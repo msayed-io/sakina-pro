@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowRight, Check, Copy, Download, MessageCirclePlus, Share2, X } from "lucide-react";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
+import ProgressiveBlur from "@/components/ProgressiveBlur";
 import { getCurrentSession } from "@/services/auth-service";
 import {
   forkSakeenahSharedConversation,
@@ -108,7 +109,7 @@ export default function SharedSakeenahConversationPage({ token }: { token: strin
 
   return (
     <>
-      <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>
+      <ProgressiveBlur />
       <main dir="rtl" data-clarity-mask="true" data-sakeenah-ai-surface="true" className="min-h-[100dvh] overflow-hidden bg-[#ece7de] text-[#2b1a10]">
       <div className="relative min-h-[100dvh] w-full overflow-hidden font-sans">
         <div className="pointer-events-none absolute right-[-10%] top-[-20%] z-0 h-[300px] w-[300px] rounded-full bg-[#b88a4f]/5 blur-[120px]" />

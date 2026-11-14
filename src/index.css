@@ -824,7 +824,3 @@
   .progressive-blur { background: linear-gradient(var(--qf-fade), var(--bg) 25%, transparent); }
   .progressive-blur i { display: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
-
-/* The home capsule is only rendered after scrolling; keep its blur absent before then. */
-.progressive-blur-home { visibility: hidden; }
-.home-tab:has(.fixed.top-4.z-50) .progressive-blur-home { visibility: visible; }

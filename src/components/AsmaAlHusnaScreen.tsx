@@ -18,6 +18,7 @@ import {
   Info,
 } from "lucide-react";
 import { HomeIcon } from "@/components/icons/AppIcons";
+import ProgressiveBlur from "@/components/ProgressiveBlur";
 
 type Props = {
   onClose: () => void;
@@ -117,7 +118,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
       dir="rtl"
       className="fixed inset-0 z-50 w-full max-w-full overflow-x-hidden bg-[#ece7de] font-sans flex flex-col h-full"
     >
-      <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>
+      <ProgressiveBlur />
       {/* ── FLOATING HEADER ── */}
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
         {/* Right Side (First in RTL): Title Capsule */}

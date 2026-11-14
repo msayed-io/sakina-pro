@@ -14,6 +14,7 @@ import { App as CapacitorApp } from "@capacitor/app";
 import { Geolocation } from "@capacitor/geolocation";
 import AuthScreen from "@/components/AuthScreen";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
+import ProgressiveBlur from "@/components/ProgressiveBlur";
 import type { AuthUser } from "@/services/auth-service";
 import {
   getCurrentSession,
@@ -1172,36 +1173,6 @@ function AuthenticatedApp() {
             <div className="absolute inset-0 bg-gradient-to-b from-[#180d07]/65 via-[#2a170f]/30 to-[#ece7de] pointer-events-none z-[1] will-change-transform [transform:translateZ(0)]" />
 
             <div className="relative z-[2] mx-auto w-full max-w-[390px] px-4 pb-7 pt-6">
-              <div className="progressive-blur progressive-blur-top progressive-blur-home" aria-hidden="true"><i /><i /></div>
-              {/* ── Fixed Floating Glassmorphic Header ── */}
-              <AnimatePresence>
-                {isScrolled && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 380, damping: 28 }}
-                    className="fixed top-4 left-0 right-0 z-50 mx-auto w-full max-w-[390px] px-4 flex items-center justify-between pointer-events-none"
-                  >
-                    {/* Settings button in glassmorphic capsule */}
-                    <button
-                      className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full cut-crystal-capsule shadow-md text-[#2b1a10] transition-all duration-300 active:scale-95 cursor-pointer"
-                      aria-label="فتح الإعدادات"
-                      onClick={() => setActiveTab("settings")}
-                    >
-                      <UserIdentityIcon user={currentUser} />
-                    </button>
-
-                    {/* Sakinah text in glassmorphic capsule */}
-                    <div className="pointer-events-auto cut-crystal-capsule px-6 h-10 rounded-full shadow-md flex items-center justify-center text-[#2b1a10]">
-                      <span className="text-[17px] font-display font-black leading-none pt-[1px]">
-                        سَكِينَة
-                      </span>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
               <header
                 className="mb-8 flex items-center justify-between text-[#fff9f1] transition-all duration-300 ease-in-out"
                 style={{
@@ -1553,12 +1524,41 @@ function AuthenticatedApp() {
               )}
             </AnimatePresence>
           </section>
+          {activeTab === "main" && !showAzkarCounter && isScrolled && <ProgressiveBlur />}
+          {/* ── Fixed Floating Glassmorphic Header ── */}
+          <AnimatePresence>
+            {isScrolled && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                className="fixed top-4 left-0 right-0 z-50 mx-auto w-full max-w-[390px] px-4 flex items-center justify-between pointer-events-none"
+              >
+                {/* Settings button in glassmorphic capsule */}
+                <button
+                  className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full cut-crystal-capsule shadow-md text-[#2b1a10] transition-all duration-300 active:scale-95 cursor-pointer"
+                  aria-label="فتح الإعدادات"
+                  onClick={() => setActiveTab("settings")}
+                >
+                  <UserIdentityIcon user={currentUser} />
+                </button>
+
+                {/* Sakinah text in glassmorphic capsule */}
+                <div className="pointer-events-auto cut-crystal-capsule px-6 h-10 rounded-full shadow-md flex items-center justify-center text-[#2b1a10]">
+                  <span className="text-[17px] font-display font-black leading-none pt-[1px]">
+                    سَكِينَة
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* TAB: AZKAR */}
         {visitedTabs.has("azkar") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الأذكار..." />}>
-            {activeTab === "azkar" && !showAzkarCounter && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
+            {activeTab === "azkar" && !showAzkarCounter && !showAsmaAlHusna && <ProgressiveBlur />}
             <div className={activeTab === "azkar" && !showAzkarCounter ? "block w-full overflow-x-hidden" : "hidden"}>
               <AzkarTabScreen
                 onOpenAzkarCounter={handleOpenAzkarCounter}
@@ -1572,7 +1572,7 @@ function AuthenticatedApp() {
         {/* TAB: QURAN */}
         {visitedTabs.has("quran") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل القرآن..." />}>
-            {activeTab === "quran" && !showAzkarCounter && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
+            {activeTab === "quran" && !showAzkarCounter && <ProgressiveBlur />}
             <div className={activeTab === "quran" && !showAzkarCounter ? "block relative h-full min-h-screen w-full" : "hidden"}>
               <QuranTabScreen
                 isActive={activeTab === "quran" && !showAzkarCounter}
@@ -1586,7 +1586,7 @@ function AuthenticatedApp() {
         {/* TAB: HADITH BOOKS */}
         {visitedTabs.has("hadith") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل كتب الحديث..." />}>
-            {activeTab === "hadith" && !showAzkarCounter && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
+            {activeTab === "hadith" && !showAzkarCounter && !showSakinaLibrary && <ProgressiveBlur />}
             <div className={activeTab === "hadith" && !showAzkarCounter ? "block relative min-h-screen w-full overflow-x-hidden" : "hidden"}>
               <HadithBooksScreen
                 isActive={activeTab === "hadith" && !showAzkarCounter}
@@ -1605,7 +1605,7 @@ function AuthenticatedApp() {
             data-clarity-mask="true"
             data-sakeenah-ai-surface="true"
           >
-            {currentUser && isAuthReady && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
+            {activeTab === "sakeenah-ai" && !showAzkarCounter && currentUser && isAuthReady && <ProgressiveBlur />}
             {!isAuthReady ? (
               <div className="flex min-h-screen items-center justify-center bg-[#ece7de] text-sm font-bold text-[#7f6a55]">
                 جارٍ التحقق من الجلسة...
@@ -1636,8 +1636,8 @@ function AuthenticatedApp() {
         {/* TAB: SETTINGS */}
         {visitedTabs.has("settings") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الإعدادات..." />}>
+            {activeTab === "settings" && !showAzkarCounter && <ProgressiveBlur />}
             <div className={activeTab === "settings" && !showAzkarCounter ? "block" : "hidden"}>
-          <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>
           <SettingsScreen
             cityName={cityName}
             cityLat={cityLat}
