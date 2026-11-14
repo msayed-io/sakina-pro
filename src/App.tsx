@@ -164,6 +164,7 @@ function AuthenticatedApp() {
   const [activeTab, setActiveTab] = useState<TabType>("main");
   const [visitedTabs, setVisitedTabs] = useState<Set<TabType>>(() => new Set(["main"]));
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [nativeAuthError, setNativeAuthError] = useState<string | null>(null);
   const [pendingSharedToken, setPendingSharedToken] = useState<string | null>(() => localStorage.getItem("sakeenah_pending_share_token"));
   const [pendingForkConversationId, setPendingForkConversationId] = useState<string | null>(() => localStorage.getItem("sakeenah_pending_fork_conversation_id"));
   const [isAuthReady, setIsAuthReady] = useState(false);
@@ -330,9 +331,20 @@ function AuthenticatedApp() {
     };
 
     void bootstrapAuth();
-    const stopNativeCallback = listenForNativeAuthCallback((session) => {
-      if (!disposed) setCurrentUser(session?.user ?? null);
-    });
+    const stopNativeCallback = listenForNativeAuthCallback(
+      (session) => {
+        if (disposed) return;
+        setCurrentUser(session?.user ?? null);
+        if (session) setNativeAuthError(null);
+      },
+      () => {
+        if (!disposed) {
+          setNativeAuthError(
+            "تعذر إكمال تسجيل الدخول بعد العودة من Google. أعد المحاولة، وإذا تكررت المشكلة فتحقق من رابط Android في إعدادات Supabase.",
+          );
+        }
+      },
+    );
     const stopAuthSubscription = subscribeToAuthState((event, session) => {
       if (!disposed) setCurrentUser(session?.user ?? null);
       if (event === "SIGNED_IN" && session) {
@@ -1609,6 +1621,8 @@ function AuthenticatedApp() {
               <AuthScreen
                 onBack={handleBackToMain}
                 onAuthenticated={(user) => setCurrentUser(user)}
+                nativeCallbackError={nativeAuthError}
+                onClearNativeCallbackError={() => setNativeAuthError(null)}
               />
             )}
           </div>

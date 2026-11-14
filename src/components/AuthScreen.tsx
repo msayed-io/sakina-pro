@@ -1,4 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { App as CapacitorApp } from "@capacitor/app";
+import { Capacitor } from "@capacitor/core";
 import type { User } from "@supabase/supabase-js";
 import { ArrowRight } from "lucide-react";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
@@ -13,6 +15,8 @@ type LegalView = "terms" | "privacy";
 interface AuthScreenProps {
   onBack?: () => void;
   onAuthenticated?: (user: User) => void;
+  nativeCallbackError?: string | null;
+  onClearNativeCallbackError?: () => void;
 }
 
 function authErrorMessage(error: unknown): string {
@@ -24,14 +28,36 @@ function authErrorMessage(error: unknown): string {
   return "تعذر إتمام العملية الآن. حاول مرة أخرى.";
 }
 
-export default function AuthScreen({ onBack, onAuthenticated }: AuthScreenProps) {
+export default function AuthScreen({
+  onBack,
+  onAuthenticated,
+  nativeCallbackError,
+  onClearNativeCallbackError,
+}: AuthScreenProps) {
   const [legalView, setLegalView] = useState<LegalView | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (!nativeCallbackError) return;
+    setError(nativeCallbackError);
+    setGoogleLoading(false);
+  }, [nativeCallbackError]);
+
+  useEffect(() => {
+    if (!googleLoading || !Capacitor.isNativePlatform()) return;
+    const listenerPromise = CapacitorApp.addListener("appStateChange", ({ isActive }) => {
+      if (isActive) setGoogleLoading(false);
+    });
+    return () => {
+      void listenerPromise.then((listener) => listener.remove());
+    };
+  }, [googleLoading]);
+
   const handleGoogle = async () => {
     setGoogleLoading(true);
     setError("");
+    onClearNativeCallbackError?.();
     try {
       await signInWithGoogle();
     } catch (authError) {

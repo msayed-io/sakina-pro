@@ -132,25 +132,72 @@ export async function handleAuthCallback(url?: string): Promise<AuthSession | nu
 
 export function listenForNativeAuthCallback(
   onSession: (session: AuthSession | null) => void,
+  onError?: (error: unknown) => void,
 ): () => void {
   if (!Capacitor.isNativePlatform()) return () => undefined;
 
   let disposed = false;
+  const completedCodes = new Set<string>();
+  const inFlightCodes = new Map<string, Promise<void>>();
   const processUrl = async (url: string | undefined) => {
-    if (disposed || !url?.startsWith(NATIVE_AUTH_REDIRECT_URI)) return;
+    if (disposed || !url) return;
+    let parsed: URL;
     try {
-      const session = await handleAuthCallback(url);
-      onSession(session);
+      parsed = new URL(url);
     } catch (error) {
-      console.error("Native auth callback failed", error);
-      onSession(null);
+      return;
+    }
+    if (
+      parsed.protocol !== "com.sakeenah.app:" ||
+      parsed.hostname !== "auth" ||
+      parsed.pathname !== "/callback"
+    ) {
+      return;
+    }
+
+    const oauthError = parsed.searchParams.get("error");
+    if (oauthError) {
+      onError?.(new Error(parsed.searchParams.get("error_description") || oauthError));
+      return;
+    }
+
+    const code = parsed.searchParams.get("code");
+    if (!code || completedCodes.has(code)) return;
+
+    const existingExchange = inFlightCodes.get(code);
+    if (existingExchange) {
+      await existingExchange;
+      return;
+    }
+
+    const exchange = (async () => {
+      try {
+        const session = await handleAuthCallback(url);
+        if (!session) throw new Error("لم تُستعد جلسة تسجيل الدخول من Google.");
+        completedCodes.add(code);
+        onSession(session);
+      } catch (error) {
+        console.error("Native auth callback failed", error);
+        onError?.(error);
+        onSession(null);
+      }
+    })();
+    inFlightCodes.set(code, exchange);
+    try {
+      await exchange;
+    } finally {
+      inFlightCodes.delete(code);
     }
   };
 
   const listenerPromise = App.addListener("appUrlOpen", ({ url }) => {
     void processUrl(url);
   });
-  void App.getLaunchUrl().then(({ url }) => processUrl(url));
+  void App.getLaunchUrl()
+    .then((launchUrl) => processUrl(launchUrl?.url))
+    .catch((error: unknown) => {
+      if (!disposed) onError?.(error);
+    });
 
   return () => {
     disposed = true;
