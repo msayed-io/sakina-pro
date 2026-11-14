@@ -215,12 +215,12 @@ export default function MapLocationPicker({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-white" dir="rtl">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-white dark:bg-[var(--sk-bg)]" dir="rtl">
       {/* Top Header */}
       <div className="absolute top-0 inset-x-0 z-[110] flex items-start justify-between p-4 pt-6 bg-gradient-to-b from-black/40 to-transparent pointer-events-none">
         <button
           onClick={onClose}
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-white shadow-md text-[#2b1a10] pointer-events-auto active:scale-95 transition-transform shrink-0"
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[var(--sk-bg3)] shadow-md text-[var(--sk-label)] pointer-events-auto active:scale-95 transition-transform shrink-0"
         >
           <ChevronRight size={24} />
         </button>
@@ -230,7 +230,7 @@ export default function MapLocationPicker({
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-[#2b1a10]/95 backdrop-blur-sm text-white px-5 py-2.5 rounded-full shadow-lg pointer-events-auto mx-2 flex items-center justify-center"
+              className="bg-[#2b1a10]/95 dark:bg-[var(--sk-shade)]/95 backdrop-blur-sm text-white px-5 py-2.5 rounded-full shadow-lg pointer-events-auto mx-2 flex items-center justify-center"
             >
               <span className="text-[14px] font-bold tracking-wide">
                 لم يتم العثور على الموقع
@@ -260,17 +260,17 @@ export default function MapLocationPicker({
       </div>
 
       {/* Bottom Panel */}
-      <div className="relative z-[110] bg-[#ece7de] rounded-t-[40px] -mt-6 shadow-[0_-8px_30px_rgba(43,26,16,0.08)] px-6 pt-4 pb-8 flex flex-col gap-6 border-t border-[#e6dccf]">
-        <div className="w-12 h-1.5 bg-[#c2b5a3] rounded-full mx-auto" />
+      <div className="relative z-[110] bg-[var(--sk-bg)] rounded-t-[40px] -mt-6 shadow-[0_-8px_30px_rgba(43,26,16,0.08)] px-6 pt-4 pb-8 flex flex-col gap-6 border-t border-[var(--sk-sep)]">
+        <div className="w-12 h-1.5 bg-[var(--sk-label4)] rounded-full mx-auto" />
 
         <div className="text-center">
-          <h2 className="text-[22px] font-bold text-[#2b1a10]">
+          <h2 className="text-[22px] font-bold text-[var(--sk-label)]">
             اختيار المدينة
           </h2>
         </div>
 
         <div className="relative">
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7f6a55]">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--sk-label2)]">
             <Search size={20} />
           </div>
           <input
@@ -278,11 +278,11 @@ export default function MapLocationPicker({
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="مثال: المدينة المنورة، السعودية"
-            className="w-full bg-[#fdfcfb] border border-[#e6dccf] rounded-[20px] py-4 pr-12 pl-4 text-[15px] font-bold text-[#2b1a10] placeholder-[#7f6a55]/60 focus:outline-none focus:border-[#b88a4f] focus:ring-1 focus:ring-[#b88a4f] transition-all"
+            className="w-full bg-[var(--sk-bg3)] border border-[var(--sk-sep)] rounded-[20px] py-4 pr-12 pl-4 text-[15px] font-bold text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none focus:border-[var(--sk-accent)] focus:ring-1 focus:ring-[var(--sk-accent)] transition-all"
           />
           {isSearching && (
             <div className="absolute left-4 top-1/2 -translate-y-1/2">
-              <SakeenahLineSpinner size={16} color="#b88a4f" label="جارٍ البحث" />
+              <SakeenahLineSpinner size={16} color="var(--sk-accent)" label="جارٍ البحث" />
             </div>
           )}
 
@@ -293,16 +293,16 @@ export default function MapLocationPicker({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute top-full left-0 right-0 mt-2 bg-[#fdfcfb] rounded-[16px] shadow-xl border border-[#e6dccf] max-h-[200px] overflow-y-auto z-50"
+                className="absolute top-full left-0 right-0 mt-2 bg-[var(--sk-bg3)] rounded-[16px] shadow-xl border border-[var(--sk-sep)] max-h-[200px] overflow-y-auto z-50"
               >
                 {searchResults.map((result, idx) => (
                   <button
                     key={idx}
                     onClick={() => selectSearchResult(result)}
-                    className="w-full text-right px-4 py-3 border-b border-[#e6dccf] last:border-0 hover:bg-[#f7f2ea] flex items-center gap-3"
+                    className="w-full text-right px-4 py-3 border-b border-[var(--sk-sep)] last:border-0 hover:bg-[var(--sk-bg2)] flex items-center gap-3"
                   >
-                    <MapPin size={16} className="text-[#b88a4f] shrink-0" />
-                    <span className="text-[14px] font-semibold text-[#2b1a10] truncate">
+                    <MapPin size={16} className="text-[var(--sk-accent)] shrink-0" />
+                    <span className="text-[14px] font-semibold text-[var(--sk-label)] truncate">
                       {result.display_name}
                     </span>
                   </button>
@@ -315,13 +315,13 @@ export default function MapLocationPicker({
         </div>
 
         <div className="flex items-center justify-center gap-2 mb-2">
-          <MapPin size={16} className="text-[#b88a4f]" />
-          <p className="text-[15px] font-bold text-[#2b1a10]">{locationName}</p>
+          <MapPin size={16} className="text-[var(--sk-accent)]" />
+          <p className="text-[15px] font-bold text-[var(--sk-label)]">{locationName}</p>
         </div>
 
         <button
           onClick={handleConfirm}
-          className="w-full bg-[#2b1a10] text-white rounded-[24px] py-4 text-[16px] font-bold active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(43,26,16,0.25)]"
+          className="w-full bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] rounded-[24px] py-4 text-[16px] font-bold active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(43,26,16,0.25)]"
         >
           اختيار الموقع
         </button>

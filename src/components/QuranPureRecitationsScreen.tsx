@@ -267,20 +267,20 @@ export default function QuranPureRecitationsScreen({
   };
 
   return (
-    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-sans relative overflow-hidden" dir="rtl">
-      <div className="absolute top-0 right-0 w-full h-[320px] bg-gradient-to-b from-[#b88a4f]/10 to-transparent pointer-events-none" />
-      <div className="absolute bottom-[-12%] left-[-14%] w-[280px] h-[280px] bg-[#deab65]/10 rounded-full blur-[110px] pointer-events-none" />
+    <div className="min-h-screen bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden" dir="rtl">
+      <div className="absolute top-0 right-0 w-full h-[320px] bg-gradient-to-b from-[#b88a4f]/10 dark:from-[var(--sk-accent)]/10 to-transparent pointer-events-none" />
+      <div className="absolute bottom-[-12%] left-[-14%] w-[280px] h-[280px] bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 rounded-full blur-[110px] pointer-events-none" />
 
       <header className="fixed top-6 left-6 right-6 z-40 flex items-center justify-between pointer-events-none">
         <div className="cut-crystal-capsule rounded-full px-4 h-10 flex items-center gap-2 shadow-md pointer-events-auto">
-          <BookOpenText size={16} className="text-[#b88a4f]" />
+          <BookOpenText size={16} className="text-[var(--sk-accent)]" />
           <span className="text-[14px] font-bold">التلاوات النقية</span>
         </div>
         <button
           type="button"
           onClick={handleBack}
           aria-label={selectedReciter ? "العودة إلى القراء" : "الخروج إلى صفحة الاستماع"}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[#2b1a10] active:scale-95 transition-transform pointer-events-auto"
+          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto"
         >
           <ChevronRight size={20} />
         </button>
@@ -290,9 +290,9 @@ export default function QuranPureRecitationsScreen({
         {!selectedReciter && (
           <section className="px-6 pt-4 pb-7">
             <div className="max-w-[340px] mr-auto text-right">
-              <p className="text-[11px] font-bold text-[#b88a4f] mb-1.5">اختيارات سكينة</p>
-              <h1 className="text-[23px] font-bold leading-tight text-[#2b1a10]">تلاوات نقية ومنتقاة</h1>
-              <p className="text-[13px] text-[#7f6a55] font-bold leading-relaxed mt-2">
+              <p className="text-[11px] font-bold text-[var(--sk-accent)] mb-1.5">اختيارات سكينة</p>
+              <h1 className="text-[23px] font-bold leading-tight text-[var(--sk-label)]">تلاوات نقية ومنتقاة</h1>
+              <p className="text-[13px] text-[var(--sk-label2)] font-bold leading-relaxed mt-2">
                 تسجيلات مستقلة بجودة مراجَعة من مكتبة سكينة الخاصة.
               </p>
             </div>
@@ -301,19 +301,19 @@ export default function QuranPureRecitationsScreen({
 
         {isLoading && !catalog ? (
           <div className="px-6 py-16 text-center flex flex-col items-center gap-3">
-            <SakeenahLineSpinner size={40} color="#b88a4f" label="جارٍ تحميل كتالوج التلاوات النقية" />
-            <p className="text-[13px] text-[#7f6a55] font-bold">جاري تجهيز مكتبة التلاوات...</p>
+            <SakeenahLineSpinner size={40} color="var(--sk-accent)" label="جارٍ تحميل كتالوج التلاوات النقية" />
+            <p className="text-[13px] text-[var(--sk-label2)] font-bold">جاري تجهيز مكتبة التلاوات...</p>
           </div>
         ) : error && !catalog ? (
           <section className="px-6 py-8">
             <div className="cut-crystal-panel rounded-[28px] p-6 text-center shadow-sm">
-              <WifiOff size={25} className="mx-auto text-[#b88a4f] mb-3" />
+              <WifiOff size={25} className="mx-auto text-[var(--sk-accent)] mb-3" />
               <h2 className="text-[17px] font-bold mb-2">المكتبة قيد التجهيز</h2>
-              <p className="text-[13px] text-[#7f6a55] font-bold leading-relaxed">{error ?? "لم تُنشر ملفات صوتية معتمدة بعد."}</p>
+              <p className="text-[13px] text-[var(--sk-label2)] font-bold leading-relaxed">{error ?? "لم تُنشر ملفات صوتية معتمدة بعد."}</p>
               <button
                 type="button"
                 onClick={() => void loadCatalog()}
-                className="mt-5 cut-crystal-capsule rounded-full px-5 py-2.5 text-[13px] font-bold text-[#b88a4f] inline-flex items-center gap-2 active:scale-95 transition-transform"
+                className="mt-5 cut-crystal-capsule rounded-full px-5 py-2.5 text-[13px] font-bold text-[var(--sk-accent)] inline-flex items-center gap-2 active:scale-95 transition-transform"
               >
                 <RefreshCw size={15} />
                 إعادة المحاولة
@@ -326,7 +326,7 @@ export default function QuranPureRecitationsScreen({
               <section className="px-6 pb-5">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-[16px] font-bold">اختر القارئ</h2>
-                  <span className="text-[11px] text-[#7f6a55] font-bold">{catalog.reciters.length} قراء</span>
+                  <span className="text-[11px] text-[var(--sk-label2)] font-bold">{catalog.reciters.length} قراء</span>
                 </div>
                 <div className="space-y-3.5">
                   {catalog.reciters.map((reciter) => {
@@ -340,7 +340,7 @@ export default function QuranPureRecitationsScreen({
                       >
                         <div className="flex items-center gap-4 min-w-0">
                           <div className="relative w-12 h-12 shrink-0 rounded-full cut-crystal-panel p-1 text-white">
-                            <div className="relative h-full w-full overflow-hidden rounded-full bg-gradient-to-br from-[#deab65] to-[#b88a4f] flex items-center justify-center">
+                            <div className="relative h-full w-full overflow-hidden rounded-full bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] flex items-center justify-center">
 
                             {imageUrl ? (
                               <img
@@ -358,16 +358,16 @@ export default function QuranPureRecitationsScreen({
                             </div>
                           </div>
                           <div className="min-w-0">
-                            <h3 className="text-[17px] font-bold leading-tight mb-1.5 truncate text-[#2b1a10] group-hover:text-[#b88a4f]">
+                            <h3 className="text-[17px] font-bold leading-tight mb-1.5 truncate text-[var(--sk-label)] group-hover:text-[var(--sk-accent)]">
                               {reciter.name}
                             </h3>
-                            <div className="flex items-center gap-1.5 text-[12px] text-[#7f6a55] font-bold">
-                              <BookOpenText size={12} className="text-[#b88a4f]" />
+                            <div className="flex items-center gap-1.5 text-[12px] text-[var(--sk-label2)] font-bold">
+                              <BookOpenText size={12} className="text-[var(--sk-accent)]" />
                               <span>تلاوة نقية · {reciter.tracks.length} سورة</span>
                             </div>
                           </div>
                         </div>
-                        <ChevronRight size={18} className="text-[#b88a4f] opacity-80 shrink-0" />
+                        <ChevronRight size={18} className="text-[var(--sk-accent)] opacity-80 shrink-0" />
                       </button>
                     );
                   })}

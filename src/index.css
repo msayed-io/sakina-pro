@@ -1,6 +1,9 @@
 @import "./styles/player.css";
 @import "tailwindcss";
 
+/* Dark variant bound to the root data-theme attribute (spec §3.2). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @font-face {
   font-family: 'KFGQPC Uthman Taha Naskh';
   src: url('/fonts/KFGQPC_Uthmanic_Script_HAFS_Regular.otf') format('opentype');
@@ -169,12 +172,12 @@
 
 .cut-crystal-capsule-gold {
   position: relative;
-  background: #deab65;
+  background: var(--sk-accent-bright);
   border: 1px solid rgba(43, 26, 16, 0.15);
   box-shadow: 0 4px 12px rgba(222, 171, 101, 0.25),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
   border-radius: 9999px;
-  color: #2b1a10;
+  color: var(--sk-label);
   transition: all 0.25s ease;
 }
 
@@ -191,6 +194,24 @@
 }
 
 /* 4. UNIVERSAL CUT-CRYSTAL INPUT & SEARCH BAR */
+/* AI chat composer pill (dark needs the glass recipe; light stays byte-identical) */
+.ai-composer-pill {
+  background: linear-gradient(180deg, rgba(253, 252, 251, 0.75) 0%, rgba(244, 240, 234, 0.60) 100%);
+  -webkit-backdrop-filter: blur(26px) saturate(210%) contrast(99%) brightness(102%);
+  backdrop-filter: blur(26px) saturate(210%) contrast(99%) brightness(102%);
+  border: 1px solid rgba(43, 26, 16, 0.09);
+  box-shadow: 0 16px 36px -12px rgba(43, 26, 16, 0.14), 0 4px 10px -2px rgba(43, 26, 16, 0.06),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.90),
+              inset 0 -1px 0 0 rgba(43, 26, 16, 0.05);
+}
+html[data-theme="dark"] .ai-composer-pill {
+  background: var(--sk-glass);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-color: transparent;
+  box-shadow: var(--sk-drop);
+}
+
 .cut-crystal-input {
   position: relative;
   background: rgba(253, 252, 251, 0.85);
@@ -203,7 +224,7 @@
   transition: all 0.25s ease;
 }
 .cut-crystal-input:focus-within {
-  border-color: #deab65;
+  border-color: var(--sk-accent-bright);
   box-shadow: 0 0 0 3px rgba(222, 171, 101, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 1);
 }
 
@@ -324,10 +345,10 @@
 @keyframes ringPulse {
   0%,
   100% {
-    filter: drop-shadow(0 0 0 rgba(43, 26, 15, 0));
+    filter: drop-shadow(0 0 0 var(--sk-ring-idle));
   }
   50% {
-    filter: drop-shadow(0 0 8px rgba(43, 26, 15, 0.25));
+    filter: drop-shadow(0 0 8px var(--sk-ring-glow));
   }
 }
 
@@ -421,7 +442,7 @@
   position: absolute;
   inset-inline: 0;
   bottom: 1.1em;
-  color: var(--qcf-accent, #8a6a3d);
+  color: var(--qcf-accent, var(--sk-accent-deep));
   font-family: 'Thmanyah Sans', sans-serif;
   font-size: 0.78em;
   font-weight: 700;
@@ -477,16 +498,16 @@
 
 .qcf-highlighted {
   background: var(--qcf-highlight, rgba(184, 147, 90, 0.18));
-  color: var(--qcf-accent, #8a6a3d);
+  color: var(--qcf-accent, var(--sk-accent-deep));
 }
 
 .qcf-playing {
   background: var(--qcf-playing, rgba(184, 147, 90, 0.28));
-  color: var(--qcf-accent, #8a6a3d);
+  color: var(--qcf-accent, var(--sk-accent-deep));
 }
 
 .qcf-end-mark {
-  color: var(--qcf-accent, #8a6a3d);
+  color: var(--qcf-accent, var(--sk-accent-deep));
   cursor: pointer;
 }
 
@@ -542,9 +563,9 @@
 }
 
 .mushaf-spread-rail-button--active {
-  background: #b88a4f;
-  color: #fff9f1;
-  box-shadow: 0 4px 12px rgba(184, 138, 79, 0.35);
+  background: var(--sk-accent);
+  color: var(--sk-on-accent-soft);
+  box-shadow: var(--sk-rail-active-shadow);
 }
 
 .mushaf-spread-rail-stop {
@@ -654,7 +675,7 @@
   margin: 0;
   padding: 0;
   overflow: visible;
-  color: #2b1a10;
+  color: var(--sk-label);
   font-family: 'Thmanyah Serif Display', 'Thmanyah Serif Text', serif;
   font-size: clamp(10.5px, 3.65vw, 16px);
   font-weight: 900;
@@ -720,7 +741,7 @@
   font-family: 'Amiri Quran', 'Amiri', serif;
   direction: rtl;
   text-align: center;
-  color: #2b1a10;
+  color: var(--sk-label);
   line-height: 1.3;
   letter-spacing: 0;
   user-select: none;
@@ -766,11 +787,11 @@
 /* تأثير لمعان هادئ على كلمة Thinking — ضوء رملي يدور داخل الحروف بلا نهاية */
 .thinking-shimmer {
   background: linear-gradient(90deg,
-    #7f6a55 0%,
-    #b88a4f 25%,
-    #deab65 50%,
-    #b88a4f 75%,
-    #7f6a55 100%
+    var(--sk-label2) 0%,
+    var(--sk-accent) 25%,
+    var(--sk-accent-bright) 50%,
+    var(--sk-accent) 75%,
+    var(--sk-label2) 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -792,7 +813,7 @@
 
 /* Progressive top blur: standalone light-theme edge, independent of the capsule headers. */
 .progressive-blur {
-  --bg: #ece7de;
+  --bg: var(--sk-bg);
   --qf-top: max(24px, env(safe-area-inset-top));
   position: fixed; inset-inline: 0; top: 0;
   height: calc(var(--qf-top) + 88px); z-index: 18; pointer-events: none;
@@ -823,4 +844,346 @@
 @media (prefers-reduced-transparency: reduce) {
   .progressive-blur { background: linear-gradient(var(--qf-fade), var(--bg) 25%, transparent); }
   .progressive-blur i { display: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+
+/* ==========================================================================
+   Sakinah Dark Mode — semantic tokens (spec §4.8) and dark recipes (§5).
+   :root keeps today's light values byte-identical; html[data-theme="dark"]
+   re-maps every token. Behavior is derived solely from prefers-color-scheme
+   via the inline boot script (index.html). No stored preference, no toggle.
+   ========================================================================== */
+
+:root {
+  /* Surfaces (light stand-ins; dark overrides below) */
+  --sk-bg: #ece7de;
+  --sk-bg2: #f7f2ea;
+  --sk-bg3: #fdfcfb;
+  --sk-bg4: #efe9dd;
+  --sk-sep: #e6dccf;
+  --sk-sep-solid: #ddd2c4;
+  --sk-fill: rgba(43, 26, 16, 0.12);
+  --sk-fill2: rgba(43, 26, 16, 0.09);
+  --sk-fill3: rgba(43, 26, 16, 0.07);
+  --sk-fill4: rgba(43, 26, 16, 0.05);
+
+  /* Labels */
+  --sk-label: #2b1a10;
+  --sk-label2: #7f6a55;
+  --sk-label3: #a39282;
+  --sk-label4: #c2b5a3;
+
+  /* Single accent + its helper tokens (light keeps the two gold temps) */
+  --sk-accent: #b88a4f;
+  --sk-accent-bright: #deab65;
+  --sk-accent-deep: #8a6a3d;
+  --sk-on-accent: #2b1a10;
+  --sk-on-accent-soft: #fff9f1;
+  --sk-focus: rgba(222, 171, 101, 0.22);
+  --sk-selection: rgba(222, 171, 101, 0.28);
+  --sk-tint: rgba(184, 138, 79, 0.22);
+
+  /* Semantic — hue family is preserved in dark, tuned for OLED */
+  --sk-danger: #c94a4a;
+  --sk-warning: #b45309;
+  --sk-success: #4d6342;
+
+  /* Glass / depth */
+  --sk-glass: rgba(253, 252, 251, 0.78);
+  --sk-solid: #fdfcfb;
+  --sk-panel: rgba(253, 252, 251, 0.92);
+  --sk-dialog: rgba(253, 252, 251, 0.97);
+  --sk-sheet: #fdfcfb;
+  --sk-scrim: rgba(43, 26, 16, 0.38);
+  --sk-lens: rgba(43, 26, 16, 0.10);
+  --sk-hairline: rgba(43, 26, 16, 0.09);
+  --sk-drop: 0 1px 3px rgba(43, 26, 16, 0.16);
+  --sk-amb-tabbar: 0 10px 30px rgba(43, 26, 16, 0.18);
+  --sk-amb-card: 0 14px 34px rgba(43, 26, 16, 0.16);
+
+  --sk-ring-idle: rgba(43, 26, 15, 0);
+  --sk-ring-glow: rgba(43, 26, 15, 0.25);
+  --sk-rail-active-shadow: 0 4px 12px rgba(184, 138, 79, 0.35);
+  --sk-ring-track: #e8dfd4;
+  --sk-espresso-fill: #2b1a10;
+  --sk-on-espresso: #ffffff;
+
+  /* Player-adjacent tints (light values preserved exactly) */
+  --sk-tan: #f5ebd6;
+  --sk-accent-variant: #c49a62;
+  --sk-accent-deep2: #8c6332;
+  --sk-bar: rgba(253, 252, 251, 0.88);
+  --sk-glass-tint: rgba(253, 252, 251, 0.85);
+
+  /* Espresso ramp + extra exact tints (light values preserved exactly) */
+  --sk-espresso2: #524336;
+  --sk-accent-deep3: #a0753e;
+  --sk-espresso3: #4a3b32;
+  --sk-espresso-end: #1a0f0a;
+  --sk-player-deep: #1a1512;
+  --sk-linen: #d8c9b8;
+  --sk-cream: #f5ebd9;
+  --sk-champagne: #f7dfb4;
+  --sk-dot-hover: #a89680;
+  --sk-gold-mid: #d8b27b;
+  --sk-gold-eq1: #c4904a;
+  --sk-gold-eq2: #e0b06b;
+  --sk-gold-eq3: #a37c48;
+  --sk-success-soft: #80a390;
+  --sk-danger-deep: #8f3c35;
+  --sk-danger-soft: #a66969;
+  --sk-warning-bg: #fff8e1;
+  --sk-shade: var(--sk-label);
+  --sk-tab-active: var(--sk-label);
+  --sk-wash: rgba(43, 26, 16, 0.05);
+  --sk-progress-arc: var(--sk-label);
+  --sk-chip-bg: rgba(255, 255, 255, 0.60);
+  --sk-tint-border: rgba(184, 138, 79, 0.30);
+  --sk-tint-shadow: 0 4px 16px rgba(184, 138, 79, 0.06);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces — OLED neutrals, separated by luminance not strokes */
+  --sk-bg: #000000;
+  --sk-bg2: #1C1C1E;
+  --sk-bg3: #2C2C2E;
+  --sk-bg4: #3A3A3C;
+  --sk-sep: rgba(84, 84, 88, 0.6);
+  --sk-sep-solid: #38383A;
+  --sk-fill: rgba(120, 120, 128, 0.36);
+  --sk-fill2: rgba(120, 120, 128, 0.32);
+  --sk-fill3: rgba(120, 120, 128, 0.24);
+  --sk-fill4: rgba(116, 116, 128, 0.18);
+
+  /* Labels */
+  --sk-label: #FFFFFF;
+  --sk-label2: rgba(235, 235, 245, 0.60);
+  --sk-label3: rgba(235, 235, 245, 0.30);
+  --sk-label4: rgba(235, 235, 245, 0.18);
+
+  /* The single accent: Parchment Ivory */
+  --sk-accent: #EEDFC2;
+  --sk-accent-bright: #EEDFC2;
+  --sk-accent-deep: #EEDFC2;
+  --sk-on-accent: #EEDFC2;
+  --sk-on-accent-soft: #000000;
+  --sk-focus: rgba(238, 223, 194, 0.22);
+  --sk-selection: rgba(238, 223, 194, 0.22);
+  --sk-tint: rgba(238, 223, 194, 0.18);
+
+  /* Semantic — same hue family, OLED-tuned */
+  --sk-danger: #FF4245;
+  --sk-warning: #FF9230;
+  --sk-success: #30D158;
+
+  /* Glass / depth */
+  --sk-glass: rgba(44, 44, 46, 0.64);
+  --sk-solid: #2C2C2E;
+  --sk-panel: rgba(44, 44, 46, 0.88);
+  --sk-dialog: rgba(28, 28, 30, 0.94);
+  --sk-sheet: #1C1C1E;
+  --sk-scrim: rgba(0, 0, 0, 0.60);
+  --sk-lens: rgba(0, 0, 0, 0.34);
+  --sk-hairline: transparent;
+  --sk-drop: 0 1px 3px rgba(0, 0, 0, 0.50);
+  --sk-amb-tabbar: 0 10px 30px rgba(0, 0, 0, 0.50);
+  --sk-amb-card: 0 14px 34px rgba(0, 0, 0, 0.55);
+
+  --sk-ring-idle: rgba(0, 0, 0, 0);
+  --sk-ring-glow: rgba(0, 0, 0, 0.55);
+  --sk-rail-active-shadow: 0 6px 18px rgba(0, 0, 0, 0.60);
+  --sk-ring-track: rgba(235, 235, 245, 0.12);
+  --sk-espresso-fill: #EEDFC2;
+  --sk-on-espresso: #000000;
+
+  --sk-tan: #2C2C2E;
+  --sk-accent-variant: #EEDFC2;
+  --sk-accent-deep2: #EEDFC2;
+  --sk-bar: rgba(28, 28, 30, 0.88);
+  --sk-glass-tint: rgba(44, 44, 46, 0.64);
+
+  --sk-espresso2: rgba(235, 235, 245, 0.60);
+  --sk-accent-deep3: #EEDFC2;
+  --sk-espresso3: rgba(235, 235, 245, 0.45);
+  --sk-espresso-end: #000000;
+  --sk-player-deep: #000000;
+  --sk-linen: var(--sk-sep);
+  --sk-cream: #2C2C2E;
+  --sk-champagne: #EEDFC2;
+  --sk-dot-hover: rgba(235, 235, 245, 0.40);
+  --sk-gold-mid: #EEDFC2;
+  --sk-gold-eq1: #EEDFC2;
+  --sk-gold-eq2: #EEDFC2;
+  --sk-gold-eq3: #EEDFC2;
+  --sk-success-soft: #30D158;
+  --sk-danger-deep: #FF4245;
+  --sk-danger-soft: #FF6165;
+  --sk-warning-bg: rgba(255, 146, 48, 0.14);
+  --sk-shade: #000000;
+  --sk-tab-active: #EEDFC2;
+  --sk-wash: rgba(116, 116, 128, 0.18);
+  --sk-progress-arc: #EEDFC2;
+  --sk-chip-bg: var(--sk-glass);
+  --sk-tint-border: rgba(238, 223, 194, 0.28);
+  --sk-tint-shadow: 0 4px 16px rgba(0, 0, 0, 0.40);
+}
+
+/* --- Cut-crystal recipes follow the dark glass model (§4.7/§5) --- */
+html[data-theme="dark"] .cut-crystal-panel {
+  background: rgba(28, 28, 30, 0.90);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-color: transparent;
+  box-shadow: var(--sk-amb-card);
+}
+html[data-theme="dark"] .cut-crystal-panel:hover {
+  border-color: transparent;
+  box-shadow: var(--sk-amb-card);
+}
+html[data-theme="dark"] .cut-crystal-panel:active {
+  box-shadow: var(--sk-drop);
+}
+
+html[data-theme="dark"] .cut-crystal-capsule {
+  background: var(--sk-glass);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-color: transparent;
+  box-shadow: var(--sk-amb-tabbar);
+}
+html[data-theme="dark"] .cut-crystal-capsule:hover {
+  border-color: transparent;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+}
+html[data-theme="dark"] .cut-crystal-capsule:active {
+  box-shadow: var(--sk-drop);
+}
+
+html[data-theme="dark"] .cut-crystal-capsule-dark {
+  background: var(--sk-glass);
+  border-color: transparent;
+  box-shadow: var(--sk-amb-tabbar);
+}
+html[data-theme="dark"] .cut-crystal-capsule-dark:hover {
+  border-color: transparent;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+}
+
+html[data-theme="dark"] .cut-crystal-capsule-gold {
+  background: var(--sk-accent);
+  border-color: transparent;
+  color: var(--sk-on-espresso);
+  box-shadow: var(--sk-drop);
+}
+html[data-theme="dark"] .cut-crystal-capsule-gold:hover {
+  background: #F4E7CD;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.50);
+}
+html[data-theme="dark"] .cut-crystal-capsule-gold:active {
+  background: #DCD0B2;
+}
+
+html[data-theme="dark"] .cut-crystal-input {
+  background: var(--sk-fill3);
+  border-color: transparent;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+}
+html[data-theme="dark"] .cut-crystal-input:focus-within {
+  border-color: var(--sk-accent);
+  box-shadow: 0 0 0 3px var(--sk-focus);
+}
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+  caret-color: var(--sk-accent);
+}
+
+html[data-theme="dark"] .cut-crystal-satin {
+  background: rgba(28, 28, 30, 0.90);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border-color: transparent;
+  box-shadow: var(--sk-amb-card);
+}
+html[data-theme="dark"] .cut-crystal-satin:hover {
+  border-color: transparent;
+  box-shadow: var(--sk-amb-card);
+}
+html[data-theme="dark"] .cut-crystal-satin:active {
+  box-shadow: var(--sk-drop);
+}
+
+/* Shimmer keeps its motion, loses the gold (ivory ramp) */
+html[data-theme="dark"] .thinking-shimmer {
+  background-image: linear-gradient(90deg,
+    #7c766a 0%,
+    #EEDFC2 25%,
+    #FBF3DE 50%,
+    #EEDFC2 75%,
+    #7c766a 100%);
+}
+
+/* One edge owner for rim targets (dark only): the physical rim paints the
+   edge, so the CSS hairline/inset highlight is surrendered by the target.
+   The light theme is untouched. */
+html[data-theme="dark"] .sk-rim,
+html[data-theme="dark"] .sk-rim-nested {
+  border-color: transparent;
+  box-shadow: var(--sk-drop);
+}
+
+/* Text selection + keyboard focus, dark only (light keeps UA defaults) */
+html[data-theme="dark"] ::selection {
+  background: var(--sk-selection);
+}
+html[data-theme="dark"] :focus-visible {
+  outline: 2px solid var(--sk-accent);
+  outline-offset: 2px;
+}
+
+/* Specular rim — display layer (adapted from specular-rim-spec-ar.md §4.3).
+   One edge-only canvas per element; no pseudo-element, no second glass layer. */
+[data-qf-rim] > .qf-specular-rim {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: none;
+  opacity: calc(clamp(0, var(--rim, 1), 1) * var(--qf-rim-layer, 1) * var(--qf-rim-accessibility, 1));
+}
+[data-qf-rim="nested"] > .qf-specular-rim {
+  --qf-rim-layer: .85;
+}
+/* Safety net: the light theme never shows the rim, even if one were mounted */
+html:not([data-theme="dark"]) .qf-specular-rim {
+  display: none;
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --qf-rim-accessibility: .5;
+  }
+  html[data-theme="dark"] .sk-rim,
+  html[data-theme="dark"] .sk-rim-nested {
+    background: var(--sk-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Increase contrast nudges (spec §9) — dark only */
+@media (prefers-contrast: more) {
+  html[data-theme="dark"] {
+    --sk-accent: #FBF1DC;
+    --sk-danger: #FF6165;
+    --sk-warning: #FFA056;
+  }
 }

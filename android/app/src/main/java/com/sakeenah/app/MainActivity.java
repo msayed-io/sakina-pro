@@ -29,6 +29,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(PrayerAlarmPlugin.class);
         registerPlugin(RadioCapturePlugin.class);
         super.onCreate(savedInstanceState);
+        disableWebViewAlgorithmicDarkening(); // الوضع الداكن تديره الويب، لا تعتيم WebView الخوارزمي
         hideSystemBars(); // القاعدة #4: إخفاء كامل عند الإطلاق (Immersive Mode)
         createNotificationChannels();
     }
@@ -47,6 +48,28 @@ public class MainActivity extends BridgeActivity {
      * ويعودان مؤقتاً عند السحب من حافة الشاشة، ثم يختفيان تلقائياً.
      * القاعدة #5: مع Immersive Mode، لا يجب استخدام Safe Area padding في CSS
      */
+    /**
+     * Sakinah renders its own dark mode from prefers-color-scheme; the
+     * WebView's automatic algorithmic darkening must stay off so it never
+     * double-darkens author-styled surfaces (spec §3.4).
+     */
+    private void disableWebViewAlgorithmicDarkening() {
+        try {
+            com.getcapacitor.Bridge bridge = getBridge();
+            android.webkit.WebView webView = bridge != null ? bridge.getWebView() : null;
+            if (webView == null) return;
+            android.webkit.WebSettings settings = webView.getSettings();
+            if (Build.VERSION.SDK_INT >= 33) {
+                settings.setAlgorithmicDarkeningAllowed(false);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                //noinspection deprecation
+                settings.setForceDark(android.webkit.WebSettings.FORCE_DARK_OFF);
+            }
+        } catch (Throwable t) {
+            Log.w("MainActivity", "Algorithmic darkening could not be disabled: " + t);
+        }
+    }
+
     private void hideSystemBars() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

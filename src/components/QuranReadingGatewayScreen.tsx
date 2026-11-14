@@ -93,10 +93,10 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
   }, [filteredSurahs, selectedTypeFilter]);
 
   return (
-    <div className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-sans relative overflow-hidden" dir="rtl">
+    <div className="min-h-screen bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden" dir="rtl">
       {/* Background soft ambient shapes */}
-      <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Floating Top Elements */}
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
@@ -106,8 +106,8 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
             onClick={() => setIsModeDropdownOpen(!isModeDropdownOpen)}
             className="cut-crystal-capsule px-4.5 h-10 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
           >
-            <span className="text-[14px] font-black text-[#2b1a10] whitespace-nowrap pt-0.5">القرآن الكريم</span>
-            <ChevronDown size={14} className={`text-[#b88a4f] transition-transform duration-200 ${isModeDropdownOpen ? "rotate-180" : ""}`} />
+            <span className="text-[14px] font-black text-[var(--sk-label)] whitespace-nowrap pt-0.5">القرآن الكريم</span>
+            <ChevronDown size={14} className={`text-[var(--sk-accent)] transition-transform duration-200 ${isModeDropdownOpen ? "rotate-180" : ""}`} />
           </button>
 
           {/* Mode Dropdown */}
@@ -130,7 +130,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                       setIsModeDropdownOpen(false);
                       onModeChange("listening");
                     }}
-                    className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 text-[#2b1a10]"
+                    className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)]"
                   >
                     <span className="text-[13px] font-bold">الاستماع</span>
                   </button>
@@ -139,10 +139,10 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                       setIsModeDropdownOpen(false);
                       onModeChange("reading");
                     }}
-                    className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 text-[#2b1a10]"
+                    className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)]"
                   >
-                    <span className="text-[13px] font-black text-[#b88a4f]">القرآن الكريم</span>
-                    <Check size={14} className="text-[#b88a4f] shrink-0" />
+                    <span className="text-[13px] font-black text-[var(--sk-accent)]">القرآن الكريم</span>
+                    <Check size={14} className="text-[var(--sk-accent)] shrink-0" />
                   </button>
                 </motion.div>
               </>
@@ -156,8 +156,8 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
             onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
             className="cut-crystal-capsule px-4 h-10 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
           >
-            <span className="text-[12.5px] text-[#7f6a55] font-bold whitespace-nowrap pt-0.5">{statsLabel}</span>
-            <ChevronDown size={14} className={`text-[#b88a4f] transition-transform duration-200 ${isFilterDropdownOpen ? "rotate-180" : ""}`} />
+            <span className="text-[12.5px] text-[var(--sk-label2)] font-bold whitespace-nowrap pt-0.5">{statsLabel}</span>
+            <ChevronDown size={14} className={`text-[var(--sk-accent)] transition-transform duration-200 ${isFilterDropdownOpen ? "rotate-180" : ""}`} />
           </button>
 
           {/* Filter Dropdown */}
@@ -186,12 +186,12 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                         setSelectedTypeFilter(opt.id as any);
                         setIsFilterDropdownOpen(false);
                       }}
-                      className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 text-[#2b1a10]"
+                      className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)]"
                     >
-                      <span className={`text-[13px] ${selectedTypeFilter === opt.id ? "font-black text-[#b88a4f]" : "font-medium"}`}>
+                      <span className={`text-[13px] ${selectedTypeFilter === opt.id ? "font-black text-[var(--sk-accent)]" : "font-medium"}`}>
                         {opt.label}
                       </span>
-                      {selectedTypeFilter === opt.id && <Check size={14} className="text-[#b88a4f] shrink-0" />}
+                      {selectedTypeFilter === opt.id && <Check size={14} className="text-[var(--sk-accent)] shrink-0" />}
                     </button>
                   ))}
                 </motion.div>
@@ -210,8 +210,8 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
               onClick={() => setActiveTab("surahs")}
               className={`flex-1 py-1.5 text-[14px] font-bold rounded-full transition-all duration-300 relative ${
                 activeTab === "surahs"
-                  ? "bg-[#b88a4f] text-white shadow-sm font-black"
-                  : "text-[#7f6a55] hover:text-[#2b1a10]"
+                  ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm font-black"
+                  : "text-[var(--sk-label2)] hover:text-[var(--sk-label)]"
               }`}
             >
               سور القرآن
@@ -220,8 +220,8 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
               onClick={() => setActiveTab("bookmarks")}
               className={`flex-1 py-1.5 text-[14px] font-bold rounded-full transition-all duration-300 relative ${
                 activeTab === "bookmarks"
-                  ? "bg-[#b88a4f] text-white shadow-sm font-black"
-                  : "text-[#7f6a55] hover:text-[#2b1a10]"
+                  ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm font-black"
+                  : "text-[var(--sk-label2)] hover:text-[var(--sk-label)]"
               }`}
             >
               علامات مرجعية
@@ -233,7 +233,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
         {activeTab === "surahs" ? (
           <>
             {filteredSurahs.length === 0 ? (
-              <div className="text-center py-20 text-[#7f6a55] font-bold relative z-10">
+              <div className="text-center py-20 text-[var(--sk-label2)] font-bold relative z-10">
                 لا توجد نتائج مطابقة لبحثك
               </div>
             ) : (
@@ -243,13 +243,13 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                     <button
                       key={surah.id}
                       onClick={() => onReadSurah(surah.id)}
-                      className="w-full h-[60px] md:h-[64px] rounded-full px-5 md:px-6 flex items-center justify-between group active:scale-[0.99] transition-all duration-200 cursor-pointer relative overflow-hidden cut-crystal-panel hover:bg-[#f5ebd6]/30 shadow-sm"
+                      className="w-full h-[60px] md:h-[64px] rounded-full px-5 md:px-6 flex items-center justify-between group active:scale-[0.99] transition-all duration-200 cursor-pointer relative overflow-hidden cut-crystal-panel hover:bg-[#f5ebd6]/30 dark:hover:bg-[var(--sk-tan)]/30 shadow-sm"
                     >
                       {/* Right Side: Ornament & Calligraphy Name */}
                       <div className="flex items-center gap-2 md:gap-2.5 min-w-0 relative z-10 flex-1">
                         {/* Rub el Hizb 8-pointed Star Ornament */}
                         <div className="relative w-[34px] h-[34px] flex items-center justify-center shrink-0">
-                          <svg viewBox="0 0 24 24" className="w-full h-full fill-none stroke-[#b88a4f] transition-transform duration-500 group-hover:rotate-[45deg]" strokeWidth="1.2">
+                          <svg viewBox="0 0 24 24" className="w-full h-full fill-none stroke-[var(--sk-accent)] transition-transform duration-500 group-hover:rotate-[45deg]" strokeWidth="1.2">
                             {/* Outer 8-pointed star */}
                             <path d="M12 2 L15 5 L19 5 L19 9 L22 12 L19 15 L19 19 L15 19 L12 22 L9 19 L5 19 L5 15 L2 12 L5 9 L5 5 L9 5 Z" />
                             {/* Inner 8-pointed star */}
@@ -257,12 +257,12 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                             {/* Inner circle */}
                             <circle cx="12" cy="12" r="3" strokeWidth="0.8" />
                             {/* Center solid dot */}
-                            <circle cx="12" cy="12" r="1" className="fill-[#b88a4f]" />
+                            <circle cx="12" cy="12" r="1" className="fill-[var(--sk-accent)]" />
                           </svg>
                         </div>
 
                         {/* Vocalized Surah Calligraphy Name */}
-                        <span className="font-display font-bold text-[18px] md:text-[20px] text-[#2b1a10] group-hover:text-[#b88a4f] transition-colors leading-none pt-1 select-none whitespace-nowrap truncate">
+                        <span className="font-display font-bold text-[18px] md:text-[20px] text-[var(--sk-label)] group-hover:text-[var(--sk-accent)] transition-colors leading-none pt-1 select-none whitespace-nowrap truncate">
                           {vocalizedSurahNames[surah.id] || `سُورَةُ ${surah.name}`}
                         </span>
                       </div>
@@ -270,19 +270,19 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                       {/* Left Side: Metadata, Verses Badge, and Arrow */}
                       <div className="flex items-center gap-1.5 md:gap-2 relative z-10 shrink-0 ml-2">
                         {/* Metadata: Type | Page */}
-                        <span className="text-[8px] md:text-[8.5px] text-[#7f6a55] font-bold whitespace-nowrap select-none font-sans mr-1">
+                        <span className="text-[8px] md:text-[8.5px] text-[var(--sk-label2)] font-bold whitespace-nowrap select-none font-sans mr-1">
                           {surah.type === "مكية" ? "مكية" : "مدنية"}
                           <span className="mx-0.5 md:mx-1 opacity-30 font-normal">|</span>
                           صفحة {SURAH_START_PAGES[surah.id] || 1}
                         </span>
 
                         {/* Verses Count Pill Badge */}
-                        <div className="bg-[#b88a4f]/10 text-[#b88a4f] rounded-full px-2 h-[20px] flex items-center justify-center text-[7.5px] md:text-[8px] font-black whitespace-nowrap select-none font-sans shadow-sm -mt-[1px]">
+                        <div className="bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)] rounded-full px-2 h-[20px] flex items-center justify-center text-[7.5px] md:text-[8px] font-black whitespace-nowrap select-none font-sans shadow-sm -mt-[1px]">
                           {surah.versesCount} آية
                         </div>
 
                         {/* Chevron Arrow */}
-                        <ChevronLeft size={18} className="text-[#b88a4f] opacity-80 group-hover:opacity-100 group-hover:translate-x-[-2px] transition-all shrink-0" />
+                        <ChevronLeft size={18} className="text-[var(--sk-accent)] opacity-80 group-hover:opacity-100 group-hover:translate-x-[-2px] transition-all shrink-0" />
                       </div>
                     </button>
                   );
@@ -294,9 +294,9 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
           /* Bookmarks Tab Content */
           <div className="space-y-2 relative z-10">
             {bookmarks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center text-center py-24 px-6 text-[#7f6a55] relative z-10">
-                <BookOpen size={48} className="text-[#b88a4f] opacity-35 mb-4 animate-pulse" />
-                <span className="font-bold text-[14.5px] text-[#2b1a10] mb-1">لا توجد علامات مرجعية محفوظة</span>
+              <div className="flex flex-col items-center justify-center text-center py-24 px-6 text-[var(--sk-label2)] relative z-10">
+                <BookOpen size={48} className="text-[var(--sk-accent)] opacity-35 mb-4 animate-pulse" />
+                <span className="font-bold text-[14.5px] text-[var(--sk-label)] mb-1">لا توجد علامات مرجعية محفوظة</span>
                 <p className="text-[12.5px] max-w-[280px] leading-relaxed opacity-80">
                   أثناء قراءتك للمصحف الشريف، يمكنك حفظ صفحة كاملة أو آية معينة بالضغط عليها لتظهر هنا للرجوع السريع.
                 </p>
@@ -312,21 +312,21 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                     className="flex-1 h-full flex items-center justify-between text-right"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#b88a4f]/10 flex items-center justify-center text-[#b88a4f] shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 flex items-center justify-center text-[var(--sk-accent)] shrink-0">
                         {b.type === "page" ? <BookOpen size={18} /> : <Bookmark size={18} fill="currentColor" />}
                       </div>
                       <div className="flex flex-col text-right">
-                        <span className="text-[14px] font-black text-[#2b1a10] line-clamp-1">
+                        <span className="text-[14px] font-black text-[var(--sk-label)] line-clamp-1">
                           سُورَةُ {b.surahName}
                         </span>
-                        <span className="text-[11px] text-[#7f6a55] font-bold">
+                        <span className="text-[11px] text-[var(--sk-label2)] font-bold">
                           {b.type === "page" 
                             ? `الصفحة ${toArabicDigits(b.page)}` 
                             : `الآية ${toArabicDigits(b.verseNumber)} (صفحة ${toArabicDigits(b.page)})`}
                         </span>
                       </div>
                     </div>
-                    <ChevronLeft size={14} className="text-[#7f6a55]/60 group-hover:text-[#b88a4f] group-hover:-translate-x-0.5 transition-all" />
+                    <ChevronLeft size={14} className="text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60 group-hover:text-[var(--sk-accent)] group-hover:-translate-x-0.5 transition-all" />
                   </button>
 
                   <button
@@ -334,7 +334,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                       e.stopPropagation();
                       deleteBookmark(b.id);
                     }}
-                    className="p-2 mr-2 rounded-full hover:bg-red-500/10 text-[#7f6a55] hover:text-red-500 transition-colors z-10"
+                    className="p-2 mr-2 rounded-full hover:bg-red-500/10 text-[var(--sk-label2)] hover:text-red-500 transition-colors z-10"
                     title="حذف العلامة"
                   >
                     <Trash2 size={15} />
@@ -378,7 +378,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                     exit={{ rotate: 90, opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <X size={20} className="text-[#7f6a55] hover:text-[#2b1a10]" />
+                    <X size={20} className="text-[var(--sk-label2)] hover:text-[var(--sk-label)]" />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -388,7 +388,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                     exit={{ rotate: -90, opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <Search size={20} className="text-[#b88a4f]" />
+                    <Search size={20} className="text-[var(--sk-accent)]" />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -406,14 +406,14 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
                 placeholder="البحث عن سورة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-full bg-transparent border-none outline-none text-[15px] font-sans font-bold text-[#2b1a10] placeholder:text-[#7f6a55] px-2 pt-0.5"
+                className="w-full h-full bg-transparent border-none outline-none text-[15px] font-sans font-bold text-[var(--sk-label)] placeholder:text-[var(--sk-label2)] px-2 pt-0.5"
                 tabIndex={isSearchActive ? 0 : -1}
               />
             </div>
             
             {/* Decorative Search Icon when expanded */}
             <div className={`w-12 h-14 shrink-0 flex items-center justify-center transition-opacity duration-200 ${isSearchActive ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-              <Search size={18} className="text-[#b88a4f]/50" />
+              <Search size={18} className="text-[#b88a4f]/50 dark:text-[var(--sk-accent)]/50" />
             </div>
           </motion.div>
         </div>

@@ -141,13 +141,13 @@ export const SecondaryPrayerTimesAccordion = React.memo(function SecondaryPrayer
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between py-3 px-1 cursor-pointer group"
       >
-        <span className="text-[14px] font-bold text-[#7f6a55] group-hover:text-[#2b1a10] transition-colors">
+        <span className="text-[14px] font-bold text-[var(--sk-label2)] group-hover:text-[var(--sk-label)] transition-colors">
           أوقات أخرى
         </span>
         <motion.svg
           animate={{ rotate: isExpanded ? 180 : 0 }}
           transition={{ duration: 0.3 }}
-          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7f6a55" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" style={{ stroke: "var(--sk-label2)" }} strokeLinecap="round" strokeLinejoin="round"
         >
           <polyline points="6 9 12 15 18 9" />
         </motion.svg>
@@ -171,22 +171,22 @@ export const SecondaryPrayerTimesAccordion = React.memo(function SecondaryPrayer
                 return (
                   <div
                     key={timing.id}
-                    className="flex items-center justify-between rounded-[16px] bg-[#fdfcfb] border border-[#e6dccf]/50 px-4 py-3"
+                    className="flex items-center justify-between rounded-[16px] bg-[var(--sk-bg3)] border border-[#e6dccf]/50 dark:border-[var(--sk-sep)]/50 px-4 py-3"
                   >
                     {/* Right: Icon + Name */}
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#f7f2ea] flex items-center justify-center text-[#b88a4f]">
+                      <div className="w-8 h-8 rounded-full bg-[var(--sk-bg2)] flex items-center justify-center text-[var(--sk-accent)]">
                         {timing.icon}
                       </div>
                       <div>
-                        <p className="text-[14px] font-bold text-[#2b1a10]">{timing.name}</p>
+                        <p className="text-[14px] font-bold text-[var(--sk-label)]">{timing.name}</p>
                       </div>
                     </div>
 
                     {/* Center: Time */}
-                    <div className="text-[14px] font-black text-[#2b1a10] tabular-nums">
+                    <div className="text-[14px] font-black text-[var(--sk-label)] tabular-nums">
                       {timing.time}
-                      <span className="mr-1 text-[11px] font-bold text-[#7f6a55]/60">{timing.meridiem}</span>
+                      <span className="mr-1 text-[11px] font-bold text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60">{timing.meridiem}</span>
                     </div>
 
                     {/* Left: Toggle + Speaker */}
@@ -196,17 +196,17 @@ export const SecondaryPrayerTimesAccordion = React.memo(function SecondaryPrayer
                         onClick={() => onToggleEnabled(timing.id, !pref.enabled)}
                         className="relative w-8 h-[1.125rem] rounded-full p-0.5 transition-colors duration-300 cursor-pointer flex items-center"
                         style={{
-                          backgroundColor: pref.enabled ? '#b88a4f' : '#e6dccf',
+                          backgroundColor: pref.enabled ? 'var(--sk-accent)' : 'var(--sk-sep)',
                           justifyContent: pref.enabled ? 'flex-start' : 'flex-end',
                         }}
                       >
-                        <div className="w-3.5 h-3.5 rounded-full bg-white shadow-sm" />
+                        <div data-checked={pref.enabled} className="w-3.5 h-3.5 rounded-full bg-white shadow-sm dark:data-[checked=true]:bg-black" />
                       </button>
 
                       {/* Speaker icon */}
                       <button
                         onClick={() => onOpenSettings(timing.id)}
-                        className="w-7 h-7 rounded-full bg-[#f7f2ea] flex items-center justify-center text-[#b88a4f] hover:bg-[#e6dccf] transition-colors cursor-pointer"
+                        className="w-7 h-7 rounded-full bg-[var(--sk-bg2)] flex items-center justify-center text-[var(--sk-accent)] hover:bg-[var(--sk-sep)] transition-colors cursor-pointer"
                         aria-label={`إعدادات ${timing.name}`}
                       >
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

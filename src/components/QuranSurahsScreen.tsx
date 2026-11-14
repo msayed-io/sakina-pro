@@ -127,23 +127,23 @@ export default function QuranSurahsScreen({
 
   return (
     <div
-      className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-sans relative overflow-hidden"
+      className="min-h-screen bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden"
       dir="rtl"
     >
       {/* Background elegant overlay */}
-      <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-[#b88a4f]/5 to-transparent pointer-events-none" />
+      <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-[#b88a4f]/5 dark:from-[var(--sk-accent)]/5 to-transparent pointer-events-none" />
 
       {/* Floating Header */}
       {showHeader && <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
         {/* Left bookmark icon */}
-        <button className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[#7f6a55] active:scale-95 transition-transform pointer-events-auto cursor-pointer">
+        <button className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label2)] active:scale-95 transition-transform pointer-events-auto cursor-pointer">
           <Bookmark size={18} />
         </button>
 
         {/* Right back button */}
         <button
           onClick={onBack}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[#2b1a10] active:scale-95 transition-transform pointer-events-auto cursor-pointer"
+          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto cursor-pointer"
         >
           <ChevronRight size={20} />
         </button>
@@ -153,7 +153,7 @@ export default function QuranSurahsScreen({
         {showPortfolioHero ? (
           <>
             {/* Unified Reciter Portfolio Hero — used by Sakeenah Pure Recitations only */}
-            <section className="relative isolate -mt-24 h-[min(62svh,520px)] min-h-[360px] overflow-hidden rounded-b-[28px] border border-[#fdfcfb]/10 bg-[#2b1a10] text-[#fdfcfb] shadow-[var(--glass-ambient),var(--glass-lensing)]">
+            <section className="relative isolate -mt-24 h-[min(62svh,520px)] min-h-[360px] overflow-hidden rounded-b-[28px] border border-[#fdfcfb]/10 dark:border-[#fdfcfb]/10 bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] shadow-[var(--glass-ambient),var(--glass-lensing)]">
               {reciter.photoUrl || reciter.photo ? (
                 <img
                   src={reciter.photoUrl || reciter.photo}
@@ -165,21 +165,21 @@ export default function QuranSurahsScreen({
                   className="absolute inset-0 h-full w-full object-cover object-[center_24%]"
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#deab65] via-[#b88a4f] to-[#2b1a10]" aria-hidden="true">
-                  <span className="font-serif text-[clamp(5rem,18vw,10rem)] font-black text-[#f7dfb4]/80">{reciter.name.trim().charAt(0)}</span>
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--sk-accent-bright)] via-[var(--sk-accent)] to-[var(--sk-shade)]" aria-hidden="true">
+                  <span className="font-serif text-[clamp(5rem,18vw,10rem)] font-black text-[#f7dfb4]/80 dark:text-[var(--sk-champagne)]/80">{reciter.name.trim().charAt(0)}</span>
                 </div>
               )}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(222,171,101,0.18),transparent_42%),linear-gradient(180deg,rgba(43,26,16,0.08)_18%,rgba(43,26,16,0.18)_43%,rgba(43,26,16,0.97)_100%)]" aria-hidden="true" />
               {reciter.country && (
-                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1 rounded-full border border-[#deab65]/25 bg-[#2b1a10]/45 px-1.5 py-0.5 text-[9px] font-bold leading-none text-[#f7dfb4] shadow-[0_8px_20px_-8px_rgba(43,26,16,0.45),inset_0_1px_0_rgba(222,171,101,0.25)] backdrop-blur-md sm:bottom-6 sm:left-6 sm:px-2 sm:py-1 sm:text-[10px]" dir="rtl">
+                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1 rounded-full border border-[#deab65]/25 dark:border-[var(--sk-accent-bright)]/25 bg-[#2b1a10]/45 dark:bg-[var(--sk-shade)]/45 px-1.5 py-0.5 text-[9px] font-bold leading-none text-[var(--sk-champagne)] shadow-[0_8px_20px_-8px_rgba(43,26,16,0.45),inset_0_1px_0_rgba(222,171,101,0.25)] backdrop-blur-md sm:bottom-6 sm:left-6 sm:px-2 sm:py-1 sm:text-[10px]" dir="rtl">
                   <span>{reciter.country}</span>
                   <span aria-hidden="true" className="text-[10px]">{reciter.countryFlag}</span>
                 </div>
               )}
               <div className="relative z-10 flex h-full flex-col justify-end px-5 pb-7 pt-16 text-center sm:px-8 sm:pb-9">
                 <div className="mx-auto flex max-w-3xl flex-col items-center">
-                  <h1 className="text-2xl font-black leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl">{reciter.name}</h1>
-                  <p className="mt-3 max-w-2xl text-xs font-bold leading-6 text-[#fdfcfb]/75 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">{reciter.bioShort ?? "تلاوة مرتلة من المصحف الشريف ضمن مكتبة التلاوات."}</p>
+                  <h1 className="text-2xl font-black leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl dark:text-[#ffffff]">{reciter.name}</h1>
+                  <p className="mt-3 max-w-2xl text-xs font-bold leading-6 text-[#fdfcfb]/75 dark:text-[#fdfcfb]/75 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">{reciter.bioShort ?? "تلاوة مرتلة من المصحف الشريف ضمن مكتبة التلاوات."}</p>
                 </div>
               </div>
             </section>
@@ -202,7 +202,7 @@ export default function QuranSurahsScreen({
           <>
             {/* Existing general-reciter header remains unchanged outside Pure Recitations. */}
             <div className="relative z-10 flex items-center gap-4 px-6 pb-6">
-              <div className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[24px] border border-[#c49a62] bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-[26px] font-bold text-white shadow-[0_8px_24px_rgba(184,138,79,0.2)] flex items-center justify-center font-serif">
+              <div className="h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[24px] border border-[var(--sk-accent-variant)] bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[26px] font-bold text-[var(--sk-on-espresso)] shadow-[0_8px_24px_rgba(184,138,79,0.2)] flex items-center justify-center font-serif">
                 {reciter.photoUrl || reciter.photo ? (
                   <img
                     src={reciter.photoUrl || reciter.photo}
@@ -216,8 +216,8 @@ export default function QuranSurahsScreen({
                 ) : reciter.name.trim().charAt(0)}
               </div>
               <div className="flex-1 text-right">
-                <h2 className="mb-1 text-[22px] font-bold leading-tight text-[#2b1a10]">{reciter.name}</h2>
-                <p className="text-[13px] font-bold text-[#7f6a55]">{moshaf.name.replace("مرتل", "").trim()} - مرتل</p>
+                <h2 className="mb-1 text-[22px] font-bold leading-tight text-[var(--sk-label)]">{reciter.name}</h2>
+                <p className="text-[13px] font-bold text-[var(--sk-label2)]">{moshaf.name.replace("مرتل", "").trim()} - مرتل</p>
               </div>
             </div>
             <div className="relative z-10 flex items-center gap-3 px-6 pb-8">
@@ -227,13 +227,13 @@ export default function QuranSurahsScreen({
                     onPlaySurah(surahIds[0], surahIds);
                   }
                 }}
-                className="flex-1 rounded-full bg-gradient-to-r from-[#deab65] to-[#b88a4f] py-3.5 text-center text-[14px] font-bold text-white shadow-[0_8px_24px_rgba(184,138,79,0.25)] transition-opacity hover:opacity-95 active:scale-[0.98]"
+                className="flex-1 rounded-full bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] py-3.5 text-center text-[14px] font-bold text-[var(--sk-on-espresso)] shadow-[0_8px_24px_rgba(184,138,79,0.25)] transition-opacity hover:opacity-95 active:scale-[0.98]"
               >
                 تشغيل الكل
               </button>
               <button
                 onClick={onTriggerTimer}
-                className="flex-1 cut-crystal-capsule flex items-center justify-center gap-2 rounded-full py-3.5 text-[14px] font-bold text-[#b88a4f] shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+                className="flex-1 cut-crystal-capsule flex items-center justify-center gap-2 rounded-full py-3.5 text-[14px] font-bold text-[var(--sk-accent)] shadow-sm transition-all active:scale-[0.98] cursor-pointer"
               >
                 <Clock size={16} />
                 <span>مع مؤقت</span>
@@ -256,29 +256,29 @@ export default function QuranSurahsScreen({
                 onClick={() => onPlaySurah(surahId, surahIds)}
                 className={`w-full h-[60px] md:h-[64px] rounded-full px-5 md:px-6 flex items-center justify-between group active:scale-[0.99] transition-all duration-200 cursor-pointer relative overflow-hidden ${
                   isCurrentPlaying
-                    ? "bg-[#f5ebd6]/90 border border-[#c49a62] shadow-md"
-                    : "cut-crystal-panel hover:bg-[#f5ebd6]/30 shadow-sm"
+                    ? "bg-[#f5ebd6]/90 dark:bg-[var(--sk-tan)]/90 border border-[var(--sk-accent-variant)] shadow-md"
+                    : "cut-crystal-panel hover:bg-[#f5ebd6]/30 dark:hover:bg-[var(--sk-tan)]/30 shadow-sm"
                 }`}
               >
                 {/* Right side: Equalizer / Star Ornament / Surah Name */}
                 <div className="flex items-center gap-2 md:gap-2.5 min-w-0 relative z-10 flex-1">
                   <div className="relative w-[34px] h-[34px] flex items-center justify-center shrink-0">
                     {isCurrentPlaying ? (
-                      <div className="w-full h-full rounded-full bg-[#b88a4f] flex items-center justify-center shadow-sm">
+                      <div className="w-full h-full rounded-full bg-[var(--sk-accent)] flex items-center justify-center shadow-sm">
                         <div
                           className="flex items-center gap-0.5 h-3.5 shrink-0"
                           dir="ltr"
                         >
                           <span
-                            className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_100ms]" : "h-1"}`}
+                            className={`w-0.5 bg-white dark:bg-[var(--sk-on-espresso)] rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_100ms]" : "h-1"}`}
                             style={{ height: isPlaying ? "100%" : "3px" }}
                           />
                           <span
-                            className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_300ms]" : "h-2"}`}
+                            className={`w-0.5 bg-white dark:bg-[var(--sk-on-espresso)] rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_300ms]" : "h-2"}`}
                             style={{ height: isPlaying ? "60%" : "8px" }}
                           />
                           <span
-                            className={`w-0.5 bg-white rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_500ms]" : "h-1.2"}`}
+                            className={`w-0.5 bg-white dark:bg-[var(--sk-on-espresso)] rounded-full origin-bottom ${isPlaying ? "animate-[bounce_0.8s_infinite_500ms]" : "h-1.2"}`}
                             style={{ height: isPlaying ? "80%" : "5px" }}
                           />
                         </div>
@@ -286,7 +286,7 @@ export default function QuranSurahsScreen({
                     ) : (
                       <svg
                         viewBox="0 0 24 24"
-                        className="w-full h-full fill-none stroke-[#b88a4f] transition-transform duration-500 group-hover:rotate-[45deg]"
+                        className="w-full h-full fill-none stroke-[var(--sk-accent)] transition-transform duration-500 group-hover:rotate-[45deg]"
                         strokeWidth="1.2"
                       >
                         {/* Outer 8-pointed star */}
@@ -303,7 +303,7 @@ export default function QuranSurahsScreen({
                           cx="12"
                           cy="12"
                           r="1"
-                          className="fill-[#b88a4f]"
+                          className="fill-[var(--sk-accent)]"
                         />
                       </svg>
                     )}
@@ -313,14 +313,14 @@ export default function QuranSurahsScreen({
                     <span
                       className={`font-display font-bold text-[18px] md:text-[20px] transition-colors leading-none pt-1 select-none whitespace-nowrap truncate ${
                         isCurrentPlaying
-                          ? "text-[#b88a4f]"
-                          : "text-[#2b1a10] group-hover:text-[#b88a4f]"
+                          ? "text-[var(--sk-accent)]"
+                          : "text-[var(--sk-label)] group-hover:text-[var(--sk-accent)]"
                       }`}
                     >
                       {vocalizedSurahNames[surahId] ||
                         `سُورَةُ ${surahNames[surahId]}`}
                     </span>
-                    <span className="text-[8px] md:text-[8.5px] text-[#7f6a55] font-bold mt-1 font-sans">
+                    <span className="text-[8px] md:text-[8.5px] text-[var(--sk-label2)] font-bold mt-1 font-sans">
                       {isDownloaded
                         ? "متاحة بدون إنترنت"
                         : "تتطلب اتصال بالإنترنت"}
@@ -338,7 +338,7 @@ export default function QuranSurahsScreen({
                       e.stopPropagation();
                       if (onReadSurah) onReadSurah(surahId);
                     }}
-                    className="w-8.5 h-8.5 flex items-center justify-center rounded-full text-[#2b1a10] bg-[#2b1a10]/5 hover:bg-[#2b1a10]/10 active:scale-95 transition-all"
+                    className="w-8.5 h-8.5 flex items-center justify-center rounded-full text-[var(--sk-label)] bg-[#2b1a10]/5 dark:bg-[var(--sk-shade)]/5 hover:bg-[#2b1a10]/10 dark:hover:bg-[var(--sk-shade)]/10 active:scale-95 transition-all"
                     title="اقرأ وتدبر الآيات"
                   >
                     <BookOpen size={15} strokeWidth={2.2} />
@@ -348,8 +348,8 @@ export default function QuranSurahsScreen({
                     onClick={(e) => handleBookmarkToggle(surahId, e)}
                     className={`w-8.5 h-8.5 flex items-center justify-center rounded-full active:scale-95 transition-all ${
                       isBookmarked
-                        ? "text-[#b88a4f] bg-[#b88a4f]/10"
-                        : "text-[#7f6a55] hover:bg-[#b88a4f]/5"
+                        ? "text-[var(--sk-accent)] bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10"
+                        : "text-[var(--sk-label2)] hover:bg-[#b88a4f]/5 dark:hover:bg-[var(--sk-accent)]/5"
                     }`}
                   >
                     <Bookmark
@@ -364,14 +364,14 @@ export default function QuranSurahsScreen({
                     disabled={isDownloading}
                     className={`w-8.5 h-8.5 flex items-center justify-center rounded-full active:scale-95 transition-all ${
                       isDownloaded
-                        ? "text-[#b88a4f] bg-[#b88a4f]/10 hover:bg-[#b88a4f]/20"
+                        ? "text-[var(--sk-accent)] bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 hover:bg-[#b88a4f]/20 dark:hover:bg-[var(--sk-accent)]/20"
                         : isDownloading
-                          ? "text-[#b88a4f] bg-transparent"
-                          : "text-[#7f6a55] hover:bg-[#b88a4f]/5"
+                          ? "text-[var(--sk-accent)] bg-transparent"
+                          : "text-[var(--sk-label2)] hover:bg-[#b88a4f]/5 dark:hover:bg-[var(--sk-accent)]/5"
                     }`}
                   >
                     {isDownloading ? (
-                      <SakeenahLineSpinner size={16} color="#b88a4f" label="جارٍ تنزيل السورة" />
+                      <SakeenahLineSpinner size={16} color="var(--sk-accent)" label="جارٍ تنزيل السورة" />
                     ) : isDownloaded ? (
                       <Smartphone size={15} strokeWidth={2.2} />
                     ) : (
@@ -394,7 +394,7 @@ export default function QuranSurahsScreen({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSurahToDelete(null)}
-              className="absolute inset-0 bg-[#2b1a10]/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-[#2b1a10]/40 dark:bg-[var(--sk-shade)]/40 backdrop-blur-sm"
             />
 
             <motion.div
@@ -408,10 +408,10 @@ export default function QuranSurahsScreen({
                 <Trash2 size={24} strokeWidth={1.5} />
               </div>
 
-              <h3 className="text-[18px] font-bold text-[#2b1a10] mb-2">
+              <h3 className="text-[18px] font-bold text-[var(--sk-label)] mb-2">
                 حذف التلاوة المحلية
               </h3>
-              <p className="text-[13px] text-[#7f6a55] font-medium leading-relaxed mb-6 px-2">
+              <p className="text-[13px] text-[var(--sk-label2)] font-medium leading-relaxed mb-6 px-2">
                 سيتم حذف الملف من جهازك. ستحتاج إلى اتصال بالإنترنت للاستماع
                 إليها مجدداً.
               </p>
@@ -419,7 +419,7 @@ export default function QuranSurahsScreen({
               <div className="flex gap-2.5">
                 <button
                   onClick={() => setSurahToDelete(null)}
-                  className="flex-1 bg-[#f7f2ea] hover:bg-[#e8dfd4] text-[#2b1a10] font-bold text-[14px] py-3 rounded-full transition-colors border border-[#e6dccf]"
+                  className="flex-1 bg-[var(--sk-bg2)] hover:bg-[var(--sk-ring-track)] text-[var(--sk-label)] font-bold text-[14px] py-3 rounded-full transition-colors border border-[var(--sk-sep)]"
                 >
                   إلغاء
                 </button>

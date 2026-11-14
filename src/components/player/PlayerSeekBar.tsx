@@ -44,15 +44,15 @@ export function PlayerSeekBar({ currentTime, duration, onSeek, audioRef }: Props
     <div className="px-6 my-6 z-0" dir="ltr">
       <div className="relative h-11 flex items-center touch-none group">
         {/* Track */}
-        <div className="absolute inset-x-0 h-1.5 rounded-full bg-[#2b1a10]/12 overflow-hidden">
+        <div className="absolute inset-x-0 h-1.5 rounded-full bg-[#2b1a10]/12 dark:bg-[var(--sk-shade)]/12 overflow-hidden">
           <div 
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#deab65] to-[#b88a4f] rounded-full transition-none"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] rounded-full transition-none"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
         {/* Thumb */}
         <div 
-          className={`absolute w-4 h-4 bg-[#b88a4f] rounded-full shadow-md border-2 border-white transition-transform ${isDragging ? "scale-125" : "group-hover:scale-110"}`}
+          className={`absolute w-4 h-4 bg-[var(--sk-accent)] rounded-full shadow-md border-2 border-white transition-transform ${isDragging ? "scale-125" : "group-hover:scale-110"}`}
           style={{ left: `calc(${progressPercent}% - 8px)` }}
         />
         {/* Native input overlay for 60fps dragging */}
@@ -71,7 +71,7 @@ export function PlayerSeekBar({ currentTime, duration, onSeek, audioRef }: Props
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer touch-none"
         />
       </div>
-      <div className="flex justify-between mt-2 font-numbers text-[13px] text-[#7f6a55] font-bold px-1">
+      <div className="flex justify-between mt-2 font-numbers text-[13px] text-[var(--sk-label2)] font-bold px-1">
         <span>{formatTime(localProgress)}</span>
         <span>{formatTime(duration)}</span>
       </div>

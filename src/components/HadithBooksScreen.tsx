@@ -103,8 +103,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 98,
     description: "أصح كتاب بعد كتاب الله تعالى، جمع فيه الإمام البخاري الأحاديث الصحيحة المسندة عن رسول الله ﷺ.",
     category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 text-[#2b1a10] border-[#deab65]/40",
-    bgGradient: "from-[#deab65]/10 via-[#deab65]/5 to-transparent",
+    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
+    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
     editionSlug: "ara-bukhari",
     coverImage: "/images/hadith/author_bukhari.webp",
   },
@@ -117,8 +117,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 57,
     description: "ثاني أصح كتب الحديث الشريف، امتاز بحسن الترتيب والصياغة والاستيعاب للطرق والأسانيد.",
     category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 text-[#2b1a10] border-[#deab65]/40",
-    bgGradient: "from-[#deab65]/10 via-[#deab65]/5 to-transparent",
+    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
+    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
     editionSlug: "ara-muslim",
     coverImage: "/images/hadith/author_muslim.webp",
   },
@@ -131,8 +131,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 44,
     description: "أحد أهم السنن الأربعة، ركز فيه مصنفه على أحاديث الأحكام والسنن الفقهية المرفوعة.",
     category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 text-[#8a6a3d] border-[#deab65]/40",
-    bgGradient: "from-[#deab65]/10 via-[#deab65]/5 to-transparent",
+    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
+    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
     editionSlug: "ara-abudawud",
     coverImage: "/images/hadith/author_abudawud.png",
   },
@@ -145,8 +145,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 50,
     description: "معروف بالجامع والسنن، تميز بذكر مذاهب الفقهاء وبيان درجات الأحاديث من الصحة والحسن والضعف.",
     category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 text-[#8a6a3d] border-[#deab65]/40",
-    bgGradient: "from-[#deab65]/10 via-[#deab65]/5 to-transparent",
+    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
+    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
     editionSlug: "ara-tirmidhi",
     coverImage: "/images/hadith/author_tirmidhi.png",
   },
@@ -159,8 +159,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 52,
     description: "أشد السنن انتقاءً للرجال وأقلها حديثاً ضعيفاً بعد الصحيحين، اشتمل على الدقائق الفقهية والعلل.",
     category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 text-[#8a6a3d] border-[#deab65]/40",
-    bgGradient: "from-[#deab65]/10 via-[#deab65]/5 to-transparent",
+    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
+    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
     editionSlug: "ara-nasai",
     coverImage: "/images/hadith/author_nasai.png",
   },
@@ -173,8 +173,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 38,
     description: "خاتم الكتب الستة، امتاز بحسن التبويب وكثرة زوائده على الأمهات الخمس من الأحاديث والسنن.",
     category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 text-[#8a6a3d] border-[#deab65]/40",
-    bgGradient: "from-[#deab65]/10 via-[#deab65]/5 to-transparent",
+    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
+    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
     editionSlug: "ara-ibnmajah",
     coverImage: "/images/hadith/author_ibnmajah.png",
   },
@@ -187,8 +187,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
     chaptersCount: 62,
     description: "أقدم مدونة حديثية وفقهية جامعة وصلتنا بحالة ممتازة، من أصح الآثار والسنن عن دار الهجرة.",
     category: "الموطآت والمسانيد",
-    badgeColor: "bg-[#2b1a10]/12 text-[#2b1a10] border-[#2b1a10]/25",
-    bgGradient: "from-[#2b1a10]/10 via-[#2b1a10]/5 to-transparent",
+    badgeColor: "bg-[#2b1a10]/12 dark:bg-[var(--sk-shade)]/12 text-[var(--sk-label)] border-[#2b1a10]/25 dark:border-[var(--sk-label)]/25",
+    bgGradient: "from-[#2b1a10]/10 dark:from-[var(--sk-shade)]/10 via-[#2b1a10]/5 dark:via-[var(--sk-shade)]/5 to-transparent",
     editionSlug: "ara-malik",
     coverImage: "/images/hadith/author_malik.png",
   },
@@ -905,7 +905,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#ece7de] text-[#2b1a10] font-sans pb-28 relative flex flex-col"
+      className="min-h-screen bg-[var(--sk-bg)] text-[var(--sk-label)] font-sans pb-28 relative flex flex-col"
     >
       {/* ── Toast Notification for Typo Report ── */}
       <AnimatePresence>
@@ -914,9 +914,9 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 cut-crystal-capsule-dark px-5 py-2.5 flex items-center gap-2 text-[#fdfcfb] text-xs font-bold shadow-2xl border border-[#deab65]/40 backdrop-blur-xl"
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 cut-crystal-capsule-dark sk-rim px-5 py-2.5 flex items-center gap-2 text-[#fdfcfb] text-xs font-bold shadow-2xl border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 backdrop-blur-xl"
           >
-            <ShieldCheck className="w-4 h-4 text-[#deab65]" />
+            <ShieldCheck className="w-4 h-4 text-[var(--sk-accent-bright)]" />
             <span>تم تدوين وحفظ ملاحظتك وتصحيحك بنجاح في سجل بلاغاتك المحلية!</span>
           </motion.div>
         )}
@@ -930,16 +930,16 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           {viewMode !== "library" && (
             <button
               onClick={() => setViewMode("library")}
-              className="w-10 h-10 cut-crystal-capsule flex items-center justify-center text-[#2b1a10] active:scale-95 transition-all cursor-pointer shadow-2xs shrink-0"
+              className="w-10 h-10 cut-crystal-capsule flex items-center justify-center text-[var(--sk-label)] active:scale-95 transition-all cursor-pointer shadow-2xs shrink-0"
               title="العودة للمكتبة"
               aria-label="العودة"
             >
-              <ChevronRight className="w-5 h-5 text-[#2b1a10]" />
+              <ChevronRight className="w-5 h-5 text-[var(--sk-label)]" />
             </button>
           )}
 
           {/* Title Capsule */}
-          <div className="px-4 h-10 cut-crystal-capsule flex items-center justify-center text-[#2b1a10] shadow-2xs">
+          <div className="px-4 h-10 cut-crystal-capsule flex items-center justify-center text-[var(--sk-label)] shadow-2xs">
             <span className="text-[13.5px] font-bold whitespace-nowrap">
               {viewMode === "book_reader" && selectedBook
                 ? selectedBook.titleArabic
@@ -962,15 +962,15 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
               onClick={() => setViewMode(viewMode === "bookmarks" ? "library" : "bookmarks")}
               className={`h-8 px-3 rounded-[20px] flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
                 viewMode === "bookmarks"
-                  ? "bg-[#2b1a10] text-[#fdfcfb] shadow-xs"
-                  : "text-[#2b1a10] hover:bg-[#2b1a10]/5"
+                  ? "bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] shadow-xs"
+                  : "text-[var(--sk-label)] hover:bg-[#2b1a10]/5 dark:hover:bg-[var(--sk-shade)]/5"
               }`}
               title="المحفوظات"
             >
-              <BookmarkCheck className={`w-3.5 h-3.5 ${viewMode === "bookmarks" ? "text-[#deab65]" : "text-[#8a6a3d]"}`} />
+              <BookmarkCheck className={`w-3.5 h-3.5 ${viewMode === "bookmarks" ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-accent-deep)]"}`} />
               <span className="hidden sm:inline">المحفوظات</span>
               {bookmarks.length > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] bg-[#deab65] text-[#2b1a10] font-black rounded-full leading-none flex items-center justify-center min-w-[16px]">
+                <span className="px-1.5 py-0.5 text-[10px] bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim">
                   {bookmarks.length}
                 </span>
               )}
@@ -981,15 +981,15 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
               onClick={() => setViewMode(viewMode === "reports" ? "library" : "reports")}
               className={`h-8 px-3 rounded-[20px] flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
                 viewMode === "reports"
-                  ? "bg-[#2b1a10] text-[#fdfcfb] shadow-xs"
-                  : "text-[#2b1a10] hover:bg-[#2b1a10]/5"
+                  ? "bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] shadow-xs"
+                  : "text-[var(--sk-label)] hover:bg-[#2b1a10]/5 dark:hover:bg-[var(--sk-shade)]/5"
               }`}
               title="ملاحظاتي وبلاغاتي"
             >
-              <Flag className={`w-3.5 h-3.5 ${viewMode === "reports" ? "text-[#deab65]" : "text-[#8a6a3d]"}`} />
+              <Flag className={`w-3.5 h-3.5 ${viewMode === "reports" ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-accent-deep)]"}`} />
               <span className="hidden sm:inline">ملاحظاتي</span>
               {reports.length > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] bg-[#deab65] text-[#2b1a10] font-black rounded-full leading-none flex items-center justify-center min-w-[16px]">
+                <span className="px-1.5 py-0.5 text-[10px] bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim">
                   {reports.length}
                 </span>
               )}
@@ -1009,17 +1009,17 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
             className="mb-4 p-4 cut-crystal-satin border border-amber-900/10 rounded-[22px] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs"
           >
             <div className="flex items-start gap-2.5">
-              <div className="p-2 rounded-xl bg-[#deab65]/15 text-[#8a6a3d] shrink-0 mt-0.5 md:mt-0">
+              <div className="p-2 rounded-xl bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] shrink-0 mt-0.5 md:mt-0">
                 <Info className="w-4 h-4" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-[#2b1a10] text-sm">تنويه موثوقية وإخلاء مسؤولية علمي:</span>
-                  <span className="px-2.5 py-1 rounded-full bg-[#deab65]/20 text-[#8a6a3d] font-black text-[11px] border border-[#deab65]/30">
+                  <span className="font-bold text-[var(--sk-label)] text-sm">تنويه موثوقية وإخلاء مسؤولية علمي:</span>
+                  <span className="px-2.5 py-1 rounded-full bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] font-black text-[11px] border border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30">
                     الترقيم الدولي / طبعة دار السلام
                   </span>
                 </div>
-                <p className="text-[#524336] leading-relaxed">
+                <p className="text-[var(--sk-espresso2)] leading-relaxed">
                   هذه الموسوعة الرقمية مخصصة للاستئناس والمدارسة والمطالعة الميسرة. نظراً لطبيعة السحب البرمجي واختلاف طبعات الترقيم الحديثية، يُنصح الطلاب والباحثون بالرجوع للنسخ المطبوعة المحققة المعتمدة في الاستدلالات الدقيقة والمسائل الفقهية.
                 </p>
               </div>
@@ -1034,7 +1034,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   console.error("Error saving disclaimer preference:", e);
                 }
               }}
-              className="px-3.5 py-1.5 cut-crystal-capsule text-xs font-bold text-[#7f6a55] hover:text-[#2b1a10] shrink-0 self-end md:self-center cursor-pointer"
+              className="px-3.5 py-1.5 cut-crystal-capsule text-xs font-bold text-[var(--sk-label2)] hover:text-[var(--sk-label)] shrink-0 self-end md:self-center cursor-pointer"
             >
               فهمت ذلك
             </button>
@@ -1052,16 +1052,16 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           >
             {/* Last Read Banner (if exists) */}
             {lastRead && (
-              <div className="p-5 cut-crystal-panel rounded-[26px] border border-[#deab65]/30 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-5 cut-crystal-panel rounded-[26px] border border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30 relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1 z-10">
-                  <div className="flex items-center gap-2 text-[#deab65] text-xs font-extrabold">
+                  <div className="flex items-center gap-2 text-[var(--sk-accent-bright)] text-xs font-extrabold">
                     <BookMarked className="w-4 h-4" />
                     <span>مواصلة القراءة السابقة</span>
                   </div>
-                  <h3 className="text-base font-bold text-[#2b1a10]">
-                    {lastRead.bookTitle} - <span className="text-[#deab65]">حديث رقم [{lastRead.hadithnumber}]</span>
+                  <h3 className="text-base font-bold text-[var(--sk-label)]">
+                    {lastRead.bookTitle} - <span className="text-[var(--sk-accent-bright)]">حديث رقم [{lastRead.hadithnumber}]</span>
                   </h3>
-                  <p className="text-xs text-[#524336] line-clamp-1">{lastRead.chapterTitle}</p>
+                  <p className="text-xs text-[var(--sk-espresso2)] line-clamp-1">{lastRead.chapterTitle}</p>
                 </div>
 
                 <button
@@ -1075,10 +1075,10 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   className="z-10 px-4 py-2.5 cut-crystal-capsule-gold text-xs font-extrabold transition flex items-center justify-center gap-1.5 shadow-sm self-start sm:self-center cursor-pointer"
                 >
                   <span>متابعة من هنا</span>
-                  <ChevronLeft className="w-4 h-4 text-[#2b1a10]" />
+                  <ChevronLeft className="w-4 h-4 text-[var(--sk-label)]" />
                 </button>
 
-                <Library className="absolute -left-4 -bottom-4 w-32 h-32 text-[#2b1a10]/5 pointer-events-none" />
+                <Library className="absolute -left-4 -bottom-4 w-32 h-32 text-[#2b1a10]/5 dark:text-[var(--sk-label)]/5 pointer-events-none" />
               </div>
             )}
 
@@ -1087,35 +1087,35 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                 type="button"
                 onClick={onOpenSakinaLibrary}
                 whileTap={{ scale: 0.985 }}
-                className="group relative isolate flex min-h-[142px] w-full items-end justify-between gap-4 overflow-hidden rounded-[28px] border border-[#fdfcfb]/20 bg-[#2b1a10] p-4 text-right text-[#fdfcfb] shadow-[var(--glass-ambient)] transition-transform active:scale-[0.99] sm:min-h-[156px] sm:p-5"
+                className="group relative isolate flex min-h-[142px] w-full items-end justify-between gap-4 overflow-hidden rounded-[28px] border border-[#fdfcfb]/20 dark:border-[#fdfcfb]/20 bg-[var(--sk-espresso-fill)] p-4 text-right text-[var(--sk-on-espresso)] shadow-[var(--glass-ambient)] transition-transform active:scale-[0.99] sm:min-h-[156px] sm:p-5"
                 style={{
                   backgroundImage: `linear-gradient(270deg, rgba(43,26,16,0.9) 0%, rgba(43,26,16,0.62) 54%, rgba(43,26,16,0.2) 100%), url(${SAKINA_LIBRARY_GATE_IMAGE})`,
                   backgroundPosition: "center",
                   backgroundSize: "cover",
                 }}
               >
-                <div className="relative z-10 min-w-0 max-w-[84%] rounded-[22px] border border-[#f7dfb4]/15 bg-[#2b1a10]/28 p-3 backdrop-blur-[2px] sm:p-3.5">
-                  <div className="mb-1.5 flex items-center gap-2 text-[10px] font-black text-[#f7dfb4]">
+                <div className="relative z-10 min-w-0 max-w-[84%] rounded-[22px] border border-[#f7dfb4]/15 dark:border-[var(--sk-champagne)]/15 bg-[#2b1a10]/28 dark:bg-[var(--sk-shade)]/28 p-3 backdrop-blur-[2px] sm:p-3.5">
+                  <div className="mb-1.5 flex items-center gap-2 text-[10px] font-black text-[var(--sk-champagne)]">
                     <span>مكتبة سكينة</span>
-                    <span className="rounded-full border border-[#f7dfb4]/20 bg-[#2b1a10]/25 px-2 py-1 text-[9px]">قسم جديد</span>
+                    <span className="rounded-full border border-[#f7dfb4]/20 dark:border-[var(--sk-champagne)]/20 bg-[#2b1a10]/25 dark:bg-[var(--sk-shade)]/25 px-2 py-1 text-[9px]">قسم جديد</span>
                   </div>
-                  <h2 className="truncate text-[15px] font-black text-[#fdfcfb] sm:text-base">الدروس والمحاضرات</h2>
-                  <p className="mt-1 line-clamp-2 text-[11px] font-bold leading-5 text-[#fdfcfb]/78">دروس مرتبة من الشيخ إلى السلسلة ثم الدرس، من مصادر يتم اعتمادها ومراجعتها.</p>
+                  <h2 className="truncate text-[15px] font-black text-[var(--sk-bg3)] dark:text-[#fdfcfb] sm:text-base">الدروس والمحاضرات</h2>
+                  <p className="mt-1 line-clamp-2 text-[11px] font-bold leading-5 text-[#fdfcfb]/78 dark:text-[#fdfcfb]/78">دروس مرتبة من الشيخ إلى السلسلة ثم الدرس، من مصادر يتم اعتمادها ومراجعتها.</p>
                 </div>
-                <ChevronLeft className="relative z-10 mb-1 h-5 w-5 shrink-0 text-[#f7dfb4] transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <ChevronLeft className="relative z-10 mb-1 h-5 w-5 shrink-0 text-[var(--sk-champagne)] transition-transform duration-200 group-hover:-translate-x-0.5" />
               </motion.button>
             )}
 
             {/* Global Search Bar with Integrated Scope Dropdown Toggle */}
             <form onSubmit={handleGlobalSearchSubmit} className="relative z-30">
-              <div className="cut-crystal-input flex items-center px-4 py-2">
-                <Search className="w-5 h-5 text-[#deab65] shrink-0 ml-3" />
+              <div className="cut-crystal-input sk-rim flex items-center px-4 py-2">
+                <Search className="w-5 h-5 text-[var(--sk-accent-bright)] shrink-0 ml-3" />
                 <input
                   type="text"
                   value={globalSearchQuery}
                   onChange={(e) => setGlobalSearchQuery(e.target.value)}
                   placeholder="ابحث بالنص أو الكلمة أو رقم الحديث في جميع الكتب النبوية..."
-                  className="w-full bg-transparent border-none text-sm text-[#2b1a10] placeholder-[#7f6a55]/60 focus:outline-none py-1 font-sans"
+                  className="w-full bg-transparent border-none text-sm text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none py-1 font-sans"
                 />
 
                 {/* Search Button Capsule with Separated Arrow Button */}
@@ -1123,13 +1123,13 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   {/* Primary Action Button: Execute Global Search */}
                   <button
                     type="submit"
-                    className="px-3 py-1 text-xs font-black text-[#2b1a10] hover:bg-black/5 transition cursor-pointer flex items-center gap-1 rounded-r-full"
+                    className="px-3 py-1 text-xs font-black text-[var(--sk-label)] hover:bg-black/5 transition cursor-pointer flex items-center gap-1 rounded-r-full"
                   >
                     <span>بحث شامل</span>
                   </button>
 
                   {/* Divider */}
-                  <div className="w-[1px] h-4 bg-[#2b1a10]/20 my-auto" />
+                  <div className="w-[1px] h-4 bg-[#2b1a10]/20 dark:bg-[var(--sk-shade)]/20 my-auto" />
 
                   {/* Secondary Action Button: Toggle Search Scope Dropdown */}
                   <button
@@ -1139,12 +1139,12 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       e.preventDefault();
                       setIsSearchScopeDropdownOpen(!isSearchScopeDropdownOpen);
                     }}
-                    className="px-2 py-1 text-xs font-black text-[#2b1a10] hover:bg-black/5 transition cursor-pointer flex items-center justify-center rounded-l-full"
+                    className="px-2 py-1 text-xs font-black text-[var(--sk-label)] hover:bg-black/5 transition cursor-pointer flex items-center justify-center rounded-l-full"
                     title="خيارات ونطاق البحث"
                     aria-label="خيارات ونطاق البحث"
                   >
                     <ChevronDown
-                      className={`w-3.5 h-3.5 text-[#2b1a10] transition-transform duration-300 ${
+                      className={`w-3.5 h-3.5 text-[var(--sk-label)] transition-transform duration-300 ${
                         isSearchScopeDropdownOpen ? "rotate-180" : ""
                       }`}
                     />
@@ -1171,14 +1171,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       style={{ position: "absolute" }}
                     >
                       {/* Dropdown Top Header */}
-                      <div className="flex items-center justify-between pb-2 border-b border-[#e6dccf]/60 px-0.5">
-                        <span className="text-[11.5px] font-black text-[#2b1a10]">
+                      <div className="flex items-center justify-between pb-2 border-b border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60 px-0.5">
+                        <span className="text-[11.5px] font-black text-[var(--sk-label)]">
                           محرك البحث
                         </span>
 
                         {/* Settings-styled Switch for Offline / Online Mode */}
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-[#7f6a55]">
+                          <span className="text-[10px] font-bold text-[var(--sk-label2)]">
                             {searchMethod === "offline" ? "أوفلاين" : "أونلاين"}
                           </span>
                           <button
@@ -1186,7 +1186,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                             onClick={() => setSearchMethod(searchMethod === "offline" ? "online" : "offline")}
                             className="relative w-9 h-5 rounded-full p-0.5 transition-colors duration-300 focus:outline-none flex items-center shadow-inner cursor-pointer"
                             style={{
-                              backgroundColor: searchMethod === "offline" ? "#b88a4f" : "#e6dccf",
+                              backgroundColor: searchMethod === "offline" ? "var(--sk-accent)" : "var(--sk-sep)",
                               justifyContent: searchMethod === "offline" ? "flex-start" : "flex-end",
                             }}
                             title={searchMethod === "offline" ? "تبديل للوضع الأونلاين" : "تبديل للوضع الأوفلاين"}
@@ -1194,12 +1194,13 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                             <motion.div
                               layout
                               transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                              className="w-4 h-4 rounded-full bg-white shadow-md border border-white flex items-center justify-center shrink-0"
+                              data-checked={searchMethod === "offline"}
+                              className="w-4 h-4 rounded-full bg-white shadow-md border border-white dark:data-[checked=true]:bg-black dark:data-[checked=true]:border-black flex items-center justify-center shrink-0"
                             >
                               {searchMethod === "offline" ? (
-                                <WifiOff className="w-2.5 h-2.5 text-[#b88a4f]" />
+                                <WifiOff className="w-2.5 h-2.5 text-[var(--sk-accent)]" />
                               ) : (
-                                <Wifi className="w-2.5 h-2.5 text-[#7f6a55]" />
+                                <Wifi className="w-2.5 h-2.5 text-[var(--sk-label2)]" />
                               )}
                             </motion.div>
                           </button>
@@ -1212,23 +1213,23 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                           {isIndexing ? (
                             /* Real Downloading & Progress State */
                             <div className="py-2.5 px-1 space-y-2.5">
-                              <div className="flex items-center justify-between text-xs font-bold text-[#7f6a55]">
-                                <span className="text-[#2b1a10] text-[11.5px] font-extrabold flex items-center gap-1.5">
-                                  <SakeenahLineSpinner size={32} color="#deab65" label="جارٍ تحميل الكتاب" className="shrink-0" />
+                              <div className="flex items-center justify-between text-xs font-bold text-[var(--sk-label2)]">
+                                <span className="text-[var(--sk-label)] text-[11.5px] font-extrabold flex items-center gap-1.5">
+                                  <SakeenahLineSpinner size={32} color="var(--sk-accent-bright)" label="جارٍ تحميل الكتاب" className="shrink-0" />
                                   جاري التحميل...
                                 </span>
-                                <span className="text-[#deab65] font-black text-[12px]">{indexingProgress}%</span>
+                                <span className="text-[var(--sk-accent-bright)] font-black text-[12px]">{indexingProgress}%</span>
                               </div>
 
                               {/* Rounded Progress Bar */}
-                              <div className="w-full h-2 bg-[#2b1a10]/10 rounded-full overflow-hidden p-[1px] border border-[#e6dccf]">
+                              <div className="w-full h-2 bg-[#2b1a10]/10 dark:bg-[var(--sk-shade)]/10 rounded-full overflow-hidden p-[1px] border border-[var(--sk-sep)]">
                                 <div
-                                  className="h-full bg-gradient-to-r from-[#deab65] to-[#8a6a3d] rounded-full transition-all duration-300"
+                                  className="h-full bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent-deep)] rounded-full transition-all duration-300"
                                   style={{ width: `${indexingProgress}%` }}
                                 />
                               </div>
 
-                              <p className="text-[10.5px] text-[#7f6a55] font-bold text-center truncate">
+                              <p className="text-[10.5px] text-[var(--sk-label2)] font-bold text-center truncate">
                                 {indexingStatusText}
                               </p>
                             </div>
@@ -1241,15 +1242,15 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                               transition={{ type: "spring", damping: 15, stiffness: 300 }}
                               className="py-5 flex flex-col items-center justify-center space-y-2"
                             >
-                              <div className="w-10 h-10 rounded-full bg-[#deab65]/20 text-[#8a6a3d] flex items-center justify-center border border-[#deab65]/40 shadow-sm">
+                              <div className="w-10 h-10 rounded-full bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] flex items-center justify-center border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 shadow-sm">
                                 <Check className="w-5 h-5 stroke-[3]" />
                               </div>
-                              <span className="text-xs font-black text-[#2b1a10]">تم اكتمال التنزيل بنجاح!</span>
+                              <span className="text-xs font-black text-[var(--sk-label)]">تم اكتمال التنزيل بنجاح!</span>
                             </motion.div>
                           ) : !Object.values(downloadStats).some((v) => v === true) ? (
                             /* Un-downloaded Prompt & Button */
                             <div className="py-2 space-y-3 text-center">
-                              <p className="text-[11.5px] text-[#524336] font-bold leading-relaxed">
+                              <p className="text-[11.5px] text-[var(--sk-espresso2)] font-bold leading-relaxed">
                                 اضغط للتنزيل للبحث بدون إنترنت
                               </p>
                               <button
@@ -1257,20 +1258,20 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                 onClick={handleIndexAllBooks}
                                 className="w-full py-2 px-4 cut-crystal-capsule-gold text-xs font-black flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] cursor-pointer"
                               >
-                                <Download className="w-4 h-4 text-[#2b1a10]" />
+                                <Download className="w-4 h-4 text-[var(--sk-label)]" />
                                 <span>تنزيل الآن</span>
                               </button>
                             </div>
                           ) : (
                             /* Downloaded Books Checklist / Actions */
                             <div className="space-y-2">
-                              <div className="flex items-center justify-between text-[11px] font-extrabold text-[#7f6a55] pb-1">
+                              <div className="flex items-center justify-between text-[11px] font-extrabold text-[var(--sk-label2)] pb-1">
                                 <span>حالة كتب الحديث أوفلاين:</span>
                                 {books.some((b) => !downloadStats[b.id]) && (
                                   <button
                                     type="button"
                                     onClick={handleIndexAllBooks}
-                                    className="text-[10px] text-[#deab65] hover:underline font-bold cursor-pointer"
+                                    className="text-[10px] text-[var(--sk-accent-bright)] hover:underline font-bold cursor-pointer"
                                   >
                                     تنزيل الكل
                                   </button>
@@ -1282,15 +1283,15 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                   return (
                                     <div
                                       key={b.id}
-                                      className="p-2 rounded-xl bg-[#f7f2ea]/80 border border-[#e6dccf]/80 flex items-center justify-between text-xs"
+                                      className="p-2 rounded-xl bg-[#f7f2ea]/80 dark:bg-[var(--sk-bg2)]/80 border border-[#e6dccf]/80 dark:border-[var(--sk-sep)]/80 flex items-center justify-between text-xs"
                                     >
                                       <div className="flex items-center gap-1.5 min-w-0">
                                         {isDownloaded ? (
-                                          <Check className="w-3.5 h-3.5 text-[#deab65] shrink-0" />
+                                          <Check className="w-3.5 h-3.5 text-[var(--sk-accent-bright)] shrink-0" />
                                         ) : (
                                           <div className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
                                         )}
-                                        <span className="font-bold text-[#2b1a10] text-[11.5px] truncate">
+                                        <span className="font-bold text-[var(--sk-label)] text-[11.5px] truncate">
                                           {b.titleArabic}
                                         </span>
                                       </div>
@@ -1300,7 +1301,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                         className={`px-2 py-0.5 rounded-lg text-[10px] font-black cursor-pointer transition shrink-0 ${
                                           isDownloaded
                                             ? "bg-red-500/10 text-red-600 hover:bg-red-500/20"
-                                            : "bg-[#deab65]/20 text-[#8a6a3d] hover:bg-[#deab65]/30"
+                                            : "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] hover:bg-[#deab65]/30 dark:hover:bg-[var(--sk-accent-bright)]/30"
                                         }`}
                                       >
                                         {isDownloaded ? "حذف" : "تحميل"}
@@ -1315,11 +1316,11 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       ) : (
                         /* Online Mode Indicator */
                         <div className="py-3 px-2 text-center space-y-1.5">
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#deab65]/15 text-[#2b1a10] text-[11px] font-extrabold border border-[#deab65]/35">
-                            <Wifi className="w-3.5 h-3.5 text-[#deab65]" />
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-on-accent)] text-[11px] font-extrabold border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35">
+                            <Wifi className="w-3.5 h-3.5 text-[var(--sk-accent-bright)]" />
                             <span>البحث السحابي أونلاين</span>
                           </div>
-                          <p className="text-[11px] text-[#7f6a55] font-bold leading-relaxed pt-0.5">
+                          <p className="text-[11px] text-[var(--sk-label2)] font-bold leading-relaxed pt-0.5">
                             يتم البحث في السيرفر أونلاين عبر كافة كتب الأحاديث النبوية المتاحة.
                           </p>
                         </div>
@@ -1345,7 +1346,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                     className={`px-4 py-2 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                       libraryFilter === tab.id
                         ? "cut-crystal-capsule-gold"
-                        : "cut-crystal-capsule text-[#524336] hover:text-[#2b1a10]"
+                        : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
                     }`}
                   >
                     {tab.label}
@@ -1353,7 +1354,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                 ))}
               </div>
 
-              <div className="text-xs font-bold text-[#7f6a55] whitespace-nowrap px-2">
+              <div className="text-xs font-bold text-[var(--sk-label2)] whitespace-nowrap px-2">
                 {filteredBooks.length} كتب متاحة
               </div>
             </div>
@@ -1361,8 +1362,8 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
             {/* Loading & Error States */}
             {loadingBooks && (
               <div className="py-20 text-center space-y-3">
-                <SakeenahLineSpinner size={40} color="#deab65" label="جارٍ تحميل فهرس الكتب" className="mx-auto" />
-                <p className="text-sm font-bold text-[#7f6a55]">جاري تحميل فهرس الكتب الشريفة...</p>
+                <SakeenahLineSpinner size={40} color="var(--sk-accent-bright)" label="جارٍ تحميل فهرس الكتب" className="mx-auto" />
+                <p className="text-sm font-bold text-[var(--sk-label2)]">جاري تحميل فهرس الكتب الشريفة...</p>
               </div>
             )}
 
@@ -1394,8 +1395,8 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       whileHover={{ y: -3 }}
                       className={`group relative overflow-hidden rounded-[26px] p-5 flex flex-col justify-between transition-all duration-500 shadow-md ${
                         hasCoverImage
-                          ? "border border-[#deab65]/40 text-[#fdfcfb]"
-                          : "cut-crystal-satin text-[#2b1a10]"
+                          ? "border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb]"
+                          : "cut-crystal-satin text-[var(--sk-label)]"
                       }`}
                     >
                       {/* Background Cover Image with 4:3 preservation, Dark Gradient & Film Grain Overlay */}
@@ -1413,9 +1414,9 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                             className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out z-0"
                           />
                           {/* Multi-layered Vignette & Contrast Gradients for text legibility with high illustration clarity */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f0a]/85 via-[#1a0f0a]/45 to-[#1a0f0a]/25 z-1" />
-                          <div className="absolute inset-0 border border-[#deab65]/25 rounded-[26px] pointer-events-none z-2" />
-                          <div className="pointer-events-none absolute inset-3 z-[3] rounded-[24px] border border-[#f7dfb4]/15 bg-[#2b1a10]/28 backdrop-blur-[2px]" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f0a]/85 dark:from-[var(--sk-espresso-end)]/85 via-[#1a0f0a]/45 dark:via-[var(--sk-espresso-end)]/45 to-[#1a0f0a]/25 dark:to-[var(--sk-espresso-end)]/25 z-1" />
+                          <div className="absolute inset-0 border border-[#deab65]/25 dark:border-[var(--sk-accent-bright)]/25 rounded-[26px] pointer-events-none z-2" />
+                          <div className="pointer-events-none absolute inset-3 z-[3] rounded-[24px] border border-[#f7dfb4]/15 dark:border-[var(--sk-champagne)]/15 bg-[#2b1a10]/28 dark:bg-[var(--sk-shade)]/28 backdrop-blur-[2px]" />
                         </>
                       )}
 
@@ -1426,15 +1427,15 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                             <h2
                               className={`text-lg font-black font-display transition leading-snug ${
                                 hasCoverImage
-                                  ? "text-[#fefefe] group-hover:text-[#deab65] drop-shadow-sm"
-                                  : "text-[#2b1a10] group-hover:text-[#deab65]"
+                                  ? "text-[#fefefe] group-hover:text-[var(--sk-accent-bright)] drop-shadow-sm"
+                                  : "text-[var(--sk-label)] group-hover:text-[var(--sk-accent-bright)]"
                               }`}
                             >
                               {book.titleArabic}
                             </h2>
                             <p
                               className={`text-xs font-bold ${
-                                hasCoverImage ? "text-[#e6dccf]/90" : "text-[#7f6a55]"
+                                hasCoverImage ? "text-[#e6dccf]/90 dark:text-[#e6dccf]/90" : "text-[var(--sk-label2)]"
                               }`}
                             >
                               {book.authorArabic} ({book.authorDeath})
@@ -1450,29 +1451,29 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                   e.stopPropagation();
                                   handleIndexBookToggle(book);
                                 }}
-                                className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/50 backdrop-blur-md shadow-xs active:scale-95 ${
+                                className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/50 dark:border-[var(--sk-accent-bright)]/50 backdrop-blur-md shadow-xs active:scale-95 ${
                                   hasCoverImage
-                                    ? "bg-[#deab65]/25 text-[#fdfcfb] hover:bg-[#deab65]/35"
-                                    : "bg-[#deab65]/15 text-[#2b1a10] hover:bg-[#deab65]/25"
+                                    ? "bg-[#deab65]/25 dark:bg-[var(--sk-accent-bright)]/25 text-[var(--sk-bg3)] dark:text-[#fdfcfb] hover:bg-[#deab65]/35 dark:hover:bg-[var(--sk-accent-bright)]/35"
+                                    : "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-on-accent)] hover:bg-[#deab65]/25 dark:hover:bg-[var(--sk-accent-bright)]/25"
                                 }`}
                                 title="محمل ومتاح بدون إنترنت - اضغط للحذف"
                               >
-                                <Check className="w-2.5 h-2.5 text-[#deab65] stroke-[3]" />
+                                <Check className="w-2.5 h-2.5 text-[var(--sk-accent-bright)] stroke-[3]" />
                                 <span className="text-[9.5px]">أوفلاين</span>
                               </button>
                             ) : isDownloadingThisBook ? (
                               <div
-                                className="relative overflow-hidden w-[84px] h-7 rounded-full border border-[#deab65]/60 bg-white/85 backdrop-blur-md shadow-sm flex items-center justify-center cursor-default"
+                                className="relative overflow-hidden w-[84px] h-7 rounded-full border border-[#deab65]/60 dark:border-[var(--sk-accent-bright)]/60 bg-white/85 backdrop-blur-md shadow-sm flex items-center justify-center cursor-default"
                                 title={`جاري التحميل... ${currentPct}%`}
                               >
                                 {/* Progress Fill inside Capsule (RTL width fill from right) */}
                                 <div
-                                  className="absolute inset-y-0 right-0 bg-gradient-to-l from-[#deab65] to-[#c4904a] transition-all duration-300 ease-out opacity-85"
+                                  className="absolute inset-y-0 right-0 bg-gradient-to-l from-[var(--sk-accent-bright)] to-[var(--sk-gold-eq1)] transition-all duration-300 ease-out opacity-85"
                                   style={{ width: `${currentPct}%` }}
                                 />
                                 {/* Percentage & Loading Icon */}
-                                <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-black text-[#2b1a10]">
-                                  <SakeenahLineSpinner size={32} color="#2b1a10" label="جارٍ تنزيل الكتاب" className="shrink-0" />
+                                <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-black text-[var(--sk-label)]">
+                                  <SakeenahLineSpinner size={32} color="var(--sk-label)" label="جارٍ تنزيل الكتاب" className="shrink-0" />
                                   <span className="tabular-nums font-mono">{currentPct}%</span>
                                 </div>
                               </div>
@@ -1483,14 +1484,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                   e.stopPropagation();
                                   handleIndexBookToggle(book);
                                 }}
-                                className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/40 backdrop-blur-md shadow-xs active:scale-95 ${
+                                className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 backdrop-blur-md shadow-xs active:scale-95 ${
                                   hasCoverImage
-                                    ? "bg-black/40 text-[#fdfcfb] hover:bg-[#deab65]/30 hover:border-[#deab65]/70"
-                                    : "bg-white/50 text-[#8a6a3d] hover:bg-[#deab65]/15 hover:border-[#deab65]/60"
+                                    ? "bg-black/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb] hover:bg-[#deab65]/30 dark:hover:bg-[var(--sk-accent-bright)]/30 hover:border-[#deab65]/70 dark:hover:border-[var(--sk-accent-bright)]/70"
+                                    : "bg-white/50 text-[var(--sk-accent-deep)] hover:bg-[#deab65]/15 dark:hover:bg-[var(--sk-accent-bright)]/15 hover:border-[#deab65]/60 dark:hover:border-[var(--sk-accent-bright)]/60"
                                 }`}
                                 title="تحميل للقراءة والبحث بدون إنترنت"
                               >
-                                <Download className="w-2.5 h-2.5 text-[#deab65]" />
+                                <Download className="w-2.5 h-2.5 text-[var(--sk-accent-bright)]" />
                                 <span className="text-[9.5px]">تنزيل</span>
                               </button>
                             )}
@@ -1500,7 +1501,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                         {/* Description */}
                         <p
                           className={`text-xs leading-relaxed line-clamp-3 font-serif ${
-                            hasCoverImage ? "text-[#f2ebe1]/90" : "text-[#524336]"
+                            hasCoverImage ? "text-[#f2ebe1]/90" : "text-[var(--sk-espresso2)]"
                           }`}
                         >
                           {book.description}
@@ -1511,8 +1512,8 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                           <div
                             className={`px-3 py-1 text-[11px] font-bold rounded-full backdrop-blur-md ${
                               hasCoverImage
-                                ? "bg-white/15 text-[#fdfcfb] border border-white/20"
-                                : "cut-crystal-capsule text-[#2b1a10]"
+                                ? "bg-white/15 text-[var(--sk-bg3)] dark:text-[#fdfcfb] border border-white/20"
+                                : "cut-crystal-capsule text-[var(--sk-label)]"
                             }`}
                           >
                             {book.hadithsCount.toLocaleString("ar-EG")} حديثًا
@@ -1520,8 +1521,8 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                           <div
                             className={`px-3 py-1 text-[11px] font-bold rounded-full backdrop-blur-md ${
                               hasCoverImage
-                                ? "bg-white/10 text-[#e6dccf] border border-white/15"
-                                : "cut-crystal-capsule text-[#524336]"
+                                ? "bg-white/10 text-[var(--sk-sep)] dark:text-[#e6dccf]/85 border border-white/15"
+                                : "cut-crystal-capsule text-[var(--sk-espresso2)]"
                             }`}
                           >
                             {book.chaptersCount} بابًا
@@ -1534,14 +1535,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                         className={`pt-4 mt-4 relative z-10 ${
                           hasCoverImage
                             ? "border-t border-white/15"
-                            : "border-t border-[#2b1a10]/10"
+                            : "border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10"
                         }`}
                       >
                         <button
                           onClick={() => handleOpenBook(book)}
                           className="w-full py-2.5 px-4 cut-crystal-capsule-gold text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                         >
-                          <BookText className="w-4 h-4 text-[#2b1a10]" />
+                          <BookText className="w-4 h-4 text-[var(--sk-label)]" />
                           <span>فتح وتصفح الكتاب</span>
                         </button>
                       </div>
@@ -1564,10 +1565,10 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 {/* Book Title & Author Info */}
                 <div className="space-y-1 text-right flex-1 min-w-0">
-                  <h2 className="text-2xl font-black text-[#2b1a10] font-display tracking-tight leading-tight">
+                  <h2 className="text-2xl font-black text-[var(--sk-label)] font-display tracking-tight leading-tight">
                     {selectedBook.titleArabic}
                   </h2>
-                  <p className="text-[13px] font-bold text-[#7f6a55]/90">
+                  <p className="text-[13px] font-bold text-[#7f6a55]/90 dark:text-[var(--sk-label2)]/90">
                     {selectedBook.authorArabic}
                   </p>
                 </div>
@@ -1578,13 +1579,13 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   {activeChapterId !== "all" && (
                     <form onSubmit={handleReaderSearchSubmit} className="relative w-full sm:w-60">
                       <div className="cut-crystal-input flex items-center px-3 py-1.5">
-                        <Search className="w-3.5 h-3.5 text-[#7f6a55] ml-2 shrink-0" />
+                        <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-2 shrink-0" />
                         <input
                           type="text"
                           value={readerSearch}
                           onChange={(e) => setReaderSearch(e.target.value)}
                           placeholder="بحث داخل الباب الحالي..."
-                          className="w-full bg-transparent border-none text-xs text-[#2b1a10] placeholder-[#7f6a55]/60 focus:outline-none"
+                          className="w-full bg-transparent border-none text-xs text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
                         />
                       </div>
                     </form>
@@ -1600,7 +1601,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                           value={jumpHadithNum}
                           onChange={(e) => setJumpHadithNum(e.target.value)}
                           placeholder="رقم الحديث..."
-                          className="w-20 bg-transparent border-none text-xs text-[#2b1a10] placeholder-[#7f6a55]/60 focus:outline-none text-center"
+                          className="w-20 bg-transparent border-none text-xs text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none text-center"
                         />
                       </div>
                       <button
@@ -1615,10 +1616,10 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
               </div>
 
               {/* Lower Section: Active chapter detail & Index trigger with Dropdown */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#2b1a10]/10">
-                <div className="text-xs text-[#7f6a55] font-bold flex items-center gap-1">
-                  <span className="text-[#deab65] font-extrabold">الباب الحالي:</span>
-                  <span className="text-[#2b1a10]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
+                <div className="text-xs text-[var(--sk-label2)] font-bold flex items-center gap-1">
+                  <span className="text-[var(--sk-accent-bright)] font-extrabold">الباب الحالي:</span>
+                  <span className="text-[var(--sk-label)]">
                     {activeChapterId === "all"
                       ? "جميع الأبواب"
                       : chapters.find((c) => c.id === activeChapterId)?.title || `الباب رقم ${activeChapterId}`}
@@ -1629,17 +1630,17 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                 <div className="relative shrink-0">
                   <button
                     onClick={() => setShowChapterDrawer(!showChapterDrawer)}
-                    className="px-3.5 py-2 cut-crystal-capsule bg-[#deab65]/10 hover:bg-[#deab65]/20 text-[12.5px] font-bold text-[#2b1a10] border border-[#deab65]/35 flex items-center gap-2 cursor-pointer active:scale-95 transition-all shadow-3xs"
+                    className="px-3.5 py-2 cut-crystal-capsule bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 hover:bg-[#deab65]/20 dark:hover:bg-[var(--sk-accent-bright)]/20 text-[12.5px] font-bold text-[var(--sk-on-accent)] border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35 flex items-center gap-2 cursor-pointer active:scale-95 transition-all shadow-3xs"
                     title="فتح فهرس الأبواب"
                   >
-                    <List className="w-4 h-4 text-[#8a6a3d]" />
-                    <span className="text-[#8a6a3d]">الفهرس:</span>
+                    <List className="w-4 h-4 text-[var(--sk-accent-deep)]" />
+                    <span className="text-[var(--sk-accent-deep)]">الفهرس:</span>
                     <span className="font-extrabold max-w-[120px] sm:max-w-[180px] truncate">
                       {activeChapterId === "all"
                         ? "جميع الأبواب"
                         : chapters.find((c) => c.id === activeChapterId)?.title || `الباب رقم ${activeChapterId}`}
                     </span>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80" />
+                    <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80" />
                   </button>
 
                   {/* Dropdown Card (البطاقة المنسدلة للفهرس) */}
@@ -1655,23 +1656,23 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: -8, scale: 0.97 }}
                           transition={{ duration: 0.15, ease: "easeOut" }}
-                          className="absolute right-0 top-full mt-2 w-[290px] sm:w-[340px] bg-[#fdfcfb]/95 backdrop-blur-xl rounded-[24px] border border-[#e6dccf] shadow-[0_12px_28px_rgba(43,26,16,0.12)] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
+                          className="absolute right-0 top-full mt-2 w-[290px] sm:w-[340px] bg-[#fdfcfb]/95 dark:bg-[var(--sk-bg3)]/95 backdrop-blur-xl rounded-[24px] border border-[var(--sk-sep)] shadow-[0_12px_28px_rgba(43,26,16,0.12)] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
                         >
                           {/* Search bar inside Dropdown */}
-                          <div className="p-3 border-b border-[#2b1a10]/10 bg-[#fbf8f3]/85">
+                          <div className="p-3 border-b border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 bg-[#fbf8f3]/85">
                             <div className="cut-crystal-input flex items-center px-2.5 py-1">
-                              <Search className="w-3.5 h-3.5 text-[#7f6a55] ml-1.5 shrink-0" />
+                              <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
                               <input
                                 type="text"
                                 value={chapterSearchQuery}
                                 onChange={(e) => setChapterSearchQuery(e.target.value)}
                                 placeholder="تصفية أبواب الفهرس..."
-                                className="w-full bg-transparent border-none text-[12px] text-[#2b1a10] placeholder-[#7f6a55]/60 focus:outline-none"
+                                className="w-full bg-transparent border-none text-[12px] text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
                               />
                               {chapterSearchQuery && (
                                 <button
                                   onClick={() => setChapterSearchQuery("")}
-                                  className="text-[#7f6a55] hover:text-[#2b1a10] mr-1"
+                                  className="text-[var(--sk-label2)] hover:text-[var(--sk-label)] mr-1"
                                 >
                                   <X className="w-3 h-3" />
                                 </button>
@@ -1690,18 +1691,18 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                 }}
                                 className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${
                                   activeChapterId === "all"
-                                    ? "bg-[#deab65]/15 text-[#8a6a3d] border-[#deab65]/30"
-                                    : "hover:bg-[#e8dfd4]/45 text-[#2b1a10] border-transparent"
+                                    ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30"
+                                    : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"
                                 }`}
                               >
                                 <span>عرض جميع الأبواب</span>
-                                <Check className={`w-3.5 h-3.5 ${activeChapterId === "all" ? "opacity-100 text-[#deab65]" : "opacity-0"}`} />
+                                <Check className={`w-3.5 h-3.5 ${activeChapterId === "all" ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
                               </button>
                             )}
 
                             {loadingChapters ? (
-                              <div className="py-8 flex items-center justify-center gap-2 text-xs font-bold text-[#7f6a55]">
-                                <SakeenahLineSpinner size={32} color="#deab65" label="جارٍ تحميل فهرس الأبواب" />
+                              <div className="py-8 flex items-center justify-center gap-2 text-xs font-bold text-[var(--sk-label2)]">
+                                <SakeenahLineSpinner size={32} color="var(--sk-accent-bright)" label="جارٍ تحميل فهرس الأبواب" />
                                 <span>جاري تحميل الفهرس...</span>
                               </div>
                             ) : (
@@ -1720,19 +1721,19 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                     }}
                                     className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${
                                       activeChapterId === ch.id
-                                        ? "bg-[#deab65]/15 text-[#8a6a3d] border-[#deab65]/30"
-                                        : "hover:bg-[#e8dfd4]/45 text-[#2b1a10] border-transparent"
+                                        ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30"
+                                        : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"
                                     }`}
                                   >
                                     <div className="space-y-0.5 max-w-[85%] text-right">
                                       <span className="block truncate">{ch.title}</span>
                                       {ch.hadithCount !== undefined && ch.hadithCount > 0 && (
-                                        <span className={`text-[9.5px] font-normal ${activeChapterId === ch.id ? "text-[#deab65]" : "text-[#7f6a55]"}`}>
+                                        <span className={`text-[9.5px] font-normal ${activeChapterId === ch.id ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-label2)]"}`}>
                                           ({ch.hadithCount} أحاديث)
                                         </span>
                                       )}
                                     </div>
-                                    <Check className={`w-3.5 h-3.5 shrink-0 ${activeChapterId === ch.id ? "opacity-100 text-[#deab65]" : "opacity-0"}`} />
+                                    <Check className={`w-3.5 h-3.5 shrink-0 ${activeChapterId === ch.id ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
                                   </button>
                                 ))
                             )}
@@ -1748,8 +1749,8 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
             {/* Hadiths Content Loading & Error */}
             {loadingHadiths && (
               <div className="py-20 text-center space-y-3">
-                <SakeenahLineSpinner size={40} color="#deab65" label="جارٍ تحميل الأحاديث" className="mx-auto" />
-                <p className="text-sm font-bold text-[#7f6a55]">جاري تحميل الأحاديث الشريفة...</p>
+                <SakeenahLineSpinner size={40} color="var(--sk-accent-bright)" label="جارٍ تحميل الأحاديث" className="mx-auto" />
+                <p className="text-sm font-bold text-[var(--sk-label2)]">جاري تحميل الأحاديث الشريفة...</p>
               </div>
             )}
 
@@ -1771,14 +1772,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
               <div className="space-y-4">
                 {hadiths.length === 0 ? (
                   <div className="py-16 cut-crystal-satin text-center space-y-2 rounded-[26px]">
-                    <p className="text-sm font-bold text-[#7f6a55]">لم يتم العثور على أحاديث تطابق بحثك.</p>
+                    <p className="text-sm font-bold text-[var(--sk-label2)]">لم يتم العثور على أحاديث تطابق بحثك.</p>
                     <button
                       onClick={() => {
                         setReaderSearch("");
                         setActiveChapterId("all");
                         fetchHadiths(selectedBook.id, "all", 1, "");
                       }}
-                      className="px-4 py-1.5 cut-crystal-capsule bg-[#2b1a10] text-[#fdfcfb] text-xs font-bold"
+                      className="px-4 py-1.5 cut-crystal-capsule bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-bold"
                     >
                       إعادة ضبط
                     </button>
@@ -1798,19 +1799,19 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                         className="cut-crystal-satin rounded-[26px] p-5 md:p-6 space-y-4"
                       >
                         {/* Hadith Header */}
-                        <div className="flex items-start justify-between gap-3 border-b border-[#2b1a10]/10 pb-3">
+                        <div className="flex items-start justify-between gap-3 border-b border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 pb-3">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="px-3 py-1 rounded-full bg-[#2b1a10] text-[#fdfcfb] text-xs font-extrabold shadow-xs">
+                            <span className="px-3 py-1 rounded-full bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-extrabold shadow-xs">
                               حديث رقم: [{hadith.hadithnumber}]
                             </span>
-                            <span className="text-xs font-bold text-[#524336] px-3 py-1 cut-crystal-capsule">
+                            <span className="text-xs font-bold text-[var(--sk-espresso2)] px-3 py-1 cut-crystal-capsule">
                               {hadith.chapterTitle}
                             </span>
                             {hadith.grade && (
                               <span
                                 className={`text-[11px] font-extrabold px-3 py-1 rounded-full border ${
                                   hadith.grade.includes("صحيح") || hadith.grade.includes("Sahih")
-                                    ? "bg-[#deab65]/20 text-[#2b1a10] border-[#deab65]/40"
+                                    ? "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40"
                                     : "bg-amber-950/10 text-amber-900 border-amber-800/30"
                                 }`}
                               >
@@ -1825,12 +1826,12 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                               onClick={() => saveBookmarkToggle(hadith)}
                               className={`p-2 transition rounded-full ${
                                 bookmarked
-                                  ? "cut-crystal-capsule-dark bg-[#deab65] text-[#2b1a10]"
-                                  : "cut-crystal-capsule text-[#524336] hover:text-[#2b1a10]"
+                                  ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
+                                  : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
                               }`}
                               title={bookmarked ? "محفوظ في المفضلة" : "حفظ الحديث"}
                             >
-                              <Bookmark className={`w-4 h-4 ${bookmarked ? "fill-[#2b1a10]" : ""}`} />
+                              <Bookmark className={`w-4 h-4 ${bookmarked ? "fill-[var(--sk-label)]" : ""}`} />
                             </button>
                           </div>
                         </div>
@@ -1843,45 +1844,45 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                           {hadith.text?.trim() ? (
                             hadith.text
                           ) : (
-                            <span className="text-sm font-sans text-[#7f6a55] leading-loose">
+                            <span className="text-sm font-sans text-[var(--sk-label2)] leading-loose">
                               هذا السجل موجود في الإصدار العربي الموحّد للمصدر، لكن النص العربي غير متوفر له في ملف المصدر الحالي.
                             </span>
                           )}
                         </div>
 
                         {/* Hadith Action Bar */}
-                        <div className="pt-3 border-t border-[#2b1a10]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                           {/* Left: Standard Actions */}
                           <div className="flex items-center gap-1.5">
                             {/* Speak button */}
                             <button
                               onClick={() => handleSpeechHadith(hadith)}
-                              className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[#524336] hover:text-[#2b1a10] ${
+                              className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
                                 isSpeaking ? "bg-rose-50 text-rose-700 border-rose-200" : ""
                               }`}
                               title={isSpeaking ? "إيقاف القراءة الصوتية" : "قراءة صوتية للحديث"}
                             >
-                              {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-[#deab65]" />}
+                              {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />}
                             </button>
 
                             {/* Copy button */}
                             <button
                               onClick={() => handleCopyHadith(hadith)}
-                              className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[#524336] hover:text-[#2b1a10] ${
-                                isCopied ? "bg-[#deab65]/20 text-[#2b1a10] border-[#deab65]/40" : ""
+                              className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
+                                isCopied ? "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40" : ""
                               }`}
                               title="نسخ الحديث الشريف"
                             >
-                              {isCopied ? <Check className="w-4 h-4 text-[#deab65]" /> : <Copy className="w-4 h-4 text-[#deab65]" />}
+                              {isCopied ? <Check className="w-4 h-4 text-[var(--sk-accent-bright)]" /> : <Copy className="w-4 h-4 text-[var(--sk-accent-bright)]" />}
                             </button>
 
                             {/* Share button */}
                             <button
                               onClick={() => handleShareHadith(hadith)}
-                              className="p-2.5 cut-crystal-capsule text-[#524336] hover:text-[#2b1a10] transition cursor-pointer flex items-center justify-center"
+                              className="p-2.5 cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] transition cursor-pointer flex items-center justify-center"
                               title="مشاركة الحديث"
                             >
-                              <Share2 className="w-4 h-4 text-[#deab65]" />
+                              <Share2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />
                             </button>
 
                             {/* Report Typo / Note button */}
@@ -1906,20 +1907,20 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                     <button
                       onClick={() => handlePageChange(page - 1)}
                       disabled={page <= 1}
-                      className="px-4 py-2 cut-crystal-capsule text-xs font-bold text-[#2b1a10] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1"
+                      className="px-4 py-2 cut-crystal-capsule text-xs font-bold text-[var(--sk-label)] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1"
                     >
                       <ChevronRight className="w-4 h-4" />
                       <span>الصفحة السابقة</span>
                     </button>
 
-                    <div className="text-xs font-extrabold text-[#7f6a55]">
+                    <div className="text-xs font-extrabold text-[var(--sk-label2)]">
                       صفحة {page} من {totalPages}
                     </div>
 
                     <button
                       onClick={() => handlePageChange(page + 1)}
                       disabled={page >= totalPages}
-                      className="px-4 py-2 cut-crystal-capsule text-xs font-bold text-[#2b1a10] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1"
+                      className="px-4 py-2 cut-crystal-capsule text-xs font-bold text-[var(--sk-label)] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1"
                     >
                       <span>الصفحة التالية</span>
                       <ChevronLeft className="w-4 h-4" />
@@ -1938,19 +1939,19 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <div className="p-4 cut-crystal-panel rounded-[26px] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BookmarkCheck className="w-5 h-5 text-[#deab65]" />
-                <h2 className="text-base font-extrabold text-[#2b1a10]">قائمة الأحاديث المحفوظة</h2>
+                <BookmarkCheck className="w-5 h-5 text-[var(--sk-accent-bright)]" />
+                <h2 className="text-base font-extrabold text-[var(--sk-label)]">قائمة الأحاديث المحفوظة</h2>
               </div>
-              <span className="text-xs font-bold text-[#7f6a55]">{bookmarks.length} حديثًا محفوظًا</span>
+              <span className="text-xs font-bold text-[var(--sk-label2)]">{bookmarks.length} حديثًا محفوظًا</span>
             </div>
 
             {bookmarks.length === 0 ? (
               <div className="py-20 text-center cut-crystal-satin rounded-[26px] space-y-3">
-                <Bookmark className="w-12 h-12 text-[#7f6a55]/30 mx-auto" />
-                <p className="text-sm font-bold text-[#7f6a55]">لم تقم بحفظ أي أحاديث بعد.</p>
+                <Bookmark className="w-12 h-12 text-[#7f6a55]/30 dark:text-[var(--sk-label2)]/30 mx-auto" />
+                <p className="text-sm font-bold text-[var(--sk-label2)]">لم تقم بحفظ أي أحاديث بعد.</p>
                 <button
                   onClick={() => setViewMode("library")}
-                  className="px-4 py-2 cut-crystal-capsule bg-[#2b1a10] text-[#fdfcfb] text-xs font-bold"
+                  className="px-4 py-2 cut-crystal-capsule bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-bold"
                 >
                   تصفح المكتبة
                 </button>
@@ -1964,13 +1965,13 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md bg-[#2b1a10] text-[#fdfcfb] text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded-md bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-[10px] font-bold">
                           {bm.bookTitle}
                         </span>
-                        <span className="text-xs font-bold text-[#7f6a55]">حديث رقم [{bm.hadithnumber}]</span>
+                        <span className="text-xs font-bold text-[var(--sk-label2)]">حديث رقم [{bm.hadithnumber}]</span>
                       </div>
-                      <p className="text-xs font-serif text-[#2b1a10] line-clamp-2">{bm.textSnippet}</p>
-                      <p className="text-[10px] text-[#7f6a55]">{bm.chapterTitle}</p>
+                      <p className="text-xs font-serif text-[var(--sk-label)] line-clamp-2">{bm.textSnippet}</p>
+                      <p className="text-[10px] text-[var(--sk-label2)]">{bm.chapterTitle}</p>
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
@@ -2012,17 +2013,17 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <div className="p-4 cut-crystal-panel rounded-[26px] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Flag className="w-5 h-5 text-[#deab65]" />
-                <h2 className="text-base font-extrabold text-[#2b1a10]">سجل ملاحظاتي وبلاغاتي عن النصوص والتشكيل</h2>
+                <Flag className="w-5 h-5 text-[var(--sk-accent-bright)]" />
+                <h2 className="text-base font-extrabold text-[var(--sk-label)]">سجل ملاحظاتي وبلاغاتي عن النصوص والتشكيل</h2>
               </div>
-              <span className="text-xs font-bold text-[#7f6a55]">{reports.length} بلاغًا مسجلاً</span>
+              <span className="text-xs font-bold text-[var(--sk-label2)]">{reports.length} بلاغًا مسجلاً</span>
             </div>
 
             {reports.length === 0 ? (
               <div className="py-20 text-center cut-crystal-satin rounded-[26px] space-y-3">
-                <ShieldCheck className="w-12 h-12 text-[#deab65]/40 mx-auto" />
-                <p className="text-sm font-bold text-[#7f6a55]">لا توجد ملاحظات أو بلاغات مسجلة لديك حالياً.</p>
-                <p className="text-xs text-[#7f6a55]/80 max-w-md mx-auto">
+                <ShieldCheck className="w-12 h-12 text-[#deab65]/40 dark:text-[var(--sk-accent-bright)]/40 mx-auto" />
+                <p className="text-sm font-bold text-[var(--sk-label2)]">لا توجد ملاحظات أو بلاغات مسجلة لديك حالياً.</p>
+                <p className="text-xs text-[#7f6a55]/80 dark:text-[var(--sk-label2)]/80 max-w-md mx-auto">
                   يمكنك أثناء تصفح أي حديث النقر على زر "إبلاغ عن تصحيح" لتدوين أي ملحوظة حول التشكيل أو الألفاظ وحفظها.
                 </p>
               </div>
@@ -2033,12 +2034,12 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                     key={rep.id}
                     className="p-4 cut-crystal-satin rounded-[22px] space-y-2 border border-amber-900/10"
                   >
-                    <div className="flex items-center justify-between gap-2 border-b border-[#2b1a10]/10 pb-2">
+                    <div className="flex items-center justify-between gap-2 border-b border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 pb-2">
                       <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-md bg-[#2b1a10] text-[#fdfcfb] text-xs font-bold">
+                        <span className="px-2.5 py-0.5 rounded-md bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-bold">
                           {rep.bookTitle}
                         </span>
-                        <span className="text-xs font-bold text-[#7f6a55]">حديث رقم [{rep.hadithnumber}]</span>
+                        <span className="text-xs font-bold text-[var(--sk-label2)]">حديث رقم [{rep.hadithnumber}]</span>
                         <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100/80 text-amber-900 font-bold border border-amber-300/50">
                           {rep.category}
                         </span>
@@ -2053,11 +2054,11 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       </button>
                     </div>
 
-                    <p className="text-xs font-bold text-[#2b1a10] leading-relaxed">
-                      الملاحظة المدونة: <span className="font-normal text-[#524336]">"{rep.note}"</span>
+                    <p className="text-xs font-bold text-[var(--sk-label)] leading-relaxed">
+                      الملاحظة المدونة: <span className="font-normal text-[var(--sk-espresso2)]">"{rep.note}"</span>
                     </p>
 
-                    <div className="text-[10px] text-[#7f6a55]/70 flex items-center justify-between pt-1">
+                    <div className="text-[10px] text-[#7f6a55]/70 dark:text-[var(--sk-label2)]/70 flex items-center justify-between pt-1">
                       <span>{rep.chapterTitle}</span>
                       <span>{new Date(rep.createdAt).toLocaleDateString("ar-EG")}</span>
                     </div>
@@ -2076,25 +2077,25 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
             <div className="p-5 cut-crystal-panel rounded-[26px] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Search className="w-5 h-5 text-[#deab65]" />
-                  <h2 className="text-lg font-black text-[#2b1a10]">نتائج البحث الشامل</h2>
+                  <Search className="w-5 h-5 text-[var(--sk-accent-bright)]" />
+                  <h2 className="text-lg font-black text-[var(--sk-label)]">نتائج البحث الشامل</h2>
                 </div>
-                <p className="text-xs text-[#7f6a55] font-bold">
-                  البحث عن: <span className="text-[#2b1a10] font-black font-serif">"{globalSearchQuery}"</span>
+                <p className="text-xs text-[var(--sk-label2)] font-bold">
+                  البحث عن: <span className="text-[var(--sk-label)] font-black font-serif">"{globalSearchQuery}"</span>
                 </p>
               </div>
 
               <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
-                <span className="px-3 py-1.5 rounded-full bg-[#2b1a10] text-[#fdfcfb] text-xs font-bold">
+                <span className="px-3 py-1.5 rounded-full bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-bold">
                   {globalSearchResults.length} نتائج
                 </span>
                 {searchMethod === "offline" && Object.values(downloadStats).some(v => v === true) ? (
-                  <span className="px-3 py-1.5 rounded-full bg-[#deab65]/20 text-[#2b1a10] text-[10px] font-black border border-[#deab65]/40 flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-[#deab65]" />
+                  <span className="px-3 py-1.5 rounded-full bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] text-[10px] font-black border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-[var(--sk-accent-bright)]" />
                     <span>محرك أوفلاين ٢٠٠٪</span>
                   </span>
                 ) : (
-                  <span className="px-3 py-1.5 rounded-full bg-[#2b1a10]/5 text-[#7f6a55] text-[10px] font-black border border-[#2b1a10]/10 flex items-center gap-1">
+                  <span className="px-3 py-1.5 rounded-full bg-[#2b1a10]/5 dark:bg-[var(--sk-shade)]/5 text-[var(--sk-label2)] text-[10px] font-black border border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex items-center gap-1">
                     <span>بحث سيرفر أونلاين</span>
                   </span>
                 )}
@@ -2103,14 +2104,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
 
             {loadingGlobalSearch ? (
               <div className="py-24 text-center space-y-4 cut-crystal-satin rounded-[26px]">
-                <SakeenahLineSpinner size={40} color="#deab65" label="جارٍ إجراء البحث" className="mx-auto" />
-                <p className="text-sm font-bold text-[#7f6a55]">جاري إجراء البحث الفائق في أمهات كتب السنة...</p>
+                <SakeenahLineSpinner size={40} color="var(--sk-accent-bright)" label="جارٍ إجراء البحث" className="mx-auto" />
+                <p className="text-sm font-bold text-[var(--sk-label2)]">جاري إجراء البحث الفائق في أمهات كتب السنة...</p>
               </div>
             ) : globalSearchResults.length === 0 ? (
               <div className="py-20 text-center cut-crystal-satin rounded-[26px] space-y-4">
-                <AlertCircle className="w-12 h-12 text-[#deab65]/40 mx-auto" />
-                <p className="text-sm font-bold text-[#2b1a10]">لم نجد أي نتائج مطابقة لعبارة البحث.</p>
-                <p className="text-xs text-[#7f6a55] max-w-md mx-auto leading-relaxed text-center">
+                <AlertCircle className="w-12 h-12 text-[#deab65]/40 dark:text-[var(--sk-accent-bright)]/40 mx-auto" />
+                <p className="text-sm font-bold text-[var(--sk-label)]">لم نجد أي نتائج مطابقة لعبارة البحث.</p>
+                <p className="text-xs text-[var(--sk-label2)] max-w-md mx-auto leading-relaxed text-center">
                   تلميح: جرب كتابة كلمات مفردة أو مرادفات إسلامية (مثل: صلاة، وضوء، غضب، والدين، توبة). خوارزمية محرك البحث قادرة على توسيع مرادفات هذه الكلمات أوفلاين تلقائياً لتغطي عشرات الألفاظ والمشتقات!
                 </p>
                 <button
@@ -2129,23 +2130,23 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   return (
                     <div
                       key={`${hadith.bookId}_${hadith.hadithnumber}`}
-                      className="p-5 sm:p-6 cut-crystal-satin rounded-[26px] space-y-4 relative overflow-hidden group border border-[#deab65]/10"
+                      className="p-5 sm:p-6 cut-crystal-satin rounded-[26px] space-y-4 relative overflow-hidden group border border-[#deab65]/10 dark:border-[var(--sk-accent-bright)]/10"
                     >
                       {/* Top Header Row of Hadith Card */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2b1a10]/5 pb-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2b1a10]/5 dark:border-[var(--sk-label)]/5 pb-3">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2.5 py-0.5 rounded-lg bg-[#2b1a10] text-[#fdfcfb] text-xs font-black">
+                          <span className="px-2.5 py-0.5 rounded-lg bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-black">
                             {hadith.bookTitle}
                           </span>
-                          <span className="text-xs font-bold text-[#deab65]">حديث رقم [{hadith.hadithnumber}]</span>
+                          <span className="text-xs font-bold text-[var(--sk-accent-bright)]">حديث رقم [{hadith.hadithnumber}]</span>
                           {hadith.grade && (
-                            <span className="px-2 py-0.5 rounded bg-[#deab65]/15 text-[#2b1a10] text-[10px] font-bold border border-[#deab65]/35">
+                            <span className="px-2 py-0.5 rounded bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-on-accent)] text-[10px] font-bold border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35">
                               درجة الحديث: {localizeHadithGrade(hadith.grade)}
                             </span>
                           )}
                         </div>
 
-                        <span className="text-[10px] font-bold text-[#7f6a55] text-right">
+                        <span className="text-[10px] font-bold text-[var(--sk-label2)] text-right">
                           {hadith.chapterTitle}
                         </span>
                       </div>
@@ -2153,7 +2154,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       {/* Hadith Text Box with Customizable Font Size */}
                       <div className="py-2">
                         <p
-                          className="font-serif leading-loose text-right text-[#2b1a10] selection:bg-[#deab65]/20"
+                          className="font-serif leading-loose text-right text-[var(--sk-on-accent)] selection:bg-[#deab65]/20 dark:selection:bg-[var(--sk-accent-bright)]/20"
                           style={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
                         >
                           {hadith.text}
@@ -2161,38 +2162,38 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                       </div>
 
                       {/* Tool Actions Row */}
-                      <div className="pt-3 border-t border-[#2b1a10]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                      <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                         {/* Left: Standard Actions */}
                         <div className="flex items-center gap-1.5">
                           {/* Speak button */}
                           <button
                             onClick={() => handleSpeechHadith(hadith)}
-                            className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[#524336] hover:text-[#2b1a10] ${
+                            className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
                               isSpeaking ? "bg-rose-50 text-rose-700 border-rose-200" : ""
                             }`}
                             title={isSpeaking ? "إيقاف القراءة الصوتية" : "قراءة صوتية للحديث"}
                           >
-                            {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-[#deab65]" />}
+                            {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />}
                           </button>
 
                           {/* Copy button */}
                           <button
                             onClick={() => handleCopyHadith(hadith)}
-                            className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[#524336] hover:text-[#2b1a10] ${
-                              isCopied ? "bg-[#deab65]/20 text-[#2b1a10] border-[#deab65]/40" : ""
+                            className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
+                              isCopied ? "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40" : ""
                             }`}
                             title="نسخ الحديث الشريف"
                           >
-                            {isCopied ? <Check className="w-4 h-4 text-[#deab65]" /> : <Copy className="w-4 h-4 text-[#deab65]" />}
+                            {isCopied ? <Check className="w-4 h-4 text-[var(--sk-accent-bright)]" /> : <Copy className="w-4 h-4 text-[var(--sk-accent-bright)]" />}
                           </button>
 
                           {/* Share button */}
                           <button
                             onClick={() => handleShareHadith(hadith)}
-                            className="p-2.5 cut-crystal-capsule text-[#524336] hover:text-[#2b1a10] transition cursor-pointer flex items-center justify-center"
+                            className="p-2.5 cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] transition cursor-pointer flex items-center justify-center"
                             title="مشاركة الحديث"
                           >
-                            <Share2 className="w-4 h-4 text-[#deab65]" />
+                            <Share2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />
                           </button>
 
                           {/* Report Correction button */}
@@ -2220,7 +2221,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                     onClick={() => setViewMode("library")}
                     className="px-6 py-3 cut-crystal-capsule-gold text-xs font-black shadow-md cursor-pointer transition active:scale-95 inline-flex items-center gap-2"
                   >
-                    <ChevronRight className="w-4 h-4 text-[#2b1a10]" />
+                    <ChevronRight className="w-4 h-4 text-[var(--sk-label)]" />
                     <span>العودة للمكتبة النبوية</span>
                   </button>
                 </div>
@@ -2241,16 +2242,16 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg bg-[#ece7de] cut-crystal-panel rounded-[28px] shadow-2xl overflow-hidden flex flex-col border border-[#deab65]/30"
+              className="w-full max-w-lg bg-[var(--sk-bg)] cut-crystal-panel rounded-[28px] shadow-2xl overflow-hidden flex flex-col border border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30"
             >
-              <div className="p-4 border-b border-[#2b1a10]/10 flex items-center justify-between bg-[#ece7de]">
+              <div className="p-4 border-b border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex items-center justify-between bg-[var(--sk-bg)]">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-amber-700" />
-                  <h3 className="text-base font-extrabold text-[#2b1a10]">الإبلاغ عن تصحيح في النص أو التشكيل</h3>
+                  <h3 className="text-base font-extrabold text-[var(--sk-label)]">الإبلاغ عن تصحيح في النص أو التشكيل</h3>
                 </div>
                 <button
                   onClick={() => setReportingHadith(null)}
-                  className="p-1.5 cut-crystal-capsule text-[#2b1a10]"
+                  className="p-1.5 cut-crystal-capsule text-[var(--sk-label)]"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -2258,18 +2259,18 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
 
               <form onSubmit={handleSubmitReport} className="p-5 space-y-4">
                 <div className="p-3 cut-crystal-satin rounded-[18px] space-y-1">
-                  <p className="text-[11px] font-bold text-[#7f6a55]">
+                  <p className="text-[11px] font-bold text-[var(--sk-label2)]">
                     {reportingHadith.bookTitle} - حديث رقم [{reportingHadith.hadithnumber}]
                   </p>
-                  <p className="text-xs font-serif text-[#2b1a10] line-clamp-2">"{reportingHadith.text}"</p>
+                  <p className="text-xs font-serif text-[var(--sk-label)] line-clamp-2">"{reportingHadith.text}"</p>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2b1a10]">نوع الملاحظة:</label>
+                  <label className="text-xs font-bold text-[var(--sk-label)]">نوع الملاحظة:</label>
                   <select
                     value={reportCategory}
                     onChange={(e) => setReportCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl cut-crystal-input text-xs text-[#2b1a10] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl cut-crystal-input text-xs text-[var(--sk-label)] focus:outline-none"
                   >
                     <option value="خطأ في التشكيل أو الإعراب">خطأ في التشكيل أو الإعراب</option>
                     <option value="سقط أو زيادة في الكلمات">سقط أو زيادة في الكلمات</option>
@@ -2279,14 +2280,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2b1a10]">تفاصيل الملاحظة أو التصحيح المقترح:</label>
+                  <label className="text-xs font-bold text-[var(--sk-label)]">تفاصيل الملاحظة أو التصحيح المقترح:</label>
                   <textarea
                     required
                     rows={3}
                     value={reportNote}
                     onChange={(e) => setReportNote(e.target.value)}
                     placeholder="اكتب التشكيل الصحيح أو الملاحظة بالتفصيل..."
-                    className="w-full p-3 rounded-xl cut-crystal-input text-xs text-[#2b1a10] placeholder-[#7f6a55]/60 focus:outline-none"
+                    className="w-full p-3 rounded-xl cut-crystal-input text-xs text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
                   />
                 </div>
 
@@ -2294,7 +2295,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                   <button
                     type="button"
                     onClick={() => setReportingHadith(null)}
-                    className="px-4 py-2 cut-crystal-capsule text-xs font-bold text-[#7f6a55]"
+                    className="px-4 py-2 cut-crystal-capsule text-xs font-bold text-[var(--sk-label2)]"
                   >
                     إلغاء
                   </button>

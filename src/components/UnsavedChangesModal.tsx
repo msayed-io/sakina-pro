@@ -25,7 +25,7 @@ export const UnsavedChangesModal = React.memo(function UnsavedChangesModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#2b1a10]/55 backdrop-blur-md"
+            className="absolute inset-0 bg-[#2b1a10]/55 dark:bg-[var(--sk-shade)]/55 backdrop-blur-md"
           />
 
           {/* Modal Container */}
@@ -45,10 +45,10 @@ export const UnsavedChangesModal = React.memo(function UnsavedChangesModal({
 
             {/* Title & Subtitle */}
             <div className="space-y-2">
-              <h3 className="text-[19.5px] font-bold text-[#2b1a10]">
+              <h3 className="text-[19.5px] font-bold text-[var(--sk-label)]">
                 التغييرات غير محفوظة
               </h3>
-              <p className="text-[13px] font-medium leading-relaxed text-[#7f6a55]">
+              <p className="text-[13px] font-medium leading-relaxed text-[var(--sk-label2)]">
                 تغييراتك غير محفوظة. هل أنت متأكد من مغادرة هذه الصفحة؟
               </p>
             </div>
@@ -59,7 +59,7 @@ export const UnsavedChangesModal = React.memo(function UnsavedChangesModal({
               <button
                 type="button"
                 onClick={onSaveAndClose}
-                className="w-full h-11 bg-[#2b1a10] text-[#fff9f1] hover:brightness-110 active:scale-[0.98] transition-all text-[14px] font-bold rounded-full shadow-md cursor-pointer"
+                className="w-full h-11 bg-[var(--sk-espresso-fill)] text-[var(--sk-on-accent-soft)] hover:brightness-110 active:scale-[0.98] transition-all text-[14px] font-bold rounded-full shadow-md cursor-pointer"
               >
                 احفظ التغييرات
               </button>
@@ -68,7 +68,7 @@ export const UnsavedChangesModal = React.memo(function UnsavedChangesModal({
               <button
                 type="button"
                 onClick={onDiscardAndClose}
-                className="w-full text-center text-[13px] font-bold text-[#7f6a55] hover:text-[#2b1a10] underline underline-offset-4 decoration-1 decoration-[#7f6a55]/60 cursor-pointer py-1"
+                className="w-full text-center text-[13px] font-bold text-[var(--sk-label2)] hover:text-[var(--sk-label)] underline underline-offset-4 decoration-1 decoration-[#7f6a55]/60 dark:decoration-[var(--sk-label2)]/60 cursor-pointer py-1"
               >
                 امسح التغييرات
               </button>

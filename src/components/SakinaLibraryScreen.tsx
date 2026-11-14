@@ -291,7 +291,7 @@ export default function SakinaLibraryScreen({
           : "مكتبة سكينة";
 
   return (
-    <div className="min-h-[100dvh] w-full overflow-x-hidden bg-[#ece7de] text-[#2b1a10]">
+    <div className="min-h-[100dvh] w-full overflow-x-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
       <ProgressiveBlur />
       <header className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-8 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-2">
@@ -299,7 +299,7 @@ export default function SakinaLibraryScreen({
             <button
               type="button"
               onClick={() => view === "lesson" ? setView("series") : view === "series" ? setView("scholar") : goHome()}
-              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule text-[#2b1a10] shadow-sm active:scale-95 transition-transform"
+              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule text-[var(--sk-label)] shadow-sm active:scale-95 transition-transform"
               aria-label="العودة"
             >
               <ChevronRight className="h-5 w-5" />
@@ -308,7 +308,7 @@ export default function SakinaLibraryScreen({
             <button
               type="button"
               onClick={onBack}
-              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule text-[#2b1a10] shadow-sm active:scale-95 transition-transform"
+              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule text-[var(--sk-label)] shadow-sm active:scale-95 transition-transform"
               aria-label="الخروج من مكتبة سكينة"
             >
               <ChevronRight className="h-5 w-5" />
@@ -323,12 +323,12 @@ export default function SakinaLibraryScreen({
           <button
             type="button"
             onClick={() => setView("saved")}
-            className={`flex h-10 items-center gap-1.5 cut-crystal-capsule px-3 text-xs font-bold shadow-sm active:scale-95 transition-transform ${view === "saved" ? "text-[#b88a4f]" : "text-[#2b1a10]"}`}
+            className={`flex h-10 items-center gap-1.5 cut-crystal-capsule px-3 text-xs font-bold shadow-sm active:scale-95 transition-transform ${view === "saved" ? "text-[var(--sk-accent)]" : "text-[var(--sk-label)]"}`}
             aria-label="المحفوظات"
           >
             <BookmarkCheck className="h-4 w-4" />
             <span className="hidden sm:inline">محفوظاتي</span>
-            {savedLessons.length > 0 && <span className="rounded-full bg-[#deab65] px-1.5 py-0.5 text-[10px] text-[#2b1a10]">{savedLessons.length}</span>}
+            {savedLessons.length > 0 && <span className="rounded-full bg-[var(--sk-accent-bright)] px-1.5 py-0.5 text-[10px] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] sk-rim">{savedLessons.length}</span>}
           </button>
         </div>
       </header>
@@ -338,7 +338,7 @@ export default function SakinaLibraryScreen({
           {view === "library" && (
             <motion.div key="library" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-5">
               <section
-                className="cut-crystal-panel relative min-h-[196px] overflow-hidden rounded-[30px] border border-[#fdfcfb]/20 bg-[#2b1a10] p-4 text-[#fdfcfb] shadow-[var(--glass-ambient)] sm:min-h-[214px] sm:p-5"
+                className="cut-crystal-panel relative min-h-[196px] overflow-hidden rounded-[30px] border border-[#fdfcfb]/20 dark:border-[#fdfcfb]/20 bg-[var(--sk-espresso-fill)] p-4 text-[var(--sk-on-espresso)] shadow-[var(--glass-ambient)] sm:min-h-[214px] sm:p-5"
                 style={{
                   backgroundImage: `linear-gradient(270deg, rgba(43,26,16,0.88) 0%, rgba(43,26,16,0.58) 52%, rgba(43,26,16,0.22) 100%), url(${SAKINA_LIBRARY_HERO_IMAGE})`,
                   backgroundPosition: "center",
@@ -346,34 +346,34 @@ export default function SakinaLibraryScreen({
                   boxShadow: "var(--glass-ambient)",
                 }}
               >
-                <div className="relative z-10 max-w-xl rounded-[24px] border border-[#f7dfb4]/15 bg-[#2b1a10]/28 p-3 backdrop-blur-[2px] sm:p-4">
-                  <div className="mb-2 flex items-center gap-2 text-[#f7dfb4]">
+                <div className="relative z-10 max-w-xl rounded-[24px] border border-[#f7dfb4]/15 dark:border-[var(--sk-champagne)]/15 bg-[#2b1a10]/28 dark:bg-[var(--sk-shade)]/28 p-3 backdrop-blur-[2px] sm:p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[var(--sk-champagne)]">
                     <GraduationCap className="h-4 w-4" />
                     <span className="text-[11px] font-black tracking-wide">محتوى علمي منتقى</span>
                   </div>
-                  <h1 className="text-[23px] font-black leading-tight sm:text-[28px]">تعلم بهدوء، من مصادر موثوقة</h1>
-                  <p className="mt-2 max-w-xl text-xs font-bold leading-6 text-[#fdfcfb]/78">دروس ومحاضرات مرتبة داخل مكتبة سكينة، من الشيخ إلى السلسلة ثم الدرس، بلا تشتت ولا نتائج عشوائية.</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-bold text-[#f7dfb4]">
-                    <span className="cut-crystal-capsule-dark px-2.5 py-1.5 text-[#f7dfb4]">ترشيح ومراجعة</span>
-                    <span className="cut-crystal-capsule-dark px-2.5 py-1.5 text-[#f7dfb4]">متابعة من حيث توقفت</span>
-                    <span className="cut-crystal-capsule-dark px-2.5 py-1.5 text-[#f7dfb4]">مشغل رسمي</span>
+                  <h1 className="text-[23px] font-black leading-tight sm:text-[28px] dark:text-[#ffffff]">تعلم بهدوء، من مصادر موثوقة</h1>
+                  <p className="mt-2 max-w-xl text-xs font-bold leading-6 text-[#fdfcfb]/78 dark:text-[#fdfcfb]/78">دروس ومحاضرات مرتبة داخل مكتبة سكينة، من الشيخ إلى السلسلة ثم الدرس، بلا تشتت ولا نتائج عشوائية.</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-bold text-[var(--sk-champagne)]">
+                    <span className="cut-crystal-capsule-dark px-2.5 py-1.5 text-[var(--sk-champagne)]">ترشيح ومراجعة</span>
+                    <span className="cut-crystal-capsule-dark px-2.5 py-1.5 text-[var(--sk-champagne)]">متابعة من حيث توقفت</span>
+                    <span className="cut-crystal-capsule-dark px-2.5 py-1.5 text-[var(--sk-champagne)]">مشغل رسمي</span>
                   </div>
                 </div>
               </section>
 
               <form onSubmit={(event) => event.preventDefault()} className="cut-crystal-input flex items-center gap-3 px-4 py-3">
-                <Search className="h-5 w-5 shrink-0 text-[#b88a4f]" />
-                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث عن شيخ أو سلسلة أو درس..." className="w-full bg-transparent text-sm font-bold text-[#2b1a10] outline-none placeholder:text-[#7f6a55]/60" />
-                {query && <button type="button" onClick={() => setQuery("")} aria-label="مسح البحث"><X className="h-4 w-4 text-[#7f6a55]" /></button>}
+                <Search className="h-5 w-5 shrink-0 text-[var(--sk-accent)]" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث عن شيخ أو سلسلة أو درس..." className="w-full bg-transparent text-sm font-bold text-[var(--sk-label)] outline-none placeholder:text-[#7f6a55]/60 dark:placeholder:text-[var(--sk-label2)]/60" />
+                {query && <button type="button" onClick={() => setQuery("")} aria-label="مسح البحث"><X className="h-4 w-4 text-[var(--sk-label2)]" /></button>}
               </form>
 
               {query && (
                 <section className="space-y-2">
-                  <div className="flex items-center justify-between px-1"><h2 className="text-sm font-black">نتائج البحث</h2><span className="text-xs font-bold text-[#7f6a55]">{searchResults.length} نتيجة</span></div>
+                  <div className="flex items-center justify-between px-1"><h2 className="text-sm font-black">نتائج البحث</h2><span className="text-xs font-bold text-[var(--sk-label2)]">{searchResults.length} نتيجة</span></div>
                   {searchResults.length > 0 ? searchResults.map((result, index) => (
                     <button key={`${result.kind}-${result.lesson?.id ?? result.series?.id ?? result.scholar.id}-${index}`} type="button" onClick={() => result.kind === "scholar" ? openScholar(result.scholar) : result.kind === "series" && result.series ? openSeries(result.scholar, result.series) : result.series && result.lesson ? openLesson(result.scholar, result.series, result.lesson) : undefined} className="flex w-full items-center justify-between rounded-[22px] cut-crystal-panel px-4 py-3 text-right shadow-sm active:scale-[0.99] transition-transform">
-                      <span><span className="block text-sm font-black">{result.lesson?.titleAr ?? result.series?.titleAr ?? result.scholar.displayName}</span><span className="mt-1 block text-xs font-bold text-[#7f6a55]">{result.lesson ? `${result.scholar.displayName} · ${result.series?.titleAr}` : result.kind === "series" ? result.scholar.displayName : "بورتفوليو الشيخ"}</span></span>
-                      <ChevronLeft className="h-4 w-4 text-[#b88a4f]" />
+                      <span><span className="block text-sm font-black">{result.lesson?.titleAr ?? result.series?.titleAr ?? result.scholar.displayName}</span><span className="mt-1 block text-xs font-bold text-[var(--sk-label2)]">{result.lesson ? `${result.scholar.displayName} · ${result.series?.titleAr}` : result.kind === "series" ? result.scholar.displayName : "بورتفوليو الشيخ"}</span></span>
+                      <ChevronLeft className="h-4 w-4 text-[var(--sk-accent)]" />
                     </button>
                   )) : <EmptyState compact title="لا توجد نتائج في الكتالوج المنشور" description="البحث يعمل داخل المصادر التي تم اعتمادها ونشرها فقط." />}
                 </section>
@@ -385,7 +385,7 @@ export default function SakinaLibraryScreen({
 
               {!query && scholars.length > 0 && (
                 <section className="space-y-3">
-                  <div className="flex items-center justify-between px-1"><h2 className="text-base font-black">الشيوخ المعتمدون</h2><span className="text-xs font-bold text-[#7f6a55]">{scholars.length} شيوخ</span></div>
+                  <div className="flex items-center justify-between px-1"><h2 className="text-base font-black">الشيوخ المعتمدون</h2><span className="text-xs font-bold text-[var(--sk-label2)]">{scholars.length} شيوخ</span></div>
                   <div className="grid gap-3 sm:grid-cols-2">{scholars.map((scholar) => <ScholarCard key={scholar.id} scholar={scholar} onClick={() => openScholar(scholar)} />)}</div>
                 </section>
               )}
@@ -400,14 +400,14 @@ export default function SakinaLibraryScreen({
 
           {view === "scholar" && selectedScholar && (
             <motion.div key="scholar" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-5">
-              <section className="relative isolate -mx-4 -mt-24 h-[min(62svh,520px)] min-h-[360px] overflow-hidden rounded-b-[28px] border border-[#fdfcfb]/10 bg-[#2b1a10] text-[#fdfcfb] shadow-[var(--glass-ambient),var(--glass-lensing)] sm:-mx-6 sm:min-h-[420px]">
-                {selectedScholar.photoUrl ? <img src={selectedScholar.photoUrl} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_24%]" loading="eager" decoding="async" /> : <div className="absolute inset-0 bg-gradient-to-br from-[#deab65] to-[#2b1a10]" aria-hidden="true" />}
+              <section className="relative isolate -mx-4 -mt-24 h-[min(62svh,520px)] min-h-[360px] overflow-hidden rounded-b-[28px] border border-[#fdfcfb]/10 dark:border-[#fdfcfb]/10 bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] shadow-[var(--glass-ambient),var(--glass-lensing)] sm:-mx-6 sm:min-h-[420px]">
+                {selectedScholar.photoUrl ? <img src={selectedScholar.photoUrl} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_24%]" loading="eager" decoding="async" /> : <div className="absolute inset-0 bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-shade)]" aria-hidden="true" />}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(222,171,101,0.18),transparent_42%),linear-gradient(180deg,rgba(43,26,16,0.08)_18%,rgba(43,26,16,0.18)_43%,rgba(43,26,16,0.97)_100%)]" aria-hidden="true" />
-                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1 rounded-full border border-[#deab65]/25 bg-[#2b1a10]/45 px-1.5 py-0.5 text-[9px] font-bold leading-none text-[#f7dfb4] shadow-[0_8px_20px_-8px_rgba(43,26,16,0.45),inset_0_1px_0_rgba(222,171,101,0.25)] backdrop-blur-md sm:bottom-6 sm:left-6 sm:px-2 sm:py-1 sm:text-[10px]" dir="rtl"><span>مصر</span><span aria-hidden="true" className="text-[10px]">🇪🇬</span></div>
+                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1 rounded-full border border-[#deab65]/25 dark:border-[var(--sk-accent-bright)]/25 bg-[#2b1a10]/45 dark:bg-[var(--sk-shade)]/45 px-1.5 py-0.5 text-[9px] font-bold leading-none text-[var(--sk-champagne)] shadow-[0_8px_20px_-8px_rgba(43,26,16,0.45),inset_0_1px_0_rgba(222,171,101,0.25)] backdrop-blur-md sm:bottom-6 sm:left-6 sm:px-2 sm:py-1 sm:text-[10px]" dir="rtl"><span>مصر</span><span aria-hidden="true" className="text-[10px]">🇪🇬</span></div>
                 <div className="relative z-10 flex h-full flex-col justify-end px-5 pb-7 pt-16 text-center sm:px-8 sm:pb-9">
                   <div className="mx-auto flex max-w-3xl flex-col items-center">
-                    <h1 className="text-2xl font-black leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl">{selectedScholar.displayName}</h1>
-                    <p className="mt-3 max-w-2xl text-xs font-bold leading-6 text-[#fdfcfb]/75 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">{selectedScholar.bioShort ?? "دروس وسلاسل تعليمية مرتبة داخل مكتبة سكينة."}</p>
+                    <h1 className="text-2xl font-black leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl dark:text-[#ffffff]">{selectedScholar.displayName}</h1>
+                    <p className="mt-3 max-w-2xl text-xs font-bold leading-6 text-[#fdfcfb]/75 dark:text-[#fdfcfb]/75 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">{selectedScholar.bioShort ?? "دروس وسلاسل تعليمية مرتبة داخل مكتبة سكينة."}</p>
                   </div>
                 </div>
               </section>
@@ -426,9 +426,9 @@ export default function SakinaLibraryScreen({
                             setSelectedLessonId(null);
                             setView("scholar");
                           }}
-                          className={`relative flex items-center gap-1.5 rounded-[22px] transition-all duration-200 cursor-pointer ${isActive ? "px-4 py-2 text-[#2b1a10]" : "px-3 py-2 text-[#7f6a55] hover:bg-[#2b1a10]/5"}`}
+                          className={`relative flex items-center gap-1.5 rounded-[22px] transition-all duration-200 cursor-pointer ${isActive ? "px-4 py-2 text-[var(--sk-label)]" : "px-3 py-2 text-[var(--sk-label2)] hover:bg-[#2b1a10]/5 dark:hover:bg-[var(--sk-shade)]/5"}`}
                         >
-                          {isActive && <motion.div layoutId="amgadSourceIndicator" className="absolute inset-0 rounded-[24px] bg-[#2b1a10]/10 shadow-inner" transition={{ type: "spring", stiffness: 400, damping: 30 }} />}
+                          {isActive && <motion.div layoutId="amgadSourceIndicator" className="absolute inset-0 rounded-[24px] bg-[#2b1a10]/10 dark:bg-[var(--sk-shade)]/10 shadow-inner" transition={{ type: "spring", stiffness: 400, damping: 30 }} />}
                           <span className="relative z-10 flex items-center justify-center"><Video className="h-[17px] w-[17px]" /></span>
                           <AnimatePresence mode="popLayout">
                             {isActive && <motion.span initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: "auto" }} exit={{ opacity: 0, width: 0 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="relative z-10 overflow-hidden text-xs font-bold whitespace-nowrap">{source.labelAr}</motion.span>}
@@ -440,22 +440,22 @@ export default function SakinaLibraryScreen({
                 </nav>
               )}
               <section className="space-y-3">
-                <div className="flex items-center justify-between px-1"><h2 className="text-base font-black">{selectedSource?.labelAr ?? "السلاسل التعليمية"}</h2><span className="text-xs font-bold text-[#7f6a55]">{visibleSeries.length} سلاسل</span></div>
+                <div className="flex items-center justify-between px-1"><h2 className="text-base font-black">{selectedSource?.labelAr ?? "السلاسل التعليمية"}</h2><span className="text-xs font-bold text-[var(--sk-label2)]">{visibleSeries.length} سلاسل</span></div>
                 {visibleSeries.length > 0 ? visibleSeries.map((series) => <SeriesCard key={series.id} series={series} onClick={() => openSeries(selectedScholar, series)} />) : <EmptyState compact title="السلاسل قيد التجهيز" description="لا توجد سلاسل منشورة لهذا المصدر حتى الآن." />}
               </section>
               {selectedSource?.id === selectedScholar.sources?.find((source) => source.channelId === "UC_FFy2YxiElNMba-t-6VwTA")?.id && visibleStandaloneLessons.length > 0 && standaloneSeries && (
                 <section className="space-y-3">
-                  <div className="flex items-center justify-between px-1"><h2 className="text-base font-black">دروس القناة العامة</h2><span className="text-xs font-bold text-[#7f6a55]">{visibleStandaloneLessons.length} فيديو</span></div>
+                  <div className="flex items-center justify-between px-1"><h2 className="text-base font-black">دروس القناة العامة</h2><span className="text-xs font-bold text-[var(--sk-label2)]">{visibleStandaloneLessons.length} فيديو</span></div>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{visibleStandaloneLessons.map((lesson) => <LessonVideoCard key={lesson.id} lesson={lesson} progress={progress[lesson.id] ?? 0} saved={savedLessonIds.has(lesson.id)} onToggleSaved={() => toggleSaved(lesson.id)} onClick={() => openLesson(selectedScholar, standaloneSeries, lesson)} />)}</div>
                 </section>
               )}
               {showScholarIntro && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2b1a10]/35 px-4 py-8 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2b1a10]/35 dark:bg-[var(--sk-shade)]/35 px-4 py-8 backdrop-blur-sm">
                   <motion.section initial={{ opacity: 0, y: 10, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="w-full max-w-md cut-crystal-panel rounded-[30px] p-5 shadow-2xl sm:p-6" role="dialog" aria-modal="true" aria-labelledby="amgad-profile-intro-title">
-                    <div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#deab65]/15 text-[#b88a4f]"><LibraryBig className="h-6 w-6" /></div><h2 id="amgad-profile-intro-title" className="text-xl font-black">دليل بورتفوليو الشيخ</h2><p className="mt-2 text-sm font-bold leading-6 text-[#7f6a55]">هنا هتلاقي محتوى أمجد سمير مرتب حسب كل قناة.</p></div>
+                    <div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent)]"><LibraryBig className="h-6 w-6" /></div><h2 id="amgad-profile-intro-title" className="text-xl font-black">دليل بورتفوليو الشيخ</h2><p className="mt-2 text-sm font-bold leading-6 text-[var(--sk-label2)]">هنا هتلاقي محتوى أمجد سمير مرتب حسب كل قناة.</p></div>
                     <div className="space-y-2.5">
-                      <div className="cut-crystal-panel rounded-[22px] p-3.5"><div className="flex items-center gap-2 text-sm font-black text-[#b88a4f]"><Video className="h-4 w-4" />القناة العامة</div><p className="mt-1.5 text-xs font-bold leading-6 text-[#7f6a55]">مواعظ ودروس ومحتوى تربوي عام للمشاهدة اليومية.</p></div>
-                      <div className="cut-crystal-panel rounded-[22px] p-3.5"><div className="flex items-center gap-2 text-sm font-black text-[#b88a4f]"><GraduationCap className="h-4 w-4" />القناة العلمية</div><p className="mt-1.5 text-xs font-bold leading-6 text-[#7f6a55]">سلاسل علمية طويلة وشروح مرتبة للدراسة المتتابعة.</p></div>
+                      <div className="cut-crystal-panel rounded-[22px] p-3.5"><div className="flex items-center gap-2 text-sm font-black text-[var(--sk-accent)]"><Video className="h-4 w-4" />القناة العامة</div><p className="mt-1.5 text-xs font-bold leading-6 text-[var(--sk-label2)]">مواعظ ودروس ومحتوى تربوي عام للمشاهدة اليومية.</p></div>
+                      <div className="cut-crystal-panel rounded-[22px] p-3.5"><div className="flex items-center gap-2 text-sm font-black text-[var(--sk-accent)]"><GraduationCap className="h-4 w-4" />القناة العلمية</div><p className="mt-1.5 text-xs font-bold leading-6 text-[var(--sk-label2)]">سلاسل علمية طويلة وشروح مرتبة للدراسة المتتابعة.</p></div>
                     </div>
                     <button type="button" disabled={!introReady} onClick={() => { try { localStorage.setItem(SCHOLAR_INTRO_STORAGE_KEY, "true"); } catch { /* Storage is optional. */ } setShowScholarIntro(false); }} className="mt-5 w-full cut-crystal-capsule-gold px-4 py-3 text-sm font-black transition-opacity disabled:cursor-not-allowed disabled:opacity-45">{introReady ? "فهمت" : "اقرأ التعريف أولًا"}</button>
                   </motion.section>
@@ -466,7 +466,7 @@ export default function SakinaLibraryScreen({
 
           {view === "series" && selectedScholar && selectedSeries && (
             <motion.div key="series" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-5">
-              <section className="cut-crystal-panel rounded-[30px] p-5 sm:p-7"><div className="flex items-start justify-between gap-4"><div><span className="text-xs font-black text-[#b88a4f]">{selectedScholar.displayName}</span><h1 className="mt-2 text-2xl font-black">{selectedSeries.titleAr}</h1><p className="mt-2 text-sm font-bold leading-7 text-[#7f6a55]">{selectedSeries.description ?? "سلسلة مرتبة لمتابعة الدروس خطوة بخطوة."}</p></div><ListVideo className="h-8 w-8 shrink-0 text-[#b88a4f]" /></div><div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-[#7f6a55]"><span className="cut-crystal-capsule px-3 py-2">{selectedSeries.lessons.length} درس</span>{selectedSeries.category && <span className="cut-crystal-capsule px-3 py-2">{selectedSeries.category}</span>}</div></section>
+              <section className="cut-crystal-panel rounded-[30px] p-5 sm:p-7"><div className="flex items-start justify-between gap-4"><div><span className="text-xs font-black text-[var(--sk-accent)]">{selectedScholar.displayName}</span><h1 className="mt-2 text-2xl font-black">{selectedSeries.titleAr}</h1><p className="mt-2 text-sm font-bold leading-7 text-[var(--sk-label2)]">{selectedSeries.description ?? "سلسلة مرتبة لمتابعة الدروس خطوة بخطوة."}</p></div><ListVideo className="h-8 w-8 shrink-0 text-[var(--sk-accent)]" /></div><div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-[var(--sk-label2)]"><span className="cut-crystal-capsule px-3 py-2">{selectedSeries.lessons.length} درس</span>{selectedSeries.category && <span className="cut-crystal-capsule px-3 py-2">{selectedSeries.category}</span>}</div></section>
               <section className="space-y-3">{selectedSeries.lessons.length > 0 ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{selectedSeries.lessons.slice().sort((a, b) => a.sortOrder - b.sortOrder).map((lesson) => <LessonVideoCard key={lesson.id} lesson={lesson} progress={progress[lesson.id] ?? 0} saved={savedLessonIds.has(lesson.id)} onToggleSaved={() => toggleSaved(lesson.id)} onClick={() => openLesson(selectedScholar, selectedSeries, lesson)} />)}</div> : <EmptyState compact title="السلسلة قيد التجهيز" description="ستظهر الدروس بعد اعتماد روابطها الرسمية." />}</section>
             </motion.div>
           )}
@@ -474,10 +474,10 @@ export default function SakinaLibraryScreen({
           {view === "lesson" && selectedScholar && selectedSeries && selectedLesson && (
             <motion.div key="lesson" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-4">
               <section className="cut-crystal-panel overflow-hidden rounded-[30px]">
-                {selectedLesson.source?.videoId ? <div className="aspect-video w-full bg-[#2b1a10]"><iframe className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(selectedLesson.source.videoId)}?enablejsapi=1&rel=0`} title={selectedLesson.titleAr} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen onLoad={() => markLessonStarted(selectedLesson.id)} /></div> : <div className="flex aspect-video flex-col items-center justify-center gap-3 bg-[#2b1a10] px-6 text-center text-[#fdfcfb]"><Video className="h-10 w-10 text-[#deab65]" /><p className="text-sm font-bold">سيظهر المشغل الرسمي بعد اعتماد رابط الدرس</p></div>}
-                <div className="space-y-3 p-5"><div className="flex items-start justify-between gap-4"><div><span className="text-xs font-black text-[#b88a4f]">{selectedScholar.displayName} · {selectedSeries.titleAr}</span><h1 className="mt-2 text-xl font-black">{selectedLesson.titleAr}</h1></div><button type="button" onClick={() => toggleSaved(selectedLesson.id)} className="flex h-10 w-10 shrink-0 items-center justify-center cut-crystal-capsule text-[#b88a4f]" aria-label={savedLessonIds.has(selectedLesson.id) ? "إلغاء الحفظ" : "حفظ الدرس"}>{savedLessonIds.has(selectedLesson.id) ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}</button></div><p className="text-sm font-bold leading-7 text-[#7f6a55]">{selectedLesson.descriptionShort ?? "درس منتقى داخل سلسلة تعليمية موثوقة."}</p><div className="flex flex-wrap gap-2 text-xs font-bold text-[#7f6a55]"><span className="cut-crystal-capsule flex items-center gap-1.5 px-3 py-2"><Clock3 className="h-3.5 w-3.5 text-[#b88a4f]" />{formatDuration(selectedLesson.durationSeconds)}</span>{selectedLesson.episodeNumber && <span className="cut-crystal-capsule px-3 py-2">الدرس {selectedLesson.episodeNumber}</span>}<span className="cut-crystal-capsule px-3 py-2">التقدم {progress[selectedLesson.id] ?? 0}%</span></div><div className="flex flex-wrap gap-2 pt-1"><button type="button" onClick={() => markLessonCompleted(selectedLesson.id)} className="cut-crystal-capsule-gold flex items-center gap-2 px-4 py-2.5 text-xs font-black"><CheckCircle2 className="h-4 w-4" />تمت المشاهدة</button>{selectedLesson.source?.canonicalUrl && <a href={selectedLesson.source.canonicalUrl} target="_blank" rel="noreferrer" className="cut-crystal-capsule flex items-center gap-2 px-4 py-2.5 text-xs font-black"><ArrowLeft className="h-4 w-4" />فتح في YouTube</a>}</div></div>
+                {selectedLesson.source?.videoId ? <div className="aspect-video w-full bg-[var(--sk-espresso-fill)]"><iframe className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(selectedLesson.source.videoId)}?enablejsapi=1&rel=0`} title={selectedLesson.titleAr} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen onLoad={() => markLessonStarted(selectedLesson.id)} /></div> : <div className="flex aspect-video flex-col items-center justify-center gap-3 bg-[var(--sk-espresso-fill)] px-6 text-center text-[var(--sk-on-espresso)]"><Video className="h-10 w-10 text-[var(--sk-accent-bright)]" /><p className="text-sm font-bold">سيظهر المشغل الرسمي بعد اعتماد رابط الدرس</p></div>}
+                <div className="space-y-3 p-5"><div className="flex items-start justify-between gap-4"><div><span className="text-xs font-black text-[var(--sk-accent)]">{selectedScholar.displayName} · {selectedSeries.titleAr}</span><h1 className="mt-2 text-xl font-black">{selectedLesson.titleAr}</h1></div><button type="button" onClick={() => toggleSaved(selectedLesson.id)} className="flex h-10 w-10 shrink-0 items-center justify-center cut-crystal-capsule text-[var(--sk-accent)]" aria-label={savedLessonIds.has(selectedLesson.id) ? "إلغاء الحفظ" : "حفظ الدرس"}>{savedLessonIds.has(selectedLesson.id) ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}</button></div><p className="text-sm font-bold leading-7 text-[var(--sk-label2)]">{selectedLesson.descriptionShort ?? "درس منتقى داخل سلسلة تعليمية موثوقة."}</p><div className="flex flex-wrap gap-2 text-xs font-bold text-[var(--sk-label2)]"><span className="cut-crystal-capsule flex items-center gap-1.5 px-3 py-2"><Clock3 className="h-3.5 w-3.5 text-[var(--sk-accent)]" />{formatDuration(selectedLesson.durationSeconds)}</span>{selectedLesson.episodeNumber && <span className="cut-crystal-capsule px-3 py-2">الدرس {selectedLesson.episodeNumber}</span>}<span className="cut-crystal-capsule px-3 py-2">التقدم {progress[selectedLesson.id] ?? 0}%</span></div><div className="flex flex-wrap gap-2 pt-1"><button type="button" onClick={() => markLessonCompleted(selectedLesson.id)} className="cut-crystal-capsule-gold flex items-center gap-2 px-4 py-2.5 text-xs font-black"><CheckCircle2 className="h-4 w-4" />تمت المشاهدة</button>{selectedLesson.source?.canonicalUrl && <a href={selectedLesson.source.canonicalUrl} target="_blank" rel="noreferrer" className="cut-crystal-capsule flex items-center gap-2 px-4 py-2.5 text-xs font-black"><ArrowLeft className="h-4 w-4" />فتح في YouTube</a>}</div></div>
               </section>
-              <div className="flex items-center justify-between px-1 text-xs font-bold text-[#7f6a55]"><span>السلسلة: {selectedSeries.titleAr}</span><button type="button" onClick={() => setView("series")} className="flex items-center gap-1 text-[#b88a4f]">كل الدروس <ChevronLeft className="h-4 w-4" /></button></div>
+              <div className="flex items-center justify-between px-1 text-xs font-bold text-[var(--sk-label2)]"><span>السلسلة: {selectedSeries.titleAr}</span><button type="button" onClick={() => setView("series")} className="flex items-center gap-1 text-[var(--sk-accent)]">كل الدروس <ChevronLeft className="h-4 w-4" /></button></div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -487,16 +487,16 @@ export default function SakinaLibraryScreen({
 }
 
 function EmptyState({ title, description, compact = false }: { title: string; description: string; compact?: boolean }) {
-  return <section className={`cut-crystal-panel rounded-[28px] text-center ${compact ? "p-5" : "p-8 sm:p-12"}`}><div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#deab65]/15 text-[#b88a4f]"><LibraryBig className="h-7 w-7" /></div><h2 className="text-lg font-black">{title}</h2><p className="mx-auto mt-2 max-w-xl text-sm font-bold leading-7 text-[#7f6a55]">{description}</p></section>;
+  return <section className={`cut-crystal-panel rounded-[28px] text-center ${compact ? "p-5" : "p-8 sm:p-12"}`}><div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent)]"><LibraryBig className="h-7 w-7" /></div><h2 className="text-lg font-black">{title}</h2><p className="mx-auto mt-2 max-w-xl text-sm font-bold leading-7 text-[var(--sk-label2)]">{description}</p></section>;
 }
 
 function AvatarImage({ src, alt, fallback, large = false }: { src?: string; alt: string; fallback: string; large?: boolean }) {
   const sizeClass = large ? "h-full w-full rounded-[28px] text-3xl" : "h-14 w-14 rounded-full text-xl";
-  return src ? <img src={src} alt={alt} className={`${sizeClass} shrink-0 border border-[#deab65]/50 object-cover shadow-sm`} loading="eager" decoding="async" /> : <div className={`${sizeClass} flex shrink-0 items-center justify-center bg-gradient-to-br from-[#deab65] to-[#b88a4f] font-black text-white shadow-sm`}>{fallback}</div>;
+  return src ? <img src={src} alt={alt} className={`${sizeClass} shrink-0 border border-[#deab65]/50 dark:border-[var(--sk-accent-bright)]/50 object-cover shadow-sm`} loading="eager" decoding="async" /> : <div className={`${sizeClass} flex shrink-0 items-center justify-center bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] font-black text-[var(--sk-on-espresso)] shadow-sm`}>{fallback}</div>;
 }
 
 function ScholarCard({ scholar, onClick }: { scholar: SakinaScholar; onClick: () => void }) {
-  return <button type="button" onClick={onClick} className="group flex w-full items-center justify-between gap-4 rounded-[26px] cut-crystal-panel p-4 text-right shadow-sm active:scale-[0.985] transition-transform"><div className="flex min-w-0 items-center gap-3"><AvatarImage src={scholar.photoUrl} alt={scholar.displayName} fallback={scholar.displayName.charAt(0)} /><div className="min-w-0"><h3 className="truncate text-base font-black group-hover:text-[#b88a4f]">{scholar.displayName}</h3><p className="mt-1 flex items-center gap-1.5 text-xs font-bold text-[#7f6a55]"><ShieldCheck className="h-3.5 w-3.5 text-[#b88a4f]" />{verifiedLabel(scholar.verificationStatus)} · {scholar.series.length} سلسلة</p></div></div><ChevronLeft className="h-5 w-5 shrink-0 text-[#b88a4f]" /></button>;
+  return <button type="button" onClick={onClick} className="group flex w-full items-center justify-between gap-4 rounded-[26px] cut-crystal-panel p-4 text-right shadow-sm active:scale-[0.985] transition-transform"><div className="flex min-w-0 items-center gap-3"><AvatarImage src={scholar.photoUrl} alt={scholar.displayName} fallback={scholar.displayName.charAt(0)} /><div className="min-w-0"><h3 className="truncate text-base font-black group-hover:text-[var(--sk-accent)]">{scholar.displayName}</h3><p className="mt-1 flex items-center gap-1.5 text-xs font-bold text-[var(--sk-label2)]"><ShieldCheck className="h-3.5 w-3.5 text-[var(--sk-accent)]" />{verifiedLabel(scholar.verificationStatus)} · {scholar.series.length} سلسلة</p></div></div><ChevronLeft className="h-5 w-5 shrink-0 text-[var(--sk-accent)]" /></button>;
 }
 
 function ScholarSourceCard({ source }: { source: NonNullable<SakinaScholar["sources"]>[number] }) {
@@ -510,48 +510,48 @@ function ScholarSourceCard({ source }: { source: NonNullable<SakinaScholar["sour
     >
       <div>
         <div className="mb-2 flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-black text-[#b88a4f]"><Video className="h-3.5 w-3.5" />{source.labelAr}</span>
-          <ExternalLink className="h-3.5 w-3.5 text-[#b88a4f] transition-transform group-hover:-translate-x-0.5" />
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-black text-[var(--sk-accent)]"><Video className="h-3.5 w-3.5" />{source.labelAr}</span>
+          <ExternalLink className="h-3.5 w-3.5 text-[var(--sk-accent)] transition-transform group-hover:-translate-x-0.5" />
         </div>
         <h3 className="text-sm font-black leading-6">{source.channelTitle}</h3>
-        <p className="mt-1 text-[11px] font-bold leading-5 text-[#7f6a55]">{source.descriptionAr}</p>
+        <p className="mt-1 text-[11px] font-bold leading-5 text-[var(--sk-label2)]">{source.descriptionAr}</p>
       </div>
-      <div className="mt-3 flex items-center justify-between gap-2 text-[10px] font-black text-[#7f6a55]">
+      <div className="mt-3 flex items-center justify-between gap-2 text-[10px] font-black text-[var(--sk-label2)]">
         <span className="cut-crystal-capsule px-2 py-1">{isScientific ? "سلاسل علمية طويلة" : "محتوى عام"}</span>
-        <span className="text-[#b88a4f]">فتح القناة</span>
+        <span className="text-[var(--sk-accent)]">فتح القناة</span>
       </div>
     </a>
   );
 }
 
 function SeriesCard({ series, onClick }: { series: SakinaLessonSeries; onClick: () => void }) {
-  return <button type="button" onClick={onClick} className="flex w-full items-center justify-between gap-3 rounded-[22px] cut-crystal-panel p-3.5 text-right shadow-sm active:scale-[0.985] transition-transform"><div className="min-w-0"><div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-black text-[#b88a4f]"><ListVideo className="h-3.5 w-3.5" />سلسلة تعليمية</div><h3 className="truncate text-sm font-black">{series.titleAr}</h3><p className="mt-1 max-h-10 overflow-hidden text-[11px] font-bold leading-5 text-[#7f6a55]">{series.description ?? "سلسلة مرتبة داخل مكتبة سكينة."}</p><span className="mt-2 inline-flex cut-crystal-capsule px-2 py-1 text-[10px] font-bold text-[#7f6a55]">{series.lessons.length} درس</span></div><ChevronLeft className="h-4 w-4 shrink-0 text-[#b88a4f]" /></button>;
+  return <button type="button" onClick={onClick} className="flex w-full items-center justify-between gap-3 rounded-[22px] cut-crystal-panel p-3.5 text-right shadow-sm active:scale-[0.985] transition-transform"><div className="min-w-0"><div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-black text-[var(--sk-accent)]"><ListVideo className="h-3.5 w-3.5" />سلسلة تعليمية</div><h3 className="truncate text-sm font-black">{series.titleAr}</h3><p className="mt-1 max-h-10 overflow-hidden text-[11px] font-bold leading-5 text-[var(--sk-label2)]">{series.description ?? "سلسلة مرتبة داخل مكتبة سكينة."}</p><span className="mt-2 inline-flex cut-crystal-capsule px-2 py-1 text-[10px] font-bold text-[var(--sk-label2)]">{series.lessons.length} درس</span></div><ChevronLeft className="h-4 w-4 shrink-0 text-[var(--sk-accent)]" /></button>;
 }
 
 function LessonVideoCard({ lesson, progress, saved, onToggleSaved, onClick }: { lesson: SakinaLessonItem; progress: number; saved: boolean; onToggleSaved: () => void; onClick: () => void }) {
   return (
     <article className="overflow-hidden rounded-[24px] cut-crystal-panel shadow-sm">
       <button type="button" onClick={onClick} className="group block w-full text-right">
-        <div className="relative aspect-video overflow-hidden bg-[#2b1a10]">
-          {lesson.thumbnailUrl ? <img src={lesson.thumbnailUrl} alt="" className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.025]" loading="lazy" decoding="async" /> : <div className="flex h-full items-center justify-center text-[#deab65]"><Video className="h-9 w-9" /></div>}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2b1a10]/75 via-transparent to-[#2b1a10]/10" aria-hidden="true" />
-          <span className="absolute right-2 top-2 rounded-full bg-[#2b1a10]/75 px-2 py-1 text-[10px] font-black text-[#fdfcfb] backdrop-blur-sm">{lesson.episodeNumber ? `الحلقة ${lesson.episodeNumber}` : "درس"}</span>
-          <span className="absolute bottom-2 left-2 rounded-full bg-[#2b1a10]/80 px-2 py-1 text-[10px] font-black text-[#fdfcfb] backdrop-blur-sm">{formatDuration(lesson.durationSeconds)}</span>
-          <span className="absolute inset-0 flex items-center justify-center"><span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#deab65] text-[#2b1a10] shadow-lg transition-transform duration-150 group-hover:scale-105"><Play className="h-4 w-4 fill-current" /></span></span>
+        <div className="relative aspect-video overflow-hidden bg-[var(--sk-espresso-fill)]">
+          {lesson.thumbnailUrl ? <img src={lesson.thumbnailUrl} alt="" className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.025]" loading="lazy" decoding="async" /> : <div className="flex h-full items-center justify-center text-[var(--sk-accent-bright)]"><Video className="h-9 w-9" /></div>}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2b1a10]/75 dark:from-[var(--sk-shade)]/75 via-transparent to-[#2b1a10]/10 dark:to-[var(--sk-shade)]/10" aria-hidden="true" />
+          <span className="absolute right-2 top-2 rounded-full bg-[#2b1a10]/75 dark:bg-[var(--sk-shade)]/75 px-2 py-1 text-[10px] font-black text-[var(--sk-bg3)] dark:text-[#fdfcfb] backdrop-blur-sm">{lesson.episodeNumber ? `الحلقة ${lesson.episodeNumber}` : "درس"}</span>
+          <span className="absolute bottom-2 left-2 rounded-full bg-[#2b1a10]/80 dark:bg-[var(--sk-shade)]/80 px-2 py-1 text-[10px] font-black text-[var(--sk-bg3)] backdrop-blur-sm">{formatDuration(lesson.durationSeconds)}</span>
+          <span className="absolute inset-0 flex items-center justify-center"><span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] shadow-lg transition-transform duration-150 group-hover:scale-105"><Play className="h-4 w-4 fill-current" /></span></span>
         </div>
         <div className="p-3.5 pb-2">
           <h3 className="min-h-[3rem] text-sm font-black leading-6">{lesson.titleAr}</h3>
-          {progress > 0 && <div className="mt-3 h-1 overflow-hidden rounded-full bg-[#2b1a10]/10"><div className="h-full rounded-full bg-[#b88a4f]" style={{ width: `${Math.min(100, progress)}%` }} /></div>}
+          {progress > 0 && <div className="mt-3 h-1 overflow-hidden rounded-full bg-[#2b1a10]/10 dark:bg-[var(--sk-shade)]/10"><div className="h-full rounded-full bg-[var(--sk-accent)]" style={{ width: `${Math.min(100, progress)}%` }} /></div>}
         </div>
       </button>
-      <div className="flex items-center justify-between px-3.5 pb-3 text-[10px] font-bold text-[#7f6a55]">
+      <div className="flex items-center justify-between px-3.5 pb-3 text-[10px] font-bold text-[var(--sk-label2)]">
         <span>{progress >= 100 ? "مكتمل" : progress > 0 ? `${progress}% مكتمل` : "جاهز للمشاهدة"}</span>
-        <button type="button" onClick={onToggleSaved} className="flex h-8 w-8 items-center justify-center cut-crystal-capsule text-[#b88a4f]" aria-label={saved ? "إلغاء حفظ الدرس" : "حفظ الدرس"}>{saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}</button>
+        <button type="button" onClick={onToggleSaved} className="flex h-8 w-8 items-center justify-center cut-crystal-capsule text-[var(--sk-accent)]" aria-label={saved ? "إلغاء حفظ الدرس" : "حفظ الدرس"}>{saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}</button>
       </div>
     </article>
   );
 }
 
 function LessonRow({ lesson, progress, saved, onToggleSaved, onClick }: { lesson: SakinaLessonItem; progress: number; saved: boolean; onToggleSaved: () => void; onClick: () => void }) {
-  return <div className="flex items-center gap-3 rounded-[24px] cut-crystal-panel p-3 shadow-sm"><button type="button" onClick={onClick} className="flex min-w-0 flex-1 items-center gap-3 text-right"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#2b1a10] text-[#deab65]"><Play className="h-4 w-4 fill-current" /></div><div className="min-w-0"><h3 className="truncate text-sm font-black">{lesson.episodeNumber ? `${lesson.episodeNumber}. ` : ""}{lesson.titleAr}</h3><div className="mt-1 flex items-center gap-2 text-[11px] font-bold text-[#7f6a55]"><span>{formatDuration(lesson.durationSeconds)}</span>{progress > 0 && <span className="text-[#b88a4f]">{progress >= 100 ? "مكتمل" : `${progress}%`}</span>}</div>{progress > 0 && <div className="mt-2 h-1 w-32 overflow-hidden rounded-full bg-[#2b1a10]/10"><div className="h-full rounded-full bg-[#b88a4f]" style={{ width: `${Math.min(100, progress)}%` }} /></div>}</div></button><button type="button" onClick={onToggleSaved} className="flex h-9 w-9 shrink-0 items-center justify-center cut-crystal-capsule text-[#b88a4f]" aria-label={saved ? "إلغاء حفظ الدرس" : "حفظ الدرس"}>{saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}</button></div>;
+  return <div className="flex items-center gap-3 rounded-[24px] cut-crystal-panel p-3 shadow-sm"><button type="button" onClick={onClick} className="flex min-w-0 flex-1 items-center gap-3 text-right"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--sk-espresso-fill)] text-[#deab65] dark:text-[var(--sk-on-espresso)]"><Play className="h-4 w-4 fill-current" /></div><div className="min-w-0"><h3 className="truncate text-sm font-black">{lesson.episodeNumber ? `${lesson.episodeNumber}. ` : ""}{lesson.titleAr}</h3><div className="mt-1 flex items-center gap-2 text-[11px] font-bold text-[var(--sk-label2)]"><span>{formatDuration(lesson.durationSeconds)}</span>{progress > 0 && <span className="text-[var(--sk-accent)]">{progress >= 100 ? "مكتمل" : `${progress}%`}</span>}</div>{progress > 0 && <div className="mt-2 h-1 w-32 overflow-hidden rounded-full bg-[#2b1a10]/10 dark:bg-[var(--sk-shade)]/10"><div className="h-full rounded-full bg-[var(--sk-espresso-fill)]" style={{ width: `${Math.min(100, progress)}%` }} /></div>}</div></button><button type="button" onClick={onToggleSaved} className="flex h-9 w-9 shrink-0 items-center justify-center cut-crystal-capsule text-[var(--sk-accent)]" aria-label={saved ? "إلغاء حفظ الدرس" : "حفظ الدرس"}>{saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}</button></div>;
 }

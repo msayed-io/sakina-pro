@@ -89,19 +89,19 @@ const CodeBlock = ({ children }: { children: string }) => {
   };
 
   return (
-    <div className="my-3 overflow-hidden border border-[#e6dccf] bg-[#fdfcfb] rounded-[22px] shadow-sm text-left" style={{ direction: 'ltr' }}>
-      <div className="flex items-center justify-between px-4 py-2 bg-[#f5ebd9] border-b border-[#e6dccf] text-[#7f6a55] select-none">
+    <div className="my-3 overflow-hidden border border-[var(--sk-sep)] bg-[var(--sk-bg3)] rounded-[22px] shadow-sm text-left" style={{ direction: 'ltr' }}>
+      <div className="flex items-center justify-between px-4 py-2 bg-[var(--sk-cream)] border-b border-[var(--sk-sep)] text-[var(--sk-label2)] select-none">
         <span className="text-[10px] font-mono font-bold tracking-wider">CODE / TEXT</span>
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1 text-[#7f6a55] hover:text-[#b88a4f] transition-colors p-1 rounded-md cursor-pointer"
+          className="flex items-center gap-1 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] transition-colors p-1 rounded-md cursor-pointer"
         >
-          {copied ? <Check size={12} className="text-[#b88a4f]" /> : <Copy size={12} />}
+          {copied ? <Check size={12} className="text-[var(--sk-accent)]" /> : <Copy size={12} />}
           <span className="text-[10px] font-bold">{copied ? "Copied!" : "Copy"}</span>
         </button>
       </div>
-      <pre className="p-4 overflow-x-auto font-mono text-[12.5px] text-[#2b1a10] leading-relaxed">
+      <pre className="p-4 overflow-x-auto font-mono text-[12.5px] text-[var(--sk-label)] leading-relaxed">
         <code>{children}</code>
       </pre>
     </div>
@@ -153,38 +153,38 @@ const normalizeMarkdownSpacing = (raw: string): string => {
 
 const markdownComponents = {
   h1: ({ children }: any) => (
-    <h1 className="text-[17px] font-display font-black text-[#2b1a10] mt-4 mb-2 text-right">
+    <h1 className="text-[17px] font-display font-black text-[var(--sk-label)] mt-4 mb-2 text-right">
       {children}
     </h1>
   ),
   h2: ({ children }: any) => (
-    <h2 className="text-[16px] font-display font-black text-[#2b1a10] mt-4 mb-2 text-right">
+    <h2 className="text-[16px] font-display font-black text-[var(--sk-label)] mt-4 mb-2 text-right">
       {children}
     </h2>
   ),
   h3: ({ children }: any) => (
-    <h3 className="text-[16px] font-display font-black text-[#2b1a10] mt-4 mb-2 text-right">
+    <h3 className="text-[16px] font-display font-black text-[var(--sk-label)] mt-4 mb-2 text-right">
       {children}
     </h3>
   ),
   h4: ({ children }: any) => (
-    <h4 className="text-[15px] font-display font-black text-[#2b1a10] mt-3 mb-1 text-right">
+    <h4 className="text-[15px] font-display font-black text-[var(--sk-label)] mt-3 mb-1 text-right">
       {children}
     </h4>
   ),
   h5: ({ children }: any) => (
-    <h5 className="text-[14px] font-display font-black text-[#2b1a10] mt-3 mb-1.5 text-right">
+    <h5 className="text-[14px] font-display font-black text-[var(--sk-label)] mt-3 mb-1.5 text-right">
       {children}
     </h5>
   ),
   h6: ({ children }: any) => (
-    <h6 className="text-[14px] font-display font-black text-[#2b1a10]/90 mt-3 mb-1.5 text-right">
+    <h6 className="text-[14px] font-display font-black text-[#2b1a10]/90 dark:text-[var(--sk-label)]/90 mt-3 mb-1.5 text-right">
       {children}
     </h6>
   ),
   p: ({ children }: any) => (
     <p 
-      className="text-[14px] font-sans leading-relaxed text-[#2b1a10] mb-2 text-right break-words whitespace-pre-wrap"
+      className="text-[14px] font-sans leading-relaxed text-[var(--sk-label)] mb-2 text-right break-words whitespace-pre-wrap"
       dir="auto"
       style={{ unicodeBidi: "plaintext" }}
     >
@@ -192,7 +192,7 @@ const markdownComponents = {
     </p>
   ),
   strong: ({ children }: any) => (
-    <strong className="font-display font-black text-[#2b1a10]">
+    <strong className="font-display font-black text-[var(--sk-label)]">
       {children}
     </strong>
   ),
@@ -202,7 +202,7 @@ const markdownComponents = {
       target="_blank"
       rel="noreferrer"
       referrerPolicy="no-referrer"
-      className="text-[#b88a4f] underline font-bold hover:text-[#deab65] transition-colors inline"
+      className="text-[var(--sk-accent)] underline font-bold hover:text-[var(--sk-accent-bright)] transition-colors inline"
     >
       {children}
     </a>
@@ -230,7 +230,7 @@ const markdownComponents = {
     if (ordered) {
       return (
         <li
-          className="block w-full text-[14px] font-sans leading-relaxed text-[#2b1a10] text-right"
+          className="block w-full text-[14px] font-sans leading-relaxed text-[var(--sk-label)] text-right"
           dir="auto"
           style={{ unicodeBidi: "plaintext" }}
         >
@@ -240,11 +240,11 @@ const markdownComponents = {
     }
     return (
       <li
-        className="flex items-start gap-2 text-[14px] font-sans leading-relaxed text-[#2b1a10]"
+        className="flex items-start gap-2 text-[14px] font-sans leading-relaxed text-[var(--sk-label)]"
         dir="auto"
         style={{ unicodeBidi: "plaintext" }}
       >
-        <span className="text-[#b88a4f] mt-1.5 shrink-0 select-none text-[8px]">●</span>
+        <span className="text-[var(--sk-accent)] mt-1.5 shrink-0 select-none text-[8px]">●</span>
         <span className="flex-1 text-right whitespace-pre-wrap">{compact}</span>
       </li>
     );
@@ -255,29 +255,29 @@ const markdownComponents = {
       return <CodeBlock>{children}</CodeBlock>;
     }
     return (
-      <code className="bg-[#f5ebd9] border border-[#e6dccf] rounded-lg px-1.5 py-0.5 mx-0.5 font-mono text-[12.5px] text-[#2b1a10]">
+      <code className="bg-[var(--sk-cream)] border border-[var(--sk-sep)] rounded-lg px-1.5 py-0.5 mx-0.5 font-mono text-[12.5px] text-[var(--sk-label)]">
         {children}
       </code>
     );
   },
   blockquote: ({ children }: any) => (
-    <blockquote className="border-r-4 border-[#b88a4f] pr-3 my-3 italic text-[#7f6a55] text-right bg-[#f7f2ea]/40 py-1 rounded-l-md">
+    <blockquote className="border-r-4 border-[var(--sk-accent)] pr-3 my-3 italic text-[var(--sk-label2)] text-right bg-[#f7f2ea]/40 dark:bg-[var(--sk-bg2)]/40 py-1 rounded-l-md">
       {children}
     </blockquote>
   ),
-  hr: () => <hr className="my-3 h-px border-0 bg-[#e6dccf]" />,
+  hr: () => <hr className="my-3 h-px border-0 bg-[var(--sk-sep)]" />,
   table: ({ children }: any) => (
-    <div className="overflow-x-auto my-3 border border-[#e6dccf] rounded-xl">
+    <div className="overflow-x-auto my-3 border border-[var(--sk-sep)] rounded-xl">
       <table className="w-full text-right border-collapse text-[13px]">
         {children}
       </table>
     </div>
   ),
-  thead: ({ children }: any) => <thead className="bg-[#f7f2ea] text-[#2b1a10] font-display font-black">{children}</thead>,
-  tbody: ({ children }: any) => <tbody className="divide-y divide-[#e6dccf]/60">{children}</tbody>,
+  thead: ({ children }: any) => <thead className="bg-[var(--sk-bg2)] text-[var(--sk-label)] font-display font-black">{children}</thead>,
+  tbody: ({ children }: any) => <tbody className="divide-y divide-[#e6dccf]/60 dark:divide-[var(--sk-sep)]/60">{children}</tbody>,
   tr: ({ children }: any) => <tr className="hover:bg-white/40 transition-colors">{children}</tr>,
-  th: ({ children }: any) => <th className="p-2.5 font-display font-black border-b border-[#e6dccf]">{children}</th>,
-  td: ({ children }: any) => <td className="p-2.5 font-sans text-[#2b1a10]/90">{children}</td>,
+  th: ({ children }: any) => <th className="p-2.5 font-display font-black border-b border-[var(--sk-sep)]">{children}</th>,
+  td: ({ children }: any) => <td className="p-2.5 font-sans text-[#2b1a10]/90 dark:text-[var(--sk-label)]/90">{children}</td>,
 };
 
 const remarkPlugins = [remarkGfm];
@@ -961,14 +961,14 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
   };
 
   return (
-    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-sans bg-[#ece7de] h-screen relative flex flex-col overflow-hidden">
+    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-sans bg-[var(--sk-bg)] h-screen relative flex flex-col overflow-hidden">
       
       {/* Background soft ambient shapes */}
-      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
         {messages.length === 0 && (
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[38vh] bg-gradient-to-t from-[#d8b27b]/55 via-[#d8b27b]/20 to-transparent"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[38vh] bg-gradient-to-t from-[#d8b27b]/55 dark:from-[var(--sk-gold-mid)]/55 via-[#d8b27b]/20 dark:via-[var(--sk-gold-mid)]/20 to-transparent"
             aria-hidden="true"
           />
         )}
@@ -979,7 +979,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           <button
             type="button"
             onClick={() => setIsDrawerOpen(true)}
-            className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[#2b1a10] hover:text-[#b88a4f] hover:border-[#b88a4f]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
+            className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
             aria-label="فتح المحادثات المحفوظة"
             title="المحادثات المحفوظة"
           >
@@ -995,7 +995,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             <button
               type="button"
               onClick={startNewConversation}
-              className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[#7f6a55] hover:text-[#b88a4f] hover:border-[#b88a4f]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
+              className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[var(--sk-label2)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
               aria-label="بدء محادثة جديدة"
               title="محادثة جديدة"
             >
@@ -1005,7 +1005,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           <button
             type="button"
             onClick={onBack}
-            className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[#2b1a10] hover:text-[#b88a4f] hover:border-[#b88a4f]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
+            className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
             aria-label="رجوع"
           >
             <ChevronRight size={18} className="mr-0.5" />
@@ -1019,7 +1019,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             <motion.button
               type="button"
               aria-label="إغلاق قائمة المحادثات"
-              className="fixed inset-0 z-[55] bg-[#2b1a10]/18 backdrop-blur-[2px] cursor-default"
+              className="fixed inset-0 z-[55] bg-[#2b1a10]/18 dark:bg-[var(--sk-shade)]/18 backdrop-blur-[2px] cursor-default"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1038,12 +1038,12 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
               exit={{ opacity: 0, x: 18, scale: 0.995 }}
               transition={{ duration: 0.14, ease: [0.23, 1, 0.32, 1] }}
             >
-              <div className="flex h-12 shrink-0 items-center justify-between border-b border-[#b88a4f]/15 px-4">
-                <p className="text-[14px] font-display font-black text-[#2b1a10]">سَكِينَة AI</p>
+              <div className="flex h-12 shrink-0 items-center justify-between border-b border-[#b88a4f]/15 dark:border-[var(--sk-accent)]/15 px-4">
+                <p className="text-[14px] font-display font-black text-[var(--sk-label)]">سَكِينَة AI</p>
                 <button
                   type="button"
                   onClick={() => setIsDrawerOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#7f6a55] transition-colors hover:bg-white hover:text-[#2b1a10] active:scale-95 cursor-pointer"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--sk-label2)] transition-colors hover:bg-white hover:text-[var(--sk-label)] active:scale-95 cursor-pointer"
                   aria-label="إغلاق قائمة المحادثات"
                 >
                   <X size={16} />
@@ -1053,7 +1053,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
               <button
                 type="button"
                 onClick={startNewConversation}
-                className="mx-3 mt-3 flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-[#b88a4f] px-4 text-[12px] font-display font-black text-[#fff9f1] shadow-sm transition-all hover:bg-[#a0753e] active:scale-[0.98] cursor-pointer"
+                className="mx-3 mt-3 flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--sk-accent)] px-4 text-[12px] font-display font-black text-[var(--sk-on-espresso)] shadow-sm transition-all hover:bg-[var(--sk-accent-deep3)] active:scale-[0.98] cursor-pointer"
               >
                 <MessageCirclePlus size={16} />
                 <span>محادثة جديدة</span>
@@ -1061,12 +1061,12 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
 
               <div className="flex-1 overflow-y-auto px-3 pb-4 pt-4 hide-scrollbar">
                 {isConversationsLoading || isConversationLoading ? (
-                  <div className="flex items-center justify-center gap-2 py-10 text-[12px] font-bold text-[#7f6a55]">
-                    <SakeenahLineSpinner size={16} color="#b88a4f" label="جارٍ تحميل المحادثات" />
+                  <div className="flex items-center justify-center gap-2 py-10 text-[12px] font-bold text-[var(--sk-label2)]">
+                    <SakeenahLineSpinner size={16} color="var(--sk-accent)" label="جارٍ تحميل المحادثات" />
                     <span>جارٍ تحميل المحادثات</span>
                   </div>
                 ) : conversations.length === 0 ? (
-                  <div className="px-5 py-10 text-center text-[12px] font-bold leading-6 text-[#7f6a55]">
+                  <div className="px-5 py-10 text-center text-[12px] font-bold leading-6 text-[var(--sk-label2)]">
                     لا توجد محادثات محفوظة بعد.
                     <br />ابدأ سؤالًا جديدًا وستظهر هنا.
                   </div>
@@ -1077,8 +1077,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                         key={conversation.id}
                         className={`group relative flex items-center gap-1 rounded-[22px] border px-3 py-2 transition-all ${
                           conversation.id === activeConversationId
-                            ? "border-[#b88a4f]/40 bg-[#f7f2ea] shadow-sm"
-                            : "border-transparent hover:border-[#b88a4f]/20 hover:bg-[#f7f2ea]/70"
+                            ? "border-[#b88a4f]/40 dark:border-[var(--sk-accent)]/40 bg-[var(--sk-bg2)] shadow-sm"
+                            : "border-transparent hover:border-[#b88a4f]/20 dark:hover:border-[var(--sk-accent)]/20 hover:bg-[#f7f2ea]/70 dark:hover:bg-[var(--sk-bg2)]/70"
                         }`}
                       >
                         <button
@@ -1086,11 +1086,11 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                           onClick={() => void openConversation(conversation.id)}
                           className="min-w-0 flex-1 text-right cursor-pointer"
                         >
-                          <span className="flex items-center gap-1.5 truncate text-[12px] font-display font-black text-[#2b1a10]">
-                            {conversation.pinnedAt && <Pin size={11} className="shrink-0 text-[#b88a4f]" aria-label="مثبتة" />}
+                          <span className="flex items-center gap-1.5 truncate text-[12px] font-display font-black text-[var(--sk-label)]">
+                            {conversation.pinnedAt && <Pin size={11} className="shrink-0 text-[var(--sk-accent)]" aria-label="مثبتة" />}
                             <span className="truncate">{conversation.title}</span>
                           </span>
-                          <span className="mt-1 block text-[10px] font-bold text-[#7f6a55]">
+                          <span className="mt-1 block text-[10px] font-bold text-[var(--sk-label2)]">
                             {conversation.lastMessageAt.toLocaleDateString("ar-EG", { day: "numeric", month: "short" })}
                           </span>
                         </button>
@@ -1100,7 +1100,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                             event.stopPropagation();
                             setOpenConversationMenuId((current) => current === conversation.id ? null : conversation.id);
                           }}
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all hover:bg-[#f5ebd9]/75 cursor-pointer ${conversation.pinnedAt ? "text-[#b88a4f]" : "text-[#7f6a55]/70 hover:text-[#2b1a10]"}`}
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all hover:bg-[#f5ebd9]/75 dark:hover:bg-[var(--sk-cream)]/75 cursor-pointer ${conversation.pinnedAt ? "text-[var(--sk-accent)]" : "text-[#7f6a55]/70 dark:text-[var(--sk-label2)]/70 hover:text-[var(--sk-label)]"}`}
                           aria-label={`إجراءات ${conversation.title}`}
                           title="إجراءات المحادثة"
                         >
@@ -1115,20 +1115,20 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                               transition={{ duration: 0.12 }}
                               className="!absolute left-2 top-10 z-[70] w-[184px] cut-crystal-panel rounded-[20px] shadow-2xl overflow-hidden p-1.5"
                             >
-                              <button type="button" onClick={() => void handleShareConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[#2b1a10] transition hover:bg-[#f5ebd9] cursor-pointer">
-                                <Share2 size={14} className="text-[#b88a4f]" />
+                              <button type="button" onClick={() => void handleShareConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[var(--sk-label)] transition hover:bg-[var(--sk-cream)] cursor-pointer">
+                                <Share2 size={14} className="text-[var(--sk-accent)]" />
                                 <span>مشاركة المحادثة</span>
                               </button>
-                              <button type="button" onClick={() => void handlePinConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[#2b1a10] transition hover:bg-[#f5ebd9] cursor-pointer">
-                                <Pin size={14} className={conversation.pinnedAt ? "fill-[#b88a4f] text-[#b88a4f]" : "text-[#b88a4f]"} />
+                              <button type="button" onClick={() => void handlePinConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[var(--sk-label)] transition hover:bg-[var(--sk-cream)] cursor-pointer">
+                                <Pin size={14} className={conversation.pinnedAt ? "fill-[var(--sk-accent)] text-[var(--sk-accent)]" : "text-[var(--sk-accent)]"} />
                                 <span>{conversation.pinnedAt ? "إلغاء التثبيت" : "تثبيت"}</span>
                               </button>
-                              <button type="button" onClick={() => openRenameConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[#2b1a10] transition hover:bg-[#f5ebd9] cursor-pointer">
-                                <Pencil size={14} className="text-[#b88a4f]" />
+                              <button type="button" onClick={() => openRenameConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[var(--sk-label)] transition hover:bg-[var(--sk-cream)] cursor-pointer">
+                                <Pencil size={14} className="text-[var(--sk-accent)]" />
                                 <span>إعادة التسمية</span>
                               </button>
-                              <button type="button" onClick={() => { setOpenConversationMenuId(null); setDeleteTarget(conversation); }} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[#2b1a10] transition hover:bg-[#f5ebd9] cursor-pointer">
-                                <Trash2 size={14} className="text-[#b88a4f]" />
+                              <button type="button" onClick={() => { setOpenConversationMenuId(null); setDeleteTarget(conversation); }} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[var(--sk-label)] transition hover:bg-[var(--sk-cream)] cursor-pointer">
+                                <Trash2 size={14} className="text-[var(--sk-accent)]" />
                                 <span>حذف</span>
                               </button>
                             </motion.div>
@@ -1146,43 +1146,43 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
 
       <AnimatePresence>
         {shareResult && (
-          <motion.div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#2b1a10]/20 px-5 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#2b1a10]/20 dark:bg-[var(--sk-shade)]/20 px-5 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div dir="rtl" className="cut-crystal-panel w-full max-w-[360px] rounded-[28px] p-5" initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 8 }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[15px] font-display font-black text-[#2b1a10]">تم إنشاء رابط المشاركة</p>
-                  <p className="mt-1 text-[11px] font-bold text-[#7f6a55]">يمكن لأي شخص يملك الرابط مشاهدة هذه المحادثة.</p>
+                  <p className="text-[15px] font-display font-black text-[var(--sk-label)]">تم إنشاء رابط المشاركة</p>
+                  <p className="mt-1 text-[11px] font-bold text-[var(--sk-label2)]">يمكن لأي شخص يملك الرابط مشاهدة هذه المحادثة.</p>
                 </div>
-                <button type="button" onClick={() => setShareResult(null)} className="flex h-8 w-8 items-center justify-center rounded-full text-[#7f6a55] hover:bg-[#f5ebd9] cursor-pointer" aria-label="إغلاق"><X size={16} /></button>
+                <button type="button" onClick={() => setShareResult(null)} className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--sk-label2)] hover:bg-[var(--sk-cream)] cursor-pointer" aria-label="إغلاق"><X size={16} /></button>
               </div>
               <div className="cut-crystal-panel mt-4 flex items-center gap-2 rounded-[18px] p-2">
-                <input readOnly value={shareResult.result.url} className="min-w-0 flex-1 bg-transparent px-2 text-left text-[10px] font-bold text-[#2b1a10] outline-none" dir="ltr" aria-label="رابط مشاركة المحادثة" />
-                <button type="button" onClick={() => void navigator.clipboard?.writeText(shareResult.result.url)} className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[#b88a4f] px-3 text-[11px] font-black text-white hover:bg-[#a0753e] cursor-pointer"><Copy size={13} />نسخ</button>
+                <input readOnly value={shareResult.result.url} className="min-w-0 flex-1 bg-transparent px-2 text-left text-[10px] font-bold text-[var(--sk-label)] outline-none" dir="ltr" aria-label="رابط مشاركة المحادثة" />
+                <button type="button" onClick={() => void navigator.clipboard?.writeText(shareResult.result.url)} className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[var(--sk-accent)] px-3 text-[11px] font-black text-[var(--sk-on-espresso)] hover:bg-[var(--sk-accent-deep3)] cursor-pointer"><Copy size={13} />نسخ</button>
               </div>
               <div className="mt-4 flex gap-2">
-                <button type="button" onClick={() => setShareResult(null)} className="h-10 flex-1 rounded-full border border-[#b88a4f]/25 text-[12px] font-black text-[#7f6a55] hover:bg-[#f5ebd9] cursor-pointer">تم</button>
+                <button type="button" onClick={() => setShareResult(null)} className="h-10 flex-1 rounded-full border border-[#b88a4f]/25 dark:border-[var(--sk-accent)]/25 text-[12px] font-black text-[var(--sk-label2)] hover:bg-[var(--sk-cream)] cursor-pointer">تم</button>
                 <button type="button" onClick={() => void handleRevokeShare()} disabled={actionLoading} className="h-10 flex-1 rounded-full border border-red-200 text-[11px] font-black text-red-700 hover:bg-red-50 disabled:opacity-50 cursor-pointer">إلغاء الرابط</button>
               </div>
             </motion.div>
           </motion.div>
         )}
         {renameTarget && (
-          <motion.div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#2b1a10]/20 px-5 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#2b1a10]/20 dark:bg-[var(--sk-shade)]/20 px-5 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.form dir="rtl" onSubmit={(event) => { event.preventDefault(); void handleRenameConversation(); }} className="cut-crystal-panel w-full max-w-[360px] rounded-[28px] p-5" initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 8 }}>
-              <p className="text-[16px] font-display font-black text-[#2b1a10]">إعادة تسمية المحادثة</p>
-              <input autoFocus value={renameValue} onChange={(event) => setRenameValue(event.target.value)} maxLength={160} className="cut-crystal-input mt-4 h-11 w-full rounded-[18px] px-4 text-right text-[13px] font-bold text-[#2b1a10] outline-none focus:border-[#b88a4f]" aria-label="اسم المحادثة الجديد" />
+              <p className="text-[16px] font-display font-black text-[var(--sk-label)]">إعادة تسمية المحادثة</p>
+              <input autoFocus value={renameValue} onChange={(event) => setRenameValue(event.target.value)} maxLength={160} className="cut-crystal-input mt-4 h-11 w-full rounded-[18px] px-4 text-right text-[13px] font-bold text-[var(--sk-label)] outline-none focus:border-[var(--sk-accent)]" aria-label="اسم المحادثة الجديد" />
               <div className="mt-4 flex gap-2">
-                <button type="button" onClick={() => setRenameTarget(null)} className="h-10 flex-1 rounded-full border border-[#d8c9b8] text-[12px] font-black text-[#7f6a55] hover:bg-[#f5ebd9] cursor-pointer">إلغاء</button>
-                <button type="submit" disabled={!renameValue.trim() || actionLoading} className="h-10 flex-1 rounded-full bg-[#b88a4f] text-[12px] font-black text-white disabled:opacity-50 cursor-pointer">حفظ</button>
+                <button type="button" onClick={() => setRenameTarget(null)} className="h-10 flex-1 rounded-full border border-[var(--sk-linen)] text-[12px] font-black text-[var(--sk-label2)] hover:bg-[var(--sk-cream)] cursor-pointer">إلغاء</button>
+                <button type="submit" disabled={!renameValue.trim() || actionLoading} className="h-10 flex-1 rounded-full bg-[var(--sk-accent)] text-[12px] font-black text-[var(--sk-on-espresso)] disabled:opacity-50 cursor-pointer">حفظ</button>
               </div>
             </motion.form>
           </motion.div>
         )}
         {deleteTarget && (
-          <motion.div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#2b1a10]/25 px-5 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#2b1a10]/25 dark:bg-[var(--sk-shade)]/25 px-5 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div dir="rtl" className="cut-crystal-panel w-full max-w-[360px] rounded-[28px] p-5" initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 8 }}>
-              <div className="flex items-start gap-3"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8f3c35] to-[#6f2d29] text-white shadow-sm"><Trash2 size={18} /></div><div><p className="text-[16px] font-display font-black text-[#2b1a10]">حذف المحادثة نهائيًا؟</p><p className="mt-2 text-[12px] font-bold leading-6 text-[#7f6a55]">سيتم حذف المحادثة وجميع رسائلها ورابط مشاركتها نهائيًا. لا يمكن التراجع عن هذا الإجراء.</p></div></div>
-              <div className="mt-5 flex gap-2"><button type="button" onClick={() => setDeleteTarget(null)} disabled={actionLoading} className="h-10 flex-1 rounded-full border border-[#d8c9b8] text-[12px] font-black text-[#7f6a55] hover:bg-[#f5ebd9] cursor-pointer">إلغاء</button><button type="button" onClick={() => void handleDeleteConversation(deleteTarget.id)} disabled={actionLoading} className="h-10 flex-1 rounded-full border border-[#8f3c35]/35 bg-gradient-to-br from-[#8f3c35] to-[#6f2d29] text-[12px] font-black text-white shadow-[0_10px_22px_-12px_rgba(111,45,41,0.9)] transition-[transform,filter] duration-150 hover:brightness-110 active:scale-[0.97] disabled:opacity-50 cursor-pointer">{actionLoading ? "جارٍ الحذف..." : "حذف نهائي"}</button></div>
+              <div className="flex items-start gap-3"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--sk-danger-deep)] to-[#6f2d29] text-white shadow-sm"><Trash2 size={18} /></div><div><p className="text-[16px] font-display font-black text-[var(--sk-label)]">حذف المحادثة نهائيًا؟</p><p className="mt-2 text-[12px] font-bold leading-6 text-[var(--sk-label2)]">سيتم حذف المحادثة وجميع رسائلها ورابط مشاركتها نهائيًا. لا يمكن التراجع عن هذا الإجراء.</p></div></div>
+              <div className="mt-5 flex gap-2"><button type="button" onClick={() => setDeleteTarget(null)} disabled={actionLoading} className="h-10 flex-1 rounded-full border border-[var(--sk-linen)] text-[12px] font-black text-[var(--sk-label2)] hover:bg-[var(--sk-cream)] cursor-pointer">إلغاء</button><button type="button" onClick={() => void handleDeleteConversation(deleteTarget.id)} disabled={actionLoading} className="h-10 flex-1 rounded-full border border-[#8f3c35]/35 dark:border-[var(--sk-danger-deep)]/35 bg-gradient-to-br from-[var(--sk-danger-deep)] to-[#6f2d29] text-[12px] font-black text-white shadow-[0_10px_22px_-12px_rgba(111,45,41,0.9)] transition-[transform,filter] duration-150 hover:brightness-110 active:scale-[0.97] disabled:opacity-50 cursor-pointer">{actionLoading ? "جارٍ الحذف..." : "حذف نهائي"}</button></div>
             </motion.div>
           </motion.div>
         )}
@@ -1194,7 +1194,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            className="fixed bottom-6 left-5 right-5 z-[120] mx-auto max-w-[360px] rounded-[20px] border border-white/45 bg-[#ece7de]/55 px-4 py-3 text-center text-[11px] font-black text-[#2b1a10] shadow-[0_18px_42px_rgba(43,26,16,0.24)] backdrop-blur-2xl"
+            className="fixed bottom-6 left-5 right-5 z-[120] mx-auto max-w-[360px] rounded-[20px] border border-white/45 bg-[#ece7de]/55 dark:bg-[var(--sk-bg)]/55 px-4 py-3 text-center text-[11px] font-black text-[var(--sk-label)] shadow-[0_18px_42px_rgba(43,26,16,0.24)] backdrop-blur-2xl"
           >
             {storageError}
           </motion.div>
@@ -1215,11 +1215,11 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                 transition={{ duration: 0.28, ease: "easeOut" }}
                 className="flex h-full flex-col items-center justify-center px-4 text-center"
               >
-                <p className="text-[13px] font-bold text-[#8a6a3d]">أهلًا بك، {userName}</p>
-                <h1 className="mt-3 max-w-[330px] font-display text-[29px] font-black leading-[1.25] text-[#2b1a10]">
+                <p className="text-[13px] font-bold text-[var(--sk-accent-deep)]">أهلًا بك، {userName}</p>
+                <h1 className="mt-3 max-w-[330px] font-display text-[29px] font-black leading-[1.25] text-[var(--sk-label)]">
                   {welcomeLines[welcomeLineIndex].title}
                 </h1>
-                <p className="mt-3 max-w-[285px] text-[13px] font-bold leading-7 text-[#7f6a55]">
+                <p className="mt-3 max-w-[285px] text-[13px] font-bold leading-7 text-[var(--sk-label2)]">
                   {welcomeLines[welcomeLineIndex].subtitle}
                 </p>
               </motion.div>
@@ -1246,14 +1246,14 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                     className={isUser ? "mr-auto max-w-[85%]" : "w-full"}
                   >
                     {!isUser && (
-                      <div className="flex items-center gap-1.5 mb-2 text-[11px] font-display font-black text-[#b88a4f] select-none">
+                      <div className="flex items-center gap-1.5 mb-2 text-[11px] font-display font-black text-[var(--sk-accent)] select-none">
                         <span>سكينة AI</span>
                       </div>
                     )}
                     
                     {isUser ? (
                       <>
-                        <div className="relative text-right bg-gradient-to-br from-[#2b1a10] to-[#3f281a] text-[#fff9f1] border border-[#2b1a10]/20 rounded-[28px] shadow-md transition-all duration-300 overflow-hidden">
+                        <div className="relative text-right bg-gradient-to-br from-[var(--sk-shade)] to-[#3f281a] text-[#fff9f1] border border-[#2b1a10]/20 dark:border-[var(--sk-label)]/20 rounded-[28px] shadow-md transition-all duration-300 overflow-hidden">
                           {isEditingThisMessage ? (
                             <textarea
                               autoFocus
@@ -1276,7 +1276,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                                   {m.content}
                                 </p>
                                 {longMsgs.has(m.id) && !expandedMsgs.has(m.id) && (
-                                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#2b1a10] via-[#2b1a10]/85 to-transparent pointer-events-none rounded-b-[28px]" />
+                                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[var(--sk-shade)] via-[#2b1a10]/85 dark:via-[var(--sk-shade)]/85 to-transparent pointer-events-none rounded-b-[28px]" />
                                 )}
                               </div>
                               {longMsgs.has(m.id) && (
@@ -1303,8 +1303,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                               onClick={confirmEditingUserMessage}
                               className={`inline-flex h-7 items-center justify-center rounded-full px-3 text-[12px] font-bold transition-all ${
                                 hasEditedContent && editingContent.trim()
-                                  ? "bg-[#b88a4f] text-[#fff9f1] shadow-sm hover:bg-[#a0753e] active:scale-95 cursor-pointer"
-                                  : "bg-[#e6dccf]/60 text-[#7f6a55]/40 cursor-not-allowed"
+                                  ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm hover:bg-[var(--sk-accent-deep3)] active:scale-95 cursor-pointer"
+                                  : "bg-[#e6dccf]/60 dark:bg-[var(--sk-sep)]/60 text-[#7f6a55]/40 dark:text-[var(--sk-label2)]/40 cursor-not-allowed"
                               }`}
                             >
                               تعديل
@@ -1312,7 +1312,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                             <button
                               type="button"
                               onClick={cancelEditingUserMessage}
-                              className="text-[#7f6a55] transition-colors hover:text-[#2b1a10] cursor-pointer"
+                              className="text-[var(--sk-label2)] transition-colors hover:text-[var(--sk-label)] cursor-pointer"
                             >
                               إلغاء
                             </button>
@@ -1323,7 +1323,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                               <button
                                 type="button"
                                 onClick={() => startEditingUserMessage(m)}
-                                className="inline-flex h-7 w-7 items-center justify-center text-[#7f6a55] transition-colors hover:text-[#b88a4f] active:scale-90 cursor-pointer"
+                                className="inline-flex h-7 w-7 items-center justify-center text-[var(--sk-label2)] transition-colors hover:text-[var(--sk-accent)] active:scale-90 cursor-pointer"
                                 title="تعديل الرسالة"
                               >
                                 <Pencil size={13} />
@@ -1332,7 +1332,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                             <button
                               type="button"
                               onClick={() => handleCopyMsgContent(m.id, m.content)}
-                              className={`inline-flex h-7 w-7 items-center justify-center text-[#7f6a55] transition-colors hover:text-[#b88a4f] active:scale-90 cursor-pointer ${
+                              className={`inline-flex h-7 w-7 items-center justify-center text-[var(--sk-label2)] transition-colors hover:text-[var(--sk-accent)] active:scale-90 cursor-pointer ${
                                 copiedResponseId === m.id ? "text-emerald-600" : ""
                               }`}
                               title="نسخ الرسالة"
@@ -1343,16 +1343,16 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                         )}
                       </>
                     ) : (
-                      <div className="w-full text-right bg-transparent border-none shadow-none px-0 py-2 text-[#2b1a10]">
+                      <div className="w-full text-right bg-transparent border-none shadow-none px-0 py-2 text-[var(--sk-label)]">
                         {/* مهم: لا تضع whitespace-pre-wrap على أي حاوية خارجية —
                             الخاصية موروثة وستحوّل أسطر \n الفاصلة بين البلوكات
                             إلى أسطر فارغة مرئية. pre-wrap مقصور على عناصر النص. */}
                         <div>
                           {m.content.trim() === "" && m.isStreaming ? (
                         <div className="flex items-center gap-1.5 py-3 justify-start">
-                          <span className="w-2 h-2 rounded-full bg-[#b88a4f] animate-bounce [animation-delay:-0.3s]"></span>
-                          <span className="w-2 h-2 rounded-full bg-[#b88a4f] animate-bounce [animation-delay:-0.15s]"></span>
-                          <span className="w-2 h-2 rounded-full bg-[#b88a4f] animate-bounce"></span>
+                          <span className="w-2 h-2 rounded-full bg-[var(--sk-accent)] animate-bounce [animation-delay:-0.3s]"></span>
+                          <span className="w-2 h-2 rounded-full bg-[var(--sk-accent)] animate-bounce [animation-delay:-0.15s]"></span>
+                          <span className="w-2 h-2 rounded-full bg-[var(--sk-accent)] animate-bounce"></span>
                         </div>
                       ) : (
                         <MarkdownRenderer 
@@ -1369,13 +1369,13 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                         {isLastAI && (
                           <div
                             dir="ltr"
-                            className="mt-4 flex w-full items-center justify-end gap-2 border-t border-[#e6dccf]/40 pt-3 text-[#7f6a55] select-none"
+                            className="mt-4 flex w-full items-center justify-end gap-2 border-t border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 pt-3 text-[var(--sk-label2)] select-none"
                           >
                             {/* Explicit LTR flex direction keeps this group on the physical right side. */}
                             <button
                               type="button"
                               onClick={() => setFeedback(prev => ({ ...prev, [m.id]: prev[m.id] === 'dislike' ? undefined : 'dislike' }))}
-                              className={`inline-flex h-7 w-7 items-center justify-center text-[#7f6a55] transition-all hover:text-red-500 active:scale-90 cursor-pointer ${
+                              className={`inline-flex h-7 w-7 items-center justify-center text-[var(--sk-label2)] transition-all hover:text-red-500 active:scale-90 cursor-pointer ${
                                 feedback[m.id] === 'dislike' ? 'text-red-600' : ''
                               }`}
                               title="لم يعجبني"
@@ -1386,8 +1386,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                             <button
                               type="button"
                               onClick={() => setFeedback(prev => ({ ...prev, [m.id]: prev[m.id] === 'like' ? undefined : 'like' }))}
-                              className={`inline-flex h-7 w-7 items-center justify-center text-[#7f6a55] transition-all hover:text-[#b88a4f] active:scale-90 cursor-pointer ${
-                                feedback[m.id] === 'like' ? 'text-[#b88a4f]' : ''
+                              className={`inline-flex h-7 w-7 items-center justify-center text-[var(--sk-label2)] transition-all hover:text-[var(--sk-accent)] active:scale-90 cursor-pointer ${
+                                feedback[m.id] === 'like' ? 'text-[var(--sk-accent)]' : ''
                               }`}
                               title="أعجبني"
                             >
@@ -1397,7 +1397,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                             <button
                               type="button"
                               onClick={() => handleCopyMsgContent(m.id, m.content)}
-                              className={`inline-flex h-7 w-7 items-center justify-center text-[#7f6a55] transition-all hover:text-[#b88a4f] active:scale-90 cursor-pointer ${
+                              className={`inline-flex h-7 w-7 items-center justify-center text-[var(--sk-label2)] transition-all hover:text-[var(--sk-accent)] active:scale-90 cursor-pointer ${
                                 copiedResponseId === m.id ? "text-emerald-600" : ""
                               }`}
                               title="نسخ الإجابة"
@@ -1435,8 +1435,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
         <div
           className={`fixed inset-x-0 bottom-0 z-10 pointer-events-none h-28 ${
             messages.length === 0
-              ? "bg-gradient-to-t from-[#d8b27b]/55 via-[#d8b27b]/20 to-transparent"
-              : "bg-gradient-to-t from-[#ece7de] via-[#ece7de]/80 to-transparent"
+              ? "bg-gradient-to-t from-[#d8b27b]/55 dark:from-[var(--sk-gold-mid)]/55 via-[#d8b27b]/20 dark:via-[var(--sk-gold-mid)]/20 to-transparent"
+              : "bg-gradient-to-t from-[var(--sk-bg)] via-[#ece7de]/80 dark:via-[var(--sk-bg)]/80 to-transparent"
           }`}
         />
 
@@ -1448,15 +1448,10 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                 e.preventDefault();
                 handleSendMessage(inputValue);
               }}
-              className="flex items-end gap-2 p-2 transition-shadow duration-300"
+              className="ai-composer-pill sk-rim flex items-end gap-2 p-2 transition-shadow duration-300"
               style={{
                 borderRadius: isMultiline ? '22px' : '9999px',
                 overflow: 'hidden',
-                background: 'linear-gradient(180deg, rgba(253,252,251,0.75) 0%, rgba(244,240,234,0.60) 100%)',
-                backdropFilter: 'blur(26px) saturate(210%) contrast(99%) brightness(102%)',
-                WebkitBackdropFilter: 'blur(26px) saturate(210%) contrast(99%) brightness(102%)',
-                border: '1px solid rgba(43,26,16,0.09)',
-                boxShadow: '0 16px 36px -12px rgba(43,26,16,0.14), 0 4px 10px -2px rgba(43,26,16,0.06), inset 0 1px 0 0 rgba(255,255,255,0.90), inset 0 -1px 0 0 rgba(43,26,16,0.05)',
                 transition: 'border-radius 0.3s ease',
               }}
             >
@@ -1467,25 +1462,25 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                 placeholder="اسأل عن أي أمر فقهي أو شرعي..."
                 disabled={isLoading || editingMessageId !== null}
                 rows={1}
-                className="flex-1 min-h-[38px] text-right bg-transparent border-none outline-none px-3 py-2 text-[13.5px] font-sans font-bold text-[#2b1a10] placeholder-[#7f6a55]/60 disabled:opacity-50 resize-none max-h-[130px] overflow-y-auto leading-relaxed break-words"
+                className="flex-1 min-h-[38px] text-right bg-transparent border-none outline-none px-3 py-2 text-[13.5px] font-sans font-bold text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 disabled:opacity-50 resize-none max-h-[130px] overflow-y-auto leading-relaxed break-words"
               />
               
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 type="submit"
                 disabled={!inputValue.trim() || isLoading || editingMessageId !== null}
-                className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 sk-rim ${
                   inputValue.trim() && !isLoading && editingMessageId === null
-                    ? "bg-[#b88a4f] text-[#fff9f1] shadow-md hover:bg-[#a0753e] active:scale-90 cursor-pointer"
-                    : "bg-[#e8dfd4]/60 text-[#7f6a55]/40 cursor-not-allowed"
+                    ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-md hover:bg-[var(--sk-accent-deep3)] active:scale-90 cursor-pointer"
+                    : "bg-[#e8dfd4]/60 dark:bg-[var(--sk-ring-track)]/60 text-[#7f6a55]/40 dark:text-[var(--sk-label2)]/40 cursor-not-allowed"
                 }`}
                 aria-label="إرسال السؤال"
               >
                 <ArrowUp size={15} strokeWidth={2.5} />
               </motion.button>
             </form>
-            <div className="text-center mt-1.5 flex items-center justify-center gap-1 text-[10px] font-sans text-[#7f6a55]/80 font-bold">
-              <AlertCircle size={10} className="text-[#b88a4f]" />
+            <div className="text-center mt-1.5 flex items-center justify-center gap-1 text-[10px] font-sans text-[#7f6a55]/80 dark:text-[var(--sk-label2)]/80 font-bold">
+              <AlertCircle size={10} className="text-[var(--sk-accent)]" />
               <span>الإجابات تقتصر بدقة على القرآن الكريم والبخاري ومسلم.</span>
             </div>
           </div>

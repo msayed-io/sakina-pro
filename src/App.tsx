@@ -119,7 +119,7 @@ function UserIdentityIcon({ user }: { user: AuthUser | null }) {
     return <img src={String(avatarUrl)} alt="" className="h-full w-full rounded-full object-cover" referrerPolicy="no-referrer" />;
   }
 
-  return <span className="text-[15px] font-black text-[#b88a4f]">{label.charAt(0).toUpperCase()}</span>;
+  return <span className="text-[15px] font-black text-[var(--sk-accent)]">{label.charAt(0).toUpperCase()}</span>;
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -145,10 +145,10 @@ function ScreenLoader({ label }: { label: string }) {
     <div
       role="status"
       aria-live="polite"
-      className="flex min-h-[100dvh] w-full items-center justify-center bg-[#ece7de] text-[#7f6a55]"
+      className="flex min-h-[100dvh] w-full items-center justify-center bg-[var(--sk-bg)] text-[var(--sk-label2)]"
     >
       <div className="flex flex-col items-center gap-4 text-center">
-        <SakeenahLineSpinner size={28} color="#b88a4f" label={label} />
+        <SakeenahLineSpinner size={28} color="var(--sk-accent)" label={label} />
         <span className="text-sm font-bold">{label}</span>
       </div>
     </div>
@@ -1105,7 +1105,7 @@ function AuthenticatedApp() {
      RENDER
      ═══════════════════════════════════════════════════════════════════ */
   return (
-      <div dir="rtl" className="min-h-screen w-full overflow-x-hidden bg-[#ece7de] text-[#2b1a10]">
+      <div dir="rtl" className="min-h-screen w-full overflow-x-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
       {/* ── Battery Optimization Modal ── */}
       {showBatteryModal && (
         <BatteryOptimizationModal
@@ -1170,7 +1170,7 @@ function AuthenticatedApp() {
               alt={`خلفية ${state.current.name}`}
               className="hero-image absolute inset-0 h-full w-full object-cover pointer-events-none z-0 will-change-transform [transform:translateZ(0)]"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#180d07]/65 via-[#2a170f]/30 to-[#ece7de] pointer-events-none z-[1] will-change-transform [transform:translateZ(0)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#180d07]/65 via-[#2a170f]/30 to-[var(--sk-bg)] pointer-events-none z-[1] will-change-transform [transform:translateZ(0)]" />
 
             <div className="relative z-[2] mx-auto w-full max-w-[390px] px-4 pb-7 pt-6">
               <header
@@ -1274,13 +1274,13 @@ function AuthenticatedApp() {
                   <div className="relative overflow-hidden rounded-[28px] cut-crystal-satin p-5 shadow-md">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-bold text-[#7f6a55] mb-1">
+                        <p className="text-[11px] font-bold text-[var(--sk-label2)] mb-1">
                           الصلاة الحالية
                         </p>
-                        <p className="text-[28px] font-display font-bold leading-none text-[#2b1a10] tracking-tight">
+                        <p className="text-[28px] font-display font-bold leading-none text-[var(--sk-label)] tracking-tight">
                           {state.current.name}
                         </p>
-                        <p className="mt-1.5 text-[11px] font-bold text-[#b88a4f]">
+                        <p className="mt-1.5 text-[11px] font-bold text-[var(--sk-accent)]">
                           التالية: {state.next.name}
                         </p>
                       </div>
@@ -1295,7 +1295,7 @@ function AuthenticatedApp() {
                             cx="50"
                             cy="50"
                             r={ringRadius}
-                            stroke="#e8dfd4"
+                            style={{ stroke: "var(--sk-ring-track)" }}
                             strokeWidth="6"
                             fill="none"
                           />
@@ -1303,7 +1303,7 @@ function AuthenticatedApp() {
                             cx="50"
                             cy="50"
                             r={ringRadius}
-                            stroke="#2b1a10"
+                            style={{ stroke: "var(--sk-progress-arc)" }}
                             strokeWidth="6"
                             strokeLinecap="round"
                             fill="none"
@@ -1312,8 +1312,8 @@ function AuthenticatedApp() {
                             className="ring-motion transition-all duration-1000 ease-in-out"
                           />
                         </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-[#2b1a10] mt-0.5">
-                          <p className="text-[9px] font-bold text-[#7f6a55] mb-0.5">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-[var(--sk-label)] mt-0.5">
+                          <p className="text-[9px] font-bold text-[var(--sk-label2)] mb-0.5">
                             متبقي
                           </p>
                           <p className="text-[11px] font-bold tabular-nums tracking-tight">
@@ -1322,11 +1322,11 @@ function AuthenticatedApp() {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-4 border-t border-[#e6dccf]/60 pt-3 flex items-center justify-between text-[11px]">
-                      <p className="font-bold text-[#7f6a55]">
+                    <div className="mt-4 border-t border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60 pt-3 flex items-center justify-between text-[11px]">
+                      <p className="font-bold text-[var(--sk-label2)]">
                         {state.gregorianDate}
                       </p>
-                      <p className="font-bold text-[#2b1a10]">
+                      <p className="font-bold text-[var(--sk-label)]">
                         {state.hijriDate}
                       </p>
                     </div>
@@ -1352,7 +1352,7 @@ function AuthenticatedApp() {
                       });
                     }
                   }}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${currentSlide === 0 ? "w-6 bg-[#2b1a10]" : "w-1.5 bg-[#c2b5a3] hover:bg-[#a89680]"}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${currentSlide === 0 ? "w-6 bg-[var(--sk-espresso-fill)]" : "w-1.5 bg-[var(--sk-label4)] hover:bg-[var(--sk-dot-hover)]"}`}
                   aria-label="البطاقة الأولى — الصلاة الحالية"
                 />
                 <button
@@ -1368,7 +1368,7 @@ function AuthenticatedApp() {
                       });
                     }
                   }}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${currentSlide === 1 ? "w-6 bg-[#2b1a10]" : "w-1.5 bg-[#c2b5a3] hover:bg-[#a89680]"}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${currentSlide === 1 ? "w-6 bg-[var(--sk-espresso-fill)]" : "w-1.5 bg-[var(--sk-label4)] hover:bg-[var(--sk-dot-hover)]"}`}
                   aria-label="البطاقة الثانية — حديث اليوم"
                 />
               </div>
@@ -1377,10 +1377,10 @@ function AuthenticatedApp() {
 
           <section className="mx-auto w-full max-w-[390px] px-4 pb-24 pt-5">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-[26px] font-display font-bold text-[#2b1a10]">
+              <h3 className="text-[26px] font-display font-bold text-[var(--sk-label)]">
                 مواقيت اليوم
               </h3>
-              <span className="text-[11.5px] font-bold text-[#7f6a55] bg-white/60 backdrop-blur-md border border-[#e6dccf] px-3.5 py-1 rounded-full shadow-sm">
+              <span className="text-[11.5px] font-bold text-[var(--sk-label2)] bg-white/60 backdrop-blur-md border border-[var(--sk-sep)] px-3.5 py-1 rounded-full shadow-sm">
                 {cityName || "الموقع الافتراضي"}
               </span>
             </div>
@@ -1395,14 +1395,14 @@ function AuthenticatedApp() {
                     dir="rtl"
                     className={`relative flex items-center justify-between px-5 py-3 rounded-full transition-all duration-300 ${
                       isHighlighted
-                        ? "bg-[#b88a4f]/22 border border-[#b88a4f]/30 shadow-[0_4px_16px_rgba(184,138,79,0.06)]"
-                        : "bg-transparent border border-transparent hover:bg-[#f7f2ea]/20"
+                        ? "bg-[#b88a4f]/22 dark:bg-[var(--sk-accent)]/22 border border-[#b88a4f]/30 dark:border-[var(--sk-accent)]/30 shadow-[0_4px_16px_rgba(184,138,79,0.06)]"
+                        : "bg-transparent border border-transparent hover:bg-[#f7f2ea]/20 dark:hover:bg-[var(--sk-bg2)]/20"
                     }`}
                   >
                     {/* Right Column: Prayer Name */}
                     <div className="w-1/3 flex items-center justify-start">
                       <span
-                        className={`text-[15px] transition-colors ${isHighlighted ? "text-[#b88a4f] font-black" : "text-[#2b1a10]"}`}
+                        className={`text-[15px] transition-colors ${isHighlighted ? "text-[var(--sk-accent)] font-black" : "text-[var(--sk-label)]"}`}
                       >
                         {prayer.name}
                       </span>
@@ -1430,12 +1430,12 @@ function AuthenticatedApp() {
                     {/* Left Column: Time Display */}
                     <div className="w-1/3 flex items-center justify-end">
                       <p
-                        className={`text-[15px] font-bold tabular-nums tracking-tight transition-colors ${isHighlighted ? "text-[#b88a4f]" : "text-[#2b1a10]"}`}
+                        className={`text-[15px] font-bold tabular-nums tracking-tight transition-colors ${isHighlighted ? "text-[var(--sk-accent)]" : "text-[var(--sk-label)]"}`}
                         dir="rtl"
                       >
                         {prayer.time}
                         <span
-                          className={`mr-1 text-[11px] font-bold ${isHighlighted ? "text-[#b88a4f]" : "text-[#7f6a55]"}`}
+                          className={`mr-1 text-[11px] font-bold ${isHighlighted ? "text-[var(--sk-accent)]" : "text-[var(--sk-label2)]"}`}
                         >
                           {prayer.meridiem}
                         </span>
@@ -1452,19 +1452,19 @@ function AuthenticatedApp() {
                 className="absolute inset-0 flex items-center"
                 aria-hidden="true"
               >
-                <div className="w-full border-t border-[#e6dccf]/70"></div>
+                <div className="w-full border-t border-[#e6dccf]/70 dark:border-[var(--sk-sep)]/70"></div>
               </div>
               <button
                 type="button"
                 onClick={() =>
                   setIsSecondaryTimesExpanded(!isSecondaryTimesExpanded)
                 }
-                className="relative flex items-center gap-1.5 bg-[#ece7de] px-4 text-[#7f6a55] hover:text-[#2b1a10] transition-colors cursor-pointer text-[13px] font-bold select-none focus:outline-none"
+                className="relative flex items-center gap-1.5 bg-[var(--sk-bg)] px-4 text-[var(--sk-label2)] hover:text-[var(--sk-label)] transition-colors cursor-pointer text-[13px] font-bold select-none focus:outline-none"
               >
                 <span>أوقات أخرى</span>
                 <ChevronDown
                   size={14}
-                  className={`transition-transform duration-300 text-[#7f6a55] ${
+                  className={`transition-transform duration-300 text-[var(--sk-label2)] ${
                     isSecondaryTimesExpanded ? "rotate-180" : ""
                   }`}
                 />
@@ -1481,11 +1481,11 @@ function AuthenticatedApp() {
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   className="overflow-hidden"
                 >
-                  <div className="space-y-4 px-4 pb-2 pt-1 text-[#2b1a10]">
+                  <div className="space-y-4 px-4 pb-2 pt-1 text-[var(--sk-label)]">
                     {/* Row 1: Duha */}
                     <div className="flex items-center justify-between">
                       <span className="text-[14.5px] font-bold">الضحى</span>
-                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[#b88a4f]">
+                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[var(--sk-accent)]">
                         {secondaryTimes.duha.time} {secondaryTimes.duha.meridiem}
                       </span>
                     </div>
@@ -1495,7 +1495,7 @@ function AuthenticatedApp() {
                       <span className="text-[14.5px] font-bold">
                         منتصف الليل
                       </span>
-                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[#b88a4f]">
+                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[var(--sk-accent)]">
                         {secondaryTimes.midnight.time} {secondaryTimes.midnight.meridiem}
                       </span>
                     </div>
@@ -1505,7 +1505,7 @@ function AuthenticatedApp() {
                       <span className="text-[14.5px] font-bold">
                         الثلث الأول من الليل
                       </span>
-                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[#b88a4f]">
+                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[var(--sk-accent)]">
                         {secondaryTimes.firstThird.time} {secondaryTimes.firstThird.meridiem}
                       </span>
                     </div>
@@ -1515,7 +1515,7 @@ function AuthenticatedApp() {
                       <span className="text-[14.5px] font-bold">
                         الثلث الأخير من الليل
                       </span>
-                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[#b88a4f]">
+                      <span className="text-[14.5px] font-bold tabular-nums tracking-tight text-[var(--sk-accent)]">
                         {secondaryTimes.lastThird.time} {secondaryTimes.lastThird.meridiem}
                       </span>
                     </div>
@@ -1537,7 +1537,7 @@ function AuthenticatedApp() {
               >
                 {/* Settings button in glassmorphic capsule */}
                 <button
-                  className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full cut-crystal-capsule shadow-md text-[#2b1a10] transition-all duration-300 active:scale-95 cursor-pointer"
+                  className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full cut-crystal-capsule shadow-md text-[var(--sk-label)] transition-all duration-300 active:scale-95 cursor-pointer"
                   aria-label="فتح الإعدادات"
                   onClick={() => setActiveTab("settings")}
                 >
@@ -1545,7 +1545,7 @@ function AuthenticatedApp() {
                 </button>
 
                 {/* Sakinah text in glassmorphic capsule */}
-                <div className="pointer-events-auto cut-crystal-capsule px-6 h-10 rounded-full shadow-md flex items-center justify-center text-[#2b1a10]">
+                <div className="pointer-events-auto cut-crystal-capsule px-6 h-10 rounded-full shadow-md flex items-center justify-center text-[var(--sk-label)]">
                   <span className="text-[17px] font-display font-black leading-none pt-[1px]">
                     سَكِينَة
                   </span>
@@ -1607,7 +1607,7 @@ function AuthenticatedApp() {
           >
             {activeTab === "sakeenah-ai" && !showAzkarCounter && currentUser && isAuthReady && <ProgressiveBlur />}
             {!isAuthReady ? (
-              <div className="flex min-h-screen items-center justify-center bg-[#ece7de] text-sm font-bold text-[#7f6a55]">
+              <div className="flex min-h-screen items-center justify-center bg-[var(--sk-bg)] text-sm font-bold text-[var(--sk-label2)]">
                 جارٍ التحقق من الجلسة...
               </div>
             ) : currentUser ? (
@@ -1678,7 +1678,7 @@ function AuthenticatedApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 overflow-y-auto bg-[#ece7de]"
+            className="fixed inset-0 z-50 overflow-y-auto bg-[var(--sk-bg)]"
           >
             <Suspense fallback={<ScreenLoader label="جارٍ تحميل مكتبة سكينة..." />}>
               <SakinaLibraryScreen
@@ -1700,7 +1700,7 @@ function AuthenticatedApp() {
         activeTab !== "settings" &&
         activeTab !== "sakeenah-ai" && (
           <nav className="fixed inset-x-0 bottom-5 z-40 flex justify-center pointer-events-none px-2">
-            <div className="pointer-events-auto flex items-center gap-1 rounded-[32px] cut-crystal-capsule px-2 py-1.5 shadow-lg max-w-full">
+            <div className="pointer-events-auto flex items-center gap-1 rounded-[32px] cut-crystal-capsule sk-rim px-2 py-1.5 shadow-lg max-w-full">
               {[
                 { id: "main", label: "الرئيسية", icon: <HomeIcon /> },
                 {
@@ -1736,14 +1736,14 @@ function AuthenticatedApp() {
                     }}
                     className={`relative flex items-center gap-1.5 rounded-[22px] transition-all duration-200 cursor-pointer ${
                       isActive
-                        ? "px-4 py-2 text-[#2b1a10]"
-                        : "px-3 py-2 text-[#7f6a55] hover:bg-[#2b1a10]/5"
+                        ? "px-4 py-2 text-[var(--sk-label)]"
+                        : "px-3 py-2 text-[var(--sk-label2)] hover:bg-[#2b1a10]/5 dark:hover:bg-[var(--sk-shade)]/5"
                     }`}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="activeTabIndicator"
-                        className="absolute inset-0 rounded-[24px] bg-[#2b1a10]/10 shadow-inner"
+                        className="absolute inset-0 rounded-[24px] bg-[#2b1a10]/10 dark:bg-[var(--sk-shade)]/10 sk-rim-nested shadow-inner"
                         transition={{
                           type: "spring",
                           stiffness: 400,
@@ -1788,7 +1788,7 @@ function AuthenticatedApp() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-0 z-50 overflow-y-auto bg-[#ece7de]"
+            className="fixed inset-0 z-50 overflow-y-auto bg-[var(--sk-bg)]"
           >
             <PrayerSettingsScreen
               prayerId={activePrayerSettings}

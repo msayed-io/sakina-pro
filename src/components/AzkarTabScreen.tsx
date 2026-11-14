@@ -51,7 +51,7 @@ const getHisnCategoryStyle = (category: string) => {
   if (category.includes("صباح"))
     return s(
       Sun,
-      "bg-gradient-to-br from-[#deab65] to-[#b88a4f] shadow-sm border border-[#c49a62]",
+      "bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] shadow-sm border border-[var(--sk-accent-variant)]",
     );
   if (category.includes("مساء"))
     return s(
@@ -66,7 +66,7 @@ const getHisnCategoryStyle = (category: string) => {
   if (category.includes("استيقاظ"))
     return s(
       Sunrise,
-      "bg-gradient-to-br from-[#deab65] to-[#b88a4f] shadow-sm border border-[#c49a62]",
+      "bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] shadow-sm border border-[var(--sk-accent-variant)]",
     );
   if (
     category.includes("صلاة") ||
@@ -75,7 +75,7 @@ const getHisnCategoryStyle = (category: string) => {
   )
     return s(
       MapPin,
-      "bg-gradient-to-br from-[#80a390] to-[#5a7d6a] shadow-sm border border-[#6e907e]",
+      "bg-gradient-to-br from-[var(--sk-success-soft)] to-[#5a7d6a] shadow-sm border border-[#6e907e]",
     );
   if (category.includes("منزل") || category.includes("بيت"))
     return s(
@@ -109,7 +109,7 @@ const getHisnCategoryStyle = (category: string) => {
   )
     return s(
       AlertCircle,
-      "bg-gradient-to-br from-[#b87a7a] to-[#965858] shadow-sm border border-[#a66969]",
+      "bg-gradient-to-br from-[#b87a7a] to-[#965858] shadow-sm border border-[var(--sk-danger-soft)]",
     );
   if (category.includes("استخارة") || category.includes("زواج"))
     return s(
@@ -119,7 +119,7 @@ const getHisnCategoryStyle = (category: string) => {
   if (category.includes("مريض") || category.includes("مرض"))
     return s(
       BriefcaseMedical,
-      "bg-gradient-to-br from-[#b87a7a] to-[#965858] shadow-sm border border-[#a66969]",
+      "bg-gradient-to-br from-[#b87a7a] to-[#965858] shadow-sm border border-[var(--sk-danger-soft)]",
     );
   if (
     category.includes("شيطان") ||
@@ -197,7 +197,7 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
           strokeWidth={1.5}
         />
       ),
-      bg: "bg-gradient-to-br from-[#deab65] to-[#b88a4f] shadow-amber-700/20 border border-[#c49a62]",
+      bg: "bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] shadow-amber-700/20 border border-[var(--sk-accent-variant)]",
     },
     {
       title: "أذكار المساء",
@@ -239,26 +239,26 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
           strokeWidth={1.5}
         />
       ),
-      bg: "bg-gradient-to-br from-[#80a390] to-[#5a7d6a] shadow-teal-900/20 border border-[#6e907e]",
+      bg: "bg-gradient-to-br from-[var(--sk-success-soft)] to-[#5a7d6a] shadow-teal-900/20 border border-[#6e907e]",
     },
   ];
 
   return (
     <div
       dir="rtl"
-      className="bg-[#ece7de] min-h-screen w-full max-w-[390px] mx-auto overflow-y-auto overflow-x-hidden pt-24 pb-28 font-sans relative"
+      className="bg-[var(--sk-bg)] min-h-screen w-full max-w-[390px] mx-auto overflow-y-auto overflow-x-hidden pt-24 pb-28 font-sans relative"
     >
       {/* Background soft ambient shapes clipped safely */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
       </div>
 
       {/* ── FLOATING TOP HEADER ── */}
       <div className="fixed top-6 inset-x-0 px-5 max-w-[390px] mx-auto h-10 flex items-center justify-between z-40 pointer-events-none">
         {/* Right Element (in RTL): Azkar Title Capsule */}
         <div className="cut-crystal-capsule px-5 h-10 rounded-full shadow-md flex items-center justify-center pointer-events-auto">
-          <span className="text-[14.5px] font-bold text-[#2b1a10] whitespace-nowrap pt-0.5">
+          <span className="text-[14.5px] font-bold text-[var(--sk-label)] whitespace-nowrap pt-0.5">
             الأذكار
           </span>
         </div>
@@ -267,11 +267,11 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
         <motion.button
           whileTap={{ scale: 0.9, rotate: 180 }}
           onClick={refreshState}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[#2b1a10] hover:text-[#b88a4f] active:scale-95 transition-all pointer-events-auto cursor-pointer"
+          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
           title="تحديث وإعادة ضبط الأذكار"
           aria-label="تحديث وإعادة ضبط الأذكار"
         >
-          <RefreshCw size={18} className="text-[#b88a4f]" />
+          <RefreshCw size={18} className="text-[var(--sk-accent)]" />
         </motion.button>
       </div>
 
@@ -283,10 +283,10 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
           className="w-full p-4 cut-crystal-panel rounded-[26px] hover:scale-[1.01] transition-all shadow-md flex flex-row-reverse items-center justify-between group text-right min-h-[90px]"
         >
           <div className="flex-1 pr-4 pl-2 flex flex-col justify-center h-full space-y-1">
-            <h3 className="text-[17px] font-bold text-[#2b1a10] leading-tight">
+            <h3 className="text-[17px] font-bold text-[var(--sk-label)] leading-tight">
               أسماء الله الحسنى
             </h3>
-            <p className="text-[12px] text-[#7f6a55] font-bold leading-relaxed">
+            <p className="text-[12px] text-[var(--sk-label2)] font-bold leading-relaxed">
               تعلّم، تدبّر وتعرّف على معاني الـ 99 اسماً
             </p>
           </div>
@@ -322,10 +322,10 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
             </div>
 
             <div className="text-right mt-3 w-full">
-              <h2 className="text-[16px] font-bold text-[#2b1a10] leading-tight mb-0.5">
+              <h2 className="text-[16px] font-bold text-[var(--sk-label)] leading-tight mb-0.5">
                 {cat.title}
               </h2>
-              <p className="text-[12px] text-[#7f6a55] font-bold">
+              <p className="text-[12px] text-[var(--sk-label2)] font-bold">
                 {cat.subtitle}
               </p>
             </div>
@@ -341,21 +341,21 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
         className="mb-10"
       >
         <div className="px-5 mb-4 flex items-center justify-between">
-          <h2 className="text-[20px] font-bold text-[#2b1a10]">
+          <h2 className="text-[20px] font-bold text-[var(--sk-label)]">
             يوميات المسلم
           </h2>
-          <span className="text-[12px] font-bold text-[#b88a4f] bg-[#f7f2ea] border border-[#e6dccf] px-3 py-1 rounded-full">
+          <span className="text-[12px] font-bold text-[var(--sk-accent)] bg-[var(--sk-bg2)] border border-[var(--sk-sep)] px-3 py-1 rounded-full">
             {completedCount} / {dailyTracker.tasks.length}
           </span>
         </div>
 
         <div className="px-5 mb-5">
-          <div className="w-full h-2.5 bg-[#e8dfd4] rounded-full overflow-hidden shadow-inner">
+          <div className="w-full h-2.5 bg-[var(--sk-ring-track)] rounded-full overflow-hidden shadow-inner">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${Math.round(progress * 100)}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="h-full bg-[#b88a4f] rounded-full relative"
+              className="h-full bg-[var(--sk-accent)] rounded-full relative"
             >
               <div className="absolute inset-0 bg-white/10 w-full h-full animate-pulse"></div>
             </motion.div>
@@ -379,29 +379,29 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
                     <div
                       className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 shadow-inner ${
                         done
-                          ? "bg-[#b88a4f] text-[#fdfcfb]"
-                          : "bg-[#e8dfd4] text-[#7f6a55]"
+                          ? "bg-[var(--sk-accent)] text-[var(--sk-bg3)]"
+                          : "bg-[var(--sk-ring-track)] text-[var(--sk-label2)]"
                       }`}
                     >
                       {done ? (
                         <Check size={14} strokeWidth={3} />
                       ) : (
-                        <div className="w-2 h-2 rounded-full bg-[#ddd2c4]"></div>
+                        <div className="w-2 h-2 rounded-full bg-[var(--sk-sep-solid)]"></div>
                       )}
                     </div>
 
                     <span
                       className={`text-[15px] font-bold flex-1 text-right transition-colors duration-300 ${
                         done
-                          ? "text-[#7f6a55] line-through decoration-[#7f6a55]/40"
-                          : "text-[#2b1a10]"
+                          ? "text-[var(--sk-label2)] line-through decoration-[#7f6a55]/40 dark:decoration-[var(--sk-label2)]/40"
+                          : "text-[var(--sk-label)]"
                       }`}
                     >
                       {task.text}
                     </span>
 
                     {!isLast && (
-                      <div className="absolute bottom-0 left-0 right-14 h-[1px] bg-[#e6dccf]/60" />
+                      <div className="absolute bottom-0 left-0 right-14 h-[1px] bg-[#e6dccf]/60 dark:bg-[var(--sk-sep)]/60" />
                     )}
                   </motion.button>
                 );
@@ -418,8 +418,8 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
         transition={{ delay: 0.4 }}
       >
         <div className="px-5 mb-4">
-          <h2 className="text-[20px] font-bold text-[#2b1a10]">حصن المسلم</h2>
-          <p className="text-[13px] text-[#7f6a55] font-bold mt-1">
+          <h2 className="text-[20px] font-bold text-[var(--sk-label)]">حصن المسلم</h2>
+          <p className="text-[13px] text-[var(--sk-label2)] font-bold mt-1">
             أدعية وأذكار من السنة النبوية
           </p>
         </div>
@@ -433,7 +433,7 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
                 <button
                   key={cat}
                   onClick={() => onOpenHisnCategory(cat)}
-                  className="relative w-full p-4 flex items-center gap-4 text-right transition-all duration-150 group hover:bg-[#e6dccf]/30 active:bg-[#e6dccf]/60"
+                  className="relative w-full p-4 flex items-center gap-4 text-right transition-all duration-150 group hover:bg-[#e6dccf]/30 dark:hover:bg-[var(--sk-sep)]/30 active:bg-[#e6dccf]/60 dark:active:bg-[var(--sk-sep)]/60"
                 >
                   <div
                     className={`w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 ${style.bg}`}
@@ -442,20 +442,20 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="text-[15px] font-bold text-[#2b1a10] leading-tight mb-0.5">
+                    <h3 className="text-[15px] font-bold text-[var(--sk-label)] leading-tight mb-0.5">
                       {cat}
                     </h3>
-                    <p className="text-[12px] font-bold text-[#7f6a55]">
+                    <p className="text-[12px] font-bold text-[var(--sk-label2)]">
                       {count} ذكر
                     </p>
                   </div>
 
-                  <div className="text-[#b88a4f] opacity-50 group-hover:opacity-100 transition-opacity">
+                  <div className="text-[var(--sk-accent)] opacity-50 group-hover:opacity-100 transition-opacity">
                     <ChevronLeft size={18} strokeWidth={2.5} />
                   </div>
 
                   {!isLast && (
-                    <div className="absolute bottom-0 left-0 right-16 h-[1px] bg-[#e6dccf]/60" />
+                    <div className="absolute bottom-0 left-0 right-16 h-[1px] bg-[#e6dccf]/60 dark:bg-[var(--sk-sep)]/60" />
                   )}
                 </button>
               );

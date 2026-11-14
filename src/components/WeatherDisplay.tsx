@@ -40,8 +40,8 @@ export function WeatherDisplay({ weather }: { weather: WeatherData | null }) {
   }
 
   return (
-    <div className="cut-crystal-satin px-3 py-1.5 text-[#2b1a10] inline-flex items-center gap-1.5 text-[11.5px] font-semibold shadow-sm mb-1.5">
-      <Icon className="h-3.5 w-3.5 text-[#deab65]" />
+    <div className="cut-crystal-satin sk-rim px-3 py-1.5 text-[var(--sk-label)] inline-flex items-center gap-1.5 text-[11.5px] font-semibold shadow-sm mb-1.5">
+      <Icon className="h-3.5 w-3.5 text-[var(--sk-accent-bright)]" />
       <span>{temp}° مئوية</span>
       <span className="opacity-40 text-[9px]">•</span>
       <span>{conditionText}</span>

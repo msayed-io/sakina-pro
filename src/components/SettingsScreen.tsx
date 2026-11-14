@@ -71,14 +71,15 @@ const Switch = React.memo(function Switch({
       onClick={() => onChange(!checked)}
       className="relative w-10 h-5.5 rounded-full p-0.5 transition-colors duration-300 focus:outline-none flex items-center shadow-inner cursor-pointer"
       style={{
-        backgroundColor: checked ? "#b88a4f" : "#e6dccf",
+        backgroundColor: checked ? "var(--sk-accent)" : "var(--sk-sep)",
         justifyContent: checked ? "flex-start" : "flex-end",
       }}
     >
       <motion.div
         layout
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
-        className="w-4.5 h-4.5 rounded-full bg-white shadow-md border border-white"
+        data-checked={checked}
+        className="w-4.5 h-4.5 rounded-full bg-white shadow-md border border-white dark:data-[checked=true]:bg-black dark:data-[checked=true]:border-black"
       />
     </button>
   );
@@ -120,17 +121,17 @@ export const SettingsScreen = React.memo(function SettingsScreen({
   return (
     <div
       dir="rtl"
-      className="mx-auto w-full max-w-[390px] px-5 pt-24 pb-28 font-sans bg-[#ece7de] min-h-screen relative overflow-hidden"
+      className="mx-auto w-full max-w-[390px] px-5 pt-24 pb-28 font-sans bg-[var(--sk-bg)] min-h-screen relative overflow-hidden"
     >
       {/* Background soft ambient shapes */}
-      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* ── FLOATING TOP HEADER ── */}
       <div className="fixed top-6 left-5 right-5 flex items-center justify-between z-45 pointer-events-none">
         {/* Right Element (in RTL): Settings Capsule */}
         <div className="cut-crystal-capsule px-5 h-10 rounded-full shadow-md flex items-center justify-center pointer-events-auto">
-          <span className="text-[14.5px] font-bold text-[#2b1a10] whitespace-nowrap pt-0.5">
+          <span className="text-[14.5px] font-bold text-[var(--sk-label)] whitespace-nowrap pt-0.5">
             الإعدادات
           </span>
         </div>
@@ -138,7 +139,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
         {/* Left Element: Back Button */}
         <button
           onClick={onBack}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[#2b1a10] active:scale-95 transition-transform pointer-events-auto cursor-pointer"
+          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto cursor-pointer"
           aria-label="رجوع"
         >
           <ChevronRight size={20} className="mr-0.5" />
@@ -153,26 +154,26 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                 <img
                   src={String(currentUser.user_metadata.avatar_url)}
                   alt="صورة الحساب"
-                  className="h-14 w-14 rounded-full border-2 border-[#deab65]/50 object-cover"
+                  className="h-14 w-14 rounded-full border-2 border-[#deab65]/50 dark:border-[var(--sk-accent-bright)]/50 object-cover"
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-b from-[#deab65] to-[#b88a4f] text-xl font-black text-white">
+                <div className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-b from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-xl font-black text-[var(--sk-on-espresso)]">
                   {String(currentUser.user_metadata?.full_name ?? currentUser.user_metadata?.name ?? currentUser.email ?? "س").charAt(0).toUpperCase()}
                 </div>
               )}
               <div className="min-w-0 flex-1 text-right">
-                <p className="text-[12px] font-bold text-[#b88a4f]">بيانات الحساب</p>
-                <p className="mt-1 truncate text-[15px] font-black text-[#2b1a10]">
+                <p className="text-[12px] font-bold text-[var(--sk-accent)]">بيانات الحساب</p>
+                <p className="mt-1 truncate text-[15px] font-black text-[var(--sk-label)]">
                   {String(currentUser.user_metadata?.full_name ?? currentUser.user_metadata?.name ?? "مستخدم سَكِينَة")}
                 </p>
-                <p className="mt-1 truncate text-[11px] font-bold text-[#7f6a55]">{currentUser.email}</p>
+                <p className="mt-1 truncate text-[11px] font-bold text-[var(--sk-label2)]">{currentUser.email}</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => void onSignOut()}
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-[#b88a4f]/25 bg-[#b88a4f]/10 text-sm font-black text-[#7f6a55] transition hover:bg-[#b88a4f]/15 active:scale-[0.98]"
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-[#b88a4f]/25 dark:border-[var(--sk-accent)]/25 bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-sm font-black text-[var(--sk-label2)] transition hover:bg-[#b88a4f]/15 dark:hover:bg-[var(--sk-accent)]/15 active:scale-[0.98]"
             >
               <LogOut size={16} />
               تسجيل الخروج
@@ -182,9 +183,9 @@ export const SettingsScreen = React.memo(function SettingsScreen({
 
         {/* ── SECTION 1: LOCATION SETTINGS ── */}
         <div className="cut-crystal-panel rounded-[26px] p-5 space-y-4 shadow-md">
-          <div className="flex items-center justify-between border-b border-[#e6dccf]/40 pb-3">
+          <div className="flex items-center justify-between border-b border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 pb-3">
             <div className="flex items-center gap-2">
-              <span className="text-[12px] font-bold text-[#b88a4f]">
+              <span className="text-[12px] font-bold text-[var(--sk-accent)]">
                 الموقع الجغرافي
               </span>
             </div>
@@ -199,14 +200,14 @@ export const SettingsScreen = React.memo(function SettingsScreen({
           {/* Current City display */}
           <div className="flex items-center justify-between cut-crystal-satin rounded-2xl p-3.5 shadow-sm">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#b88a4f]/10 text-[#b88a4f]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]">
                 <MapPin size={18} strokeWidth={2} />
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-bold text-[#7f6a55]/80 leading-none">
+                <p className="text-[10px] font-bold text-[#7f6a55]/80 dark:text-[var(--sk-label2)]/80 leading-none">
                   الموقع الحالي المعتمد
                 </p>
-                <p className="text-[14.5px] font-bold text-[#2b1a10] leading-none mt-1.5">
+                <p className="text-[14.5px] font-bold text-[var(--sk-label)] leading-none mt-1.5">
                   {cityName}
                 </p>
               </div>
@@ -214,7 +215,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={onChangeLocation}
-              className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-gradient-to-b from-[#deab65] to-[#b88a4f] text-[11px] font-bold text-white hover:opacity-95 transition-opacity shadow-sm shadow-amber-900/10 cursor-pointer"
+              className="inline-flex items-center justify-center h-8 px-3 rounded-lg bg-gradient-to-b from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[11px] font-bold text-[var(--sk-on-espresso)] hover:opacity-95 transition-opacity shadow-sm shadow-amber-900/10 cursor-pointer"
             >
               تغيير الموقع
             </motion.button>
@@ -223,14 +224,14 @@ export const SettingsScreen = React.memo(function SettingsScreen({
           {/* Auto Location toggle */}
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#b88a4f]/10 text-[#b88a4f]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]">
                 <Compass size={18} strokeWidth={2} />
               </div>
               <div className="text-right">
-                <p className="text-[13.5px] font-bold text-[#2b1a10] leading-none">
+                <p className="text-[13.5px] font-bold text-[var(--sk-label)] leading-none">
                   تحديد الموقع التلقائي (GPS)
                 </p>
-                <p className="text-[10.5px] text-[#7f6a55]/80 font-bold mt-1.5">
+                <p className="text-[10.5px] text-[#7f6a55]/80 dark:text-[var(--sk-label2)]/80 font-bold mt-1.5">
                   تحديث الميقات والقبلة أينما كنت
                 </p>
               </div>
@@ -239,7 +240,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
           </div>
 
           {/* Lat/Lon indicators */}
-          <div className="flex items-center justify-between bg-[#f7f2ea]/40 border border-[#e6dccf]/30 rounded-xl px-3.5 py-2 text-[10.5px] text-[#7f6a55]/95 font-bold">
+          <div className="flex items-center justify-between bg-[#f7f2ea]/40 dark:bg-[var(--sk-bg2)]/40 border border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30 rounded-xl px-3.5 py-2 text-[10.5px] text-[#7f6a55]/95 dark:text-[var(--sk-label2)]/95 font-bold">
             <span>خط العرض: {cityLat.toFixed(4)}</span>
             <span>خط الطول: {cityLon.toFixed(4)}</span>
           </div>
@@ -247,31 +248,31 @@ export const SettingsScreen = React.memo(function SettingsScreen({
 
         {/* ── SECTION 2: PRAYER CALCULATIONS ── */}
         <div className="cut-crystal-panel rounded-[26px] p-5 space-y-4 shadow-md">
-          <div className="flex items-center gap-2 mb-2 border-b border-[#e6dccf]/40 pb-3">
-            <span className="text-[12px] font-bold text-[#b88a4f]">
+          <div className="flex items-center gap-2 mb-2 border-b border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 pb-3">
+            <span className="text-[12px] font-bold text-[var(--sk-accent)]">
               طريقة الحساب والشرع
             </span>
           </div>
 
           {/* Calculation Method row */}
-          <div className="flex flex-col border-b border-[#e6dccf]/30 pb-3 last:border-0 last:pb-0">
+          <div className="flex flex-col border-b border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30 pb-3 last:border-0 last:pb-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b88a4f]/10 text-[#b88a4f]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]">
                   <Sliders size={18} strokeWidth={1.8} />
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[14px] font-bold text-[#2b1a10]">
+                    <p className="text-[14px] font-bold text-[var(--sk-label)]">
                       طريقة الحساب
                     </p>
                     {isAutoCalcMethod && (
-                      <span className="rounded-full bg-[#b88a4f]/10 px-2 py-0.5 text-[9px] font-bold text-[#b88a4f] border border-[#b88a4f]/20">
+                      <span className="rounded-full bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 px-2 py-0.5 text-[9px] font-bold text-[var(--sk-accent)] border border-[#b88a4f]/20 dark:border-[var(--sk-accent)]/20">
                         تلقائي
                       </span>
                     )}
                   </div>
-                  <p className="text-[11.5px] text-[#7f6a55] font-bold">
+                  <p className="text-[11.5px] text-[var(--sk-label2)] font-bold">
                     {calcMethodLabels[calcMethod]}
                   </p>
                 </div>
@@ -284,7 +285,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                 {!isAutoCalcMethod && (
                   <button
                     onClick={() => setIsCalcExpanded(!isCalcExpanded)}
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f7f2ea] border border-[#e6dccf] text-[#7f6a55] active:scale-90 transition-transform cursor-pointer"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--sk-bg2)] border border-[var(--sk-sep)] text-[var(--sk-label2)] active:scale-90 transition-transform cursor-pointer"
                   >
                     <ChevronDown
                       size={14}
@@ -317,8 +318,8 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                           }}
                           className={`w-full text-right flex items-center justify-between px-3 py-2 rounded-xl text-[12.5px] font-bold transition-all cursor-pointer ${
                             isSelected
-                              ? "bg-[#b88a4f] text-white shadow-sm"
-                              : "text-[#2b1a10] hover:bg-[#b88a4f]/5"
+                              ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm"
+                              : "text-[var(--sk-on-accent)] hover:bg-[#b88a4f]/5 dark:hover:bg-[var(--sk-accent)]/5"
                           }`}
                         >
                           <span>{label}</span>
@@ -338,21 +339,21 @@ export const SettingsScreen = React.memo(function SettingsScreen({
           <div className="flex flex-col pt-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b88a4f]/10 text-[#b88a4f]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]">
                   <BookOpen size={18} strokeWidth={1.8} />
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[14px] font-bold text-[#2b1a10]">
+                    <p className="text-[14px] font-bold text-[var(--sk-label)]">
                       المذهب الفقهي (العصر)
                     </p>
                     {isAutoAsrSchool && (
-                      <span className="rounded-full bg-[#b88a4f]/10 px-2 py-0.5 text-[9px] font-bold text-[#b88a4f] border border-[#b88a4f]/20">
+                      <span className="rounded-full bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 px-2 py-0.5 text-[9px] font-bold text-[var(--sk-accent)] border border-[#b88a4f]/20 dark:border-[var(--sk-accent)]/20">
                         تلقائي
                       </span>
                     )}
                   </div>
-                  <p className="text-[11.5px] text-[#7f6a55] font-bold">
+                  <p className="text-[11.5px] text-[var(--sk-label2)] font-bold">
                     {asrSchool === "STANDARD" ? "الجمهور" : "الحنفي"}
                   </p>
                 </div>
@@ -365,7 +366,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                 {!isAutoAsrSchool && (
                   <button
                     onClick={() => setIsAsrExpanded(!isAsrExpanded)}
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f7f2ea] border border-[#e6dccf] text-[#7f6a55] active:scale-90 transition-transform cursor-pointer"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--sk-bg2)] border border-[var(--sk-sep)] text-[var(--sk-label2)] active:scale-90 transition-transform cursor-pointer"
                   >
                     <ChevronDown
                       size={14}
@@ -398,8 +399,8 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                           }}
                           className={`w-full text-right flex items-center justify-between px-3 py-2 rounded-xl text-[12.5px] font-bold transition-all cursor-pointer ${
                             isSelected
-                              ? "bg-[#b88a4f] text-white shadow-sm"
-                              : "text-[#2b1a10] hover:bg-[#b88a4f]/5"
+                              ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm"
+                              : "text-[var(--sk-on-accent)] hover:bg-[#b88a4f]/5 dark:hover:bg-[var(--sk-accent)]/5"
                           }`}
                         >
                           <span>{label}</span>
@@ -418,8 +419,8 @@ export const SettingsScreen = React.memo(function SettingsScreen({
 
         {/* ── SECTION 3: SUNNAH REMINDERS ── */}
         <div className="cut-crystal-panel rounded-[26px] p-5 space-y-4 shadow-md">
-          <div className="flex items-center gap-2 mb-2 border-b border-[#e6dccf]/40 pb-3">
-            <span className="text-[12px] font-bold text-[#b88a4f]">
+          <div className="flex items-center gap-2 mb-2 border-b border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 pb-3">
+            <span className="text-[12px] font-bold text-[var(--sk-accent)]">
               منبهات السنن والقرآن
             </span>
           </div>
@@ -429,15 +430,15 @@ export const SettingsScreen = React.memo(function SettingsScreen({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300 ${isMulkReminderEnabled ? "bg-[#b88a4f]/10 text-[#b88a4f]" : "bg-[#e6dccf]/20 text-[#7f6a55]"}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300 ${isMulkReminderEnabled ? "bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]" : "bg-[#e6dccf]/20 dark:bg-[var(--sk-sep)]/20 text-[var(--sk-label2)]"}`}
                 >
                   <Bell size={18} strokeWidth={2} />
                 </div>
                 <div className="text-right">
-                  <p className="text-[14px] font-bold text-[#2b1a10]">
+                  <p className="text-[14px] font-bold text-[var(--sk-label)]">
                     منبه سورة الملك
                   </p>
-                  <p className="text-[11.5px] text-[#7f6a55] font-bold">
+                  <p className="text-[11.5px] text-[var(--sk-label2)] font-bold">
                     تنبيه يومي لقراءة السورة المنجية
                   </p>
                 </div>
@@ -450,7 +451,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
 
             <div className="relative flex items-center justify-between px-1 py-1">
               <span
-                className={`text-[13px] font-bold transition-colors duration-300 ${isMulkReminderEnabled ? "text-[#2b1a10]" : "text-[#7f6a55]/60"}`}
+                className={`text-[13px] font-bold transition-colors duration-300 ${isMulkReminderEnabled ? "text-[var(--sk-label)]" : "text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60"}`}
               >
                 وقت التنبيه
               </span>
@@ -458,8 +459,8 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                 <span
                   className={`text-[13.5px] font-bold transition-colors duration-300 ${
                     isMulkReminderEnabled
-                      ? "text-[#b88a4f]"
-                      : "text-[#7f6a55]/40"
+                      ? "text-[var(--sk-accent)]"
+                      : "text-[#7f6a55]/40 dark:text-[var(--sk-label2)]/40"
                   }`}
                 >
                   {formatTime12h(mulkReminderTime)}
@@ -476,22 +477,22 @@ export const SettingsScreen = React.memo(function SettingsScreen({
             </div>
           </div>
 
-          <div className="border-t border-[#e6dccf]/30 my-2" />
+          <div className="border-t border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30 my-2" />
 
           {/* Surah Al-Baqarah Group */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300 ${isBaqarahReminderEnabled ? "bg-[#b88a4f]/10 text-[#b88a4f]" : "bg-[#e6dccf]/20 text-[#7f6a55]"}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300 ${isBaqarahReminderEnabled ? "bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]" : "bg-[#e6dccf]/20 dark:bg-[var(--sk-sep)]/20 text-[var(--sk-label2)]"}`}
                 >
                   <Bell size={18} strokeWidth={2} />
                 </div>
                 <div className="text-right">
-                  <p className="text-[14px] font-bold text-[#2b1a10]">
+                  <p className="text-[14px] font-bold text-[var(--sk-label)]">
                     منبه سورة البقرة
                   </p>
-                  <p className="text-[11.5px] text-[#7f6a55] font-bold">
+                  <p className="text-[11.5px] text-[var(--sk-label2)] font-bold">
                     تنبيه يومي لقراءة سورة البركة
                   </p>
                 </div>
@@ -504,7 +505,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
 
             <div className="relative flex items-center justify-between px-1 py-1">
               <span
-                className={`text-[13px] font-bold transition-colors duration-300 ${isBaqarahReminderEnabled ? "text-[#2b1a10]" : "text-[#7f6a55]/60"}`}
+                className={`text-[13px] font-bold transition-colors duration-300 ${isBaqarahReminderEnabled ? "text-[var(--sk-label)]" : "text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60"}`}
               >
                 وقت التنبيه
               </span>
@@ -512,8 +513,8 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                 <span
                   className={`text-[13.5px] font-bold transition-colors duration-300 ${
                     isBaqarahReminderEnabled
-                      ? "text-[#b88a4f]"
-                      : "text-[#7f6a55]/40"
+                      ? "text-[var(--sk-accent)]"
+                      : "text-[#7f6a55]/40 dark:text-[var(--sk-label2)]/40"
                   }`}
                 >
                   {formatTime12h(baqarahReminderTime)}
@@ -535,34 +536,34 @@ export const SettingsScreen = React.memo(function SettingsScreen({
 
         {/* ── SECTION 4: ABOUT THE APPLICATION ── */}
         <div className="cut-crystal-panel rounded-[26px] p-5 text-center relative overflow-hidden shadow-md">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#b88a4f]/5 to-transparent rounded-full -mr-10 -mt-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#b88a4f]/5 dark:from-[var(--sk-accent)]/5 to-transparent rounded-full -mr-10 -mt-10 pointer-events-none" />
 
           <div className="flex justify-center mb-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#fdfcfb] to-[#f7f2ea] text-[#b88a4f] border border-white shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--sk-bg3)] to-[var(--sk-bg2)] text-[var(--sk-accent)] border border-white shadow-sm">
               <Sparkles
                 size={24}
-                className="text-[#b88a4f]"
+                className="text-[var(--sk-accent)]"
                 fill="currentColor"
                 strokeWidth={1.5}
               />
             </div>
           </div>
 
-          <h3 className="text-[20px] font-display font-black text-[#2b1a10]">
+          <h3 className="text-[20px] font-display font-black text-[var(--sk-label)]">
             سَكِينَة
           </h3>
-          <p className="text-[11.5px] text-[#7f6a55] font-bold mt-0.5">
+          <p className="text-[11.5px] text-[var(--sk-label2)] font-bold mt-0.5">
             منصة إسلامية متكاملة للسلام الداخلي
           </p>
-          <p className="text-[11px] font-mono font-bold text-[#b88a4f] tracking-wider mt-2 bg-[#b88a4f]/5 inline-block px-3 py-1 rounded-full border border-[#b88a4f]/15">
+          <p className="text-[11px] font-mono font-bold text-[var(--sk-accent)] tracking-wider mt-2 bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 inline-block px-3 py-1 rounded-full border border-[#b88a4f]/15 dark:border-[var(--sk-accent)]/15">
             النسخة v3.3
           </p>
 
-          <div className="mt-4 border-t border-[#e6dccf]/40 pt-4 flex flex-col items-center">
-            <p className="text-[16px] md:text-[18px] text-[#2b1a10]/90 font-normal italic animate-pulse font-quran select-text">
+          <div className="mt-4 border-t border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 pt-4 flex flex-col items-center">
+            <p className="text-[16px] md:text-[18px] text-[#2b1a10]/90 dark:text-[var(--sk-label)]/90 font-normal italic animate-pulse font-quran select-text">
               "أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ"
             </p>
-            <span className="text-[10px] text-[#7f6a55] font-bold mt-1">
+            <span className="text-[10px] text-[var(--sk-label2)] font-bold mt-1">
               سورة الرعد - الآية ٢٨
             </span>
           </div>

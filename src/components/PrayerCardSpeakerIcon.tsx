@@ -27,7 +27,7 @@ export const PrayerCardSpeakerIcon = React.memo(function PrayerCardSpeakerIcon({
   // Determine effective mode (if disabled, treat as silent)
   const effectiveMode: PrayerNotificationMode = !enabled ? 'silent' : mode;
 
-  const iconColor = isActive ? '#b88a4f' : '#b88a4f';
+  const iconColor = isActive ? 'var(--sk-accent)' : 'var(--sk-accent)';
   const iconSize = 20;
 
   return (

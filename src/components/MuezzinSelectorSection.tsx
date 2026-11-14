@@ -274,29 +274,29 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
     <div className="space-y-4 transition-all duration-300 w-full pt-1">
       {/* Outer Section Title */}
       <div className="flex items-center justify-between px-2">
-        <h4 className="text-[13px] font-bold text-[#7f6a55] tracking-wide">
+        <h4 className="text-[13px] font-bold text-[var(--sk-label2)] tracking-wide">
           صوت المؤذن
         </h4>
-        <span className="text-[10.5px] font-bold text-[#b88a4f] bg-[#b88a4f]/10 px-2.5 py-0.5 rounded-full">
+        <span className="text-[10.5px] font-bold text-[var(--sk-accent)] bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 px-2.5 py-0.5 rounded-full">
           {MUEZZIN_LIST.length} مؤذن
         </span>
       </div>
 
       {/* Elegant Capsule Search Input matching Sakineh-2.0.0 */}
-      <div className="relative flex items-center bg-[#fdfcfb]/95 backdrop-blur-xl border border-[#e6dccf]/70 rounded-[20px] h-12.5 shadow-[0_4px_20px_rgba(43,26,16,0.03)] px-3.5 w-full">
-        <Search className="text-[#b88a4f] ml-2.5 shrink-0" size={18} />
+      <div className="relative flex items-center bg-[#fdfcfb]/95 dark:bg-[var(--sk-bg3)]/95 backdrop-blur-xl border border-[#e6dccf]/70 dark:border-[var(--sk-sep)]/70 rounded-[20px] h-12.5 shadow-[0_4px_20px_rgba(43,26,16,0.03)] px-3.5 w-full">
+        <Search className="text-[var(--sk-accent)] ml-2.5 shrink-0" size={18} />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="البحث عن مؤذن..."
-          className="flex-1 h-full bg-transparent border-none outline-none text-[14px] font-sans font-bold text-[#2b1a10] placeholder:text-[#7f6a55]/65 pt-0.5 text-right"
+          className="flex-1 h-full bg-transparent border-none outline-none text-[14px] font-sans font-bold text-[var(--sk-label)] placeholder:text-[#7f6a55]/65 dark:placeholder:text-[var(--sk-label2)]/65 pt-0.5 text-right"
         />
         {searchQuery && (
           <button
             type="button"
             onClick={() => setSearchQuery("")}
-            className="text-[#7f6a55]/60 hover:text-[#2b1a10] transition-colors p-1"
+            className="text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60 hover:text-[var(--sk-label)] transition-colors p-1"
           >
             <X size={16} />
           </button>
@@ -306,7 +306,7 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
       {/* Muezzin List of Independent Capsule Cards */}
       <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1 pb-1 hide-scrollbar">
         {filteredMuezzins.length === 0 ? (
-          <p className="text-center text-[12px] font-bold text-[#7f6a55]/60 py-4">
+          <p className="text-center text-[12px] font-bold text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60 py-4">
             لا يوجد نتائج تطابق بحثك
           </p>
         ) : (
@@ -329,8 +329,8 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
                 }}
                 className={`w-full flex items-center justify-between p-4 rounded-[22px] border backdrop-blur-md transition-all duration-200 cursor-pointer active:scale-[0.99] ${
                   isSelected
-                    ? "bg-[#b88a4f]/10 border-[#b88a4f] shadow-[0_4px_16px_rgba(184,138,79,0.08)]"
-                    : "bg-white/70 hover:bg-white border-white hover:border-[#b88a4f]/30 shadow-[0_2px_12px_rgba(43,26,16,0.02)]"
+                    ? "bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 border-[var(--sk-accent)] shadow-[0_4px_16px_rgba(184,138,79,0.08)]"
+                    : "bg-white/70 hover:bg-white border-white hover:border-[#b88a4f]/30 dark:hover:border-[var(--sk-accent)]/30 shadow-[0_2px_12px_rgba(43,26,16,0.02)]"
                 }`}
               >
                 {/* Right: Muezzin Name & active golden radio checkmark */}
@@ -338,17 +338,17 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
                   <div
                     className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center transition-all ${
                       isSelected
-                        ? "border-[#b88a4f] bg-[#b88a4f]"
-                        : "border-[#e6dccf] bg-white"
+                        ? "border-[var(--sk-accent)] bg-[var(--sk-accent)]"
+                        : "border-[var(--sk-sep)] bg-white dark:bg-[var(--sk-bg3)]"
                     }`}
                   >
                     {isSelected && (
-                      <Check size={10} className="text-white stroke-[3px]" />
+                      <Check size={10} className="text-[var(--sk-on-espresso)] stroke-[3px]" />
                     )}
                   </div>
                   <span
                     className={`text-[13.5px] font-bold text-right transition-colors ${
-                      isSelected ? "text-[#b88a4f]" : "text-[#2b1a10]"
+                      isSelected ? "text-[var(--sk-accent)]" : "text-[var(--sk-label)]"
                     }`}
                   >
                     {track.name}
@@ -365,8 +365,8 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
                     onClick={() => handlePlayPreview(track)}
                     className={`w-8.5 h-8.5 rounded-full flex items-center justify-center transition-all border ${
                       isPlaying
-                        ? "bg-[#b88a4f] text-white border-[#b88a4f]"
-                        : "bg-white text-[#2b1a10] border-[#e6dccf] hover:bg-[#f7f2ea]"
+                        ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] border-[var(--sk-accent)]"
+                        : "bg-white dark:bg-[var(--sk-bg3)] text-[var(--sk-label)] border-[var(--sk-sep)] hover:bg-[var(--sk-bg2)]"
                     }`}
                     title={isPlaying ? "إيقاف الاستماع" : "استماع تجريبي"}
                   >
@@ -378,14 +378,14 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
                   </button>
 
                   {isDownloading ? (
-                    <div className="w-8.5 h-8.5 rounded-full bg-[#f7f2ea] flex items-center justify-center text-[#b88a4f] border border-[#e6dccf]">
-                      <SakeenahLineSpinner size={16} color="#b88a4f" label="جارٍ تنزيل المؤذن" />
+                    <div className="w-8.5 h-8.5 rounded-full bg-[var(--sk-bg2)] flex items-center justify-center text-[var(--sk-accent)] border border-[var(--sk-sep)]">
+                      <SakeenahLineSpinner size={16} color="var(--sk-accent)" label="جارٍ تنزيل المؤذن" />
                     </div>
                   ) : isDownloaded ? (
                     <button
                       type="button"
                       onClick={(e) => handleDelete(track, e)}
-                      className="w-8.5 h-8.5 rounded-full bg-[#f7f2ea] hover:bg-rose-50 text-rose-500 hover:text-rose-600 flex items-center justify-center border border-[#e6dccf] transition-colors"
+                      className="w-8.5 h-8.5 rounded-full bg-[var(--sk-bg2)] hover:bg-rose-50 text-rose-500 hover:text-rose-600 flex items-center justify-center border border-[var(--sk-sep)] transition-colors"
                       title="حذف الملف المحفوظ"
                     >
                       <Trash2 size={13} />
@@ -394,7 +394,7 @@ export const MuezzinSelectorSection = React.memo(function MuezzinSelectorSection
                     <button
                       type="button"
                       onClick={(e) => handleDownload(track, e)}
-                      className="w-8.5 h-8.5 rounded-full bg-white hover:bg-[#f7f2ea] text-[#7f6a55] flex items-center justify-center border border-[#e6dccf] transition-colors"
+                      className="w-8.5 h-8.5 rounded-full bg-white dark:bg-[var(--sk-bg3)] hover:bg-[var(--sk-bg2)] text-[var(--sk-label2)] flex items-center justify-center border border-[var(--sk-sep)] transition-colors"
                       title="حفظ للاستخدام دون إنترنت"
                     >
                       <Download size={13} />

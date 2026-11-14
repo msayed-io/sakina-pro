@@ -23,25 +23,25 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
       <div className="cut-crystal-panel rounded-[28px] p-5 hover:scale-[1.01] transition-all shadow-md flex flex-col max-h-[85vh] md:max-h-full overflow-hidden">
         {/* Header */}
         <div className="mb-3 flex items-center gap-3 shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-white shadow-sm border border-[#c49a62]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm border border-[var(--sk-accent-variant)]">
             <BookOpenText className="text-white h-4 w-4" strokeWidth={2} />
           </div>
           <div>
-            <p className="text-[13px] font-bold text-[#2b1a10]">حديث اليوم</p>
-            <p className="text-[10px] font-bold text-[#7f6a55]">إضاءة يومية</p>
+            <p className="text-[13px] font-bold text-[var(--sk-label)]">حديث اليوم</p>
+            <p className="text-[10px] font-bold text-[var(--sk-label2)]">إضاءة يومية</p>
           </div>
         </div>
 
         {/* Hadith Text Area (Scrollable if needed) */}
         <div className="overflow-y-auto no-scrollbar pb-2">
-          <p className="text-[14px] md:text-[15px] font-bold leading-relaxed text-[#2b1a10] font-serif">
+          <p className="text-[14px] md:text-[15px] font-bold leading-relaxed text-[var(--sk-label)] font-serif">
             «{todayHadith.text}»
           </p>
 
           <div className="mt-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#b88a4f]"></span>
-              <p className="text-[10px] font-bold text-[#b88a4f]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--sk-accent)]"></span>
+              <p className="text-[10px] font-bold text-[var(--sk-accent)]">
                 {todayHadith.source}
               </p>
             </div>
@@ -50,17 +50,17 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
           {/* Accordion Buttons */}
           <div className="mt-4 flex flex-col gap-2">
             {/* Explanation Button */}
-            <div className="overflow-hidden rounded-xl border border-[#e6dccf]/60 bg-white/40">
+            <div className="overflow-hidden rounded-xl border border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60 bg-white/40">
               <button
                 onClick={() => toggleSection("explanation")}
                 className="flex w-full items-center justify-between px-3 py-2.5 text-right transition-colors hover:bg-white/50"
               >
                 <div className="flex items-center gap-2">
                   <BookOpenText
-                    className="h-4 w-4 text-[#b88a4f]"
+                    className="h-4 w-4 text-[var(--sk-accent)]"
                     strokeWidth={2.5}
                   />
-                  <span className="text-[12px] font-bold text-[#2b1a10]">
+                  <span className="text-[12px] font-bold text-[var(--sk-label)]">
                     شرح الحديث
                   </span>
                 </div>
@@ -70,7 +70,7 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
                   }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="h-4 w-4 text-[#7f6a55]" />
+                  <ChevronDown className="h-4 w-4 text-[var(--sk-label2)]" />
                 </motion.div>
               </button>
               <AnimatePresence initial={false}>
@@ -81,11 +81,11 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                   >
-                    <div className="px-3 pb-3 pt-1 border-t border-[#e6dccf]/30">
-                      <p className="text-[12px] leading-relaxed text-[#4a3b32]">
+                    <div className="px-3 pb-3 pt-1 border-t border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30">
+                      <p className="text-[12px] leading-relaxed text-[var(--sk-espresso3)]">
                         {todayHadith.explanation}
                       </p>
-                      <p className="mt-2 text-[9px] font-bold text-[#a89680]">
+                      <p className="mt-2 text-[9px] font-bold text-[var(--sk-dot-hover)]">
                         {todayHadith.explanationSource}
                       </p>
                     </div>
@@ -95,17 +95,17 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
             </div>
 
             {/* Benefits Button */}
-            <div className="overflow-hidden rounded-xl border border-[#e6dccf]/60 bg-white/40">
+            <div className="overflow-hidden rounded-xl border border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60 bg-white/40">
               <button
                 onClick={() => toggleSection("benefits")}
                 className="flex w-full items-center justify-between px-3 py-2.5 text-right transition-colors hover:bg-white/50"
               >
                 <div className="flex items-center gap-2">
                   <Sparkles
-                    className="h-4 w-4 text-[#b88a4f]"
+                    className="h-4 w-4 text-[var(--sk-accent)]"
                     strokeWidth={2.5}
                   />
-                  <span className="text-[12px] font-bold text-[#2b1a10]">
+                  <span className="text-[12px] font-bold text-[var(--sk-label)]">
                     فوائد مستنبطة
                   </span>
                 </div>
@@ -113,7 +113,7 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
                   animate={{ rotate: expandedSection === "benefits" ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="h-4 w-4 text-[#7f6a55]" />
+                  <ChevronDown className="h-4 w-4 text-[var(--sk-label2)]" />
                 </motion.div>
               </button>
               <AnimatePresence initial={false}>
@@ -124,12 +124,12 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                   >
-                    <div className="px-3 pb-3 pt-1 border-t border-[#e6dccf]/30">
+                    <div className="px-3 pb-3 pt-1 border-t border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30">
                       <ul className="list-disc pr-4 space-y-1">
                         {todayHadith.benefits.map((benefit, index) => (
                           <li
                             key={index}
-                            className="text-[12px] leading-relaxed text-[#4a3b32]"
+                            className="text-[12px] leading-relaxed text-[var(--sk-espresso3)]"
                           >
                             {benefit}
                           </li>
@@ -142,17 +142,17 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
             </div>
 
             {/* Practical Action Button */}
-            <div className="overflow-hidden rounded-xl border border-[#e6dccf]/60 bg-white/40">
+            <div className="overflow-hidden rounded-xl border border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60 bg-white/40">
               <button
                 onClick={() => toggleSection("action")}
                 className="flex w-full items-center justify-between px-3 py-2.5 text-right transition-colors hover:bg-white/50"
               >
                 <div className="flex items-center gap-2">
                   <Lightbulb
-                    className="h-4 w-4 text-[#deab65]"
+                    className="h-4 w-4 text-[var(--sk-accent-bright)]"
                     strokeWidth={2.5}
                   />
-                  <span className="text-[12px] font-bold text-[#2b1a10]">
+                  <span className="text-[12px] font-bold text-[var(--sk-label)]">
                     كيف تعمل به اليوم؟
                   </span>
                 </div>
@@ -160,7 +160,7 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
                   animate={{ rotate: expandedSection === "action" ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="h-4 w-4 text-[#7f6a55]" />
+                  <ChevronDown className="h-4 w-4 text-[var(--sk-label2)]" />
                 </motion.div>
               </button>
               <AnimatePresence initial={false}>
@@ -171,14 +171,14 @@ export const HadithCard = React.memo(({ todayHadith }: HadithCardProps) => {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                   >
-                    <div className="px-3 pb-3 pt-1 border-t border-[#e6dccf]/30">
+                    <div className="px-3 pb-3 pt-1 border-t border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30">
                       <ul className="space-y-2">
                         {todayHadith.practicalAction.map((action, index) => (
                           <li key={index} className="flex gap-2">
-                            <span className="text-[#deab65] mt-0.5 shrink-0">
+                            <span className="text-[var(--sk-accent-bright)] mt-0.5 shrink-0">
                               ✦
                             </span>
-                            <span className="text-[12px] leading-relaxed text-[#4a3b32]">
+                            <span className="text-[12px] leading-relaxed text-[var(--sk-espresso3)]">
                               {action}
                             </span>
                           </li>

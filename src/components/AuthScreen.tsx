@@ -72,26 +72,26 @@ export default function AuthScreen({
   }
 
   return (
-    <main dir="rtl" className="relative min-h-[100dvh] overflow-hidden bg-[#ece7de] text-[#2b1a10]">
+    <main dir="rtl" className="relative min-h-[100dvh] overflow-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
       {/* خلفية ambient */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -right-36 -top-40 h-[420px] w-[420px] rounded-full bg-[#d8b27b]/18 blur-3xl" />
+        <div className="absolute -right-36 -top-40 h-[420px] w-[420px] rounded-full bg-[#d8b27b]/18 dark:bg-[var(--sk-gold-mid)]/18 blur-3xl" />
         <div className="absolute -bottom-52 -left-36 h-[500px] w-[500px] rounded-full bg-[#b9a58e]/16 blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(#2b1a10_0.6px,transparent_0.6px)] [background-size:18px_18px]" />
+        <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(var(--sk-label)_0.6px,transparent_0.6px)] [background-size:18px_18px]" />
       </div>
 
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[440px] flex-col items-center px-5 pb-5 pt-4 sm:px-7 sm:pb-8 sm:pt-5">
         {/* Header */}
         <header className="flex h-10 w-full items-center justify-between">
           <div className="cut-crystal-capsule flex h-10 items-center justify-center px-5 shadow-md">
-            <span className="pt-0.5 font-display text-[17px] font-black text-[#2b1a10]">سَكِينَة</span>
+            <span className="pt-0.5 font-display text-[17px] font-black text-[var(--sk-label)]">سَكِينَة</span>
           </div>
           <button
             type="button"
             onClick={onBack}
             disabled={!onBack}
             aria-label="رجوع"
-            className="cut-crystal-capsule grid h-10 w-10 place-items-center text-[#2b1a10] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 disabled:cursor-default disabled:opacity-0"
+            className="cut-crystal-capsule grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45 disabled:cursor-default disabled:opacity-0"
           >
             <ArrowRight size={20} strokeWidth={1.8} className="mr-0.5" />
           </button>
@@ -104,15 +104,15 @@ export default function AuthScreen({
 
         {/* العنوان */}
         <section className="mt-6 text-center">
-          <p className="font-sans text-[12px] font-bold text-[#8a6a3d]">طمأنينة في كل يوم</p>
-          <h1 className="mt-1 font-display text-[28px] font-black leading-[1.15] tracking-tight text-[#2b1a10]">
+          <p className="font-sans text-[12px] font-bold text-[var(--sk-accent-deep)]">طمأنينة في كل يوم</p>
+          <h1 className="mt-1 font-display text-[28px] font-black leading-[1.15] tracking-tight text-[var(--sk-label)]">
             أهلًا بك في سكينة
           </h1>
         </section>
 
         {/* خطأ */}
         {error && (
-          <p role="alert" className="mt-5 w-full rounded-full border border-[#a66969]/25 bg-[#a66969]/10 px-4 py-2 text-center text-[11px] font-bold leading-5 text-[#7d3f3f]">
+          <p role="alert" className="mt-5 w-full rounded-full border border-[#a66969]/25 dark:border-[var(--sk-danger-soft)]/25 bg-[#a66969]/10 dark:bg-[var(--sk-danger-soft)]/10 px-4 py-2 text-center text-[11px] font-bold leading-5 text-[#7d3f3f]">
             {error}
           </p>
         )}
@@ -122,10 +122,10 @@ export default function AuthScreen({
           type="button"
           onClick={handleGoogle}
           disabled={googleLoading}
-          className="cut-crystal-capsule mt-6 flex h-12 w-full max-w-[320px] items-center justify-center gap-3 rounded-full bg-[#f7f2ea]/70 px-5 text-[14px] font-black text-[#2b1a10] shadow-[0_10px_28px_-12px_rgba(43,26,16,0.35)] transition-[transform,background-color,box-shadow] duration-200 hover:bg-[#fffdf9] hover:shadow-[0_14px_32px_-12px_rgba(43,26,16,0.42)] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 disabled:cursor-not-allowed disabled:opacity-60"
+          className="cut-crystal-capsule mt-6 flex h-12 w-full max-w-[320px] items-center justify-center gap-3 rounded-full bg-[#f7f2ea]/70 dark:bg-[var(--sk-bg2)]/70 px-5 text-[14px] font-black text-[var(--sk-label)] shadow-[0_10px_28px_-12px_rgba(43,26,16,0.35)] transition-[transform,background-color,box-shadow] duration-200 hover:bg-[#fffdf9] hover:shadow-[0_14px_32px_-12px_rgba(43,26,16,0.42)] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {googleLoading ? (
-            <SakeenahLineSpinner size={20} color="#b88a4f" label="جارٍ فتح Google" />
+            <SakeenahLineSpinner size={20} color="var(--sk-accent)" label="جارٍ فتح Google" />
           ) : (
             <GoogleIcon />
           )}
@@ -148,20 +148,20 @@ function LegalDocument({ view, onBack }: { view: LegalView; onBack: () => void }
   const isTerms = view === "terms";
 
   return (
-    <main dir="rtl" className="min-h-[100dvh] overflow-y-auto bg-[#ece7de] text-[#2b1a10]">
+    <main dir="rtl" className="min-h-[100dvh] overflow-y-auto bg-[var(--sk-bg)] text-[var(--sk-label)]">
       <div className="mx-auto min-h-[100dvh] w-full max-w-[440px] px-5 pb-10 pt-5 sm:px-7">
         <header className="flex items-center justify-between">
           <div className="cut-crystal-capsule flex h-10 items-center justify-center px-5 shadow-md">
-            <span className="pt-0.5 font-display text-[17px] font-black text-[#2b1a10]">سَكِينَة</span>
+            <span className="pt-0.5 font-display text-[17px] font-black text-[var(--sk-label)]">سَكِينَة</span>
           </div>
-          <button type="button" onClick={onBack} aria-label="رجوع" className="cut-crystal-capsule grid h-10 w-10 place-items-center text-[#2b1a10] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45">
+          <button type="button" onClick={onBack} aria-label="رجوع" className="cut-crystal-capsule grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45">
             <ArrowRight size={20} strokeWidth={1.8} className="mr-0.5" />
           </button>
         </header>
 
         <section className="mt-9 text-right">
-          <p className="text-[12px] font-bold text-[#8a6a3d]">سكينة · وضوح وطمأنينة</p>
-          <h1 className="mt-2 font-display text-[30px] font-black leading-tight text-[#2b1a10]">{isTerms ? "شروط الاستخدام" : "سياسة الخصوصية"}</h1>
+          <p className="text-[12px] font-bold text-[var(--sk-accent-deep)]">سكينة · وضوح وطمأنينة</p>
+          <h1 className="mt-2 font-display text-[30px] font-black leading-tight text-[var(--sk-label)]">{isTerms ? "شروط الاستخدام" : "سياسة الخصوصية"}</h1>
           <p className="mt-3 text-[13px] leading-7 text-[#6f6257]">آخر تحديث: ١٦ أغسطس ٢٠٢٦</p>
         </section>
 
@@ -204,7 +204,7 @@ function PrivacyContent() {
 function LegalSection({ title, text }: { title: string; text: string }) {
   return (
     <section>
-      <h2 className="font-display text-[20px] font-black text-[#2b1a10]">{title}</h2>
+      <h2 className="font-display text-[20px] font-black text-[var(--sk-label)]">{title}</h2>
       <p className="mt-2">{text}</p>
     </section>
   );

@@ -83,13 +83,13 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col items-center overflow-hidden bg-[#ece7de] font-sans text-[#2b1a10]"
+      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col items-center overflow-hidden bg-[var(--sk-bg)] font-sans text-[var(--sk-label)]"
       dir="rtl"
     >
       <button
         onClick={onClose}
         aria-label="رجوع"
-        className="cut-crystal-capsule fixed left-5 right-auto top-5 z-[60] grid h-10 w-10 place-items-center text-[#2b1a10] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45"
+        className="cut-crystal-capsule fixed left-5 right-auto top-5 z-[60] grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45"
         style={{
           position: "fixed",
           left: "calc(20px + env(safe-area-inset-left))",
@@ -114,13 +114,12 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
                 r="129"
                 pathLength={1}
                 fill="none"
-                stroke="#b88a4f"
-                strokeWidth="4"
+                                strokeWidth="4"
                 strokeLinecap="round"
                 strokeDasharray="1"
                 animate={{ strokeDashoffset: 1 - progress / 100 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                style={{ filter: "drop-shadow(0 2px 5px rgba(184,138,79,0.28))" }}
+                style={{ stroke: "var(--sk-accent)", filter: "drop-shadow(0 2px 5px rgba(184,138,79,0.28))" }}
               />
             </svg>
           )}
@@ -136,7 +135,7 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
         </div>
 
         <section className="flex w-full max-w-[360px] flex-col items-center text-center">
-          <h2 className="font-display text-[22px] font-black leading-tight text-[#2b1a10] sm:text-[26px]">
+          <h2 className="font-display text-[22px] font-black leading-tight text-[var(--sk-label)] sm:text-[26px]">
             تنزيل المصحف والتفسير
           </h2>
 
@@ -149,14 +148,14 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                className={`absolute inset-x-0 top-0 flex h-9 items-center justify-center text-[14px] leading-7 ${isError ? "text-[#8f4d3d]" : "text-[#7f6a55]"}`}
+                className={`absolute inset-x-0 top-0 flex h-9 items-center justify-center text-[14px] leading-7 ${isError ? "text-[#8f4d3d]" : "text-[var(--sk-label2)]"}`}
               >
                 {stageText}
               </motion.p>
             </AnimatePresence>
           </div>
           {isDownloading && (
-            <div className="mt-1 flex h-7 items-center justify-center text-[15px] font-bold text-[#b88a4f]" aria-live="polite" aria-atomic="true" dir="ltr">
+            <div className="mt-1 flex h-7 items-center justify-center text-[15px] font-bold text-[var(--sk-accent)]" aria-live="polite" aria-atomic="true" dir="ltr">
               <span className="inline-flex h-6 min-w-[2ch] items-center justify-center tabular-nums">
                 {progress}
               </span>
@@ -178,7 +177,7 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
           >
             <button
               onClick={startDownload}
-              className="cut-crystal-capsule-gold flex h-12 w-full max-w-[320px] items-center justify-center gap-3 px-5 text-[14px] font-black shadow-[0_14px_24px_-16px_rgba(184,138,79,0.55)] transition-[transform,box-shadow] duration-200 hover:shadow-[0_16px_28px_-14px_rgba(184,138,79,0.62)] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f] focus-visible:ring-offset-2 focus-visible:ring-offset-[#ece7de] disabled:cursor-not-allowed disabled:opacity-60"
+              className="cut-crystal-capsule-gold flex h-12 w-full max-w-[320px] items-center justify-center gap-3 px-5 text-[14px] font-black shadow-[0_14px_24px_-16px_rgba(184,138,79,0.55)] transition-[transform,box-shadow] duration-200 hover:shadow-[0_16px_28px_-14px_rgba(184,138,79,0.62)] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sk-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--sk-bg)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Download size={18} strokeWidth={2} />
               <span>{isError ? "حاول مرة أخرى" : "تنزيل المصحف والتفسير"}</span>

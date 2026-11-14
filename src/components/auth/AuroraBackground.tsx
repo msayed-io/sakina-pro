@@ -7,7 +7,7 @@ export function AuroraBackground() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(120% 80% at 50% 0%, #fdfcfb 0%, #f7f2ea 54%, #ece7de 100%)",
+            "radial-gradient(120% 80% at 50% 0%, var(--sk-bg3) 0%, var(--sk-bg2) 54%, var(--sk-bg) 100%)",
         }}
       />
       <div

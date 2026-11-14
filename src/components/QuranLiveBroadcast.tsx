@@ -137,9 +137,9 @@ export default function QuranLiveBroadcast({
     <div id="live-broadcast-section" className="w-full mb-6 relative" dir="rtl">
       {/* Title + capture control: hidden until a station is actually playing. */}
       <div className="mb-3.5 flex min-h-8 items-center gap-2 px-1">
-        <h2 className="flex items-center gap-2 text-[20px] font-bold text-[#2b1a10]">
+        <h2 className="flex items-center gap-2 text-[20px] font-bold text-[var(--sk-label)]">
           <span>البث الصوتي</span>
-          <span className="h-1.5 w-1.5 rounded-full bg-[#80a390]"></span>
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--sk-success-soft)]"></span>
         </h2>
         <div className="mr-auto flex items-center gap-2">
           {showCaptureControl && (
@@ -153,10 +153,10 @@ export default function QuranLiveBroadcast({
               aria-label={radioCaptureState === "recording" ? "إيقاف وحفظ تسجيل البث" : "تسجيل البث"}
               className={`inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-black shadow-sm transition-[background-color,color,border-color,transform] duration-150 active:scale-95 disabled:cursor-wait disabled:opacity-70 ${
                 radioCaptureState === "recording"
-                  ? "border-[#8f3c35]/35 bg-[#8f3c35] text-white"
+                  ? "border-[#8f3c35]/35 dark:border-[var(--sk-danger-deep)]/35 bg-[var(--sk-danger-deep)] text-white"
                   : radioCaptureState === "saving"
-                    ? "border-[#b88a4f]/30 bg-[#f7f2ea] text-[#8f765d]"
-                    : "border-[#b88a4f]/45 bg-[#b88a4f] text-white"
+                    ? "border-[#b88a4f]/30 dark:border-[var(--sk-accent)]/30 bg-[var(--sk-bg2)] text-[#8f765d]"
+                    : "border-[#b88a4f]/45 dark:border-[var(--sk-accent)]/45 bg-[var(--sk-accent)] text-[var(--sk-on-espresso)]"
               }`}
             >
               {radioCaptureState === "saving" ? (
@@ -176,7 +176,7 @@ export default function QuranLiveBroadcast({
             </button>
           )}
           {radioCaptureNotice && (
-            <span role="status" className="hidden max-w-[150px] truncate text-[10px] font-bold text-[#7f6a55] sm:inline">
+            <span role="status" className="hidden max-w-[150px] truncate text-[10px] font-bold text-[var(--sk-label2)] sm:inline">
               {radioCaptureNotice}
             </span>
           )}
@@ -215,7 +215,7 @@ export default function QuranLiveBroadcast({
             <button
               type="button"
               onClick={handlePrevStation}
-              className="w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50"
+              className="w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50 dark:hover:border-[var(--sk-accent-bright)]/50"
               title="الإذاعة السابقة"
               aria-label="الإذاعة السابقة"
             >
@@ -226,7 +226,7 @@ export default function QuranLiveBroadcast({
             <button
               type="button"
               onClick={handleNextStation}
-              className="w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50"
+              className="w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50 dark:hover:border-[var(--sk-accent-bright)]/50"
               title="الإذاعة التالية"
               aria-label="الإذاعة التالية"
             >
@@ -268,12 +268,12 @@ export default function QuranLiveBroadcast({
                   className={`h-7 px-3 rounded-full flex items-center justify-center gap-1.5 text-[11px] whitespace-nowrap font-bold tracking-wide transition-all active:scale-[0.96] shadow-md border shrink-0 cursor-pointer backdrop-blur-md ${
                     isActiveAndPlaying
                       ? "bg-[#dc2626]/90 hover:bg-[#dc2626] text-white border-red-300/50 shadow-red-950/30"
-                      : "bg-[#deab65] hover:bg-[#c4904a] text-[#2b1a10] border-white/50 shadow-[#deab65]/20"
+                      : "bg-[var(--sk-accent-bright)] hover:bg-[var(--sk-gold-eq1)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] border-white/50 shadow-[#deab65]/20 dark:shadow-[var(--sk-accent-bright)]/20"
                   }`}
                 >
                   {isLoading && isActiveAndPlaying ? (
                     <>
-                      <SakeenahLineSpinner size={14} color="#ffffff" label="جارٍ الاتصال بالبث" className="shrink-0" />
+                      <SakeenahLineSpinner size={14} color="var(--sk-on-espresso)" label="جارٍ الاتصال بالبث" className="shrink-0" />
                       <span>جاري الاتصال...</span>
                     </>
                   ) : isActiveAndPlaying ? (
@@ -287,7 +287,7 @@ export default function QuranLiveBroadcast({
                     </>
                   ) : (
                     <>
-                      <Radio size={11} className="text-[#2b1a10] shrink-0" />
+                      <Radio size={11} className="text-[var(--sk-label)] shrink-0" />
                       <span>استماع مباشر</span>
                     </>
                   )}
@@ -321,10 +321,10 @@ export default function QuranLiveBroadcast({
                     transition={{ duration: 0.2 }}
                     className="flex items-end gap-0.5 px-2 py-1.5 rounded-full bg-black/35 backdrop-blur-md border border-white/20 shadow-sm"
                   >
-                    <span className="w-0.5 h-3 bg-[#deab65] animate-[bounce_0.7s_infinite_100ms] rounded-full" />
-                    <span className="w-0.5 h-4 bg-[#deab65] animate-[bounce_0.7s_infinite_300ms] rounded-full" />
-                    <span className="w-0.5 h-2.5 bg-[#deab65] animate-[bounce_0.7s_infinite_150ms] rounded-full" />
-                    <span className="w-0.5 h-3.5 bg-[#deab65] animate-[bounce_0.7s_infinite_250ms] rounded-full" />
+                    <span className="w-0.5 h-3 bg-[var(--sk-accent-bright)] animate-[bounce_0.7s_infinite_100ms] rounded-full" />
+                    <span className="w-0.5 h-4 bg-[var(--sk-accent-bright)] animate-[bounce_0.7s_infinite_300ms] rounded-full" />
+                    <span className="w-0.5 h-2.5 bg-[var(--sk-accent-bright)] animate-[bounce_0.7s_infinite_150ms] rounded-full" />
+                    <span className="w-0.5 h-3.5 bg-[var(--sk-accent-bright)] animate-[bounce_0.7s_infinite_250ms] rounded-full" />
                   </motion.div>
                 )}
               </AnimatePresence>

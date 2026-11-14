@@ -59,7 +59,7 @@ export default function SplashScreen({ onComplete, canComplete }: SplashScreenPr
     <AnimatePresence onExitComplete={onComplete}>
       {isVisible && (
         <motion.div
-          className="fixed inset-0 z-50 flex min-h-[100dvh] w-full cursor-default select-none items-center justify-center overflow-hidden bg-[#ece7de]"
+          className="fixed inset-0 z-50 flex min-h-[100dvh] w-full cursor-default select-none items-center justify-center overflow-hidden bg-[var(--sk-bg)]"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -73,7 +73,7 @@ export default function SplashScreen({ onComplete, canComplete }: SplashScreenPr
           <div className="flex flex-col items-center px-6">
             {/* الاسم — fade in فقط، صفر حركة عمودية */}
             <motion.h1
-              className="font-display text-[clamp(2.5rem,11vw,4rem)] font-black leading-none tracking-tight text-[#2b1a10] text-center"
+              className="font-display text-[clamp(2.5rem,11vw,4rem)] font-black leading-none tracking-tight text-[var(--sk-label)] text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: fadeDur, ease }}
@@ -98,7 +98,7 @@ export default function SplashScreen({ onComplete, canComplete }: SplashScreenPr
                   aria-hidden={!isVerseReady}
                 >
                   <div
-                    className="text-[clamp(1rem,4vw,1.6rem)] leading-[2.2] text-[#2b1a10] text-center"
+                    className="text-[clamp(1rem,4vw,1.6rem)] leading-[2.2] text-[var(--sk-label)] text-center"
                     style={{ direction: "rtl" }}
                   >
                     <QcfVerse
@@ -125,7 +125,7 @@ export default function SplashScreen({ onComplete, canComplete }: SplashScreenPr
                     transition={{ duration: 0.25 }}
                   >
                     <div
-                      className="font-quran text-[clamp(1rem,4vw,1.6rem)] leading-[2.2] text-[#2b1a10] text-center"
+                      className="font-quran text-[clamp(1rem,4vw,1.6rem)] leading-[2.2] text-[var(--sk-label)] text-center"
                       style={{ direction: "rtl" }}
                     >
                       ﴿ إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا ﴾

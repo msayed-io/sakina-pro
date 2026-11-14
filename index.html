@@ -3,10 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#ece7de" />
+    <!-- theme-color stays byte-identical for light; dark splits by media query (spec §3.1) -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ece7de" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>سَكِينَة — Sakinah</title>
+    <script>
+      // First-paint theme resolution (spec §3.1): no flash, no stored preference.
+      // State is derived exclusively from the OS/browser color scheme and is
+      // re-applied on system flips and when the app/tab becomes visible again
+      // (covers Capacitor background → resume).
+      (function () {
+        var query = window.matchMedia('(prefers-color-scheme: dark)');
+        function applyTheme() {
+          document.documentElement.setAttribute('data-theme', query.matches ? 'dark' : 'light');
+        }
+        applyTheme();
+        if (typeof query.addEventListener === 'function') {
+          query.addEventListener('change', applyTheme);
+        } else if (typeof query.addListener === 'function') {
+          query.addListener(applyTheme);
+        }
+        document.addEventListener('visibilitychange', function () {
+          if (!document.hidden) applyTheme();
+        });
+      })();
+    </script>
     <style>
       html, body {
         margin: 0;
@@ -16,10 +40,19 @@
         background: #ece7de;
       }
 
+      html[data-theme="dark"],
+      html[data-theme="dark"] body {
+        background: #000000;
+      }
+
       #root {
         min-height: 100vh;
         min-height: 100dvh;
         background: #ece7de;
+      }
+
+      html[data-theme="dark"] #root {
+        background: #000000;
       }
     </style>
   </head>

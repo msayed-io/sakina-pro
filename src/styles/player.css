@@ -1,27 +1,28 @@
 @theme {
-  --color-quranify-bg-primary: #ece7de;
+  --color-quranify-bg-primary: var(--sk-bg);
+  /* Scrims sit over media/imagery and stay valid in both schemes */
   --color-quranify-scrim-60: rgba(43, 26, 16, 0.35);
   --color-quranify-scrim-70: rgba(43, 26, 16, 0.50);
-  --color-quranify-bottom-bar-bg: rgba(253, 252, 251, 0.88);
-  --color-quranify-surface: #fdfcfb;
-  --color-quranify-surface-variant: #f5ebd6;
+  --color-quranify-bottom-bar-bg: var(--sk-bar);
+  --color-quranify-surface: var(--sk-bg3);
+  --color-quranify-surface-variant: var(--sk-tan);
 
-  --color-quranify-text-primary: #2b1a10;
-  --color-quranify-text-secondary: #7f6a55;
-  --color-quranify-text-disabled: #a39282;
+  --color-quranify-text-primary: var(--sk-label);
+  --color-quranify-text-secondary: var(--sk-label2);
+  --color-quranify-text-disabled: var(--sk-label3);
 
-  --color-quranify-accent-primary: #deab65;
-  --color-quranify-accent-secondary: #b88a4f;
-  --color-quranify-accent-variant: #c49a62;
-  --color-quranify-accent-deep: #8c6332;
+  --color-quranify-accent-primary: var(--sk-accent-bright);
+  --color-quranify-accent-secondary: var(--sk-accent);
+  --color-quranify-accent-variant: var(--sk-accent-variant);
+  --color-quranify-accent-deep: var(--sk-accent-deep2);
 
-  --color-quranify-error: #c94a4a;
-  --color-quranify-live: #b88a4f;
-  --color-quranify-progress: #b88a4f;
+  --color-quranify-error: var(--sk-danger);
+  --color-quranify-live: var(--sk-accent);
+  --color-quranify-progress: var(--sk-accent);
 
-  --color-quranify-purple: #b88a4f;
-  --color-quranify-notification-bg: #f5ebd6;
-  --color-quranify-glass-tint: rgba(253, 252, 251, 0.85);
+  --color-quranify-purple: var(--sk-accent);
+  --color-quranify-notification-bg: var(--sk-tan);
+  --color-quranify-glass-tint: var(--sk-glass-tint);
 
   --font-player-primary: "Thmanyah Sans", system-ui, sans-serif;
   --font-player-primary-italic: "Thmanyah Sans", system-ui, sans-serif;
@@ -165,4 +166,27 @@
 .player-hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+
+/* --- Dark-mode recipes for the static (non-video) player surfaces --- */
+html[data-theme="dark"] .player-glass-container {
+  background: linear-gradient(180deg, rgba(44, 44, 46, 0.62) 0%, rgba(28, 28, 30, 0.66) 100%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+html[data-theme="dark"] .player-glass-pill {
+  background: var(--sk-glass);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-color: transparent;
+  box-shadow: none;
+}
+html[data-theme="dark"] .player-bottom-sheet {
+  background: var(--sk-sheet);
+  border-top-color: transparent;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.60);
+  backdrop-filter: blur(30px);
 }

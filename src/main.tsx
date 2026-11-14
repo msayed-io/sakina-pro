@@ -1,6 +1,7 @@
 import { lazy, StrictMode, Suspense, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import SplashScreen from "./components/SplashScreen";
+import { useDarkRims } from "./theme/useDarkRims";
 import "./index.css";
 
 // Start fetching the application bundle immediately, but do not make its
@@ -11,6 +12,7 @@ const App = lazy(() => appModulePromise);
 function Boot() {
   const [isAppReady, setIsAppReady] = useState(false);
   const [isSplashComplete, setIsSplashComplete] = useState(false);
+  useDarkRims();
 
   useEffect(() => {
     let mounted = true;
@@ -23,9 +25,9 @@ function Boot() {
   }, []);
 
   return (
-    <div dir="rtl" className="min-h-[100dvh] w-full bg-[#ece7de] text-[#2b1a10]">
+    <div dir="rtl" className="min-h-[100dvh] w-full bg-[var(--sk-bg)] text-[var(--sk-label)]">
       {isAppReady && (
-        <Suspense fallback={<div className="min-h-[100dvh] w-full bg-[#ece7de]" />}>
+        <Suspense fallback={<div className="min-h-[100dvh] w-full bg-[var(--sk-bg)]" />}>
           <App />
         </Suspense>
       )}

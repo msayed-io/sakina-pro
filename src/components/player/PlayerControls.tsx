@@ -15,14 +15,14 @@ export function PlayerControls({ isPlaying, onTogglePlay, onPrev, onNext, shuffl
     <div className="flex items-center justify-center gap-4 sm:gap-6 my-8 z-0">
       <button 
         onClick={onToggleShuffle}
-        className={`w-12 h-12 flex items-center justify-center rounded-full transition-transform active:scale-90 ${shuffleMode ? 'text-[#b88a4f]' : 'text-[#7f6a55]/60'}`}
+        className={`w-12 h-12 flex items-center justify-center rounded-full transition-transform active:scale-90 ${shuffleMode ? 'text-[var(--sk-accent)]' : 'text-[#7f6a55]/60 dark:text-[var(--sk-label2)]/60'}`}
       >
         <Shuffle size={20} />
       </button>
 
       <button 
         onClick={onPrev}
-        className="w-14 h-14 flex items-center justify-center text-[#2b1a10] hover:text-[#b88a4f] active:scale-90 transition-transform"
+        className="w-14 h-14 flex items-center justify-center text-[var(--sk-label)] hover:text-[var(--sk-accent)] active:scale-90 transition-transform"
       >
         <SkipBack size={32} fill="currentColor" />
       </button>
@@ -34,8 +34,8 @@ export function PlayerControls({ isPlaying, onTogglePlay, onPrev, onNext, shuffl
           w-[72px] h-[72px] 
           flex items-center justify-center 
           rounded-full 
-          bg-gradient-to-br from-[#deab65] to-[#b88a4f] 
-          text-white shadow-lg shadow-[#b88a4f]/25 border border-[#c49a62]
+          bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] 
+          text-[var(--sk-on-espresso)] shadow-lg shadow-[#b88a4f]/25 dark:shadow-[var(--sk-accent)]/25 border border-[var(--sk-accent-variant)]
           active:scale-90 transition-transform
         "
       >
@@ -49,7 +49,7 @@ export function PlayerControls({ isPlaying, onTogglePlay, onPrev, onNext, shuffl
       {/* Next */}
       <button 
         onClick={onNext}
-        className="w-14 h-14 flex items-center justify-center text-[#2b1a10] hover:text-[#b88a4f] active:scale-90 transition-transform"
+        className="w-14 h-14 flex items-center justify-center text-[var(--sk-label)] hover:text-[var(--sk-accent)] active:scale-90 transition-transform"
       >
         <SkipForward size={32} fill="currentColor" />
       </button>

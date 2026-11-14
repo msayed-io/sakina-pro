@@ -90,28 +90,28 @@ export default function ManualLocationDialog({
               className="relative w-full max-w-[400px] cut-crystal-panel rounded-t-[40px] sm:rounded-[40px] shadow-2xl flex flex-col pt-4 pb-8 px-5"
             >
               {/* Drag Handle */}
-              <div className="w-12 h-1.5 bg-[#c2b5a3] rounded-full mx-auto mb-6" />
+              <div className="w-12 h-1.5 bg-[var(--sk-label4)] rounded-full mx-auto mb-6" />
 
               <div className="flex items-center justify-center mb-8 relative">
                 <button
                   onClick={onClose}
-                  className="w-10 h-10 rounded-full flex items-center justify-center cut-crystal-capsule text-[#7f6a55] hover:scale-105 active:scale-95 transition-all absolute left-0"
+                  className="w-10 h-10 rounded-full flex items-center justify-center cut-crystal-capsule text-[var(--sk-label2)] hover:scale-105 active:scale-95 transition-all absolute left-0"
                 >
                   <X size={20} />
                 </button>
-                <h2 className="text-[20px] font-bold text-[#2b1a10] text-center">
+                <h2 className="text-[20px] font-bold text-[var(--sk-label)] text-center">
                   تعديل الموقع
                 </h2>
               </div>
 
               <div className="cut-crystal-satin rounded-[24px] p-2 shadow-sm mb-8">
                 {locationError && (
-                  <div className="mx-2 mb-3 rounded-[18px] border border-[#d8b48b]/60 bg-[#fff8ec] px-3 py-3 text-right text-[13px] leading-6 text-[#6f4f35]" role="alert">
+                  <div className="mx-2 mb-3 rounded-[18px] border border-[#d8b48b]/60 bg-[#fff8ec] px-3 py-3 text-right text-[13px] leading-6 text-[#6f4f35] dark:border-[var(--sk-tint-border)] dark:bg-[var(--sk-warning-bg)] dark:text-[var(--sk-label)]" role="alert">
                     <p>{locationError}</p>
                     <button
                       type="button"
                       onClick={onOpenLocationSettings}
-                      className="mt-2 font-bold text-[#9a6c35] underline underline-offset-4"
+                      className="mt-2 font-bold text-[#9a6c35] dark:text-[var(--sk-warning)] underline underline-offset-4"
                     >
                       فتح إعدادات التطبيق
                     </button>
@@ -119,17 +119,17 @@ export default function ManualLocationDialog({
                 )}
 
                 {/* Auto Location Row */}
-                <div className="flex items-center justify-between px-4 py-4 border-b border-[#e6dccf]">
+                <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--sk-sep)]">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#f7f2ea] border border-[#e6dccf] flex items-center justify-center text-[#b88a4f]">
+                    <div className="w-8 h-8 rounded-full bg-[var(--sk-bg2)] border border-[var(--sk-sep)] flex items-center justify-center text-[var(--sk-accent)]">
                       <Navigation size={16} className="rotate-45" />
                     </div>
-                    <span className="text-[16px] font-bold text-[#2b1a10]">
+                    <span className="text-[16px] font-bold text-[var(--sk-label)]">
                       تحديد الموقع تلقائي
                     </span>
                   </div>
                   <div
-                    className={`w-12 h-7 rounded-full flex items-center p-1 cursor-pointer transition-colors ${tempAutoLocation ? "bg-[#b88a4f]" : "bg-[#e6dccf]"}`}
+                    className={`w-12 h-7 rounded-full flex items-center p-1 cursor-pointer transition-colors ${tempAutoLocation ? "bg-[var(--sk-accent)]" : "bg-[var(--sk-sep)]"}`}
                     style={{
                       justifyContent: tempAutoLocation
                         ? "flex-end"
@@ -139,7 +139,8 @@ export default function ManualLocationDialog({
                   >
                     <motion.div
                       layout
-                      className="w-5 h-5 bg-white rounded-full shadow-sm"
+                      data-checked={tempAutoLocation}
+                      className="w-5 h-5 bg-white rounded-full shadow-sm dark:data-[checked=true]:bg-black"
                       transition={{
                         type: "spring",
                         stiffness: 400,
@@ -153,31 +154,31 @@ export default function ManualLocationDialog({
                 <button
                   disabled={tempAutoLocation}
                   onClick={() => setShowMapPicker(true)}
-                  className={`w-full flex items-center justify-between px-4 py-4 transition-colors ${tempAutoLocation ? "opacity-40 cursor-not-allowed" : "hover:bg-[#f7f2ea]/50 rounded-b-[24px]"}`}
+                  className={`w-full flex items-center justify-between px-4 py-4 transition-colors ${tempAutoLocation ? "opacity-40 cursor-not-allowed" : "hover:bg-[#f7f2ea]/50 dark:hover:bg-[var(--sk-bg2)]/50 rounded-b-[24px]"}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#f7f2ea] border border-[#e6dccf] flex items-center justify-center text-[#b88a4f]">
+                    <div className="w-8 h-8 rounded-full bg-[var(--sk-bg2)] border border-[var(--sk-sep)] flex items-center justify-center text-[var(--sk-accent)]">
                       <MapPin size={16} />
                     </div>
-                    <span className="text-[16px] font-bold text-[#2b1a10]">
+                    <span className="text-[16px] font-bold text-[var(--sk-label)]">
                       الموقع المحدد
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className="text-[14px] font-bold text-[#2b1a10] truncate max-w-[130px] text-left"
+                      className="text-[14px] font-bold text-[var(--sk-label)] truncate max-w-[130px] text-left"
                       dir="ltr"
                     >
                       {tempCityName}
                     </span>
-                    <ChevronLeft size={20} className="text-[#2b1a10]" />
+                    <ChevronLeft size={20} className="text-[var(--sk-label)]" />
                   </div>
                 </button>
               </div>
 
               <button
                 onClick={handleApply}
-                className="w-full bg-[#2b1a10] text-[#fff9f1] rounded-[24px] py-4 text-[17px] font-bold shadow-[0_8px_20px_rgba(43,26,16,0.2)] active:scale-[0.98] transition-all hover:brightness-110 cursor-pointer"
+                className="w-full bg-[var(--sk-espresso-fill)] text-[var(--sk-on-accent-soft)] rounded-[24px] py-4 text-[17px] font-bold shadow-[0_8px_20px_rgba(43,26,16,0.2)] active:scale-[0.98] transition-all hover:brightness-110 cursor-pointer"
               >
                 تطبيق التعديل
               </button>

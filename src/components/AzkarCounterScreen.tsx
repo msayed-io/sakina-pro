@@ -347,7 +347,7 @@ export default function AzkarCounterScreen({
       exit={{ opacity: 0, y: "100%" }}
       transition={cardMotionTransition}
       dir="rtl"
-      className="fixed inset-0 z-50 flex flex-col bg-[#ece7de] md:max-w-[430px] md:mx-auto md:shadow-[0_24px_64px_rgba(43,26,16,0.3)] md:my-6 md:rounded-[40px] md:border md:border-white/20 overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-[var(--sk-bg)] md:max-w-[430px] md:mx-auto md:shadow-[0_24px_64px_rgba(43,26,16,0.3)] md:my-6 md:rounded-[40px] md:border md:border-white/20 overflow-hidden"
     >
       {/* ── HEADER NAVIGATION ROW ── */}
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-2">
@@ -359,8 +359,8 @@ export default function AzkarCounterScreen({
           }}
           className={`flex h-11 w-11 items-center justify-center rounded-full border shadow-sm transition-all duration-300 ${
             isBookmarked
-              ? "bg-[#b88a4f] border-[#b88a4f] text-white shadow-[#b88a4f]/20 scale-105"
-              : "cut-crystal-capsule text-[#7f6a55] hover:text-[#2b1a10]"
+              ? "bg-[var(--sk-accent)] border-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-[#b88a4f]/20 dark:shadow-[var(--sk-accent)]/20 scale-105"
+              : "cut-crystal-capsule text-[var(--sk-label2)] hover:text-[var(--sk-label)]"
           }`}
           title="حفظ في المفضلة"
         >
@@ -370,7 +370,7 @@ export default function AzkarCounterScreen({
         {/* Close/Back Button */}
         <button
           onClick={onClose}
-          className="h-11 w-11 flex items-center justify-center cut-crystal-capsule text-[#7f6a55] hover:text-[#2b1a10] active:scale-95 transition-all"
+          className="h-11 w-11 flex items-center justify-center cut-crystal-capsule text-[var(--sk-label2)] hover:text-[var(--sk-label)] active:scale-95 transition-all"
           title="رجوع"
         >
           <ChevronLeft size={22} className="scale-x-[-1]" />
@@ -379,7 +379,7 @@ export default function AzkarCounterScreen({
 
       {/* ── TITLE CONTAINER ── */}
       <div className="px-6 pb-2 text-right">
-        <h1 className="text-[26px] font-bold text-[#2b1a10] tracking-tight leading-snug font-sans">
+        <h1 className="text-[26px] font-bold text-[var(--sk-label)] tracking-tight leading-snug font-sans">
           {title}
         </h1>
       </div>
@@ -395,8 +395,8 @@ export default function AzkarCounterScreen({
           disabled={currentIndex === 0}
           className={`mb-1.5 flex h-8 w-12 items-center justify-center rounded-full transition-all duration-300 ${
             currentIndex === 0
-              ? "opacity-15 cursor-not-allowed text-[#7f6a55]/40"
-              : "text-[#7f6a55] hover:text-[#2b1a10] hover:translate-y-[-2px] active:scale-90"
+              ? "opacity-15 cursor-not-allowed text-[#7f6a55]/40 dark:text-[var(--sk-label2)]/40"
+              : "text-[var(--sk-label2)] hover:text-[var(--sk-label)] hover:translate-y-[-2px] active:scale-90"
           }`}
           title="الذكر السابق"
         >
@@ -434,9 +434,9 @@ export default function AzkarCounterScreen({
               }}
             >
               {/* Sleek Top Edge Progress Indicator */}
-              <div className="absolute top-0 inset-x-0 h-[4px] bg-[#ece7de] rounded-t-[28px] overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-[4px] bg-[var(--sk-bg)] rounded-t-[28px] overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[#deab65] to-[#b88a4f]"
+                  className="h-full bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)]"
                   animate={{
                     width: `${Math.min((currentCount / item.count) * 100, 100)}%`,
                   }}
@@ -449,7 +449,7 @@ export default function AzkarCounterScreen({
                 className="flex justify-center"
                 onClick={(e) => e.stopPropagation()}
               >
-                <span className="px-4 py-0.5 rounded-full bg-[#fff8e1] text-[#b88a4f] text-[12px] font-bold tracking-tight tabular-nums border border-[#e6dccf]/60 shadow-sm">
+                <span className="px-4 py-0.5 rounded-full bg-[var(--sk-warning-bg)] text-[var(--sk-accent)] text-[12px] font-bold tracking-tight tabular-nums border border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60 shadow-sm">
                   {total} / {currentIndex + 1}
                 </span>
               </div>
@@ -458,7 +458,7 @@ export default function AzkarCounterScreen({
               <div className="flex-1 overflow-y-auto hide-scrollbar my-2.5 px-1.5 flex flex-col justify-start">
                 <div className="my-auto py-2 w-full">
                   <p
-                    className="text-center font-serif font-medium text-[#2b1a10] leading-relaxed select-text"
+                    className="text-center font-serif font-medium text-[var(--sk-label)] leading-relaxed select-text"
                     style={{
                       fontSize: `${fontSize}px`,
                       lineHeight: "1.95",
@@ -472,7 +472,7 @@ export default function AzkarCounterScreen({
                     <motion.p
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 text-center text-[12px] font-bold text-[#b88a4f] bg-[#fff8e1] px-4 py-2 rounded-xl border border-[#e6dccf]/45 leading-relaxed shadow-inner"
+                      className="mt-4 text-center text-[12px] font-bold text-[var(--sk-accent)] bg-[var(--sk-warning-bg)] px-4 py-2 rounded-xl border border-[#e6dccf]/45 dark:border-[var(--sk-sep)]/45 leading-relaxed shadow-inner"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {item.source}
@@ -489,12 +489,12 @@ export default function AzkarCounterScreen({
                 <div
                   className={`px-4 py-1.5 rounded-full flex items-center gap-2 border text-[13px] font-bold select-none transition-all duration-300 ${
                     isComplete
-                      ? "bg-[#b88a4f]/15 border-transparent text-[#b88a4f] scale-95"
-                      : "bg-[#fff8e1] border-[#e6dccf] text-[#2b1a10]"
+                      ? "bg-[#b88a4f]/15 dark:bg-[var(--sk-accent)]/15 border-transparent text-[var(--sk-accent)] scale-95"
+                      : "bg-[var(--sk-warning-bg)] border-[var(--sk-sep)] text-[var(--sk-label)]"
                   }`}
                 >
                   <div
-                    className={`h-1.5 w-1.5 rounded-full ${isComplete ? "bg-[#b88a4f]" : "bg-[#deab65] animate-pulse"}`}
+                    className={`h-1.5 w-1.5 rounded-full ${isComplete ? "bg-[var(--sk-accent)]" : "bg-[var(--sk-accent-bright)] animate-pulse"}`}
                   />
                   <span className="font-bold tabular-nums">
                     {currentCount} من {item.count}{" "}
@@ -504,7 +504,7 @@ export default function AzkarCounterScreen({
               </div>
 
               {/* Thin Divider Line */}
-              <div className="w-full h-[1px] bg-[#ece7de]/60 mb-2" />
+              <div className="w-full h-[1px] bg-[#ece7de]/60 dark:bg-[var(--sk-bg)]/60 mb-2" />
 
               {/* Shrunken, low-profile actions row */}
               <div
@@ -519,8 +519,8 @@ export default function AzkarCounterScreen({
                   }}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all duration-200 ${
                     showSource
-                      ? "bg-[#b88a4f]/15 text-[#b88a4f]"
-                      : "text-[#7f6a55] hover:text-[#2b1a10] hover:bg-black/5"
+                      ? "bg-[#b88a4f]/15 dark:bg-[var(--sk-accent)]/15 text-[var(--sk-accent)]"
+                      : "text-[var(--sk-label2)] hover:text-[var(--sk-label)] hover:bg-black/5"
                   }`}
                 >
                   <Info size={12} />
@@ -530,7 +530,7 @@ export default function AzkarCounterScreen({
                 {/* Share Button */}
                 <button
                   onClick={handleShare}
-                  className="p-1.5 text-[#7f6a55] hover:text-[#2b1a10] hover:bg-black/5 rounded-full transition-colors"
+                  className="p-1.5 text-[var(--sk-label2)] hover:text-[var(--sk-label)] hover:bg-black/5 rounded-full transition-colors"
                   title="مشاركة الذكر"
                 >
                   <Share2 size={14} />
@@ -546,7 +546,7 @@ export default function AzkarCounterScreen({
             e.stopPropagation();
             handleNext();
           }}
-          className="mt-1.5 flex h-8 w-12 items-center justify-center rounded-full text-[#7f6a55] hover:text-[#2b1a10] hover:translate-y-[2px] active:scale-90 transition-all duration-300"
+          className="mt-1.5 flex h-8 w-12 items-center justify-center rounded-full text-[var(--sk-label2)] hover:text-[var(--sk-label)] hover:translate-y-[2px] active:scale-90 transition-all duration-300"
           title={isLast ? "تمّت الأذكار" : "الذكر التالي"}
         >
           <ChevronDown size={28} strokeWidth={2.5} />
@@ -561,7 +561,7 @@ export default function AzkarCounterScreen({
             e.stopPropagation();
             changeFontSize();
           }}
-          className="flex h-11 w-11 items-center justify-center cut-crystal-capsule text-[#2b1a10] font-bold text-[14px] shadow-md active:scale-95"
+          className="flex h-11 w-11 items-center justify-center cut-crystal-capsule text-[var(--sk-label)] font-bold text-[14px] shadow-md active:scale-95"
           title="تغيير حجم الخط"
         >
           AA
@@ -577,14 +577,14 @@ export default function AzkarCounterScreen({
           }}
           className={`flex items-center justify-center gap-2 rounded-[24px] border px-5 py-2.5 text-[12.5px] font-bold shadow-[0_4px_14px_rgba(43,26,16,0.08)] transition-colors duration-150 active:scale-[0.98] ${
             autoTransition
-              ? "border-[#b88a4f] bg-[#b88a4f] text-white"
-              : "border-[#d8c9b8] bg-[#f7f2ea] text-[#7f6a55] hover:border-[#b88a4f] hover:text-[#2b1a10]"
+              ? "border-[var(--sk-accent)] bg-[var(--sk-accent)] text-[var(--sk-on-espresso)]"
+              : "border-[var(--sk-linen)] bg-[var(--sk-bg2)] text-[var(--sk-label2)] hover:border-[var(--sk-accent)] hover:text-[var(--sk-label)]"
           }`}
         >
           <span
             aria-hidden="true"
             className={`h-2 w-2 rounded-full transition-colors duration-150 ${
-              autoTransition ? "bg-white" : "bg-[#b88a4f]"
+              autoTransition ? "bg-white dark:bg-black" : "bg-[var(--sk-accent)]"
             }`}
           />
           <span>
@@ -602,7 +602,7 @@ export default function AzkarCounterScreen({
             initial={{ opacity: 0, y: 15, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -15, scale: 0.9 }}
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-[#2b1a10]/95 text-[#ece7de] text-[13px] font-bold shadow-lg shadow-black/20 pointer-events-none"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-[#2b1a10]/95 dark:bg-[var(--sk-shade)]/95 text-[var(--sk-bg)] text-[13px] font-bold shadow-lg shadow-black/20 pointer-events-none"
           >
             {toastMessage}
           </motion.div>

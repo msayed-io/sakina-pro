@@ -366,12 +366,12 @@ export default function QuranRecitersScreen({
 
   return (
     <div
-      className="min-h-screen bg-[#ece7de] text-[#2b1a10] flex flex-col font-sans relative overflow-hidden"
+      className="min-h-screen bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden"
       dir="rtl"
     >
       {/* Background soft ambient shapes */}
-      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Global Backdrop for Top Bar Dropdowns */}
       <AnimatePresence>
@@ -400,14 +400,14 @@ export default function QuranRecitersScreen({
               setIsModeDropdownOpen((prev) => !prev);
               setIsDropdownOpen(false);
             }}
-            className="cut-crystal-capsule px-4.5 h-10 rounded-full shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
+            className="cut-crystal-capsule sk-rim px-4.5 h-10 rounded-full shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
           >
-            <span className="text-[14px] font-bold text-[#2b1a10] whitespace-nowrap pt-0.5">
+            <span className="text-[14px] font-bold text-[var(--sk-label)] whitespace-nowrap pt-0.5">
               الاستماع
             </span>
             <ChevronDown
               size={14}
-              className={`text-[#b88a4f] transition-transform duration-200 ${isModeDropdownOpen ? "rotate-180" : ""}`}
+              className={`text-[var(--sk-accent)] transition-transform duration-200 ${isModeDropdownOpen ? "rotate-180" : ""}`}
             />
           </button>
 
@@ -429,12 +429,12 @@ export default function QuranRecitersScreen({
                     setIsModeDropdownOpen(false);
                     if (onModeChange) onModeChange("listening");
                   }}
-                  className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 text-[#2b1a10]"
+                  className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)]"
                 >
-                  <span className="text-[13px] font-bold text-[#b88a4f]">
+                  <span className="text-[13px] font-bold text-[var(--sk-accent)]">
                     الاستماع
                   </span>
-                  <Check size={14} className="text-[#b88a4f] shrink-0" />
+                  <Check size={14} className="text-[var(--sk-accent)] shrink-0" />
                 </button>
                 <button
                   type="button"
@@ -442,7 +442,7 @@ export default function QuranRecitersScreen({
                     setIsModeDropdownOpen(false);
                     if (onModeChange) onModeChange("reading");
                   }}
-                  className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 text-[#2b1a10]"
+                  className="w-full flex items-center justify-between py-2.5 px-4 text-right transition-colors hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)]"
                 >
                   <span className="text-[13px] font-bold">القرآن الكريم</span>
                 </button>
@@ -459,12 +459,12 @@ export default function QuranRecitersScreen({
               setIsDropdownOpen((prev) => !prev);
               setIsModeDropdownOpen(false);
             }}
-            className="flex items-center gap-2 cut-crystal-capsule px-4 h-10 rounded-full shadow-md transition-all active:scale-95 shrink-0 max-w-[160px]"
+            className="flex items-center gap-2 cut-crystal-capsule sk-rim px-4 h-10 rounded-full shadow-md transition-all active:scale-95 shrink-0 max-w-[160px]"
           >
-            <span className="text-[13.5px] text-[#2b1a10] font-bold whitespace-nowrap pt-0.5 truncate">
+            <span className="text-[13.5px] text-[var(--sk-label)] font-bold whitespace-nowrap pt-0.5 truncate">
               {selectedFilter}
             </span>
-            <ChevronsUpDown size={14} className="text-[#b88a4f] shrink-0" />
+            <ChevronsUpDown size={14} className="text-[var(--sk-accent)] shrink-0" />
           </button>
 
           {/* Elegant Floating Dropdown Menu */}
@@ -476,10 +476,10 @@ export default function QuranRecitersScreen({
                 exit={{ opacity: 0, y: -6, scale: 0.96 }}
                 transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
                 style={{ position: "absolute", top: "calc(100% + 8px)", left: 0 }}
-                className="w-60 max-w-[calc(100vw-48px)] cut-crystal-panel rounded-[22px] shadow-2xl z-50 overflow-hidden text-[#2b1a10] max-h-[250px] overflow-y-auto hide-scrollbar origin-top-left"
+                className="w-60 max-w-[calc(100vw-48px)] cut-crystal-panel rounded-[22px] shadow-2xl z-50 overflow-hidden text-[var(--sk-label)] max-h-[250px] overflow-y-auto hide-scrollbar origin-top-left"
                 dir="rtl"
               >
-                <div className="px-4 py-2 text-[12px] font-bold text-[#7f6a55] border-b border-[#e6dccf]/40 text-right sticky top-0 bg-[#f7f2ea]/95 backdrop-blur-md z-10">
+                <div className="px-4 py-2 text-[12px] font-bold text-[var(--sk-label2)] border-b border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 text-right sticky top-0 bg-[#f7f2ea]/95 dark:bg-[var(--sk-bg2)]/95 backdrop-blur-md z-10">
                   اختر رواية أو تصفية
                 </div>
                 <div className="p-1.5 space-y-1">
@@ -493,8 +493,8 @@ export default function QuranRecitersScreen({
                       }}
                       className={`w-full flex items-center justify-between py-2.5 px-3.5 rounded-[16px] transition-all duration-150 text-right ${
                         selectedFilter === option
-                          ? "bg-[#b88a4f]/10 text-[#b88a4f]"
-                          : "hover:bg-[#e8dfd4]/40 text-[#2b1a10] active:scale-[0.98]"
+                          ? "bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]"
+                          : "hover:bg-[#e8dfd4]/40 dark:hover:bg-[var(--sk-ring-track)]/40 text-[var(--sk-label)] active:scale-[0.98]"
                       }`}
                     >
                       <span className="text-[13.5px] font-bold truncate">
@@ -503,7 +503,7 @@ export default function QuranRecitersScreen({
                       {selectedFilter === option && (
                         <Check
                           size={15}
-                          className="text-[#b88a4f] shrink-0 mr-2"
+                          className="text-[var(--sk-accent)] shrink-0 mr-2"
                         />
                       )}
                     </button>
@@ -536,38 +536,38 @@ export default function QuranRecitersScreen({
         <button
           type="button"
           onClick={onOpenPureRecitations}
-          className="w-full mb-4 cut-crystal-panel rounded-[28px] p-4.5 text-right shadow-md border border-[#deab65]/20 transition-all active:scale-[0.99] hover:bg-[#f5ebd6]/45"
+          className="w-full mb-4 cut-crystal-panel rounded-[28px] p-4.5 text-right shadow-md border border-[#deab65]/20 dark:border-[var(--sk-accent-bright)]/20 transition-all active:scale-[0.99] hover:bg-[#f5ebd6]/45 dark:hover:bg-[var(--sk-tan)]/45"
           aria-label="فتح صفحة التلاوات النقية"
         >
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-[17px] bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-white flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-11 h-11 rounded-[17px] bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] flex items-center justify-center shrink-0 shadow-sm">
               <Sparkles size={19} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold text-[#b88a4f] mb-1">اختيارات سكينة</p>
-              <h2 className="text-[16px] font-bold text-[#2b1a10] leading-tight">التلاوات النقية</h2>
-              <p className="text-[11px] text-[#7f6a55] font-bold mt-1 truncate">تسجيلات منتقاة بجودة أفضل من مكتبة سكينة الخاصة</p>
+              <p className="text-[11px] font-bold text-[var(--sk-accent)] mb-1">اختيارات سكينة</p>
+              <h2 className="text-[16px] font-bold text-[var(--sk-label)] leading-tight">التلاوات النقية</h2>
+              <p className="text-[11px] text-[var(--sk-label2)] font-bold mt-1 truncate">تسجيلات منتقاة بجودة أفضل من مكتبة سكينة الخاصة</p>
             </div>
-            <ChevronLeft size={18} className="text-[#b88a4f] shrink-0" />
+            <ChevronLeft size={18} className="text-[var(--sk-accent)] shrink-0" />
           </div>
         </button>
 
         {isLoading && reciters.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 gap-3">
-            <SakeenahLineSpinner size={40} color="#b88a4f" label="جارٍ تحميل قائمة القراء" />
-            <p className="text-[14px] text-[#7f6a55] font-bold">
+            <SakeenahLineSpinner size={40} color="var(--sk-accent)" label="جارٍ تحميل قائمة القراء" />
+            <p className="text-[14px] text-[var(--sk-label2)] font-bold">
               جاري تحميل قائمة القراء...
             </p>
           </div>
         ) : filteredReciters.length === 0 ? (
-          <div className="text-center py-20 text-[#7f6a55] font-bold">
+          <div className="text-center py-20 text-[var(--sk-label2)] font-bold">
             لا يوجد نتائج متطابقة للبحث
           </div>
         ) : (
           <div className="space-y-3.5">
             {isLoading && (
-              <div className="flex items-center justify-center gap-2 py-2.5 bg-[#b88a4f]/5 border border-[#b88a4f]/10 rounded-2xl text-[12px] text-[#b88a4f] font-bold mb-3 animate-pulse">
-                <SakeenahLineSpinner size={14} color="#b88a4f" label="جارٍ تحديث قائمة القراء" />
+              <div className="flex items-center justify-center gap-2 py-2.5 bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 border border-[#b88a4f]/10 dark:border-[var(--sk-accent)]/10 rounded-2xl text-[12px] text-[var(--sk-accent)] font-bold mb-3 animate-pulse">
+                <SakeenahLineSpinner size={14} color="var(--sk-accent)" label="جارٍ تحديث قائمة القراء" />
                 <span>جاري تحديث قائمة القراء كاملة...</span>
               </div>
             )}
@@ -605,7 +605,7 @@ export default function QuranRecitersScreen({
                 >
                   <div className="flex items-center gap-4">
                     {/* Premium avatar with brand gold/amber gradient */}
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-white flex items-center justify-center shrink-0 shadow-sm border border-[#c49a62]">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] flex items-center justify-center shrink-0 shadow-sm border border-[var(--sk-accent-variant)]">
                       <span className="text-[20px] font-bold font-serif">
                         {reciter.name.trim().charAt(0)}
                       </span>
@@ -613,13 +613,13 @@ export default function QuranRecitersScreen({
 
                     {/* Reciter texts */}
                     <div className="text-right">
-                      <h3 className="text-[17px] font-bold text-[#2b1a10] leading-tight mb-1.5 transition-colors group-hover:text-[#b88a4f]">
+                      <h3 className="text-[17px] font-bold text-[var(--sk-label)] leading-tight mb-1.5 transition-colors group-hover:text-[var(--sk-accent)]">
                         {reciter.name}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[#7f6a55] font-bold">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[var(--sk-label2)] font-bold">
                         {/* Display primary narration */}
                         <div className="flex items-center gap-1.5">
-                          <FileText size={12} className="text-[#b88a4f]" />
+                          <FileText size={12} className="text-[var(--sk-accent)]" />
                           <span>
                             {displayMoshaf.name.replace("مرتل", "").trim()} -
                             مرتل
@@ -628,7 +628,7 @@ export default function QuranRecitersScreen({
 
                         {/* Additional dynamic info */}
                         {narrationsCount > 1 && (
-                          <div className="flex items-center gap-1 bg-[#b88a4f]/10 px-2 py-0.5 rounded-full text-[10px] text-[#b88a4f] border border-[#b88a4f]/20">
+                          <div className="flex items-center gap-1 bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 px-2 py-0.5 rounded-full text-[10px] text-[var(--sk-accent)] border border-[#b88a4f]/20 dark:border-[var(--sk-accent)]/20">
                             <BookOpen size={10} />
                             <span>{toArabicWord(narrationsCount)}</span>
                           </div>
@@ -640,7 +640,7 @@ export default function QuranRecitersScreen({
                   {/* Left chevron indicating forward action */}
                   <ChevronLeft
                     size={18}
-                    className="text-[#b88a4f] opacity-80 group-hover:opacity-100 group-hover:translate-x-[-2px] transition-all"
+                    className="text-[var(--sk-accent)] opacity-80 group-hover:opacity-100 group-hover:translate-x-[-2px] transition-all"
                   />
                 </button>
               );
@@ -651,7 +651,7 @@ export default function QuranRecitersScreen({
                 <button
                   type="button"
                   onClick={() => setVisibleCount((prev) => prev + 45)}
-                  className="bg-[#f7f2ea] hover:bg-[#e8dfd4] border border-[#e6dccf] text-[#b88a4f] px-6 py-3 rounded-full text-[14px] font-bold transition-all active:scale-95 shadow-sm font-sans"
+                  className="bg-[var(--sk-bg2)] hover:bg-[var(--sk-ring-track)] border border-[var(--sk-sep)] text-[var(--sk-accent)] px-6 py-3 rounded-full text-[14px] font-bold transition-all active:scale-95 shadow-sm font-sans"
                 >
                   عرض المزيد من القراء ({filteredReciters.length - visibleCount}
                   )
@@ -673,7 +673,7 @@ export default function QuranRecitersScreen({
             borderRadius: isSearchActive ? 24 : 28,
           }}
           transition={{ type: "spring", damping: 25, stiffness: 250 }}
-          className="h-14 cut-crystal-capsule shadow-lg flex items-center overflow-hidden pointer-events-auto relative"
+          className="h-14 cut-crystal-capsule sk-rim shadow-lg flex items-center overflow-hidden pointer-events-auto relative"
         >
           {/* Left Side (in LTR): Toggle Button (Search -> Close) */}
           <button
@@ -698,7 +698,7 @@ export default function QuranRecitersScreen({
                 >
                   <X
                     size={20}
-                    className="text-[#7f6a55] hover:text-[#2b1a10]"
+                    className="text-[var(--sk-label2)] hover:text-[var(--sk-label)]"
                   />
                 </motion.div>
               ) : (
@@ -709,7 +709,7 @@ export default function QuranRecitersScreen({
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.15 }}
                 >
-                  <Search size={20} className="text-[#b88a4f]" />
+                  <Search size={20} className="text-[var(--sk-accent)]" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -730,7 +730,7 @@ export default function QuranRecitersScreen({
               placeholder="البحث عن قارئ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-full bg-transparent border-none outline-none text-[15px] font-sans font-bold text-[#2b1a10] placeholder:text-[#7f6a55] px-2 pt-0.5"
+              className="w-full h-full bg-transparent border-none outline-none text-[15px] font-sans font-bold text-[var(--sk-label)] placeholder:text-[var(--sk-label2)] px-2 pt-0.5"
               tabIndex={isSearchActive ? 0 : -1}
             />
           </div>
@@ -739,7 +739,7 @@ export default function QuranRecitersScreen({
           <div
             className={`w-12 h-14 shrink-0 flex items-center justify-center transition-opacity duration-200 ${isSearchActive ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           >
-            <Search size={18} className="text-[#b88a4f]/50" />
+            <Search size={18} className="text-[#b88a4f]/50 dark:text-[var(--sk-accent)]/50" />
           </div>
         </motion.div>
       </div>
@@ -764,7 +764,7 @@ export default function QuranRecitersScreen({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsFilterOpen(false)}
-              className="fixed inset-0 bg-[#2b1a10]/40 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-[#2b1a10]/40 dark:bg-[var(--sk-shade)]/40 backdrop-blur-sm z-50"
             />
             <motion.div
               initial={{ y: "100%" }}
@@ -773,20 +773,20 @@ export default function QuranRecitersScreen({
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-x-0 bottom-0 cut-crystal-panel rounded-t-[32px] z-50 overflow-hidden flex flex-col max-h-[75vh]"
             >
-              <div className="flex items-center justify-between p-6 border-b border-[#e6dccf]/60">
-                <h3 className="text-[18px] font-bold text-[#2b1a10] w-full text-center pr-8">
+              <div className="flex items-center justify-between p-6 border-b border-[#e6dccf]/60 dark:border-[var(--sk-sep)]/60">
+                <h3 className="text-[18px] font-bold text-[var(--sk-label)] w-full text-center pr-8">
                   تصفية حسب
                 </h3>
                 <button
                   onClick={() => setIsFilterOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center bg-[#f7f2ea] rounded-full text-[#7f6a55] border border-[#e6dccf]/40 hover:bg-[#e8dfd4] transition-colors"
+                  className="w-8 h-8 flex items-center justify-center bg-[var(--sk-bg2)] rounded-full text-[var(--sk-label2)] border border-[#e6dccf]/40 dark:border-[var(--sk-sep)]/40 hover:bg-[var(--sk-ring-track)] transition-colors"
                 >
                   <X size={16} />
                 </button>
               </div>
 
               <div
-                className="flex-1 overflow-y-auto p-4 space-y-1 divide-y divide-[#e6dccf]/40"
+                className="flex-1 overflow-y-auto p-4 space-y-1 divide-y divide-[#e6dccf]/40 dark:divide-[var(--sk-sep)]/40"
                 dir="rtl"
               >
                 {filterOptions.map((option) => (
@@ -798,17 +798,17 @@ export default function QuranRecitersScreen({
                     }}
                     className={`w-full flex items-center justify-between py-4 px-3 rounded-2xl transition-colors ${
                       selectedFilter === option
-                        ? "bg-[#b88a4f]/10 text-[#b88a4f]"
-                        : "hover:bg-[#f7f2ea]"
+                        ? "bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]"
+                        : "hover:bg-[var(--sk-bg2)]"
                     }`}
                   >
                     <span
-                      className={`text-[15px] text-right ${selectedFilter === option ? "font-bold text-[#b88a4f]" : "font-bold text-[#7f6a55]"}`}
+                      className={`text-[15px] text-right ${selectedFilter === option ? "font-bold text-[var(--sk-accent)]" : "font-bold text-[var(--sk-label2)]"}`}
                     >
                       {option}
                     </span>
                     {selectedFilter === option && (
-                      <Check size={18} className="text-[#b88a4f]" />
+                      <Check size={18} className="text-[var(--sk-accent)]" />
                     )}
                   </button>
                 ))}

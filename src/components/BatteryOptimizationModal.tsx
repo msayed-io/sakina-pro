@@ -64,7 +64,7 @@ export default function BatteryOptimizationModal({
         id: 'notifications',
         title: 'إشعارات الصلاة',
         description: 'نحتاج إذن الإشعارات حتى يصلك تذكير الصلاة وإشعار دخول الوقت. لن نرسل إشعارات خارج هذه الوظيفة.',
-        icon: <Bell size={28} className="text-[#b88a4f]" />,
+        icon: <Bell size={28} className="text-[var(--sk-accent)]" />,
       });
     }
     if (needsExactAlarm) {
@@ -72,7 +72,7 @@ export default function BatteryOptimizationModal({
         id: 'exactAlarm',
         title: 'التنبيهات الدقيقة',
         description: 'يحتاج أندرويد إذنًا خاصًا حتى يوقظ التطبيق عند وقت التذكير المحسوب بدقة، حتى أثناء النوم العميق.',
-        icon: <Clock size={28} className="text-[#b88a4f]" />,
+        icon: <Clock size={28} className="text-[var(--sk-accent)]" />,
       });
     }
     return required;
@@ -145,15 +145,15 @@ export default function BatteryOptimizationModal({
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           onClick={(event) => event.stopPropagation()}
-          className="relative w-full max-w-[390px] overflow-hidden rounded-t-[32px] bg-[#fdfcfb] shadow-2xl"
+          className="relative w-full max-w-[390px] overflow-hidden rounded-t-[32px] bg-[var(--sk-bg3)] shadow-2xl"
         >
           <div className="flex justify-center pb-2 pt-3">
-            <div className="h-1 w-10 rounded-full bg-[#e6dccf]" />
+            <div className="h-1 w-10 rounded-full bg-[var(--sk-sep)]" />
           </div>
           <div className="absolute left-4 top-4">
             <button
               onClick={handleLater}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e6dccf] bg-[#f7f2ea] text-[#7f6a55] transition-colors hover:bg-[#ece7de]"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--sk-sep)] bg-[var(--sk-bg2)] text-[var(--sk-label2)] transition-colors hover:bg-[var(--sk-bg)]"
               aria-label="إغلاق"
             >
               <X size={16} />
@@ -167,10 +167,10 @@ export default function BatteryOptimizationModal({
                   key={step.id}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     index === currentStep
-                      ? 'w-6 bg-[#b88a4f]'
+                      ? 'w-6 bg-[var(--sk-accent)]'
                       : index < currentStep
-                        ? 'w-2 bg-[#2b1a10]'
-                        : 'w-2 bg-[#e6dccf]'
+                        ? 'w-2 bg-[var(--sk-espresso-fill)]'
+                        : 'w-2 bg-[var(--sk-sep)]'
                   }`}
                 />
               ))}
@@ -179,27 +179,27 @@ export default function BatteryOptimizationModal({
             <div className="mb-6 flex justify-center">
               <div className="cut-crystal-panel flex h-20 w-20 items-center justify-center rounded-[24px] shadow-md">
                 {completedSteps.has(currentRequiredStep.id) ? (
-                  <Check size={36} className="text-[#2b1a10]" strokeWidth={2.5} />
+                  <Check size={36} className="text-[var(--sk-label)]" strokeWidth={2.5} />
                 ) : (
                   currentRequiredStep.icon
                 )}
               </div>
             </div>
 
-            <h2 className="mb-3 text-center text-[22px] font-display font-black text-[#2b1a10]">
+            <h2 className="mb-3 text-center text-[22px] font-display font-black text-[var(--sk-label)]">
               {currentRequiredStep.title}
             </h2>
-            <p className="mx-auto mb-8 max-w-[320px] text-center text-[14px] font-bold leading-relaxed text-[#7f6a55]">
+            <p className="mx-auto mb-8 max-w-[320px] text-center text-[14px] font-bold leading-relaxed text-[var(--sk-label2)]">
               {currentRequiredStep.description}
             </p>
 
             <button
               onClick={handleCurrentStep}
               disabled={isProcessing}
-              className="flex h-13 w-full items-center justify-center gap-2 rounded-[20px] bg-[#2b1a10] text-[15px] font-black text-[#fff9f1] shadow-md transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+              className="flex h-13 w-full items-center justify-center gap-2 rounded-[20px] bg-[var(--sk-espresso-fill)] text-[15px] font-black text-[var(--sk-on-accent-soft)] shadow-md transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
             >
               {isProcessing ? (
-                <SakeenahLineSpinner size={20} color="#fff9f1" label="جارٍ التنفيذ" />
+                <SakeenahLineSpinner size={20} color="var(--sk-on-accent-soft)" label="جارٍ التنفيذ" />
               ) : (
                 <>
                   {currentRequiredStep.id === 'notifications' && notificationBlocked ? <Settings size={18} /> : <Settings size={18} />}
@@ -211,7 +211,7 @@ export default function BatteryOptimizationModal({
             <div className="mt-4 text-center">
               <button
                 onClick={handleLater}
-                className="text-[13px] font-bold text-[#b88a4f] underline transition-colors hover:text-[#deab65]"
+                className="text-[13px] font-bold text-[var(--sk-accent)] underline transition-colors hover:text-[var(--sk-accent-bright)]"
               >
                 لاحقاً
               </button>

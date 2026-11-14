@@ -652,7 +652,7 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
           </>
         ) : isQuranDownloaded === null ? (
           <div className="w-full h-[80vh] flex items-center justify-center">
-             <SakeenahLineSpinner size={32} color="#b88a4f" label="جارٍ فحص حالة المصحف" />
+             <SakeenahLineSpinner size={32} color="var(--sk-accent)" label="جارٍ فحص حالة المصحف" />
           </div>
         ) : isQuranDownloaded === false ? (
           <QuranDownloadScreen
@@ -741,9 +741,9 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
               {/* Right Side: Circular Avatar Artwork & Audio texts */}
               <div className="flex items-center gap-2.5 flex-1 min-w-0">
                 {currentPlayingRadio !== null ? (
-                  <div className={`relative w-[42px] h-[42px] rounded-full text-white flex items-center justify-center text-[12.5px] font-black shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.12)] ring-2 ring-[#fdfcfb] overflow-hidden ${
+                  <div className={`relative w-[42px] h-[42px] rounded-full text-white flex items-center justify-center text-[12.5px] font-black shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.12)] ring-2 ring-[var(--sk-bg3)] overflow-hidden ${
                     currentPlayingRadio.logoType === "sba"
-                      ? "bg-gradient-to-br from-[#e0b06b] via-[#c49a62] to-[#a37c48]"
+                      ? "bg-gradient-to-br from-[var(--sk-gold-eq2)] via-[var(--sk-accent-variant)] to-[var(--sk-gold-eq3)]"
                       : "bg-gradient-to-br from-[#136a64] via-[#0f5752] to-[#0a3b38]"
                   }`}>
                     <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent opacity-60 rounded-full"></div>
@@ -751,7 +751,7 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
                   </div>
                 ) : (
                   /* Circular Artwork thumbnail */
-                  <div className="relative w-[42px] h-[42px] rounded-full text-white flex items-center justify-center text-[16px] font-bold shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.12)] ring-2 ring-[#fdfcfb] overflow-hidden bg-gradient-to-br from-[#e0b06b] via-[#c49a62] to-[#a37c48]">
+                  <div className="relative w-[42px] h-[42px] rounded-full text-white flex items-center justify-center text-[16px] font-bold shrink-0 shadow-[0_4px_10px_rgba(0,0,0,0.12)] ring-2 ring-[var(--sk-bg3)] overflow-hidden bg-gradient-to-br from-[var(--sk-gold-eq2)] via-[var(--sk-accent-variant)] to-[var(--sk-gold-eq3)]">
                     <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent opacity-60 rounded-full"></div>
                     <span className="relative z-10 drop-shadow-sm">{selectedReciter.name.trim().charAt(0)}</span>
                   </div>
@@ -759,7 +759,7 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
 
                 {/* Surah Name & Reciter Subtitle */}
                 <div className="text-right flex flex-col justify-center pb-[1px] overflow-hidden flex-1 max-w-[200px] xs:max-w-[220px] sm:max-w-[250px]">
-                  <h4 className="text-[14px] font-black text-[#2b1a10] leading-tight font-sans mb-[1px] truncate w-full">
+                  <h4 className="text-[14px] font-black text-[var(--sk-label)] leading-tight font-sans mb-[1px] truncate w-full">
                     {currentPlayingRadio !== null 
                       ? currentPlayingRadio.name 
                       : (surahNames[playingSurahId!] || `سورة ${playingSurahId}`)}
@@ -775,7 +775,7 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
                 {/* Micro play pause */}
                 <button
                   onClick={handleTogglePlay}
-                  className="w-[38px] h-[38px] flex items-center justify-center bg-[#b88a4f]/15 hover:bg-[#b88a4f]/25 active:scale-95 transition-all rounded-full text-[#b88a4f]"
+                  className="w-[38px] h-[38px] flex items-center justify-center bg-[#b88a4f]/15 dark:bg-[var(--sk-accent)]/15 hover:bg-[#b88a4f]/25 dark:hover:bg-[var(--sk-accent)]/25 active:scale-95 transition-all rounded-full text-[var(--sk-accent)]"
                 >
                   {isPlaying ? <Pause size={17} fill="currentColor" /> : <Play size={17} className="translate-x-[1px]" fill="currentColor" />}
                 </button>
@@ -807,7 +807,7 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 280 }}
-            className="fixed inset-0 z-50 bg-[#f7f2ea] overflow-hidden"
+            className="fixed inset-0 z-50 bg-[var(--sk-bg2)] overflow-hidden"
           >
             <QuranReaderScreen
               surahId={readingSurahId}

@@ -308,14 +308,14 @@ export function QuranAudioPlayerScreen({
         }
       }}
       className={`relative w-full h-full flex flex-col justify-between overflow-hidden select-none font-sans min-h-screen transition-colors duration-500 ${
-        isVideoTheme ? 'text-white' : 'text-[#2b1a10]'
+        isVideoTheme ? 'text-white' : 'text-[var(--sk-label)]'
       }`}
       dir="ltr"
     >
       {/* Layered background transitions (Z-axis bottom-most) */}
       <div 
         className={`absolute inset-0 -z-20 transition-colors duration-500 ${
-          isVideoTheme ? 'bg-black' : 'bg-[#ece7de]'
+          isVideoTheme ? 'bg-black' : 'bg-[var(--sk-bg)]'
         }`} 
       />
 
@@ -336,7 +336,7 @@ export function QuranAudioPlayerScreen({
       {/* Top Ambient Light Glow Overlay (Static mode only) */}
       {!isVideoTheme && (
         <>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#b88a4f]/12 via-transparent to-[#deab65]/15 pointer-events-none z-0" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#b88a4f]/12 dark:from-[var(--sk-accent)]/12 via-transparent to-[#deab65]/15 dark:to-[var(--sk-accent-bright)]/15 pointer-events-none z-0" />
           <div 
             className="absolute inset-0 pointer-events-none z-0"
             style={{
@@ -359,7 +359,7 @@ export function QuranAudioPlayerScreen({
             className={`w-12 h-1.5 rounded-full transition-all duration-200 group-hover:scale-x-110 group-active:scale-95 ${
               isVideoTheme
                 ? 'bg-white/40 group-hover:bg-white/60 shadow-[0_1px_4px_rgba(0,0,0,0.25)] backdrop-blur-sm'
-                : 'bg-[#2b1a10]/25 group-hover:bg-[#2b1a10]/40 shadow-[0_1px_2px_rgba(43,26,16,0.12)]'
+                : 'bg-[#2b1a10]/25 dark:bg-[var(--sk-shade)]/25 group-hover:bg-[#2b1a10]/40 dark:group-hover:bg-[var(--sk-shade)]/40 shadow-[0_1px_2px_rgba(43,26,16,0.12)]'
             }`}
           />
         </div>
@@ -370,7 +370,7 @@ export function QuranAudioPlayerScreen({
           className={`hover:opacity-90 active:scale-95 transition-all rounded-full px-6 py-2 font-sans font-bold text-sm flex items-center justify-center cursor-pointer ${
             isVideoTheme
               ? 'liquid-glass-capsule text-white optical-shadow-guard'
-              : 'cut-crystal-capsule border-[#2b1a10]/10 text-[#2b1a10]'
+              : 'cut-crystal-capsule border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 text-[var(--sk-label)]'
           }`}
           dir="rtl"
         >
@@ -404,13 +404,13 @@ export function QuranAudioPlayerScreen({
                 className={`w-[calc(100%-32px)] max-w-[340px] rounded-[28px] p-4 flex flex-col pointer-events-auto will-change-transform font-sans ${
                   isVideoTheme
                     ? 'liquid-glass-card text-white'
-                    : 'cut-crystal-panel text-[#2b1a10]'
+                    : 'cut-crystal-panel text-[var(--sk-label)]'
                 }`}
                 dir="rtl"
               >
                 {/* Header (Clean title only, no AI icon, no close button) */}
                 <div className="flex items-center justify-center pb-2.5 border-b border-current/10 mb-3 shrink-0">
-                  <h3 className={`text-base font-display font-bold ${isVideoTheme ? 'text-white' : 'text-[#2b1a10]'}`}>
+                  <h3 className={`text-base font-display font-bold ${isVideoTheme ? 'text-white' : 'text-[var(--sk-label)]'}`}>
                     خلفيات الشاشة
                   </h3>
                 </div>
@@ -437,10 +437,10 @@ export function QuranAudioPlayerScreen({
                           isSelected
                             ? isVideoTheme
                               ? 'liquid-glass-button-active text-white border border-white/40 shadow-xs scale-[1.01]'
-                              : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f] text-white border border-[#c49a62]/40 shadow-xs scale-[1.01]'
+                              : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] border border-[#c49a62]/40 dark:border-[var(--sk-accent-variant)]/40 shadow-xs scale-[1.01]'
                             : isVideoTheme
                               ? 'liquid-glass-button text-white/90 hover:text-white hover:bg-white/20'
-                              : 'bg-[#2b1a10]/05 border border-[#2b1a10]/08 text-[#2b1a10] hover:bg-[#b88a4f]/10 hover:border-[#b88a4f]/30 hover:text-[#b88a4f]'
+                              : 'bg-[#2b1a10]/05 dark:bg-[var(--sk-shade)]/05 border border-[#2b1a10]/08 dark:border-[var(--sk-label)]/08 text-[var(--sk-on-accent)] hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 hover:border-[#b88a4f]/30 dark:hover:border-[var(--sk-accent)]/30 hover:text-[var(--sk-accent)]'
                         }`}
                       >
                         <span className="truncate">{video.name}</span>
@@ -449,7 +449,7 @@ export function QuranAudioPlayerScreen({
                             className={`w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 shadow-xs ${
                               isVideoTheme
                                 ? 'bg-white text-black'
-                                : 'bg-white text-[#b88a4f]'
+                                : 'bg-white text-[var(--sk-accent)]'
                             }`}
                           >
                             <Check size={11} strokeWidth={3} />
@@ -489,7 +489,7 @@ export function QuranAudioPlayerScreen({
                 className={`w-[calc(100%-32px)] max-w-[360px] h-full max-h-[410px] rounded-[32px] p-4.5 flex flex-col pointer-events-auto will-change-transform font-sans ${
                   isVideoTheme
                     ? 'liquid-glass-card text-white'
-                    : 'cut-crystal-panel text-[#2b1a10]'
+                    : 'cut-crystal-panel text-[var(--sk-label)]'
                 }`}
                 dir="rtl"
               >
@@ -507,8 +507,8 @@ export function QuranAudioPlayerScreen({
                         repeatMode !== 'none' 
                           ? isVideoTheme
                             ? 'bg-white text-black font-bold shadow-sm'
-                            : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f] text-white font-bold shadow-sm' 
-                          : isVideoTheme ? 'liquid-glass-button text-white/80' : 'bg-[#2b1a10]/05 text-[#7f6a55] hover:text-[#2b1a10] hover:bg-[#b88a4f]/10 border border-[#2b1a10]/05'
+                            : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] font-bold shadow-sm' 
+                          : isVideoTheme ? 'liquid-glass-button text-white/80' : 'bg-[#2b1a10]/05 dark:bg-[var(--sk-shade)]/05 text-[var(--sk-label2)] hover:text-[var(--sk-on-accent)] hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 border border-[#2b1a10]/05 dark:border-[var(--sk-label)]/05'
                       }`}
                       aria-label="Repeat mode"
                     >
@@ -521,8 +521,8 @@ export function QuranAudioPlayerScreen({
                         isShuffle 
                           ? isVideoTheme
                             ? 'bg-white text-black font-bold shadow-sm'
-                            : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f] text-white font-bold shadow-sm' 
-                          : isVideoTheme ? 'liquid-glass-button text-white/80' : 'bg-[#2b1a10]/05 text-[#7f6a55] hover:text-[#2b1a10] hover:bg-[#b88a4f]/10 border border-[#2b1a10]/05'
+                            : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] font-bold shadow-sm' 
+                          : isVideoTheme ? 'liquid-glass-button text-white/80' : 'bg-[#2b1a10]/05 dark:bg-[var(--sk-shade)]/05 text-[var(--sk-label2)] hover:text-[var(--sk-on-accent)] hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 border border-[#2b1a10]/05 dark:border-[var(--sk-label)]/05'
                       }`}
                       aria-label="Shuffle"
                     >
@@ -530,7 +530,7 @@ export function QuranAudioPlayerScreen({
                     </button>
                   </div>
 
-                  <h3 className={`text-base font-display font-bold tracking-wide ${isVideoTheme ? 'text-white' : 'text-[#2b1a10]'}`}>
+                  <h3 className={`text-base font-display font-bold tracking-wide ${isVideoTheme ? 'text-white' : 'text-[var(--sk-label)]'}`}>
                     متابعة التشغيل
                   </h3>
                 </div>
@@ -545,10 +545,10 @@ export function QuranAudioPlayerScreen({
                     className={`w-full py-2 pr-9 pl-4 text-sm rounded-full focus:outline-none transition-colors text-right font-sans ${
                       isVideoTheme
                         ? 'liquid-glass-input text-white placeholder-white/60'
-                        : 'cut-crystal-input text-[#2b1a10] placeholder-[#7f6a55]/60'
+                        : 'cut-crystal-input text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60'
                     }`}
                   />
-                  <Search size={15} className={`absolute right-3.5 top-2.5 pointer-events-none ${isVideoTheme ? 'text-white/60' : 'text-[#b88a4f]'}`} />
+                  <Search size={15} className={`absolute right-3.5 top-2.5 pointer-events-none ${isVideoTheme ? 'text-white/60' : 'text-[var(--sk-accent)]'}`} />
                 </div>
 
                 {/* Scrollable Container */}
@@ -565,29 +565,29 @@ export function QuranAudioPlayerScreen({
                           className={`w-full p-2.5 rounded-2xl flex items-center justify-between shadow-sm transition-all font-sans ${
                             isVideoTheme
                               ? 'bg-white/15 border border-white/25 text-white shadow-[inset_0_1px_rgba(255,255,255,0.20)]'
-                              : 'bg-[#f5ebd6] border border-[#c49a62] text-[#2b1a10] shadow-[0_4px_12px_rgba(43,26,16,0.06)]'
+                              : 'bg-[var(--sk-tan)] border border-[var(--sk-accent-variant)] text-[var(--sk-label)] shadow-[0_4px_12px_rgba(43,26,16,0.06)]'
                           }`}
                         >
                           <button
                             onClick={onTogglePlay}
-                            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-white flex items-center justify-center active:scale-95 transition-transform shrink-0 shadow-xs cursor-pointer"
+                            className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] flex items-center justify-center active:scale-95 transition-transform shrink-0 shadow-xs cursor-pointer"
                           >
                             {isPlaying ? <Pause size={15} className="fill-white" /> : <Play size={15} className="fill-white translate-x-[0.5px]" />}
                           </button>
 
                           <div className="flex-1 text-right px-3 min-w-0">
-                            <p className={`text-sm font-bold leading-snug truncate ${isVideoTheme ? 'text-white' : 'text-[#2b1a10]'}`}>{sVocalized}</p>
-                            <p className={`text-xs font-bold truncate ${isVideoTheme ? 'text-white/70' : 'text-[#7f6a55]'}`}>{sArabic}</p>
+                            <p className={`text-sm font-bold leading-snug truncate ${isVideoTheme ? 'text-white' : 'text-[var(--sk-label)]'}`}>{sVocalized}</p>
+                            <p className={`text-xs font-bold truncate ${isVideoTheme ? 'text-white/70' : 'text-[var(--sk-label2)]'}`}>{sArabic}</p>
                           </div>
 
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
-                            isVideoTheme ? 'bg-white/10 border-white/10' : 'bg-[#ece7de] border-[#2b1a10]/08'
+                            isVideoTheme ? 'bg-white/10 border-white/10' : 'bg-[var(--sk-bg)] border-[#2b1a10]/08 dark:border-[var(--sk-label)]/08'
                           }`}>
-                            <div className={`flex items-center gap-0.5 ${isVideoTheme ? 'text-white' : 'text-[#b88a4f]'}`}>
-                              <div className={`w-0.5 h-3 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[#b88a4f]'}`} style={{ animationDelay: '0ms' }} />
-                              <div className={`w-0.5 h-4 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[#b88a4f]'}`} style={{ animationDelay: '150ms' }} />
-                              <div className={`w-0.5 h-2.5 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[#b88a4f]'}`} style={{ animationDelay: '300ms' }} />
-                              <div className={`w-0.5 h-3.5 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[#b88a4f]'}`} style={{ animationDelay: '450ms' }} />
+                            <div className={`flex items-center gap-0.5 ${isVideoTheme ? 'text-white' : 'text-[var(--sk-accent)]'}`}>
+                              <div className={`w-0.5 h-3 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[var(--sk-accent)]'}`} style={{ animationDelay: '0ms' }} />
+                              <div className={`w-0.5 h-4 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[var(--sk-accent)]'}`} style={{ animationDelay: '150ms' }} />
+                              <div className={`w-0.5 h-2.5 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[var(--sk-accent)]'}`} style={{ animationDelay: '300ms' }} />
+                              <div className={`w-0.5 h-3.5 rounded-full animate-bounce ${isVideoTheme ? 'bg-white' : 'bg-[var(--sk-accent)]'}`} style={{ animationDelay: '450ms' }} />
                             </div>
                           </div>
                         </div>
@@ -605,18 +605,18 @@ export function QuranAudioPlayerScreen({
                         className={`w-full p-2.5 rounded-2xl flex items-center justify-between transition-all cursor-pointer group font-sans ${
                           isVideoTheme
                             ? 'hover:bg-white/15 text-white'
-                            : 'hover:bg-[#b88a4f]/08 text-[#2b1a10] hover:text-[#b88a4f]'
+                            : 'hover:bg-[#b88a4f]/08 dark:hover:bg-[var(--sk-accent)]/08 text-[var(--sk-on-accent)] hover:text-[var(--sk-accent)]'
                         }`}
                       >
                         <div className="w-8 h-8 shrink-0" />
                         <div className="flex-1 text-right px-3 min-w-0">
                           <p className="text-sm font-bold leading-snug truncate">{sVocalized}</p>
-                          <p className={`text-xs font-medium truncate ${isVideoTheme ? 'text-white/70' : 'text-[#7f6a55] group-hover:text-[#b88a4f]/80'}`}>{sArabic}</p>
+                          <p className={`text-xs font-medium truncate ${isVideoTheme ? 'text-white/70' : 'text-[var(--sk-label2)] group-hover:text-[#b88a4f]/80 dark:group-hover:text-[var(--sk-accent)]/80'}`}>{sArabic}</p>
                         </div>
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 border transition-all ${
                           isVideoTheme
                             ? 'bg-white/10 border-white/10 text-white/90'
-                            : 'bg-[#f5ebd6] border-[#2b1a10]/08 text-[#b88a4f] group-hover:bg-[#b88a4f] group-hover:text-white group-hover:border-transparent group-hover:shadow-xs'
+                            : 'bg-[var(--sk-tan)] border-[#2b1a10]/08 dark:border-[var(--sk-label)]/08 text-[var(--sk-accent)] group-hover:bg-[var(--sk-accent)] group-hover:text-[var(--sk-on-espresso)] group-hover:border-transparent group-hover:shadow-xs'
                         }`}>
                           {sId}
                         </div>
@@ -645,23 +645,23 @@ export function QuranAudioPlayerScreen({
           >
             <Star 
               size={16} 
-              className={isFavorite ? (isVideoTheme ? "fill-white text-white optical-shadow-guard" : "fill-[#deab65] text-[#b88a4f] drop-shadow-xs") : isVideoTheme ? "text-white/70" : "text-[#7f6a55]"} 
+              className={isFavorite ? (isVideoTheme ? "fill-white text-white optical-shadow-guard" : "fill-[var(--sk-accent-bright)] text-[var(--sk-accent)] drop-shadow-xs") : isVideoTheme ? "text-white/70" : "text-[var(--sk-label2)]"} 
             />
           </button>
 
           {/* Title & Sheikh Info */}
           <div className="flex items-center gap-4 text-right">
             <div className="flex flex-col items-end">
-              <h2 className={`text-2xl sm:text-3xl font-display font-bold tracking-tight leading-tight ${isVideoTheme ? 'text-white optical-shadow-guard' : 'text-[#2b1a10]'}`}>
+              <h2 className={`text-2xl sm:text-3xl font-display font-bold tracking-tight leading-tight ${isVideoTheme ? 'text-white optical-shadow-guard' : 'text-[var(--sk-label)]'}`}>
                 {vocalizedName}
               </h2>
-              <p className={`text-[15px] sm:text-[16px] font-bold font-sans mt-0.5 ${isVideoTheme ? 'text-white/75 optical-shadow-guard' : 'text-[#7f6a55]'}`} dir="rtl">
+              <p className={`text-[15px] sm:text-[16px] font-bold font-sans mt-0.5 ${isVideoTheme ? 'text-white/75 optical-shadow-guard' : 'text-[var(--sk-label2)]'}`} dir="rtl">
                 {reciter.name}
               </p>
             </div>
 
             {/* Sheikh Avatar */}
-            <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full overflow-hidden border-2 border-[#c49a62] shadow-[0_8px_24px_rgba(0,0,0,0.3)] shrink-0 bg-[#f5ebd6]">
+            <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full overflow-hidden border-2 border-[var(--sk-accent-variant)] shadow-[0_8px_24px_rgba(0,0,0,0.3)] shrink-0 bg-[var(--sk-tan)]">
               <img 
                 src={reciterPhoto} 
                 alt={reciter.name}
@@ -684,14 +684,14 @@ export function QuranAudioPlayerScreen({
             className={`transition-all active:scale-90 cursor-pointer flex items-center justify-center relative ${
               isVideoTheme 
                 ? 'p-2 text-white/95 hover:text-white optical-shadow-guard' 
-                : 'p-2 text-[#7f6a55] hover:text-[#2b1a10]'
+                : 'p-2 text-[var(--sk-label2)] hover:text-[var(--sk-label)]'
             }`}
             aria-label="Sleep timer"
           >
             <div className="relative">
               <Moon size={22} strokeWidth={2.2} />
               {timerMinutesRemaining !== null && (
-                <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full animate-pulse ${isVideoTheme ? 'bg-white' : 'bg-[#deab65]'}`} />
+                <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full animate-pulse ${isVideoTheme ? 'bg-white' : 'bg-[var(--sk-accent-bright)]'}`} />
               )}
             </div>
           </button>
@@ -708,7 +708,7 @@ export function QuranAudioPlayerScreen({
             className={`transition-all active:scale-90 cursor-pointer flex items-center justify-center ${
               isVideoTheme 
                 ? 'w-10 h-10 rounded-full liquid-glass-button text-white hover:text-white' 
-                : 'p-2 text-[#2b1a10] hover:text-[#b88a4f]'
+                : 'p-2 text-[var(--sk-label)] hover:text-[var(--sk-accent)]'
             }`}
             aria-label="Previous or Rewind"
           >
@@ -721,7 +721,7 @@ export function QuranAudioPlayerScreen({
             className={`flex items-center justify-center active:scale-95 transition-all cursor-pointer ${
               isVideoTheme
                 ? 'w-14 h-14 rounded-full liquid-glass-play-btn text-white hover:scale-105'
-                : 'w-14 h-14 rounded-full bg-gradient-to-br from-[#deab65] to-[#b88a4f] text-white shadow-[0_10px_28px_rgba(184,138,79,0.4)] border border-[#c49a62]'
+                : 'w-14 h-14 rounded-full bg-gradient-to-br from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-[0_10px_28px_rgba(184,138,79,0.4)] border border-[var(--sk-accent-variant)]'
             }`}
             aria-label={isPlaying ? "Pause" : "Play"}
           >
@@ -744,7 +744,7 @@ export function QuranAudioPlayerScreen({
             className={`transition-all active:scale-90 cursor-pointer flex items-center justify-center ${
               isVideoTheme 
                 ? 'w-10 h-10 rounded-full liquid-glass-button text-white hover:text-white' 
-                : 'p-2 text-[#2b1a10] hover:text-[#b88a4f]'
+                : 'p-2 text-[var(--sk-label)] hover:text-[var(--sk-accent)]'
             }`}
             aria-label="Next or Fast forward"
           >
@@ -757,7 +757,7 @@ export function QuranAudioPlayerScreen({
             className={`transition-all active:scale-90 cursor-pointer flex items-center justify-center font-bold ${
               isVideoTheme 
                 ? 'p-2 text-white/90 hover:text-white text-base optical-shadow-guard' 
-                : 'p-2 text-[#b88a4f] hover:text-[#2b1a10] text-base'
+                : 'p-2 text-[var(--sk-accent)] hover:text-[var(--sk-label)] text-base'
             }`}
             aria-label="Playback speed"
           >
@@ -775,7 +775,7 @@ export function QuranAudioPlayerScreen({
             } ${
               isVideoTheme
                 ? 'liquid-glass-input'
-                : 'bg-[#2b1a10]/12'
+                : 'bg-[#2b1a10]/12 dark:bg-[var(--sk-shade)]/12'
             }`}
             onMouseDown={(e) => {
               handleDragStart(e.clientX);
@@ -787,13 +787,13 @@ export function QuranAudioPlayerScreen({
             }}
           >
             <div 
-              className={`absolute top-0 bottom-0 left-0 rounded-full h-full ${isVideoTheme ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f]'}`}
+              className={`absolute top-0 bottom-0 left-0 rounded-full h-full ${isVideoTheme ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)]'}`}
               style={{ width: `${currentProgressPercent}%` }}
             />
           </div>
 
           <div className={`flex items-center justify-between w-full mt-2 text-sm font-bold font-mono tracking-tight ${
-            isVideoTheme ? 'text-white/85 optical-shadow-guard' : 'text-[#7f6a55]'
+            isVideoTheme ? 'text-white/85 optical-shadow-guard' : 'text-[var(--sk-label2)]'
           }`}>
             <span>{formatRemainingTime()}</span>
             <span>{formatTime(isDragging && dragProgress !== null ? (dragProgress / 100) * duration : currentTime)}</span>
@@ -814,8 +814,8 @@ export function QuranAudioPlayerScreen({
                 ? 'liquid-glass-button-active text-white'
                 : 'liquid-glass-button text-white/80 hover:text-white active:scale-95'
               : activeSheet === 'queue'
-                ? 'bg-[#b88a4f]/15 text-[#b88a4f]'
-                : 'text-[#7f6a55] hover:text-[#2b1a10] active:scale-95'
+                ? 'bg-[#b88a4f]/15 dark:bg-[var(--sk-accent)]/15 text-[var(--sk-accent)]'
+                : 'text-[var(--sk-label2)] hover:text-[var(--sk-label)] active:scale-95'
           }`}
           aria-label="Surahs list"
         >
@@ -831,8 +831,8 @@ export function QuranAudioPlayerScreen({
                 ? 'liquid-glass-button-active text-white'
                 : 'liquid-glass-button text-white/80 hover:text-white active:scale-95'
               : activeSheet === 'cast'
-                ? 'bg-[#b88a4f]/15 text-[#b88a4f]'
-                : 'text-[#7f6a55] hover:text-[#2b1a10] active:scale-95'
+                ? 'bg-[#b88a4f]/15 dark:bg-[var(--sk-accent)]/15 text-[var(--sk-accent)]'
+                : 'text-[var(--sk-label2)] hover:text-[var(--sk-label)] active:scale-95'
           }`}
           aria-label="Cast audio"
         >
@@ -847,7 +847,7 @@ export function QuranAudioPlayerScreen({
           className={`w-10 h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
             isVideoTheme
               ? 'liquid-glass-button text-white active:scale-95'
-              : 'text-[#2b1a10] hover:text-[#b88a4f] active:scale-95'
+              : 'text-[var(--sk-label)] hover:text-[var(--sk-accent)] active:scale-95'
           }`}
           aria-label="Open Quran text reader"
         >
@@ -865,8 +865,8 @@ export function QuranAudioPlayerScreen({
                 ? 'liquid-glass-button-active text-white'
                 : 'liquid-glass-button text-white/80 hover:text-white active:scale-95'
               : activeSheet === 'volume'
-                ? 'bg-[#b88a4f]/15 text-[#b88a4f]'
-                : 'text-[#7f6a55] hover:text-[#2b1a10] active:scale-95'
+                ? 'bg-[#b88a4f]/15 dark:bg-[var(--sk-accent)]/15 text-[var(--sk-accent)]'
+                : 'text-[var(--sk-label2)] hover:text-[var(--sk-label)] active:scale-95'
           }`}
           aria-label="Volume settings"
         >
@@ -897,7 +897,7 @@ export function QuranAudioPlayerScreen({
               className={`fixed bottom-0 inset-x-0 z-50 p-6 pb-10 flex flex-col text-white rounded-t-[32px] font-sans ${
                 isVideoTheme 
                   ? 'liquid-glass-sheet' 
-                  : 'bg-[#1a1512]/98 border-white/15 backdrop-blur-2xl border-t shadow-[0_-10px_40px_rgba(0,0,0,0.3)]'
+                  : 'bg-[#1a1512]/98 dark:bg-[var(--sk-player-deep)]/98 border-white/15 backdrop-blur-2xl border-t shadow-[0_-10px_40px_rgba(0,0,0,0.3)]'
               }`}
               dir="rtl"
             >
@@ -905,7 +905,7 @@ export function QuranAudioPlayerScreen({
               
               <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
                 <div className="flex items-center gap-2">
-                  <Moon size={18} className={isVideoTheme ? "text-white" : "text-[#deab65]"} />
+                  <Moon size={18} className={isVideoTheme ? "text-white" : "text-[var(--sk-accent-bright)]"} />
                   <h3 className="text-lg font-display font-bold text-white">مؤقت النوم الإيقاف التلقائي</h3>
                 </div>
                 <button
@@ -941,7 +941,7 @@ export function QuranAudioPlayerScreen({
                         isSelected 
                           ? isVideoTheme
                             ? 'bg-white text-black shadow-md scale-[1.02]'
-                            : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f] text-white shadow-md scale-[1.02]' 
+                            : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-md scale-[1.02]' 
                           : isVideoTheme
                             ? 'liquid-glass-button text-white hover:bg-white/20'
                             : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
@@ -978,7 +978,7 @@ export function QuranAudioPlayerScreen({
               className={`fixed bottom-0 inset-x-0 z-50 p-6 pb-10 flex flex-col text-white rounded-t-[32px] font-sans ${
                 isVideoTheme 
                   ? 'liquid-glass-sheet' 
-                  : 'bg-[#1a1512]/98 border-white/15 backdrop-blur-2xl border-t shadow-[0_-10px_40px_rgba(0,0,0,0.3)]'
+                  : 'bg-[#1a1512]/98 dark:bg-[var(--sk-player-deep)]/98 border-white/15 backdrop-blur-2xl border-t shadow-[0_-10px_40px_rgba(0,0,0,0.3)]'
               }`}
               dir="rtl"
             >
@@ -986,7 +986,7 @@ export function QuranAudioPlayerScreen({
               
               <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
                 <div className="flex items-center gap-2">
-                  <Clock size={18} className={isVideoTheme ? "text-white" : "text-[#deab65]"} />
+                  <Clock size={18} className={isVideoTheme ? "text-white" : "text-[var(--sk-accent-bright)]"} />
                   <h3 className="text-lg font-display font-bold text-white">سرعة التشغيل</h3>
                 </div>
                 <button
@@ -1018,7 +1018,7 @@ export function QuranAudioPlayerScreen({
                         isSelected 
                           ? isVideoTheme
                             ? 'bg-white text-black shadow-md'
-                            : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f] text-white shadow-md' 
+                            : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-md' 
                           : isVideoTheme
                             ? 'liquid-glass-button text-white hover:bg-white/20'
                             : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
@@ -1056,7 +1056,7 @@ export function QuranAudioPlayerScreen({
               className={`absolute bottom-[78px] right-4 sm:right-8 z-50 w-52 sm:w-56 rounded-full px-3.5 py-2 flex items-center gap-3 select-none will-change-transform font-sans ${
                 isVideoTheme
                   ? 'liquid-glass-capsule text-white shadow-[0_12px_36px_rgba(0,0,0,0.35)]'
-                  : 'bg-[#fdfcfb]/98 border-[#2b1a10]/12 text-[#2b1a10] shadow-[0_12px_36px_rgba(43,26,16,0.14)] backdrop-blur-2xl border'
+                  : 'bg-[#fdfcfb]/98 dark:bg-[var(--sk-bg3)]/98 border-[#2b1a10]/12 dark:border-[var(--sk-label)]/12 text-[var(--sk-label)] shadow-[0_12px_36px_rgba(43,26,16,0.14)] backdrop-blur-2xl border'
               }`}
               dir="ltr"
             >
@@ -1065,7 +1065,7 @@ export function QuranAudioPlayerScreen({
                 className={`w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer active:scale-90 ${
                   isVideoTheme 
                     ? 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white' 
-                    : 'bg-[#2b1a10]/04 hover:bg-[#b88a4f]/10 text-[#7f6a55] hover:text-[#b88a4f] border border-[#2b1a10]/03'
+                    : 'bg-[#2b1a10]/04 dark:bg-[var(--sk-shade)]/04 hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] border border-[#2b1a10]/03 dark:border-[var(--sk-label)]/03'
                 }`}
                 aria-label="Mute volume"
               >
@@ -1074,17 +1074,17 @@ export function QuranAudioPlayerScreen({
 
               <div className="relative flex-1 flex items-center h-4 group">
                 <div className={`absolute inset-x-0 h-1.5 rounded-full pointer-events-none ${
-                  isVideoTheme ? 'bg-white/20' : 'bg-[#2b1a10]/08'
+                  isVideoTheme ? 'bg-white/20' : 'bg-[#2b1a10]/08 dark:bg-[var(--sk-shade)]/08'
                 }`} />
                 <div 
-                  className={`absolute left-0 h-1.5 rounded-full pointer-events-none ${isVideoTheme ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f]'}`}
+                  className={`absolute left-0 h-1.5 rounded-full pointer-events-none ${isVideoTheme ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)]'}`}
                   style={{ width: `${volume * 100}%` }}
                 />
                 <div 
                   className={`absolute w-3.5 h-3.5 rounded-full shadow-md transition-transform pointer-events-none ${
                     isVideoTheme 
                       ? 'bg-white shadow-[0_1.5px_4px_rgba(0,0,0,0.35)]' 
-                      : 'bg-[#b88a4f] border-2 border-[#fdfcfb] shadow-[0_2px_6px_rgba(184,138,79,0.35)]'
+                      : 'bg-[var(--sk-accent)] border-2 border-[var(--sk-bg3)] shadow-[0_2px_6px_rgba(184,138,79,0.35)]'
                   } group-hover:scale-115`}
                   style={{ left: `calc(${volume * 100}% - 7px)` }}
                 />
@@ -1104,7 +1104,7 @@ export function QuranAudioPlayerScreen({
                 className={`w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer active:scale-90 ${
                   isVideoTheme 
                     ? 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white' 
-                    : 'bg-[#2b1a10]/04 hover:bg-[#b88a4f]/10 text-[#7f6a55] hover:text-[#b88a4f] border border-[#2b1a10]/03'
+                    : 'bg-[#2b1a10]/04 dark:bg-[var(--sk-shade)]/04 hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] border border-[#2b1a10]/03 dark:border-[var(--sk-label)]/03'
                 }`}
                 aria-label="Max volume"
               >
@@ -1135,13 +1135,13 @@ export function QuranAudioPlayerScreen({
               className={`fixed bottom-0 inset-x-0 z-50 p-6 pb-10 flex flex-col text-center text-white rounded-t-[32px] font-sans ${
                 isVideoTheme 
                   ? 'liquid-glass-sheet' 
-                  : 'bg-[#1a1512]/98 border-white/15 backdrop-blur-2xl border-t shadow-[0_-10px_40px_rgba(0,0,0,0.3)]'
+                  : 'bg-[#1a1512]/98 dark:bg-[var(--sk-player-deep)]/98 border-white/15 backdrop-blur-2xl border-t shadow-[0_-10px_40px_rgba(0,0,0,0.3)]'
               }`}
               dir="rtl"
             >
               <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-5" />
               
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border ${isVideoTheme ? 'bg-white/10 text-white border-white/20' : 'bg-white/10 text-[#deab65] border-white/20'}`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border ${isVideoTheme ? 'bg-white/10 text-white border-white/20' : 'bg-white/10 text-[var(--sk-accent-bright)] border-white/20'}`}>
                 <Cast size={32} />
               </div>
 
@@ -1152,7 +1152,7 @@ export function QuranAudioPlayerScreen({
 
               <button
                 onClick={() => setActiveSheet(null)}
-                className={`w-full py-3.5 rounded-2xl font-bold text-base shadow-md active:scale-95 transition-all cursor-pointer font-sans ${isVideoTheme ? 'bg-white text-black hover:bg-white/90' : 'bg-gradient-to-r from-[#deab65] to-[#b88a4f] text-white'}`}
+                className={`w-full py-3.5 rounded-2xl font-bold text-base shadow-md active:scale-95 transition-all cursor-pointer font-sans ${isVideoTheme ? 'bg-white text-black hover:bg-white/90' : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)] text-[var(--sk-on-espresso)]'}`}
               >
                 حسناً، فهمت
               </button>
