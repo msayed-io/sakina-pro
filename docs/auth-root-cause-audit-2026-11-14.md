@@ -23,16 +23,17 @@
 2. التقاط `error` و`error_description` في رابط العودة وتمرير فشل آمن إلى واجهة الدخول بدل تجاهله.
 3. التعامل الآمن مع نتيجة `App.getLaunchUrl()` الفارغة، ومنع أخطاء destructuring غير المعالجة.
 4. عند رجوع Android إلى foreground، إلغاء مؤشر التحميل حتى يمكن للمستخدم إعادة المحاولة؛ وعند فشل callback تظهر رسالة عربية تطلب إعادة المحاولة والتحقق من رابط Android في Supabase.
-5. إضافة GitHub Actions workflow محدود لبناء APK تجريبي على فرع الإصلاح ورفع الملف كـartifact. لا ينشئ Release ولا يستخدم مفتاح توقيع إنتاج.
+5. إضافة GitHub Actions workflow محدود لبناء APK تجريبي من `main` ورفعه كـartifact. لا ينشئ Release ولا يستخدم مفتاح توقيع إنتاج.
 
 ## التحقق
 
 - فحص `git diff --check`: سليم.
 - مدقق workflow المحلي: سليم بلا أخطاء، وجميع GitHub Actions مثبتة على commit SHA.
 - فحص TypeScript: ملفات المصادقة المعدلة لا تضيف أخطاء؛ يوجد خطأ سابق/منفصل في `src/services/QuranMediaService.ts:91` بسبب توقيع callback.
-- لم يتوفر Android SDK في بيئة sandbox لبناء APK محليًا؛ بناء GitHub Actions هو التحقق المعتمد.
+- تعثرت المحاولة الأولى من CI عند تنزيل Android SDK بسبب طلب الحزمة القديمة `tools`؛ عُدّل الإعداد إلى `platform-tools` فقط.
+- المحاولة الثانية بنت web assets ونجحت في مزامنة Capacitor، ثم فشل Gradle برسالة `invalid source release: 21` لأن الـworkflow استخدم Java 17. جرى تحديث الـworkflow إلى Java 21؛ يلزم run جديد للتحقق النهائي.
 - لا يوجد emulator أو جهاز Android متصل في هذه الجلسة، لذلك يلزم اختبار callback على الهاتف باستخدام APK الناتج. بناء APK وحده لا يثبت نجاح الدخول النهائي.
 
 ## قيود الإصدار
 
-الـworkflow ينتج **debug APK** قابلًا للتثبيت للاختبار، وليس APK إنتاجيًا موقّعًا بمفتاح Google Play. لم يُرفع APK أو إصدار إلى متجر، ولم تُدفع التغييرات إلى `main`؛ التغيير يُرسل على فرع مستقل للمراجعة والبناء.
+تم التحقق من أن الـworkflow ينفذ `assembleDebug` فقط؛ لذلك هو لا يبني Release. يحتوي `android/app/build.gradle` على توقيع Release مشروط بمتغيرات البيئة `SAKEENAH_RELEASE_KEYSTORE` و`SAKEENAH_RELEASE_STORE_PASSWORD` و`SAKEENAH_RELEASE_KEY_ALIAS` و`SAKEENAH_RELEASE_KEY_PASSWORD`، لكن الـworkflow الحالي لا يمرر هذه القيم ولا ينفذ `assembleRelease`. الناتج المقصود APK تجريبي debug، وليس تحديثًا موقعًا بمفتاح الإنتاج؛ لم يُرفع APK أو إصدار إلى متجر. يلزم إعداد keystore وبياناته في GitHub Actions secrets/Environment قبل بناء Release قابل للتوزيع أو الترقية فوق تطبيق موقّع سابقًا.
