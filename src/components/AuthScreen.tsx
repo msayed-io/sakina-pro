@@ -83,7 +83,7 @@ export default function AuthScreen({
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[440px] flex-col items-center px-5 pb-5 pt-4 sm:px-7 sm:pb-8 sm:pt-5">
         {/* Header */}
         <header className="flex h-10 w-full items-center justify-between">
-          <div className="cut-crystal-capsule flex h-10 items-center justify-center px-5 shadow-md">
+          <div className="cut-crystal-capsule sk-rim flex h-10 items-center justify-center px-5 shadow-md">
             <span className="pt-0.5 font-display text-[17px] font-black text-[var(--sk-label)]">سَكِينَة</span>
           </div>
           <button
@@ -91,7 +91,7 @@ export default function AuthScreen({
             onClick={onBack}
             disabled={!onBack}
             aria-label="رجوع"
-            className="cut-crystal-capsule grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45 disabled:cursor-default disabled:opacity-0"
+            className="cut-crystal-capsule sk-rim grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45 disabled:cursor-default disabled:opacity-0"
           >
             <ArrowRight size={20} strokeWidth={1.8} className="mr-0.5" />
           </button>
@@ -151,10 +151,10 @@ function LegalDocument({ view, onBack }: { view: LegalView; onBack: () => void }
     <main dir="rtl" className="min-h-[100dvh] overflow-y-auto bg-[var(--sk-bg)] text-[var(--sk-label)]">
       <div className="mx-auto min-h-[100dvh] w-full max-w-[440px] px-5 pb-10 pt-5 sm:px-7">
         <header className="flex items-center justify-between">
-          <div className="cut-crystal-capsule flex h-10 items-center justify-center px-5 shadow-md">
+          <div className="cut-crystal-capsule sk-rim flex h-10 items-center justify-center px-5 shadow-md">
             <span className="pt-0.5 font-display text-[17px] font-black text-[var(--sk-label)]">سَكِينَة</span>
           </div>
-          <button type="button" onClick={onBack} aria-label="رجوع" className="cut-crystal-capsule grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45">
+          <button type="button" onClick={onBack} aria-label="رجوع" className="cut-crystal-capsule sk-rim grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45">
             <ArrowRight size={20} strokeWidth={1.8} className="mr-0.5" />
           </button>
         </header>

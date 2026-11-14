@@ -122,7 +122,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
       {/* ── FLOATING HEADER ── */}
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
         {/* Right Side (First in RTL): Title Capsule */}
-        <div className="px-5 h-10 cut-crystal-capsule flex items-center justify-center pointer-events-auto">
+        <div className="px-5 h-10 cut-crystal-capsule sk-rim flex items-center justify-center pointer-events-auto">
           <span className="text-[13.5px] font-bold text-[var(--sk-label)] whitespace-nowrap pt-0.5">
             أسماء الله الحسنى
           </span>
@@ -131,7 +131,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
         {/* Left Side (Second in RTL): Exit/Back Button */}
         <button
           onClick={onClose}
-          className="w-10 h-10 cut-crystal-capsule flex items-center justify-center text-[var(--sk-label)] active:scale-95 transition-all pointer-events-auto"
+          className="w-10 h-10 cut-crystal-capsule sk-rim flex items-center justify-center text-[var(--sk-label)] active:scale-95 transition-all pointer-events-auto"
           aria-label="رجوع"
         >
           <ChevronRight size={20} className="mr-0.5" />

@@ -979,13 +979,13 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           <button
             type="button"
             onClick={() => setIsDrawerOpen(true)}
-            className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
+            className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
             aria-label="فتح المحادثات المحفوظة"
             title="المحادثات المحفوظة"
           >
             <PanelLeftOpen size={17} strokeWidth={2.2} />
           </button>
-          <div className="cut-crystal-capsule px-5 h-10 rounded-full shadow-md flex items-center justify-center gap-1.5 transition-all duration-300">
+          <div className="cut-crystal-capsule sk-rim px-5 h-10 rounded-full shadow-md flex items-center justify-center gap-1.5 transition-all duration-300">
             <span className="text-[14.5px] font-display font-black whitespace-nowrap pt-0.5">سَكِينَة AI</span>
           </div>
         </div>
@@ -995,7 +995,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             <button
               type="button"
               onClick={startNewConversation}
-              className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[var(--sk-label2)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
+              className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full shadow-md text-[var(--sk-label2)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
               aria-label="بدء محادثة جديدة"
               title="محادثة جديدة"
             >
@@ -1005,7 +1005,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           <button
             type="button"
             onClick={onBack}
-            className="w-10 h-10 cut-crystal-capsule rounded-full shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
+            className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] hover:border-[#b88a4f]/40 dark:hover:border-[var(--sk-accent)]/40 hover:bg-white flex items-center justify-center active:scale-[0.95] transition-all duration-300 cursor-pointer"
             aria-label="رجوع"
           >
             <ChevronRight size={18} className="mr-0.5" />

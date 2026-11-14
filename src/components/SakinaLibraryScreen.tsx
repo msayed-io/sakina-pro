@@ -299,7 +299,7 @@ export default function SakinaLibraryScreen({
             <button
               type="button"
               onClick={() => view === "lesson" ? setView("series") : view === "series" ? setView("scholar") : goHome()}
-              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule text-[var(--sk-label)] shadow-sm active:scale-95 transition-transform"
+              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule sk-rim text-[var(--sk-label)] shadow-sm active:scale-95 transition-transform"
               aria-label="العودة"
             >
               <ChevronRight className="h-5 w-5" />
@@ -308,13 +308,13 @@ export default function SakinaLibraryScreen({
             <button
               type="button"
               onClick={onBack}
-              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule text-[var(--sk-label)] shadow-sm active:scale-95 transition-transform"
+              className="flex h-10 w-10 items-center justify-center cut-crystal-capsule sk-rim text-[var(--sk-label)] shadow-sm active:scale-95 transition-transform"
               aria-label="الخروج من مكتبة سكينة"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
           ) : null}
-          <div className="flex h-10 items-center justify-center cut-crystal-capsule px-4 shadow-sm">
+          <div className="flex h-10 items-center justify-center cut-crystal-capsule sk-rim px-4 shadow-sm">
             <span className="max-w-[48vw] truncate text-[13px] font-bold">{title}</span>
           </div>
         </div>
@@ -323,7 +323,7 @@ export default function SakinaLibraryScreen({
           <button
             type="button"
             onClick={() => setView("saved")}
-            className={`flex h-10 items-center gap-1.5 cut-crystal-capsule px-3 text-xs font-bold shadow-sm active:scale-95 transition-transform ${view === "saved" ? "text-[var(--sk-accent)]" : "text-[var(--sk-label)]"}`}
+            className={`flex h-10 items-center gap-1.5 cut-crystal-capsule sk-rim px-3 text-xs font-bold shadow-sm active:scale-95 transition-transform ${view === "saved" ? "text-[var(--sk-accent)]" : "text-[var(--sk-label)]"}`}
             aria-label="المحفوظات"
           >
             <BookmarkCheck className="h-4 w-4" />

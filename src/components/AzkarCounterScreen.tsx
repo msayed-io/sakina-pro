@@ -360,7 +360,7 @@ export default function AzkarCounterScreen({
           className={`flex h-11 w-11 items-center justify-center rounded-full border shadow-sm transition-all duration-300 ${
             isBookmarked
               ? "bg-[var(--sk-accent)] border-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-[#b88a4f]/20 dark:shadow-[var(--sk-accent)]/20 scale-105"
-              : "cut-crystal-capsule text-[var(--sk-label2)] hover:text-[var(--sk-label)]"
+              : "cut-crystal-capsule sk-rim text-[var(--sk-label2)] hover:text-[var(--sk-label)]"
           }`}
           title="حفظ في المفضلة"
         >
@@ -370,7 +370,7 @@ export default function AzkarCounterScreen({
         {/* Close/Back Button */}
         <button
           onClick={onClose}
-          className="h-11 w-11 flex items-center justify-center cut-crystal-capsule text-[var(--sk-label2)] hover:text-[var(--sk-label)] active:scale-95 transition-all"
+          className="h-11 w-11 flex items-center justify-center cut-crystal-capsule sk-rim text-[var(--sk-label2)] hover:text-[var(--sk-label)] active:scale-95 transition-all"
           title="رجوع"
         >
           <ChevronLeft size={22} className="scale-x-[-1]" />

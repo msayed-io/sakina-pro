@@ -175,7 +175,7 @@ html[data-theme="dark"] .player-glass-container {
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border-color: transparent;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  box-shadow: none;
 }
 html[data-theme="dark"] .player-glass-pill {
   background: var(--sk-glass);

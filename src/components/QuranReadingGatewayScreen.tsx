@@ -104,7 +104,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
         <div className="relative pointer-events-auto">
           <button
             onClick={() => setIsModeDropdownOpen(!isModeDropdownOpen)}
-            className="cut-crystal-capsule px-4.5 h-10 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
+            className="cut-crystal-capsule sk-rim px-4.5 h-10 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
           >
             <span className="text-[14px] font-black text-[var(--sk-label)] whitespace-nowrap pt-0.5">القرآن الكريم</span>
             <ChevronDown size={14} className={`text-[var(--sk-accent)] transition-transform duration-200 ${isModeDropdownOpen ? "rotate-180" : ""}`} />
@@ -154,7 +154,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
         <div className="relative pointer-events-auto">
           <button
             onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-            className="cut-crystal-capsule px-4 h-10 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
+            className="cut-crystal-capsule sk-rim px-4 h-10 flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-[0.97]"
           >
             <span className="text-[12.5px] text-[var(--sk-label2)] font-bold whitespace-nowrap pt-0.5">{statsLabel}</span>
             <ChevronDown size={14} className={`text-[var(--sk-accent)] transition-transform duration-200 ${isFilterDropdownOpen ? "rotate-180" : ""}`} />

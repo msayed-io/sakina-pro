@@ -136,14 +136,14 @@ export default function QuranSurahsScreen({
       {/* Floating Header */}
       {showHeader && <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
         {/* Left bookmark icon */}
-        <button className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label2)] active:scale-95 transition-transform pointer-events-auto cursor-pointer">
+        <button className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full flex items-center justify-center shadow-md text-[var(--sk-label2)] active:scale-95 transition-transform pointer-events-auto cursor-pointer">
           <Bookmark size={18} />
         </button>
 
         {/* Right back button */}
         <button
           onClick={onBack}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto cursor-pointer"
+          className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto cursor-pointer"
         >
           <ChevronRight size={20} />
         </button>

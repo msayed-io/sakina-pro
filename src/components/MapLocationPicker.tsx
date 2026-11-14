@@ -220,7 +220,7 @@ export default function MapLocationPicker({
       <div className="absolute top-0 inset-x-0 z-[110] flex items-start justify-between p-4 pt-6 bg-gradient-to-b from-black/40 to-transparent pointer-events-none">
         <button
           onClick={onClose}
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[var(--sk-bg3)] shadow-md text-[var(--sk-label)] pointer-events-auto active:scale-95 transition-transform shrink-0"
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-[var(--sk-bg3)] shadow-md sk-rim text-[var(--sk-label)] pointer-events-auto active:scale-95 transition-transform shrink-0"
         >
           <ChevronRight size={24} />
         </button>
@@ -230,7 +230,7 @@ export default function MapLocationPicker({
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-[#2b1a10]/95 dark:bg-[var(--sk-shade)]/95 backdrop-blur-sm text-white px-5 py-2.5 rounded-full shadow-lg pointer-events-auto mx-2 flex items-center justify-center"
+              className="bg-[#2b1a10]/95 dark:bg-[var(--sk-shade)]/95 backdrop-blur-sm text-white px-5 py-2.5 rounded-full shadow-lg pointer-events-auto mx-2 flex items-center justify-center sk-rim"
             >
               <span className="text-[14px] font-bold tracking-wide">
                 لم يتم العثور على الموقع

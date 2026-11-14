@@ -1537,7 +1537,7 @@ function AuthenticatedApp() {
               >
                 {/* Settings button in glassmorphic capsule */}
                 <button
-                  className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full cut-crystal-capsule shadow-md text-[var(--sk-label)] transition-all duration-300 active:scale-95 cursor-pointer"
+                  className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full cut-crystal-capsule sk-rim shadow-md text-[var(--sk-label)] transition-all duration-300 active:scale-95 cursor-pointer"
                   aria-label="فتح الإعدادات"
                   onClick={() => setActiveTab("settings")}
                 >
@@ -1545,7 +1545,7 @@ function AuthenticatedApp() {
                 </button>
 
                 {/* Sakinah text in glassmorphic capsule */}
-                <div className="pointer-events-auto cut-crystal-capsule px-6 h-10 rounded-full shadow-md flex items-center justify-center text-[var(--sk-label)]">
+                <div className="pointer-events-auto cut-crystal-capsule sk-rim px-6 h-10 rounded-full shadow-md flex items-center justify-center text-[var(--sk-label)]">
                   <span className="text-[17px] font-display font-black leading-none pt-[1px]">
                     سَكِينَة
                   </span>

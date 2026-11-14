@@ -116,7 +116,7 @@ export default function SharedSakeenahConversationPage({ token }: { token: strin
         <div className="pointer-events-none absolute bottom-[-10%] left-[-10%] z-0 h-[250px] w-[250px] rounded-full bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 blur-[100px]" />
 
         <header className="absolute left-5 right-5 top-6 z-20 flex items-center justify-start">
-          <a href="/" className="cut-crystal-capsule flex h-10 items-center justify-center gap-1.5 px-5 text-[14.5px] font-display font-black shadow-md"><span>سَكِينَة AI</span></a>
+          <a href="/" className="cut-crystal-capsule sk-rim flex h-10 items-center justify-center gap-1.5 px-5 text-[14.5px] font-display font-black shadow-md"><span>سَكِينَة AI</span></a>
         </header>
 
         <div className="relative z-10 h-[100dvh] overflow-y-auto overscroll-contain px-0 pb-[178px] pt-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

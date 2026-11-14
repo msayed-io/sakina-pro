@@ -370,7 +370,7 @@ export function QuranAudioPlayerScreen({
           className={`hover:opacity-90 active:scale-95 transition-all rounded-full px-6 py-2 font-sans font-bold text-sm flex items-center justify-center cursor-pointer ${
             isVideoTheme
               ? 'liquid-glass-capsule text-white optical-shadow-guard'
-              : 'cut-crystal-capsule border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 text-[var(--sk-label)]'
+              : 'cut-crystal-capsule sk-rim border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 text-[var(--sk-label)]'
           }`}
           dir="rtl"
         >

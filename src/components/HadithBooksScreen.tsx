@@ -930,7 +930,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           {viewMode !== "library" && (
             <button
               onClick={() => setViewMode("library")}
-              className="w-10 h-10 cut-crystal-capsule flex items-center justify-center text-[var(--sk-label)] active:scale-95 transition-all cursor-pointer shadow-2xs shrink-0"
+              className="w-10 h-10 cut-crystal-capsule sk-rim flex items-center justify-center text-[var(--sk-label)] active:scale-95 transition-all cursor-pointer shadow-2xs shrink-0"
               title="العودة للمكتبة"
               aria-label="العودة"
             >
@@ -939,7 +939,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           )}
 
           {/* Title Capsule */}
-          <div className="px-4 h-10 cut-crystal-capsule flex items-center justify-center text-[var(--sk-label)] shadow-2xs">
+          <div className="px-4 h-10 cut-crystal-capsule sk-rim flex items-center justify-center text-[var(--sk-label)] shadow-2xs">
             <span className="text-[13.5px] font-bold whitespace-nowrap">
               {viewMode === "book_reader" && selectedBook
                 ? selectedBook.titleArabic
@@ -956,7 +956,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
 
         {/* Left Side (RTL): Grouped Combined Capsule for Bookmarks & Notes */}
         <div className="flex items-center gap-2 pointer-events-auto">
-          <div className="h-10 p-1 cut-crystal-capsule flex items-center gap-1 shadow-2xs">
+          <div className="h-10 p-1 cut-crystal-capsule sk-rim flex items-center gap-1 shadow-2xs">
             {/* Bookmarks Section */}
             <button
               onClick={() => setViewMode(viewMode === "bookmarks" ? "library" : "bookmarks")}

@@ -1134,6 +1134,25 @@ html[data-theme="dark"] .sk-rim-nested {
   box-shadow: var(--sk-drop);
 }
 
+/* The light "gem" treatment (white border + inset highlight) never renders
+   in dark; the colored tile keeps its gradient, the dark edge stays flat. */
+html[data-theme="dark"] .gem-rim-glow {
+  border-color: transparent !important;
+  box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Same surrender on hover/active of rim targets so a recipe hover can never
+   leak the light inset highlight back on top of the physical rim. */
+html[data-theme="dark"] .sk-rim:hover,
+html[data-theme="dark"] .sk-rim:focus-visible,
+html[data-theme="dark"] .sk-rim:active,
+html[data-theme="dark"] .sk-rim-nested:hover,
+html[data-theme="dark"] .sk-rim-nested:focus-visible,
+html[data-theme="dark"] .sk-rim-nested:active {
+  border-color: transparent;
+  box-shadow: var(--sk-drop);
+}
+
 /* Text selection + keyboard focus, dark only (light keeps UA defaults) */
 html[data-theme="dark"] ::selection {
   background: var(--sk-selection);

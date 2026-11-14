@@ -257,7 +257,7 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
       {/* ── FLOATING TOP HEADER ── */}
       <div className="fixed top-6 inset-x-0 px-5 max-w-[390px] mx-auto h-10 flex items-center justify-between z-40 pointer-events-none">
         {/* Right Element (in RTL): Azkar Title Capsule */}
-        <div className="cut-crystal-capsule px-5 h-10 rounded-full shadow-md flex items-center justify-center pointer-events-auto">
+        <div className="cut-crystal-capsule sk-rim px-5 h-10 rounded-full shadow-md flex items-center justify-center pointer-events-auto">
           <span className="text-[14.5px] font-bold text-[var(--sk-label)] whitespace-nowrap pt-0.5">
             الأذكار
           </span>
@@ -267,7 +267,7 @@ const AzkarTabScreen = React.memo(function AzkarTabScreen({
         <motion.button
           whileTap={{ scale: 0.9, rotate: 180 }}
           onClick={refreshState}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
+          className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] hover:text-[var(--sk-accent)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
           title="تحديث وإعادة ضبط الأذكار"
           aria-label="تحديث وإعادة ضبط الأذكار"
         >

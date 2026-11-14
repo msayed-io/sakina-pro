@@ -89,7 +89,7 @@ export default function QuranDownloadScreen({ onClose, onDownloaded }: Props) {
       <button
         onClick={onClose}
         aria-label="رجوع"
-        className="cut-crystal-capsule fixed left-5 right-auto top-5 z-[60] grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45"
+        className="cut-crystal-capsule sk-rim fixed left-5 right-auto top-5 z-[60] grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45"
         style={{
           position: "fixed",
           left: "calc(20px + env(safe-area-inset-left))",

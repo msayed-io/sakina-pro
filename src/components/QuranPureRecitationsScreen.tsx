@@ -272,7 +272,7 @@ export default function QuranPureRecitationsScreen({
       <div className="absolute bottom-[-12%] left-[-14%] w-[280px] h-[280px] bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 rounded-full blur-[110px] pointer-events-none" />
 
       <header className="fixed top-6 left-6 right-6 z-40 flex items-center justify-between pointer-events-none">
-        <div className="cut-crystal-capsule rounded-full px-4 h-10 flex items-center gap-2 shadow-md pointer-events-auto">
+        <div className="cut-crystal-capsule sk-rim rounded-full px-4 h-10 flex items-center gap-2 shadow-md pointer-events-auto">
           <BookOpenText size={16} className="text-[var(--sk-accent)]" />
           <span className="text-[14px] font-bold">التلاوات النقية</span>
         </div>
@@ -280,7 +280,7 @@ export default function QuranPureRecitationsScreen({
           type="button"
           onClick={handleBack}
           aria-label={selectedReciter ? "العودة إلى القراء" : "الخروج إلى صفحة الاستماع"}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto"
+          className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-transform pointer-events-auto"
         >
           <ChevronRight size={20} />
         </button>

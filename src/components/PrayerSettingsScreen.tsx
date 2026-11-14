@@ -160,7 +160,7 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
 
       {/* ── FLOATING TOP HEADER ── */}
       <div className="fixed top-6 left-5 right-5 flex items-center justify-between z-45 pointer-events-none">
-        <div className="cut-crystal-capsule px-5 h-10 rounded-full shadow-md flex items-center justify-center pointer-events-auto">
+        <div className="cut-crystal-capsule sk-rim px-5 h-10 rounded-full shadow-md flex items-center justify-center pointer-events-auto">
           <span className="text-[14.5px] font-bold text-[var(--sk-label)] whitespace-nowrap pt-0.5">
             {headerTitle}
           </span>
@@ -168,7 +168,7 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
 
         <button
           onClick={handleCloseAttempt}
-          className="w-10 h-10 cut-crystal-capsule rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
+          className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
           aria-label="إغلاق"
         >
           <X size={18} />

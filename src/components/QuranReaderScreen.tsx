@@ -1249,7 +1249,7 @@ export default function QuranReaderScreen({
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
               onClick={(e) => { e.stopPropagation(); onClose(); }}
-              className="!absolute top-6 right-6 z-50 w-9 h-9 cut-crystal-capsule flex items-center justify-center text-[#2b1a10] shadow-md transition-all duration-200 hover:opacity-80 active:scale-95"
+              className="!absolute top-6 right-6 z-50 w-9 h-9 cut-crystal-capsule sk-rim flex items-center justify-center text-[#2b1a10] shadow-md transition-all duration-200 hover:opacity-80 active:scale-95"
               aria-label="الخروج من المصحف"
             >
               <ChevronRight size={17} />
@@ -1262,7 +1262,7 @@ export default function QuranReaderScreen({
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
               onClick={(e) => { e.stopPropagation(); togglePageBookmark(); }}
-              className={`!absolute top-6 left-6 z-50 w-9 h-9 cut-crystal-capsule flex items-center justify-center shadow-md transition-all duration-200 active:scale-95 ${isBookmarked ? "text-[#b88a4f]" : "text-[#2b1a10]"} hover:opacity-80`}
+              className={`!absolute top-6 left-6 z-50 w-9 h-9 cut-crystal-capsule sk-rim flex items-center justify-center shadow-md transition-all duration-200 active:scale-95 ${isBookmarked ? "text-[#b88a4f]" : "text-[#2b1a10]"} hover:opacity-80`}
               title="حفظ الصفحة الحالية"
             >
               <Bookmark size={18} fill={isBookmarked ? "currentColor" : "none"} />
