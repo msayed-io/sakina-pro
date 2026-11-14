@@ -1160,7 +1160,7 @@ function AuthenticatedApp() {
         {/* TAB: MAIN (Prayer Screen) */}
         <div
           className={
-            activeTab === "main" && !showAzkarCounter ? "block" : "hidden"
+            activeTab === "main" && !showAzkarCounter ? "home-tab block" : "home-tab hidden"
           }
         >
           <section className="relative isolate min-h-[72vh] overflow-hidden">
@@ -1172,6 +1172,7 @@ function AuthenticatedApp() {
             <div className="absolute inset-0 bg-gradient-to-b from-[#180d07]/65 via-[#2a170f]/30 to-[#ece7de] pointer-events-none z-[1] will-change-transform [transform:translateZ(0)]" />
 
             <div className="relative z-[2] mx-auto w-full max-w-[390px] px-4 pb-7 pt-6">
+              <div className="progressive-blur progressive-blur-top progressive-blur-home" aria-hidden="true"><i /><i /></div>
               {/* ── Fixed Floating Glassmorphic Header ── */}
               <AnimatePresence>
                 {isScrolled && (
@@ -1557,6 +1558,7 @@ function AuthenticatedApp() {
         {/* TAB: AZKAR */}
         {visitedTabs.has("azkar") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الأذكار..." />}>
+            {activeTab === "azkar" && !showAzkarCounter && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
             <div className={activeTab === "azkar" && !showAzkarCounter ? "block w-full overflow-x-hidden" : "hidden"}>
               <AzkarTabScreen
                 onOpenAzkarCounter={handleOpenAzkarCounter}
@@ -1570,6 +1572,7 @@ function AuthenticatedApp() {
         {/* TAB: QURAN */}
         {visitedTabs.has("quran") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل القرآن..." />}>
+            {activeTab === "quran" && !showAzkarCounter && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
             <div className={activeTab === "quran" && !showAzkarCounter ? "block relative h-full min-h-screen w-full" : "hidden"}>
               <QuranTabScreen
                 isActive={activeTab === "quran" && !showAzkarCounter}
@@ -1583,6 +1586,7 @@ function AuthenticatedApp() {
         {/* TAB: HADITH BOOKS */}
         {visitedTabs.has("hadith") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل كتب الحديث..." />}>
+            {activeTab === "hadith" && !showAzkarCounter && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
             <div className={activeTab === "hadith" && !showAzkarCounter ? "block relative min-h-screen w-full overflow-x-hidden" : "hidden"}>
               <HadithBooksScreen
                 isActive={activeTab === "hadith" && !showAzkarCounter}
@@ -1601,6 +1605,7 @@ function AuthenticatedApp() {
             data-clarity-mask="true"
             data-sakeenah-ai-surface="true"
           >
+            {currentUser && isAuthReady && <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>}
             {!isAuthReady ? (
               <div className="flex min-h-screen items-center justify-center bg-[#ece7de] text-sm font-bold text-[#7f6a55]">
                 جارٍ التحقق من الجلسة...
@@ -1632,6 +1637,7 @@ function AuthenticatedApp() {
         {visitedTabs.has("settings") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الإعدادات..." />}>
             <div className={activeTab === "settings" && !showAzkarCounter ? "block" : "hidden"}>
+          <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>
           <SettingsScreen
             cityName={cityName}
             cityLat={cityLat}

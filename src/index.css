@@ -788,3 +788,43 @@
     background-position: -200% 0%;
   }
 }
+
+
+/* Progressive top blur: standalone light-theme edge, independent of the capsule headers. */
+.progressive-blur {
+  --bg: #ece7de;
+  --qf-top: max(24px, env(safe-area-inset-top));
+  position: fixed; inset-inline: 0; top: 0;
+  height: calc(var(--qf-top) + 88px); z-index: 18; pointer-events: none;
+  --qf-fade: to bottom;
+  background: linear-gradient(var(--qf-fade), var(--bg), transparent);
+}
+.progressive-blur-bottom {
+  top: auto; bottom: 0; height: calc(108px + env(safe-area-inset-bottom));
+  --qf-fade: to top;
+}
+.progressive-blur i { display: none; position: absolute; inset: 0; }
+@supports ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  @supports ((mask-image: linear-gradient(black, transparent)) or (-webkit-mask-image: linear-gradient(black, transparent))) {
+    .progressive-blur { background: none; }
+    .progressive-blur i {
+      display: block; --qf-blur: 6px; --qf-from: 25%; --qf-to: 100%;
+      -webkit-backdrop-filter: blur(var(--qf-blur)) saturate(1.15);
+      backdrop-filter: blur(var(--qf-blur)) saturate(1.15);
+      -webkit-mask-image: linear-gradient(var(--qf-fade), black 0%, black var(--qf-from), transparent var(--qf-to));
+      mask-image: linear-gradient(var(--qf-fade), black 0%, black var(--qf-from), transparent var(--qf-to));
+    }
+    /* Bound the strong pass to its nonzero mask region. Two passes avoid
+       recursive multi-backdrop cost measured with five on software WebKit. */
+    .progressive-blur i:nth-child(2) { height: 70%; bottom: auto; --qf-blur: 22px; --qf-from: 0%; --qf-to: 100%; }
+    .progressive-blur-bottom i:nth-child(2) { top: auto; bottom: 0; }
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .progressive-blur { background: linear-gradient(var(--qf-fade), var(--bg) 25%, transparent); }
+  .progressive-blur i { display: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* The home capsule is only rendered after scrolling; keep its blur absent before then. */
+.progressive-blur-home { visibility: hidden; }
+.home-tab:has(.fixed.top-4.z-50) .progressive-blur-home { visibility: visible; }

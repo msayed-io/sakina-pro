@@ -107,7 +107,9 @@ export default function SharedSakeenahConversationPage({ token }: { token: strin
   }
 
   return (
-    <main dir="rtl" data-clarity-mask="true" data-sakeenah-ai-surface="true" className="min-h-[100dvh] overflow-hidden bg-[#ece7de] text-[#2b1a10]">
+    <>
+      <div className="progressive-blur progressive-blur-top" aria-hidden="true"><i /><i /></div>
+      <main dir="rtl" data-clarity-mask="true" data-sakeenah-ai-surface="true" className="min-h-[100dvh] overflow-hidden bg-[#ece7de] text-[#2b1a10]">
       <div className="relative min-h-[100dvh] w-full overflow-hidden font-sans">
         <div className="pointer-events-none absolute right-[-10%] top-[-20%] z-0 h-[300px] w-[300px] rounded-full bg-[#b88a4f]/5 blur-[120px]" />
         <div className="pointer-events-none absolute bottom-[-10%] left-[-10%] z-0 h-[250px] w-[250px] rounded-full bg-[#deab65]/5 blur-[100px]" />
@@ -152,6 +154,7 @@ export default function SharedSakeenahConversationPage({ token }: { token: strin
           </div>
         </section>
       </div>
-    </main>
+      </main>
+    </>
   );
 }
