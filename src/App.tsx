@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -145,7 +146,7 @@ function ScreenLoader({ label }: { label: string }) {
     <div
       role="status"
       aria-live="polite"
-      className="flex min-h-[100dvh] w-full items-center justify-center bg-[var(--sk-bg)] text-[var(--sk-label2)]"
+      className="fixed inset-0 z-[70] flex w-full items-center justify-center bg-[var(--sk-bg)] text-[var(--sk-label2)]"
     >
       <div className="flex flex-col items-center gap-4 text-center">
         <SakeenahLineSpinner size={28} color="var(--sk-accent)" label={label} />
@@ -515,30 +516,27 @@ function AuthenticatedApp() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [activeTab]);
 
-  // إعادة ضبط التمرير إلى الأعلى عند كل تغيير للتبويب النشط.
-  // useLayoutEffect يُستدعى بعد رسم DOM مباشرة (قبل أن يرى المستخدم الصفحة)،
-  // و requestAnimationFrame يضمن أن scrollTo يحدث بعد اكتمال رسم الصفحة الجديدة.
-  // هذا يضمن عزل تام لحالة التمرير بين الصفحات: كل صفحة تبدأ من الأعلى دائماً.
+  // ملكية التمرير — الطبقة الأولى (scroll-ownership-spec-ar.md):
+  // كل تبويب جديد يبدأ من الأعلى. التغيير يحدث داخل commit الخاصة بـ React
+  // (useLayoutEffect — بعد بناء DOM وقبل أن يرسمه المتصفح) لا بعد الرسم،
+  // ولا يُنفَّذ إلا عند تغيّر المالك فعلياً. لا إعادة ضبط في أي مكان آخر،
+  // والرجوع للخلف يتبع المتصفح (لا إعادة ضبط على popstate).
   const prevTabRef = useRef<TabType>(activeTab);
   const prevAzkarRef = useRef<boolean>(showAzkarCounter);
-  useEffect(() => {
-    // فقط عند تغيير التبويب فعلياً (ليس عند كل re-render)
+  useLayoutEffect(() => {
     if (prevTabRef.current === activeTab && prevAzkarRef.current === showAzkarCounter) return;
     prevTabRef.current = activeTab;
     prevAzkarRef.current = showAzkarCounter;
 
-    // استخدم requestAnimationFrame لتأخير scrollTo حتى بعد رسم الصفحة الجديدة
-    const rafId = requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-      // أيضاً اضبط أي حاويات تمرير داخلية
-      const scrollContainers = document.querySelectorAll('[data-scroll-container]');
-      scrollContainers.forEach((container) => {
-        if (container instanceof HTMLElement) {
-          container.scrollTop = 0;
-        }
-      });
+    // إعادة ضبط المستند أثناء الـ commit نفسه — لا رجفة ولا موضع وسيط.
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    // أيضاً اضبط أي حاويات تمرير داخلية (تحوّط — لا تحملها عناصر حالياً).
+    const scrollContainers = document.querySelectorAll('[data-scroll-container]');
+    scrollContainers.forEach((container) => {
+      if (container instanceof HTMLElement) {
+        container.scrollTop = 0;
+      }
     });
-    return () => cancelAnimationFrame(rafId);
   }, [activeTab, showAzkarCounter]);
 
   useEffect(() => {
@@ -1790,6 +1788,10 @@ function AuthenticatedApp() {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed inset-0 z-50 overflow-y-auto bg-[var(--sk-bg)]"
           >
+            {/* بدون Suspense هنا كان الفرع كله يعلو إلى جذر Boot Suspense
+                ⇒ unmount كامل للتطبيق لحظة الرسم، وانهيار ارتفاع المستند
+                إلى 100dvh ⇒ قفزة التمرير إلى 0. نفس نمط باقي الشاشات. */}
+            <Suspense fallback={<ScreenLoader label="جارٍ تحميل إعدادات الصلاة..." />}>
             <PrayerSettingsScreen
               prayerId={activePrayerSettings}
               preferences={prayerPrefs}
@@ -1800,6 +1802,7 @@ function AuthenticatedApp() {
               sunriseTime={prayerSchedule.find(p => p.key === 'sunrise')?.date}
               ishaTime={prayerSchedule.find(p => p.key === 'isha')?.date}
             />
+            </Suspense>
           </motion.div>
         )}
       </AnimatePresence>

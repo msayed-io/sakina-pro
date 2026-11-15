@@ -905,7 +905,7 @@ export default function QuranReaderScreen({
       animate={{ opacity: 1, filter: 'blur(0px)' }}
       exit={{ opacity: 0, filter: 'blur(5px)' }}
       transition={{ duration: 0.4 }}
-      className={`fixed inset-0 w-full h-[100vh] overflow-hidden flex flex-col justify-center px-4 sm:px-8 font-sans transition-colors duration-500 ${activeTheme.bg} ${activeTheme.text}`}
+      className={`fixed inset-0 w-full h-[100dvh] overflow-hidden flex flex-col justify-center px-4 sm:px-8 font-sans transition-colors duration-500 ${activeTheme.bg} ${activeTheme.text}`}
       dir="rtl"
       onClick={() => {
         if (suppressClickRef.current) {

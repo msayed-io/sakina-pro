@@ -30,6 +30,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(RadioCapturePlugin.class);
         super.onCreate(savedInstanceState);
         disableWebViewAlgorithmicDarkening(); // الوضع الداكن تديره الويب، لا تعتيم WebView الخوارزمي
+        hideWebViewScrollbarsAndOverscroll(); // ملكية التمرير — الطبقة الثالثة (scroll-ownership-spec-ar.md)
         hideSystemBars(); // القاعدة #4: إخفاء كامل عند الإطلاق (Immersive Mode)
         createNotificationChannels();
     }
@@ -67,6 +68,25 @@ public class MainActivity extends BridgeActivity {
             }
         } catch (Throwable t) {
             Log.w("MainActivity", "Algorithmic darkening could not be disabled: " + t);
+        }
+    }
+
+    /**
+     * Scroll ownership — Layer 3 (scroll-ownership-spec-ar.md):
+     * the WebView must never draw its own scroll indicators or the
+     * Android edge-glow over the app's design. Scrolling itself stays
+     * fully enabled (indicator-only change).
+     */
+    private void hideWebViewScrollbarsAndOverscroll() {
+        try {
+            com.getcapacitor.Bridge bridge = getBridge();
+            android.webkit.WebView webView = bridge != null ? bridge.getWebView() : null;
+            if (webView == null) return;
+            webView.setVerticalScrollBarEnabled(false);
+            webView.setHorizontalScrollBarEnabled(false);
+            webView.setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
+        } catch (Throwable t) {
+            Log.w("MainActivity", "WebView scroll bars could not be hidden: " + t);
         }
     }
 

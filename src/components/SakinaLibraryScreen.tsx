@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowLeft,
@@ -280,6 +280,18 @@ export default function SakinaLibraryScreen({
     });
   };
 
+  // ملكية التمرير (scroll-ownership-spec-ar.md) على مستوى هذا العرض:
+  // التنقل بين عروض المكتبة يبدأ من الأعلى. المالك هنا هو الحاوية الثابتة
+  // الخارجية (fixed + overflow-y-auto) — تصل إليها عبر closest().
+  const libraryRootRef = useRef<HTMLDivElement>(null);
+  const prevLibraryViewRef = useRef(view);
+  useLayoutEffect(() => {
+    if (prevLibraryViewRef.current === view) return;
+    prevLibraryViewRef.current = view;
+    const scroller = libraryRootRef.current?.closest<HTMLElement>(".overflow-y-auto");
+    if (scroller) scroller.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [view]);
+
   const title = view === "scholar" && selectedScholar
     ? selectedScholar.displayName
     : view === "series" && selectedSeries
@@ -291,7 +303,7 @@ export default function SakinaLibraryScreen({
           : "مكتبة سكينة";
 
   return (
-    <div className="min-h-[100dvh] w-full overflow-x-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
+    <div ref={libraryRootRef} className="min-h-[100dvh] w-full overflow-x-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
       <ProgressiveBlur />
       <header className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-8 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-2">

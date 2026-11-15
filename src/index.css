@@ -284,7 +284,7 @@ html[data-theme="dark"] .ai-composer-pill {
 .mushaf-page {
   width: min(100%, 850px);
   margin: auto;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: 70px 45px 90px 45px;
   display: flex;
   flex-direction: column;
@@ -318,6 +318,21 @@ html[data-theme="dark"] .ai-composer-pill {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
+}
+
+/* Scroll ownership — Layer 2 (scroll-ownership-spec-ar.md):
+   the app already hides scroll indicators above; this adds the missing
+   scroll-chain containment so a nested scroller can never drag the
+   document along, and the WebKit root exception that keeps ordinary
+   wheel scrolling alive (WebKit swallows it with overscroll-behavior:none
+   on the root — capability-detected, not a version guess). */
+html, body, * {
+  overscroll-behavior: none;
+}
+@supports (-webkit-nbsp-mode: space) {
+  html {
+    overscroll-behavior: auto;
+  }
 }
 
 .hero-image {

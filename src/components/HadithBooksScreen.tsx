@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Library,
@@ -252,6 +252,14 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
 
   // Active View Mode: 'library' | 'book_reader' | 'bookmarks' | 'search_global' | 'reports'
   const [viewMode, setViewMode] = useState<"library" | "book_reader" | "bookmarks" | "search_global" | "reports">("library");
+  // ملكية التمرير (scroll-ownership-spec-ar.md) على مستوى هذه الشجرة الفرعية:
+  // كل انتقال بين شاشات الحديث الفرعية يبدأ من الأعلى — والمالك هو المستند.
+  const prevHadithSubRef = useRef(viewMode);
+  useLayoutEffect(() => {
+    if (prevHadithSubRef.current === viewMode) return;
+    prevHadithSubRef.current = viewMode;
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [viewMode]);
 
   // Notify parent layout whether navigation bar should be hidden (when in any inner page)
   useEffect(() => {

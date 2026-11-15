@@ -1,0 +1,308 @@
+/**
+ * Scroll ownership audit — Sakinah (adapted from scroll-audit.mjs to this
+ * app's architecture). "No page left behind."
+ *
+ * Why adapted: this app has NO URL router. Tabs and sub-screens are a React
+ * state machine in src/App.tsx with sub-routers in QuranTabScreen
+ * (currentScreen) and HadithBooksScreen (viewMode), plus full-screen fixed
+ * overlays. There is no a[href] to click and no popstate to dispatch —
+ * a reload proves nothing about scroll leakage, exactly as the stock script
+ * says. So this runner reproduces the SAME measurements, SAME pass/fail
+ * rules and SAME output contract, but performs navigation through the real
+ * in-app controls a user touches. Every transition logged as `how` is an
+ * in-app control click — never `page.goto` (except the initial load).
+ *
+ *   node scripts/scroll-audit.mjs --base=http://127.0.0.1:4173
+ *
+ * Exit code 1 if any reachable screen fails or cannot be navigated to
+ * in-app. Screens that cannot be reached in this environment are printed
+ * as NOT_CHECKED with reasons (see scripts/routes.mjs) — they never count
+ * as PASS.
+ */
+import { chromium } from 'playwright';
+import { screens, notAudited } from './routes.mjs';
+
+const base = (process.argv.find(a => a.startsWith('--base=')) || '--base=http://127.0.0.1:4173').slice(7);
+
+const MEASURE = `(() => {
+  const root = document.scrollingElement || document.documentElement;
+  const style = getComputedStyle(document.documentElement);
+  const inner = [...document.querySelectorAll('*')].filter(el => {
+    const s = getComputedStyle(el);
+    return /auto|scroll/.test(s.overflowY) && el.scrollHeight > el.clientHeight + 1 && el.getClientRects().length;
+  });
+  return {
+    scrollY: Math.round(window.scrollY || root.scrollTop || 0),
+    innerCount: inner.length,
+    innerMax: inner.reduce((n, el) => Math.max(n, el.scrollTop), 0),
+    scrollable: root.scrollHeight > root.clientHeight + 1 || inner.length > 0,
+    bodyOverflow: getComputedStyle(document.body).overflow,
+    htmlOverflow: style.overflow,
+    scrollbarHidden: style.scrollbarWidth === 'none' || getComputedStyle(document.body).scrollbarWidth === 'none',
+    overscroll: style.overscrollBehavior.split(' ')[0]
+  };
+})()`;
+
+const rows = [];
+let failures = 0;
+
+const weather = { current_weather: { temperature: 24, weathercode: 0, is_day: 1, windspeed: 5, winddirection: 100, time: '2026-11-14T10:30' } };
+const browser = await chromium.launch({ headless: true, args: ['--disable-gpu', '--force-color-profile=srgb', '--autoplay-policy=no-user-gesture-required'] });
+const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'ar', timezoneId: 'Africa/Cairo', colorScheme: 'dark' });
+await context.route('**/api.open-meteo.com/**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(weather) }));
+const page = await context.newPage();
+const pageErrors = [];
+page.on('pageerror', (e) => pageErrors.push(e.message));
+
+const measure = () => page.evaluate(MEASURE);
+const scrollAllToBottom = () => page.evaluate(() => {
+  const root = document.scrollingElement || document.documentElement;
+  root.scrollTop = root.scrollHeight;
+  for (const el of document.querySelectorAll('*')) {
+    const s = getComputedStyle(el);
+    if (/auto|scroll/.test(s.overflowY) && el.scrollHeight > el.clientHeight + 1) el.scrollTop = el.scrollHeight;
+  }
+});
+const wait = (ms) => page.waitForTimeout(ms);
+const visible = (sel) => page.locator(sel).first().isVisible().catch(() => false);
+const click = async (sel, ms = 700) => { await page.locator(sel).first().click({ timeout: 5000 }); await wait(ms); };
+
+const clickSoft = async (sel, ms = 400) => {
+  await page.evaluate((s) => { const el = [...document.querySelectorAll(s)].find(e => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden' && getComputedStyle(e).display !== 'none'); el && el.click(); }, sel);
+  await wait(ms);
+};
+// real user click with :visible filter — the DOM also carries mounted-but-hidden copies
+// (e.g. the auth gate's invisible disabled رجوع); Playwright must not pick them.
+// Fails loudly (step marked FAIL) if an overlay/modal intercepts the visible control.
+const clickEvaluate = async (sel) => { await click(sel.trim() + ':visible', 800); };
+
+async function anchorMain() {
+  // Close any open full-screen surface using its real control, in priority order.
+  // clickSoft never hangs on exiting/hidden nodes; worst case the loop just re-tries.
+  for (let i = 0; i < 10; i++) {
+    // prayer-settings unsaved-changes guard: fresh-state isDirty pops «التغييرات غير محفوظة» — real users must dismiss it too
+    if (await visible('button:has-text("امسح التغييرات")')) { await page.locator('button:has-text("امسح التغييرات")').first().click({ timeout: 5000 }); await wait(700); continue; }
+    if (await visible('[aria-label="Drag to dismiss or click to close player"]')) { await clickSoft('[aria-label="Drag to dismiss or click to close player"]'); continue; }
+    if (await visible('button[aria-label="الخروج من مكتبة سكينة"]')) { await clickSoft('button[aria-label="الخروج من مكتبة سكينة"]'); continue; }
+    if (await visible('button[title="رجوع"]')) { await clickSoft('button[title="رجوع"]'); continue; }          // azkar counter
+    if (await visible('button[aria-label="رجوع"]:visible')) { await clickSoft('button[aria-label="رجوع"]'); continue; }   // settings / asma / auth / AI
+    if (await visible('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="إغلاق"]')) { await page.locator('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="إغلاق"]').first().click({ timeout: 5000 }); await wait(700); continue; }
+    // surahs screen (quran sub-router): the only visible chevron-right button is back
+    if (await page.locator('text=تشغيل الكل').first().isVisible().catch(() => false)) { await clickSoft('button:has(svg.lucide-chevron-right)'); continue; }
+    break;
+  }
+  // Bottom nav is visible on document-owned tabs (hidden in settings/ai/player/counter/surahs).
+  if (await visible('nav button')) {
+    const active = await page.evaluate(() => [...document.querySelectorAll('nav button')].findIndex(b => b.className.includes('px-4')));
+    if (active !== 0) { await page.locator('nav button').first().click({ timeout: 5000 }); await wait(600); }
+  }
+}
+
+const navTab = async (index) => { await page.locator('nav button').nth(index).click({ timeout: 5000 }); await wait(1300); };
+
+function record(row) { rows.push(row); if (row.verdict.startsWith('FAIL')) failures++; console.log(JSON.stringify(row)); }
+
+async function checkDocument(route, how, entered, scrolled) {
+  const fails = [];
+  if (entered.scrollY !== 0) fails.push(`entered at scrollY=${entered.scrollY}`);
+  if (entered.innerMax !== 0) fails.push(`inner container kept scrollTop=${entered.innerMax}`);
+  if (!entered.scrollbarHidden) fails.push('scrollbar not hidden');
+  if (entered.htmlOverflow === 'hidden' || entered.bodyOverflow === 'hidden') fails.push('html/body overflow hidden (a stuck modal lock)');
+  if (entered.scrollable) {
+    // The destination itself must actually move (the source's scrolled state is not evidence).
+    await scrollAllToBottom(); await wait(300);
+    const probe = await measure();
+    if (!(probe.scrollY > 0 || probe.innerMax > 0)) fails.push('nothing scrolled: scrolling is dead');
+  }
+  record({ route, how, owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+}
+
+function checkPanel(route, how, entered, extraFails = []) {
+  const fails = [...extraFails];
+  if (entered.innerMax !== 0) fails.push(`inner container kept scrollTop=${entered.innerMax}`);
+  if (!entered.scrollbarHidden) fails.push('scrollbar not hidden');
+  if (entered.htmlOverflow === 'hidden' || entered.bodyOverflow === 'hidden') fails.push('html/body overflow hidden (a stuck modal lock)');
+  record({ route, how, owner: 'panel', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+}
+
+async function step(name, how, fn) {
+  try { await fn(); } catch (e) { failures++; const row = { route: name, how, verdict: 'FAIL — ' + String(e.message || e).slice(0, 160) }; rows.push(row); console.log(JSON.stringify(row)); }
+}
+
+console.log(`base=${base} screens=${screens.length}`);
+await page.goto(base, { waitUntil: 'domcontentloaded' });
+await page.waitForLoadState('networkidle').catch(() => {}); await wait(4000);
+
+// ───────── Document-owned tab chain (each transition is a real in-app nav) ─────────
+// main → quran
+await step('main', 'initial load', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await navTab(1);
+  const entered = await measure();
+  await await checkDocument('quran', 'bottom-nav → القرآن', entered, scrolled);
+});
+// quran → surahs (sub-router; regression probe for the new layer-1 placement)
+await step('quran', "in-app → سور القارئ", async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('العفاسي')); el && el.click(); }); await wait(1500);
+  const entered = await measure();
+  await checkDocument('surahs', 'select reciter → surahs', entered, scrolled);
+});
+// surahs → player (fixed surface; player must open from a scrolled surahs list)
+await step('surahs', 'in-app → player', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'تشغيل الكل'); el && el.click(); }); await wait(2500);
+  const playerVisible = await visible('[aria-label="Drag to dismiss or click to close player"]');
+  const entered = await measure();
+  // Player is a full-screen modal: QuranTabScreen sets body overflow:hidden while open and
+  // RESTORES it on close (spec §3 modal rule). We assert the lock exists (defense) — restoration is asserted after close.
+  const bodyLocked = entered.bodyOverflow === 'hidden' || entered.htmlOverflow === 'hidden';
+  const fails = [];
+  if (!playerVisible) fails.push('player did not open (play did not start)');
+  if (!entered.scrollbarHidden) fails.push('scrollbar not hidden');
+  if (!bodyLocked) fails.push('player open without body scroll lock (document would scroll behind the modal)');
+  record({ route: 'player', how: 'تشغيل الكل (in-app)', owner: 'fixed', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+// player → close → surahs (back keeps position: document untouched by the fixed player)
+await step('player', 'close player (tap drag handle)', async () => {
+  const before = await measure();
+  await clickEvaluate('[aria-label="Drag to dismiss or click to close player"]');
+  const entered = await measure();
+  const fails = [];
+  if (entered.htmlOverflow === 'hidden' || entered.bodyOverflow === 'hidden') fails.push('body scroll lock not restored after player close');
+  if (entered.innerMax !== before.innerMax) fails.push(`surahs scroller moved across player (was ${before.innerMax}, now ${entered.innerMax})`);
+  if (entered.scrollY !== before.scrollY) fails.push(`surahs document moved across player (was ${before.scrollY}, now ${entered.scrollY})`);
+  record({ route: 'surahs (after player)', how: 'close player', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+// surahs → hadith (leave sub-router via bottom nav)
+await step('surahs', 'back → reciters, then bottom-nav → الكتب', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.getClientRects().length && b.querySelector('svg.lucide-chevron-right')); el && el.click(); }); await wait(800);
+  await navTab(2);
+  const entered = await measure();
+  await checkDocument('hadith', 'surahs back → nav الكتب', entered, scrolled);
+});
+// hadith → azkar
+await step('hadith', 'bottom-nav → الأذكار', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await navTab(3);
+  const entered = await measure();
+  await checkDocument('azkar', 'bottom-nav → الأذكار', entered, scrolled);
+});
+// azkar → sakeenah-ai
+await step('azkar', 'bottom-nav → سكينة AI', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await navTab(4);
+  const entered = await measure();
+  await checkDocument('sakeenah-ai', 'bottom-nav → سكينة AI', entered, scrolled);
+});
+// sakeenah-ai → main (in-app back; exercises the app back control + layer-1 reset)
+await step('sakeenah-ai', 'back → الرئيسية', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await clickEvaluate('button[aria-label="رجوع"]');
+  const entered = await measure();
+  await checkDocument('main (after ai)', 'back button → الرئيسية', entered, scrolled);
+});
+// main → settings (gear; layer-1 reset on tab change)
+await step('main', 'gear → الإعدادات', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  // while scrolled the hero gear is pointer-events:none by design and the app shows
+  // a fixed header gear; use it (fallback: DOM click on the hero gear).
+  const fixedGear = page.locator('div.fixed.top-4 button[aria-label="فتح الإعدادات"]').first();
+  if (await fixedGear.isVisible().catch(() => false)) { await fixedGear.click(); await wait(1200); }
+  else { await clickEvaluate('[aria-label="فتح الإعدادات"]'); }
+  const entered = await measure();
+  await checkDocument('settings', 'fixed gear (visible while scrolled)', entered, scrolled);
+});
+// settings → main (back; layer-1 reset)
+await step('settings', 'back → الرئيسية', async () => {
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  await clickEvaluate('button[aria-label="رجوع"]');
+  const entered = await measure();
+  await checkDocument('main (after settings)', 'back button → الرئيسية', entered, scrolled);
+});
+
+// ───────── Panel-owned fixed overlays (document is untouched; panel starts at top) ─────────
+async function openMainAndScroll() { await anchorMain(); const scrolled = (await scrollAllToBottom(), await wait(300), await measure()); return scrolled; }
+
+await step('main', 'speaker icon → prayer-settings panel', async () => {
+  const scrolled = await openMainAndScroll();
+  const docY = scrolled.scrollY;
+  await page.locator('[aria-label^="إعدادات الإشعار"]').last().click({ timeout: 5000 }); await wait(900);
+  const entered = await measure();
+  checkPanel('prayer-settings', 'speaker → prayer-settings', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : []);
+});
+await step('prayer-settings', 'close prayer-settings (back to main, position kept)', async () => {
+  const before = await measure();
+  await scrollAllToBottom(); await wait(300);
+  await clickEvaluate('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="إغلاق"]');
+  // fresh-state guard pops «التغييرات غير محفوظة» — discard is the neutral no-save path
+  const discard = page.locator('button:has-text("امسح التغييرات")').first();
+  if (await discard.isVisible().catch(() => false)) { await discard.click({ timeout: 5000 }); await wait(800); }
+  const panelGone = !(await page.locator('div.fixed.inset-0.z-50.overflow-y-auto').first().isVisible().catch(() => false));
+  const entered = await measure();
+  const fails = [];
+  if (!panelGone) fails.push('prayer-settings panel still visible after close attempt');
+  if (entered.scrollY !== before.scrollY) fails.push(`main position lost across prayer-settings (was ${before.scrollY}, now ${entered.scrollY})`);
+  record({ route: 'main (after prayer-settings)', how: 'إغلاق + امسح التغييرات → back to main', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+
+await step('main', 'azkar → counter panel', async () => {
+  await anchorMain(); await navTab(3);
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  const docY = scrolled.scrollY;
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('أذكار الصباح')); el && el.click(); }); await wait(1500);
+  const entered = await measure();
+  checkPanel('azkar-counter', 'الأذكار → أذكار الصباح', entered, []);
+});
+await step('azkar-counter', 'close counter (tab semantics: azkar resets to top)', async () => {
+  await scrollAllToBottom(); await wait(300);
+  await clickEvaluate('button[title="رجوع"]');
+  const entered = await measure();
+  const fails = [];
+  if (entered.scrollY !== 0) fails.push(`azkar not back at top after counter close (scrollY=${entered.scrollY})`);
+  record({ route: 'azkar (after counter)', how: 'رجوع → azkar', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+
+await step('main', 'azkar → asma-al-husna panel', async () => {
+  await anchorMain(); await navTab(3);
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  const docY = scrolled.scrollY;
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('أسماء الله الحسنى')); el && el.click(); }); await wait(1500);
+  const entered = await measure();
+  checkPanel('asma-al-husna', 'الأذكار → أسماء الله الحسنى', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : []);
+});
+await step('asma-al-husna', 'close asma (document position kept)', async () => {
+  const before = await measure();
+  await scrollAllToBottom(); await wait(300);
+  await click('button[aria-label="رجوع"]', 800);
+  const entered = await measure();
+  const fails = [];
+  if (entered.scrollY !== before.scrollY) fails.push(`azkar position lost across asma (was ${before.scrollY}, now ${entered.scrollY})`);
+  record({ route: 'azkar (after asma)', how: 'رجوع → azkar', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+
+await step('main', 'hadith → sakina-library panel', async () => {
+  await anchorMain(); await navTab(2);
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  const docY = scrolled.scrollY;
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('الدروس والمحاضرات')); el && el.click(); }); await wait(1500);
+  const entered = await measure();
+  checkPanel('sakina-library', 'الكتب → مكتبة سكينة', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : []);
+});
+await step('sakina-library', 'close library (document position kept)', async () => {
+  const before = await measure();
+  await scrollAllToBottom(); await wait(300);
+  await clickEvaluate('button[aria-label="الخروج من مكتبة سكينة"]');
+  const entered = await measure();
+  const fails = [];
+  if (entered.scrollY !== before.scrollY) fails.push(`hadith position lost across library (was ${before.scrollY}, now ${entered.scrollY})`);
+  record({ route: 'hadith (after library)', how: 'إغلاق → hadith', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+
+console.log('---');
+console.log(`audited=${rows.length} failures=${failures}`);
+for (const n of notAudited) console.log(`NOT_CHECKED ${n.name} — ${n.reason}`);
+if (pageErrors.length) console.log(`pageErrors: ${JSON.stringify(pageErrors.slice(0, 5))}`);
+await browser.close();
+process.exit(failures ? 1 : 0);

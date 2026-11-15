@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Play, Pause, X } from "lucide-react";
 import type { Reciter, Moshaf } from "@/types/quran";
@@ -36,6 +36,15 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
 
   // Navigation stack: regular reciters, pure recitations, or surahs
   const [currentScreen, setCurrentScreen] = useState<"reciters" | "pureRecitations" | "surahs">("reciters");
+
+  // ملكية التمرير (scroll-ownership-spec-ar.md) على مستوى هذه الشجرة الفرعية:
+  // كل انتقال بين شاشات القرآن الفرعية يبدأ من الأعلى — والمالك هو المستند.
+  const prevQuranSubRef = useRef(currentScreen);
+  useLayoutEffect(() => {
+    if (prevQuranSubRef.current === currentScreen) return;
+    prevQuranSubRef.current = currentScreen;
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [currentScreen]);
   
   // Selection states
   const [selectedReciter, setSelectedReciter] = useState<Reciter | null>(null);
