@@ -190,3 +190,13 @@ html[data-theme="dark"] .player-bottom-sheet {
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.60);
   backdrop-filter: blur(30px);
 }
+
+/* Video-mode «الخلفيات» button (media backgrounds): the professional specular
+   rim owns the edge in dark, like every other capsule. The liquid-glass inset
+   white rings are surrendered in dark only (light keeps the recipe untouched,
+   pixel-frozen). overflow:visible so the rim canvas (border-box, -1px) is
+   never clipped by the recipe's overflow:hidden. */
+html[data-theme="dark"] .liquid-glass-capsule.sk-rim {
+  overflow: visible !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+}
