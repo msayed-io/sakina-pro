@@ -669,7 +669,7 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
       </div>
 
       {quranMode === "reading" && (
-        <div className="fixed inset-0 z-[35] overflow-hidden bg-[var(--sk-bg)]" style={{ overscrollBehavior: "contain" }}>
+        <div className="fixed inset-0 z-[35] flex flex-col overflow-hidden bg-[var(--sk-bg)]" style={{ overscrollBehavior: "contain" }}>
           {isQuranDownloaded === null ? (
             <div className="w-full h-[100dvh] flex items-center justify-center">
               <SakeenahLineSpinner size={32} color="var(--sk-accent)" label="جارٍ فحص حالة المصحف" />

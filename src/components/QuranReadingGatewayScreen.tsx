@@ -93,7 +93,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
   }, [filteredSurahs, selectedTypeFilter]);
 
   return (
-    <div className="min-h-screen bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden" dir="rtl">
+    <div className="h-full bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden" dir="rtl">
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
