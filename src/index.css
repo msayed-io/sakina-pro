@@ -320,21 +320,17 @@ html[data-theme="dark"] .ai-composer-pill {
   height: 0 !important;
 }
 
-/* Scroll ownership — scope containment to real scroll owners only.
-   Applying overscroll-behavior:none to every node also marks clipped
-   overflow:hidden cards/hero sections as scroll-chain boundaries. A wheel
-   or touch gesture begun over those surfaces is then swallowed instead of
-   reaching the document. Keep the document scrollable and contain chaining
-   only on elements that intentionally scroll on that axis. */
+/* Scroll ownership — only explicitly isolated scroll containers stop chaining.
+   Utility classes such as overflow-y-auto are also used by flex wrappers whose
+   height expands to their content (scrollHeight === clientHeight). Applying
+   containment to those non-scrollers swallows wheel/touch gestures over their
+   children before they can reach the document. */
 html,
 body {
   overscroll-behavior: auto;
 }
-:where(.overflow-auto, .overflow-scroll, .overflow-y-auto, .overflow-y-scroll, [data-scroll-container]) {
-  overscroll-behavior-y: contain;
-}
-:where(.overflow-auto, .overflow-scroll, .overflow-x-auto, .overflow-x-scroll, [data-scroll-container]) {
-  overscroll-behavior-x: contain;
+[data-scroll-container] {
+  overscroll-behavior: contain;
 }
 
 /* Weak-hardware tier (sk-lowpower on <html>, detected pre-paint in index.html):

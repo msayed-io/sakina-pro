@@ -114,7 +114,7 @@ async function probeNativeScroll(page, gesture) {
     await page.mouse.move(point.x, point.y);
     await page.mouse.wheel(0, 520);
   } else {
-    const cdp = await context.newCDPSession(page);
+    const cdp = await page.context().newCDPSession(page);
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }] });
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 150 }] });
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 320 }] });
@@ -143,6 +143,98 @@ async function checkNativeInput() {
   if (touch.after <= touch.before) fails.push(`mobile touch swipe did not move the document (scrollY ${touch.before} → ${touch.after})`);
   record({ route: 'main (native input)', how: 'desktop wheel + mobile touch swipe over page content', owner: 'document', scrollY: `wheel=${wheel.after}; touch=${touch.after}`, inners: 'n/a', scrollbar: 'hidden', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
   await desktopContext.close();
+}
+
+async function probeNativeScrollAt(page, selector, gesture) {
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await wait(150);
+  const target = page.locator(selector).first();
+  const box = await target.boundingBox();
+  if (!box) throw new Error(`scroll target not visible: ${selector}`);
+  const point = await page.evaluate(({ x, y }) => ({
+    x: Math.max(2, Math.min(innerWidth - 2, Math.round(x))),
+    y: Math.max(45, Math.min(innerHeight - 70, Math.round(y)))
+  }), { x: box.x + box.width / 2, y: box.y + box.height / 2 });
+  const before = await page.evaluate(() => window.scrollY);
+
+  if (gesture === 'wheel') {
+    await page.mouse.move(point.x, point.y);
+    await page.mouse.wheel(0, 520);
+  } else {
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 150 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 320 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await cdp.detach();
+  }
+
+  await wait(350);
+  const after = await page.evaluate(() => window.scrollY);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await wait(120);
+  return { before, after };
+}
+
+async function auditScrollSurfaces({ width, height, mobile, gesture }) {
+  const surfaceContext = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: mobile ? 2 : 1, isMobile: mobile, hasTouch: mobile, locale: 'ar', timezoneId: 'Africa/Cairo', colorScheme: 'dark' });
+  await surfaceContext.route('**/api.open-meteo.com/**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(weather) }));
+  const fixtureCatalog = {
+    version: 'scroll-audit',
+    reciters: Array.from({ length: 10 }, (_, reciterIndex) => ({
+      id: reciterIndex === 0 ? 'mohammed-siddiq-al-minshawi' : `scroll-audit-reciter-${reciterIndex}`,
+      name: reciterIndex === 0 ? 'محمد صديق المنشاوي' : `قارئ تجريبي ${reciterIndex + 1}`,
+      folder: `scroll-audit-${reciterIndex + 1}`,
+      tracks: Array.from({ length: 24 }, (_, trackIndex) => ({
+        surahId: trackIndex + 1,
+        url: `https://audio.invalid/scroll-audit/${reciterIndex + 1}/${String(trackIndex + 1).padStart(3, '0')}.mp3`
+      }))
+    }))
+  };
+  await surfaceContext.route('**/quran-audio/catalog/manifest.json', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fixtureCatalog) }));
+  const surfacePage = await surfaceContext.newPage();
+  await surfacePage.goto(base, { waitUntil: 'domcontentloaded' });
+  await wait(2200);
+
+  const nav = async (index) => { await surfacePage.locator('nav button').nth(index).click({ timeout: 5000 }); await wait(1000); };
+  const results = [];
+  await nav(1);
+  results.push(['quran reciter list', await probeNativeScrollAt(surfacePage, 'button:has-text("مشاري العفاسي"):visible', gesture)]);
+
+  await surfacePage.locator('button:has-text("مشاري العفاسي"):visible').first().click({ timeout: 5000 });
+  await wait(700);
+  results.push(['quran sheikh surah list', await probeNativeScrollAt(surfacePage, '.space-y-3 > div:visible', gesture)]);
+
+  await surfacePage.evaluate(() => {
+    const back = [...document.querySelectorAll('button')].find((button) => button.getClientRects().length && button.querySelector('svg.lucide-chevron-right'));
+    back?.click();
+  });
+  await wait(800);
+  await surfacePage.locator('button[aria-label="فتح صفحة التلاوات النقية"]:visible').click({ timeout: 5000 });
+  await surfacePage.getByText('قارئ تجريبي 2', { exact: false }).first().waitFor({ state: 'visible', timeout: 10000 });
+  results.push(['pure recitations list', await probeNativeScrollAt(surfacePage, 'button:has-text("قارئ تجريبي 2"):visible', gesture)]);
+
+  await surfacePage.locator('button:has-text("محمد صديق المنشاوي"):visible').last().click({ timeout: 5000 });
+  await wait(700);
+  results.push(['pure reciter profile surah list', await probeNativeScrollAt(surfacePage, '.space-y-3 > div:visible', gesture)]);
+
+  await surfacePage.locator('button[aria-label="العودة إلى القراء"]:visible').click({ timeout: 5000 });
+  await wait(600);
+  await surfacePage.locator('button[aria-label="الخروج إلى صفحة الاستماع"]:visible').click({ timeout: 5000 });
+  await wait(800);
+  await nav(3);
+  results.push(['azkar category cards', await probeNativeScrollAt(surfacePage, 'button:has-text("أذكار الصباح"):visible', gesture)]);
+
+  for (const [route, result] of results) {
+    const fails = result.after <= result.before ? [`${gesture} over card did not move document (scrollY ${result.before} → ${result.after})`] : [];
+    record({ route: `${route} (${mobile ? 'mobile' : 'desktop'})`, how: gesture === 'wheel' ? 'mouse wheel over the card itself' : 'touch swipe over the card itself', owner: 'document', scrollY: result.after, inners: 'n/a', scrollbar: 'hidden', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+  }
+  await surfaceContext.close();
+}
+
+async function checkReportedSurfaceInput() {
+  await auditScrollSurfaces({ width: 1440, height: 900, mobile: false, gesture: 'wheel' });
+  await auditScrollSurfaces({ width: 390, height: 844, mobile: true, gesture: 'touch' });
 }
 
 async function checkDocument(route, how, entered, scrolled) {
@@ -178,6 +270,7 @@ console.log(`base=${base} screens=${screens.length}`);
 await page.goto(base, { waitUntil: 'domcontentloaded' });
 await page.waitForLoadState('networkidle').catch(() => {}); await wait(4000);
 await checkNativeInput();
+await checkReportedSurfaceInput();
 
 // ───────── Document-owned tab chain (each transition is a real in-app nav) ─────────
 // main → quran
