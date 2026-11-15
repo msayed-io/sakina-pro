@@ -58,11 +58,12 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
   onClose,
 }: PrayerSettingsScreenProps) {
   // Original a4b380c logic: edit the shared AllPrayersPreferences object and save via parent.
-  const [localPrefs, setLocalPrefs] = useState<AllPrayersPreferences>(() =>
-    Object.fromEntries(
-      Object.entries(preferences).map(([key, pref]) => [key, { ...pref, enabled: true }]),
-    ) as AllPrayersPreferences,
-  );
+  // «التغييرات غير محفوظة» كان يظهر زورًا على التثبيت الجديد: localPrefs كان يُزرع
+  // بـ enabled:true قسرًا بينما الافتراضيات المعطّلة (duha/midnight/tahajjud) لا تُطبَع
+  // إلا في مسار loadPrayerPreferences من التخزين المحفوظ. الزرع من preferences كما هي
+  // يجعل isDirty=false من لحظة الفتح عند غياب أي تعديل فعلي. سياسة «دائمًا مفعّل»
+  // تُدار في طبقة التخزين (loadPrayerPreferences/savePrayerPreferences) ولا تتغير هنا.
+  const [localPrefs, setLocalPrefs] = useState<AllPrayersPreferences>(() => ({ ...preferences }));
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
 
   const currentPrefs = localPrefs[prayerId];
@@ -121,11 +122,7 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
   }, [localPrefs, onSave, onClose]);
 
   const handleDiscardAndClose = useCallback(() => {
-    setLocalPrefs(
-      Object.fromEntries(
-        Object.entries(preferences).map(([key, pref]) => [key, { ...pref, enabled: true }]),
-      ) as AllPrayersPreferences,
-    );
+    setLocalPrefs({ ...preferences });
     setShowUnsavedModal(false);
     onClose();
   }, [preferences, onClose]);

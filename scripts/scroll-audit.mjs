@@ -244,7 +244,7 @@ await step('prayer-settings', 'close prayer-settings (back to main, position kep
   const fails = [];
   if (!panelGone) fails.push('prayer-settings panel still visible after close attempt');
   if (entered.scrollY !== before.scrollY) fails.push(`main position lost across prayer-settings (was ${before.scrollY}, now ${entered.scrollY})`);
-  record({ route: 'main (after prayer-settings)', how: 'إغلاق + امسح التغييرات → back to main', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+  record({ route: 'main (after prayer-settings)', how: 'إغلاق → back to main', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
 });
 
 await step('main', 'azkar → counter panel', async () => {
