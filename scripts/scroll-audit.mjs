@@ -117,11 +117,13 @@ async function checkDocument(route, how, entered, scrolled) {
   record({ route, how, owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
 }
 
-function checkPanel(route, how, entered, extraFails = []) {
+function checkPanel(route, how, entered, extraFails = [], { bodyLockExpected = false } = {}) {
   const fails = [...extraFails];
   if (entered.innerMax !== 0) fails.push(`inner container kept scrollTop=${entered.innerMax}`);
   if (!entered.scrollbarHidden) fails.push('scrollbar not hidden');
-  if (entered.htmlOverflow === 'hidden' || entered.bodyOverflow === 'hidden') fails.push('html/body overflow hidden (a stuck modal lock)');
+  if (entered.htmlOverflow === 'hidden') fails.push('html overflow hidden (the modal lock applies to body only — html must never be locked)');
+  if (!bodyLockExpected && entered.bodyOverflow === 'hidden') fails.push('body overflow hidden (a stuck modal lock)');
+  if (bodyLockExpected && entered.bodyOverflow !== 'hidden') fails.push('opaque full-screen overlay open WITHOUT the body scroll lock (wheel would drag the document behind it)');
   record({ route, how, owner: 'panel', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
 }
 
@@ -174,13 +176,63 @@ await step('player', 'close player (tap drag handle)', async () => {
   if (entered.scrollY !== before.scrollY) fails.push(`surahs document moved across player (was ${before.scrollY}, now ${entered.scrollY})`);
   record({ route: 'surahs (after player)', how: 'close player', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
 });
+// quran: الاستماع (document owner) ↔ reading subtree — positions must not bleed.
+// Headless has no quran pack ⇒ the reading mode shows the QuranDownloadScreen portal gate;
+// if the pack IS present it mounts QuranReadingGatewayScreen (fixed panel + inner scroller).
+// Both states are handled honestly: the assertion is that the listening document position is
+// preserved and that the document behind the opaque panel is not draggable.
+async function readingState() {
+  const downloadGate = await page.getByText('تنزيل المصحف', { exact: false }).first().isVisible().catch(() => false);
+  const gateway = await page.locator('.hide-scrollbar').first().isVisible().catch(() => false);
+  return { downloadGate, gateway };
+}
+
+await step('surahs (after player)', 'الاستماع → reading subtree', async () => {
+  // الـdropdown بتاع نمط العرض موجود في شاشة القراء فقط — ارجع من قائمة السور للقرّاء أولًا
+  await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.getClientRects().length && b.querySelector('svg.lucide-chevron-right')); el && el.click(); }); await wait(800);
+  const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
+  const docY = scrolled.scrollY;
+  globalThis.__quranDocY = docY;
+  // open the mode dropdown in listening mode, then pick «القرآن الكريم»
+  await click('button:has-text("الاستماع")', 700);
+  await click('button:has-text("القرآن الكريم")', 1500);
+  const entered = await measure();
+  const state = await readingState();
+  const fails = [];
+  if (entered.scrollY !== docY) fails.push(`document moved across mode switch (was ${docY}, now ${entered.scrollY})`);
+  if (!state.downloadGate && !state.gateway) fails.push('reading subtree did not mount (neither download gate nor gateway visible)');
+  // wheel over the opaque panel must not drag the document behind it
+  await page.mouse.move(195, 420); await page.mouse.wheel(0, 600); await wait(300);
+  const afterWheel = await measure();
+  if (afterWheel.scrollY !== docY) fails.push(`wheel over reading panel dragged the document (was ${docY}, now ${afterWheel.scrollY})`);
+  record({ route: 'quran-reading', how: state.downloadGate ? 'القرآن الكريم (download gate — no pack headless)' : 'القرآن الكريم (reading panel)', owner: 'panel', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+await step('quran-reading', 'back to الاستماع (listening position preserved)', async () => {
+  const docY = globalThis.__quranDocY;
+  const state = await readingState();
+  if (state.downloadGate) {
+    // بوابة التنزيل تعرض زر رجوعًا صريحًا يعيد الاستماع
+    await clickEvaluate('button[aria-label="رجوع"]');
+  } else {
+    // الـgateway نفسه ثابت — افتح قائمة النمط منه ثم اختر الاستماع
+    await click('button:has-text("القرآن الكريم")', 600);
+    await click('button:has-text("الاستماع")', 1000);
+  }
+  const entered = await measure();
+  const fails = [];
+  if (entered.scrollY !== docY) fails.push(`listening document position lost across mode switch (expected ${docY}, got ${entered.scrollY})`);
+  const stillGate = await page.getByText('تنزيل المصحف', { exact: false }).first().isVisible().catch(() => false);
+  if (stillGate) fails.push('download gate still visible after رجوع (mode did not switch back)');
+  record({ route: 'quran (listening again)', how: 'رجوع → الاستماع', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+});
+
 // surahs → hadith (leave sub-router via bottom nav)
-await step('surahs', 'back → reciters, then bottom-nav → الكتب', async () => {
+await step('quran (reciters)', 'bottom-nav → الكتب', async () => {
   const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
   await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.getClientRects().length && b.querySelector('svg.lucide-chevron-right')); el && el.click(); }); await wait(800);
   await navTab(2);
   const entered = await measure();
-  await checkDocument('hadith', 'surahs back → nav الكتب', entered, scrolled);
+  await checkDocument('hadith', 'bottom-nav → الكتب', entered, scrolled);
 });
 // hadith → azkar
 await step('hadith', 'bottom-nav → الأذكار', async () => {
@@ -251,16 +303,18 @@ await step('main', 'azkar → counter panel', async () => {
   await anchorMain(); await navTab(3);
   const scrolled = (await scrollAllToBottom(), await wait(300), await measure());
   const docY = scrolled.scrollY;
+  globalThis.__azkarDocY = docY;
   await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('أذكار الصباح')); el && el.click(); }); await wait(1500);
   const entered = await measure();
-  checkPanel('azkar-counter', 'الأذكار → أذكار الصباح', entered, []);
+  checkPanel('azkar-counter', 'الأذكار → أذكار الصباح', entered, [], { bodyLockExpected: true });
 });
-await step('azkar-counter', 'close counter (tab semantics: azkar resets to top)', async () => {
-  await scrollAllToBottom(); await wait(300);
+await step('azkar-counter', 'close counter (azkar position must now be PRESERVED)', async () => {
+  // العداد لم يعد يخفي الأذكار من التدفق — الموضع يجب أن يبقى كما كان قبل الفتح
   await clickEvaluate('button[title="رجوع"]');
   const entered = await measure();
   const fails = [];
-  if (entered.scrollY !== 0) fails.push(`azkar not back at top after counter close (scrollY=${entered.scrollY})`);
+  const docY = globalThis.__azkarDocY ?? 0;
+  if (entered.scrollY !== docY) fails.push(`azkar position lost across counter round trip (was ${docY}, now ${entered.scrollY})`);
   record({ route: 'azkar (after counter)', how: 'رجوع → azkar', owner: 'document', scrollY: entered.scrollY, inners: `${entered.innerCount}/${entered.innerMax}`, scrollbar: entered.scrollbarHidden ? 'hidden' : 'VISIBLE', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
 });
 
@@ -270,7 +324,7 @@ await step('main', 'azkar → asma-al-husna panel', async () => {
   const docY = scrolled.scrollY;
   await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('أسماء الله الحسنى')); el && el.click(); }); await wait(1500);
   const entered = await measure();
-  checkPanel('asma-al-husna', 'الأذكار → أسماء الله الحسنى', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : []);
+  checkPanel('asma-al-husna', 'الأذكار → أسماء الله الحسنى', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : [], { bodyLockExpected: true });
 });
 await step('asma-al-husna', 'close asma (document position kept)', async () => {
   const before = await measure();
@@ -288,7 +342,7 @@ await step('main', 'hadith → sakina-library panel', async () => {
   const docY = scrolled.scrollY;
   await page.evaluate(() => { const el = [...document.querySelectorAll('button')].find(b => b.textContent.includes('الدروس والمحاضرات')); el && el.click(); }); await wait(1500);
   const entered = await measure();
-  checkPanel('sakina-library', 'الكتب → مكتبة سكينة', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : []);
+  checkPanel('sakina-library', 'الكتب → مكتبة سكينة', entered, entered.scrollY !== docY ? [`document moved across panel (was ${docY}, now ${entered.scrollY})`] : [], { bodyLockExpected: true });
 });
 await step('sakina-library', 'close library (document position kept)', async () => {
   const before = await measure();

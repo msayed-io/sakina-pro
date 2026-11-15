@@ -521,12 +521,12 @@ function AuthenticatedApp() {
   // (useLayoutEffect — بعد بناء DOM وقبل أن يرسمه المتصفح) لا بعد الرسم،
   // ولا يُنفَّذ إلا عند تغيّر المالك فعلياً. لا إعادة ضبط في أي مكان آخر،
   // والرجوع للخلف يتبع المتصفح (لا إعادة ضبط على popstate).
+  // إعادة الضبط تخصّ تغيّر التبويب فقط (spec §1: شرط pathname). العدّاد لوحة
+  // ثابتة فوق الشجرة — فتحه أو إغلاقه لا يعيد تمرير المستند ولا يقصّه.
   const prevTabRef = useRef<TabType>(activeTab);
-  const prevAzkarRef = useRef<boolean>(showAzkarCounter);
   useLayoutEffect(() => {
-    if (prevTabRef.current === activeTab && prevAzkarRef.current === showAzkarCounter) return;
+    if (prevTabRef.current === activeTab) return;
     prevTabRef.current = activeTab;
-    prevAzkarRef.current = showAzkarCounter;
 
     // إعادة ضبط المستند أثناء الـ commit نفسه — لا رجفة ولا موضع وسيط.
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
@@ -537,7 +537,20 @@ function AuthenticatedApp() {
         container.scrollTop = 0;
       }
     });
-  }, [activeTab, showAzkarCounter]);
+  }, [activeTab]);
+
+  // اللوحات المعتمة كاملة الشاشة: اقفل تمرير المستند خلفها واسترجع القيمة السابقة
+  // عند الإغلاق (spec §3 — قاعدة المودال). المواضع تُحفَظ الآن لأن أشجار التبويبات
+  // تبقى مركّبة، فلا حاجة لإعادة الضبط — فقط منع التمرير خلف اللوحة.
+  const prevBodyOverflowRef = useRef<string>("");
+  useEffect(() => {
+    if (!(showAzkarCounter || showAsmaAlHusna || showSakinaLibrary)) return;
+    prevBodyOverflowRef.current = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevBodyOverflowRef.current;
+    };
+  }, [showAzkarCounter, showAsmaAlHusna, showSakinaLibrary]);
 
   useEffect(() => {
     let disposed = false;
@@ -1159,7 +1172,7 @@ function AuthenticatedApp() {
         {/* TAB: MAIN (Prayer Screen) */}
         <div
           className={
-            activeTab === "main" && !showAzkarCounter ? "home-tab block" : "home-tab hidden"
+            `home-tab ${activeTab === "main" ? "block" : "hidden"}${activeTab === "main" && showAzkarCounter ? " invisible" : ""}`
           }
         >
           <section className="relative isolate min-h-[72vh] overflow-hidden">
@@ -1557,7 +1570,7 @@ function AuthenticatedApp() {
         {visitedTabs.has("azkar") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الأذكار..." />}>
             {activeTab === "azkar" && !showAzkarCounter && !showAsmaAlHusna && <ProgressiveBlur />}
-            <div className={activeTab === "azkar" && !showAzkarCounter ? "block w-full overflow-x-hidden" : "hidden"}>
+            <div className={`w-full overflow-x-hidden ${activeTab === "azkar" ? "block" : "hidden"}${activeTab === "azkar" && showAzkarCounter ? " invisible" : ""}`}>
               <AzkarTabScreen
                 onOpenAzkarCounter={handleOpenAzkarCounter}
                 onOpenHisnCategory={handleOpenHisnCategory}
@@ -1571,7 +1584,7 @@ function AuthenticatedApp() {
         {visitedTabs.has("quran") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل القرآن..." />}>
             {activeTab === "quran" && !showAzkarCounter && <ProgressiveBlur />}
-            <div className={activeTab === "quran" && !showAzkarCounter ? "block relative h-full min-h-screen w-full" : "hidden"}>
+            <div className={`relative h-full min-h-screen w-full ${activeTab === "quran" ? "block" : "hidden"}${activeTab === "quran" && showAzkarCounter ? " invisible" : ""}`}>
               <QuranTabScreen
                 isActive={activeTab === "quran" && !showAzkarCounter}
                 onBack={handleBackToMain}
@@ -1585,7 +1598,7 @@ function AuthenticatedApp() {
         {visitedTabs.has("hadith") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل كتب الحديث..." />}>
             {activeTab === "hadith" && !showAzkarCounter && !showSakinaLibrary && <ProgressiveBlur />}
-            <div className={activeTab === "hadith" && !showAzkarCounter ? "block relative min-h-screen w-full overflow-x-hidden" : "hidden"}>
+            <div className={`relative min-h-screen w-full overflow-x-hidden ${activeTab === "hadith" ? "block" : "hidden"}${activeTab === "hadith" && showAzkarCounter ? " invisible" : ""}`}>
               <HadithBooksScreen
                 isActive={activeTab === "hadith" && !showAzkarCounter}
                 onBack={handleBackToMain}
@@ -1599,7 +1612,7 @@ function AuthenticatedApp() {
         {/* TAB: SAKEENAH AI */}
         {visitedTabs.has("sakeenah-ai") && (
           <div
-            className={activeTab === "sakeenah-ai" && !showAzkarCounter ? "block relative min-h-screen w-full overflow-x-hidden overflow-y-auto" : "hidden"}
+            className={`relative min-h-screen w-full overflow-x-hidden overflow-y-auto ${activeTab === "sakeenah-ai" ? "block" : "hidden"}${activeTab === "sakeenah-ai" && showAzkarCounter ? " invisible" : ""}`}
             data-clarity-mask="true"
             data-sakeenah-ai-surface="true"
           >
@@ -1635,7 +1648,7 @@ function AuthenticatedApp() {
         {visitedTabs.has("settings") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الإعدادات..." />}>
             {activeTab === "settings" && !showAzkarCounter && <ProgressiveBlur />}
-            <div className={activeTab === "settings" && !showAzkarCounter ? "block" : "hidden"}>
+            <div className={`${activeTab === "settings" ? "block" : "hidden"}${activeTab === "settings" && showAzkarCounter ? " invisible" : ""}`}>
           <SettingsScreen
             cityName={cityName}
             cityLat={cityLat}

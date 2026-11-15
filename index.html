@@ -29,6 +29,17 @@
         document.addEventListener('visibilitychange', function () {
           if (!document.hidden) applyTheme();
         });
+        // Weak-hardware tier: entry-level Android WebViews re-sample backdrop
+        // blur every frame during scroll (glass recipe everywhere) and choke.
+        // Mirror of the app's existing prefers-reduced-transparency recipe,
+        // applied only when the browser itself reports very limited hardware.
+        try {
+          var cores = navigator.hardwareConcurrency || 8;
+          var memory = navigator.deviceMemory || 8;
+          if (cores <= 4 || memory <= 2) {
+            document.documentElement.classList.add('sk-lowpower');
+          }
+        } catch (e) {}
       })();
     </script>
     <style>

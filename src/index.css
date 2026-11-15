@@ -335,6 +335,34 @@ html, body, * {
   }
 }
 
+/* Weak-hardware tier (sk-lowpower on <html>, detected pre-paint in index.html):
+   the app's cut-crystal recipe puts backdrop-filter (blur 24–36px + saturate)
+   on fixed chromes AND on every card, so weak GPUs re-sample the whole
+   backdrop every scroll frame — the felt cause of weak/steppy scrolling on
+   entry-level Android. This tier drops ONLY the per-frame re-sampling:
+   backgrounds, layout, spacing and colors are byte-identical, exactly like
+   the existing prefers-reduced-transparency recipe (which this mirrors). */
+html.sk-lowpower .progressive-blur {
+  background: linear-gradient(var(--qf-fade), var(--bg) 25%, transparent);
+}
+html.sk-lowpower .progressive-blur i {
+  display: none !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html.sk-lowpower [class*="backdrop-blur"],
+html.sk-lowpower .cut-crystal-capsule,
+html.sk-lowpower .cut-crystal-panel,
+html.sk-lowpower .cut-crystal-satin,
+html.sk-lowpower .cut-crystal-input,
+html.sk-lowpower .player-glass-container,
+html.sk-lowpower .player-glass-pill,
+html.sk-lowpower .liquid-glass-capsule,
+html.sk-lowpower .liquid-glass-button {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
 .hero-image {
   animation: heroZoom 24s ease-in-out infinite alternate;
   transform-origin: center center;

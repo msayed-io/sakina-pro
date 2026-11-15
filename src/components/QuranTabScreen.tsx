@@ -606,8 +606,14 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
   return (
     <div className="w-full min-h-screen relative flex flex-col" dir="rtl">
       {/* Normal Tab Screens navigation: Reciters, Surah list, or Reading Gateway (Always optimized to guarantee INSTANT performance) */}
-      <div className="w-full flex-1 flex flex-col">
-        {quranMode === "listening" ? (
+      {/* Reading mode is a self-owned fixed panel layered above the (kept-mounted)
+          listening tree — the two surfaces never share document scroll state, and
+          leaving one never disturbs the other. */}
+      <div
+        className={`w-full flex-1 flex flex-col${quranMode !== "listening" ? " invisible" : ""}`}
+        aria-hidden={quranMode !== "listening" ? true : undefined}
+      >
+        {(
           <>
             <div className={currentScreen === "reciters" ? "block w-full" : "hidden"}>
               <QuranRecitersScreen
@@ -659,22 +665,28 @@ const QuranTabScreen = React.memo(function QuranTabScreen({ onBack, onHideNavCha
               )}
             </div>
           </>
-        ) : isQuranDownloaded === null ? (
-          <div className="w-full h-[80vh] flex items-center justify-center">
-             <SakeenahLineSpinner size={32} color="var(--sk-accent)" label="جارٍ فحص حالة المصحف" />
-          </div>
-        ) : isQuranDownloaded === false ? (
-          <QuranDownloadScreen
-            onClose={() => setQuranMode("listening")}
-            onDownloaded={() => setIsQuranDownloaded(true)}
-          />
-        ) : (
-          <QuranReadingGatewayScreen
-            onReadSurah={handleReadSurah}
-            onModeChange={setQuranMode}
-          />
         )}
       </div>
+
+      {quranMode === "reading" && (
+        <div className="fixed inset-0 z-[35] overflow-hidden bg-[var(--sk-bg)]" style={{ overscrollBehavior: "contain" }}>
+          {isQuranDownloaded === null ? (
+            <div className="w-full h-[100dvh] flex items-center justify-center">
+              <SakeenahLineSpinner size={32} color="var(--sk-accent)" label="جارٍ فحص حالة المصحف" />
+            </div>
+          ) : isQuranDownloaded === false ? (
+            <QuranDownloadScreen
+              onClose={() => setQuranMode("listening")}
+              onDownloaded={() => setIsQuranDownloaded(true)}
+            />
+          ) : (
+            <QuranReadingGatewayScreen
+              onReadSurah={handleReadSurah}
+              onModeChange={setQuranMode}
+            />
+          )}
+        </div>
+      )}
 
       {/* Full screen audio player overlay (slides up immediately on top) */}
       <AnimatePresence>

@@ -369,7 +369,7 @@ export function QuranAudioPlayerScreen({
           onClick={() => setActiveSheet(activeSheet === 'ambient' ? null : 'ambient')}
           className={`hover:opacity-90 active:scale-95 transition-all rounded-full px-6 py-2 font-sans font-bold text-sm flex items-center justify-center cursor-pointer ${
             isVideoTheme
-              ? 'liquid-glass-capsule sk-rim text-white optical-shadow-guard'
+              ? 'cut-crystal-capsule sk-rim border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 text-[var(--sk-label)] optical-shadow-guard'
               : 'cut-crystal-capsule sk-rim border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 text-[var(--sk-label)]'
           }`}
           dir="rtl"
@@ -1053,20 +1053,12 @@ export function QuranAudioPlayerScreen({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 4 }}
               transition={{ type: "spring", stiffness: 850, damping: 42 }}
-              className={`absolute bottom-[78px] right-4 sm:right-8 z-50 w-52 sm:w-56 rounded-full px-3.5 py-2 flex items-center gap-3 select-none will-change-transform font-sans ${
-                isVideoTheme
-                  ? 'liquid-glass-capsule text-white shadow-[0_12px_36px_rgba(0,0,0,0.35)]'
-                  : 'bg-[#fdfcfb]/98 dark:bg-[var(--sk-bg3)]/98 border-[#2b1a10]/12 dark:border-[var(--sk-label)]/12 text-[var(--sk-label)] shadow-[0_12px_36px_rgba(43,26,16,0.14)] backdrop-blur-2xl border'
-              }`}
+              className="absolute bottom-[78px] right-4 sm:right-8 z-50 w-52 sm:w-56 rounded-full px-3.5 py-2 flex items-center gap-3 select-none will-change-transform font-sans bg-[#fdfcfb]/98 dark:bg-[var(--sk-bg3)]/98 border-[#2b1a10]/12 dark:border-[var(--sk-label)]/12 text-[var(--sk-label)] shadow-[0_12px_36px_rgba(43,26,16,0.14)] backdrop-blur-2xl border"
               dir="ltr"
             >
               <button 
                 onClick={() => onVolumeChange(0)}
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer active:scale-90 ${
-                  isVideoTheme 
-                    ? 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white' 
-                    : 'bg-[#2b1a10]/04 dark:bg-[var(--sk-shade)]/04 hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] border border-[#2b1a10]/03 dark:border-[var(--sk-label)]/03'
-                }`}
+                className="w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer active:scale-90 bg-[#2b1a10]/04 dark:bg-[var(--sk-shade)]/04 hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] border border-[#2b1a10]/03 dark:border-[var(--sk-label)]/03"
                 aria-label="Mute volume"
               >
                 <VolumeX size={15} />
@@ -1074,18 +1066,14 @@ export function QuranAudioPlayerScreen({
 
               <div className="relative flex-1 flex items-center h-4 group">
                 <div className={`absolute inset-x-0 h-1.5 rounded-full pointer-events-none ${
-                  isVideoTheme ? 'bg-white/20' : 'bg-[#2b1a10]/08 dark:bg-[var(--sk-shade)]/08'
+                  'bg-[#2b1a10]/08 dark:bg-[var(--sk-shade)]/08'
                 }`} />
                 <div 
-                  className={`absolute left-0 h-1.5 rounded-full pointer-events-none ${isVideoTheme ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)]'}`}
+                  className="absolute left-0 h-1.5 rounded-full pointer-events-none bg-gradient-to-r from-[var(--sk-accent-bright)] to-[var(--sk-accent)]"
                   style={{ width: `${volume * 100}%` }}
                 />
                 <div 
-                  className={`absolute w-3.5 h-3.5 rounded-full shadow-md transition-transform pointer-events-none ${
-                    isVideoTheme 
-                      ? 'bg-white shadow-[0_1.5px_4px_rgba(0,0,0,0.35)]' 
-                      : 'bg-[var(--sk-accent)] border-2 border-[var(--sk-bg3)] shadow-[0_2px_6px_rgba(184,138,79,0.35)]'
-                  } group-hover:scale-115`}
+                  className="absolute w-3.5 h-3.5 rounded-full shadow-md transition-transform pointer-events-none bg-[var(--sk-accent)] border-2 border-[var(--sk-bg3)] shadow-[0_2px_6px_rgba(184,138,79,0.35)] group-hover:scale-115"
                   style={{ left: `calc(${volume * 100}% - 7px)` }}
                 />
                 <input
@@ -1099,13 +1087,9 @@ export function QuranAudioPlayerScreen({
                 />
               </div>
 
-              <button 
+              <button
                 onClick={() => onVolumeChange(1)}
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer active:scale-90 ${
-                  isVideoTheme 
-                    ? 'bg-white/5 hover:bg-white/15 text-white/80 hover:text-white' 
-                    : 'bg-[#2b1a10]/04 dark:bg-[var(--sk-shade)]/04 hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] border border-[#2b1a10]/03 dark:border-[var(--sk-label)]/03'
-                }`}
+                className="w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer active:scale-90 bg-[#2b1a10]/04 dark:bg-[var(--sk-shade)]/04 hover:bg-[#b88a4f]/10 dark:hover:bg-[var(--sk-accent)]/10 text-[var(--sk-label2)] hover:text-[var(--sk-accent)] border border-[#2b1a10]/03 dark:border-[var(--sk-label)]/03"
                 aria-label="Max volume"
               >
                 <Volume2 size={15} />
