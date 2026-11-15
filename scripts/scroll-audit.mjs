@@ -7,10 +7,12 @@
  * (currentScreen) and HadithBooksScreen (viewMode), plus full-screen fixed
  * overlays. There is no a[href] to click and no popstate to dispatch —
  * a reload proves nothing about scroll leakage, exactly as the stock script
- * says. So this runner reproduces the SAME measurements, SAME pass/fail
- * rules and SAME output contract, but performs navigation through the real
- * in-app controls a user touches. Every transition logged as `how` is an
- * in-app control click — never `page.goto` (except the initial load).
+ * says. The runner performs navigation through real in-app controls and
+ * separately probes native desktop-wheel and mobile-touch scrolling over
+ * the home content. Programmatic scrollTop assignments elsewhere only set
+ * positions for transition checks; they are not evidence that user input
+ * can scroll. Every transition logged as `how` is an in-app control click —
+ * never `page.goto` (except the initial load).
  *
  *   node scripts/scroll-audit.mjs --base=http://127.0.0.1:4173
  *
@@ -47,7 +49,7 @@ const rows = [];
 let failures = 0;
 
 const weather = { current_weather: { temperature: 24, weathercode: 0, is_day: 1, windspeed: 5, winddirection: 100, time: '2026-11-14T10:30' } };
-const browser = await chromium.launch({ headless: true, args: ['--disable-gpu', '--force-color-profile=srgb', '--autoplay-policy=no-user-gesture-required'] });
+const browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined, args: ['--disable-gpu', '--force-color-profile=srgb', '--autoplay-policy=no-user-gesture-required'] });
 const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'ar', timezoneId: 'Africa/Cairo', colorScheme: 'dark' });
 await context.route('**/api.open-meteo.com/**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(weather) }));
 const page = await context.newPage();
@@ -102,6 +104,47 @@ const navTab = async (index) => { await page.locator('nav button').nth(index).cl
 
 function record(row) { rows.push(row); if (row.verdict.startsWith('FAIL')) failures++; console.log(JSON.stringify(row)); }
 
+async function probeNativeScroll(page, gesture) {
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await wait(150);
+  const before = await page.evaluate(() => window.scrollY);
+  const point = await page.evaluate(() => ({ x: Math.round(innerWidth / 2), y: Math.round(innerHeight * 0.55) }));
+
+  if (gesture === 'wheel') {
+    await page.mouse.move(point.x, point.y);
+    await page.mouse.wheel(0, 520);
+  } else {
+    const cdp = await context.newCDPSession(page);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: point.x, y: point.y }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 150 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 320 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await cdp.detach();
+  }
+
+  await wait(350);
+  const after = await page.evaluate(() => window.scrollY);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await wait(150);
+  return { before, after };
+}
+
+async function checkNativeInput() {
+  const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1, locale: 'ar', timezoneId: 'Africa/Cairo', colorScheme: 'dark' });
+  await desktopContext.route('**/api.open-meteo.com/**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(weather) }));
+  const desktopPage = await desktopContext.newPage();
+  await desktopPage.goto(base, { waitUntil: 'domcontentloaded' });
+  await wait(1800);
+
+  const wheel = await probeNativeScroll(desktopPage, 'wheel');
+  const touch = await probeNativeScroll(page, 'touch');
+  const fails = [];
+  if (wheel.after <= wheel.before) fails.push(`desktop wheel did not move the document (scrollY ${wheel.before} → ${wheel.after})`);
+  if (touch.after <= touch.before) fails.push(`mobile touch swipe did not move the document (scrollY ${touch.before} → ${touch.after})`);
+  record({ route: 'main (native input)', how: 'desktop wheel + mobile touch swipe over page content', owner: 'document', scrollY: `wheel=${wheel.after}; touch=${touch.after}`, inners: 'n/a', scrollbar: 'hidden', verdict: fails.length ? 'FAIL — ' + fails.join(', ') : 'PASS' });
+  await desktopContext.close();
+}
+
 async function checkDocument(route, how, entered, scrolled) {
   const fails = [];
   if (entered.scrollY !== 0) fails.push(`entered at scrollY=${entered.scrollY}`);
@@ -134,6 +177,7 @@ async function step(name, how, fn) {
 console.log(`base=${base} screens=${screens.length}`);
 await page.goto(base, { waitUntil: 'domcontentloaded' });
 await page.waitForLoadState('networkidle').catch(() => {}); await wait(4000);
+await checkNativeInput();
 
 // ───────── Document-owned tab chain (each transition is a real in-app nav) ─────────
 // main → quran
