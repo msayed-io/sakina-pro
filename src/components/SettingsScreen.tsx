@@ -20,6 +20,10 @@ type SettingsScreenProps = {
   cityName: string;
   cityLat: number;
   cityLon: number;
+  /** العنوان التفصيلي الكامل من عقد PrayerLocation (يُعرض كاملًا دون اقتصاص) */
+  displayAddress?: string;
+  /** المنطقة الزمنية الموحّدة IANA من عقد PrayerLocation */
+  timezoneId?: string;
   isAutoLocation: boolean;
   onToggleAutoLocation: (val: boolean) => void;
   calcMethod: CalculationMethod;
@@ -89,6 +93,8 @@ export const SettingsScreen = React.memo(function SettingsScreen({
   cityName,
   cityLat,
   cityLon,
+  displayAddress,
+  timezoneId,
   isAutoLocation,
   onToggleAutoLocation,
   calcMethod,
@@ -207,9 +213,14 @@ export const SettingsScreen = React.memo(function SettingsScreen({
                 <p className="text-[10px] font-bold text-[#7f6a55]/80 dark:text-[var(--sk-label2)]/80 leading-none">
                   الموقع الحالي المعتمد
                 </p>
-                <p className="text-[14.5px] font-bold text-[var(--sk-label)] leading-none mt-1.5">
+                <p className="text-[14.5px] font-bold text-[var(--sk-label)] leading-snug mt-1.5">
                   {cityName}
                 </p>
+                {displayAddress && displayAddress !== cityName && (
+                  <p className="text-[11px] font-bold text-[var(--sk-label2)] leading-relaxed mt-1">
+                    {displayAddress}
+                  </p>
+                )}
               </div>
             </div>
             <motion.button
@@ -243,6 +254,7 @@ export const SettingsScreen = React.memo(function SettingsScreen({
           <div className="flex items-center justify-between bg-[#f7f2ea]/40 dark:bg-[var(--sk-bg2)]/40 border border-[#e6dccf]/30 dark:border-[var(--sk-sep)]/30 rounded-xl px-3.5 py-2 text-[10.5px] text-[#7f6a55]/95 dark:text-[var(--sk-label2)]/95 font-bold">
             <span>خط العرض: {cityLat.toFixed(4)}</span>
             <span>خط الطول: {cityLon.toFixed(4)}</span>
+            {timezoneId && <span dir="ltr">{timezoneId}</span>}
           </div>
         </div>
 

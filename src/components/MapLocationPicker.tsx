@@ -11,6 +11,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Search, ChevronRight, MapPin } from "lucide-react";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
+import { reverseGeocodeCoordinates } from "@/lib/reverse-geocoding";
 
 // Fix leaflet default icon issue
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
@@ -86,24 +87,12 @@ export default function MapLocationPicker({
 
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // التحويل العكسي عبر منظومة Dar-Al-Hikayat المرجعية (4 مزودين بالتوازي
+  // مع التفكيك الهرمي: العزبة/القرية/الحي + المركز + المحافظة).
   const reverseGeocode = useCallback(async (lat: number, lon: number) => {
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ar`,
-      );
-      const data = await res.json();
-      if (data && data.address) {
-        const city =
-          data.address.city ||
-          data.address.town ||
-          data.address.village ||
-          data.address.state ||
-          "موقع غير معروف";
-        const country = data.address.country || "";
-        setLocationName(`${city}، ${country}`);
-      } else {
-        setLocationName("موقع غير معروف");
-      }
+      const result = await reverseGeocodeCoordinates(lat, lon);
+      setLocationName(result?.placeName || "موقع غير معروف");
     } catch (e) {
       console.warn(e);
       setLocationName("موقع غير معروف");

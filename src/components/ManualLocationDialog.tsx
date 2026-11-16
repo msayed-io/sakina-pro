@@ -165,10 +165,7 @@ export default function ManualLocationDialog({
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span
-                      className="text-[14px] font-bold text-[var(--sk-label)] truncate max-w-[130px] text-left"
-                      dir="ltr"
-                    >
+                    <span className="text-[14px] font-bold text-[var(--sk-label)] max-w-[190px] break-words text-left leading-snug">
                       {tempCityName}
                     </span>
                     <ChevronLeft size={20} className="text-[var(--sk-label)]" />

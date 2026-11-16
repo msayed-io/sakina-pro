@@ -12,7 +12,6 @@ import React, {
 import { motion, AnimatePresence } from "motion/react";
 import { Capacitor } from "@capacitor/core";
 import { App as CapacitorApp } from "@capacitor/app";
-import { Geolocation } from "@capacitor/geolocation";
 import AuthScreen from "@/components/AuthScreen";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
 import ProgressiveBlur from "@/components/ProgressiveBlur";
@@ -35,11 +34,20 @@ import {
 import type { CalculationMethod, AsrSchool } from "@/utils/locationDetection";
 import {
   calculatePrayerTimes,
-  calculateSecondaryPrayerTimes,
-  formatPrayerDate,
-  getLocalTimeMinutes,
+  toCalculationMethodId,
+  splitFormattedPrayerTime,
 } from "@/utils/prayerTimes";
 import type { PrayerItem } from "@/utils/prayerTimes";
+import {
+  autoDetectLocation,
+  performSilentResumeLocationRefresh,
+  getLastSavedLocation,
+  saveSavedLocation,
+  guessTimezone,
+  LOCATION_ACTIONABLE_ERROR_MESSAGE,
+} from "@/lib/gps-location";
+import { getPrayerTimeline } from "@/lib/prayer-times";
+import type { PrayerLocation } from "@/lib/prayer-config";
 import ManualLocationDialog from "@/components/ManualLocationDialog";
 const AzkarTabScreen = lazy(() => import("@/components/AzkarTabScreen"));
 const AzkarCounterScreen = lazy(() => import("@/components/AzkarCounterScreen"));
@@ -94,12 +102,9 @@ import {
   DIRECTION_LOCK_PX,
   EDGE_RESISTANCE,
 } from "@/constants/uiConstants";
-import {
-  getDayOfYear,
-  getCurrentPrayerIndex,
-  getCountdownSeconds,
-  formatCountdown,
-} from "@/utils/timeHelpers";
+// timeHelpers (getDayOfYear/getCurrentPrayerIndex/getCountdownSeconds/
+// formatCountdown) لم تعد مستخدمة: العدّاد التنازلي والحالة الحالية يأتيان
+// الآن من getPrayerTimeline في المنظومة المرجعية.
 import {
   SettingsIcon,
   HomeIcon,
@@ -156,6 +161,48 @@ function ScreenLoader({ label }: { label: string }) {
   );
 }
 
+/**
+ * تحميل الموقع الأولي من عقد PrayerLocation الموحّد (dar_prayer_location).
+ * عند غيابه يُرحَّل من مفاتيح سكينة القديمة (app_cityName/app_cityLat/app_cityLon)
+ * مرة واحدة، ثم يُحفظ في العقد الجديد. الافتراضي: القاهرة.
+ */
+function loadInitialPrayerLocation(): PrayerLocation {
+  const saved = getLastSavedLocation();
+  if (saved) return saved;
+
+  try {
+    const legacyName = localStorage.getItem("app_cityName");
+    const legacyLat = parseFloat(localStorage.getItem("app_cityLat") || "");
+    const legacyLon = parseFloat(localStorage.getItem("app_cityLon") || "");
+    if (legacyName && Number.isFinite(legacyLat) && Number.isFinite(legacyLon)) {
+      const migrated: PrayerLocation = {
+        latitude: Number(legacyLat.toFixed(6)),
+        longitude: Number(legacyLon.toFixed(6)),
+        cityName: legacyName,
+        cityNameAr: legacyName,
+        timezoneId: guessTimezone(legacyLat, legacyLon),
+        source: "legacy",
+        capturedAt: Date.now(),
+      };
+      saveSavedLocation(migrated);
+      return migrated;
+    }
+  } catch {
+    // تجاهل مفاتيح قديمة تالفة والمتابعة إلى الافتراضي
+  }
+
+  return {
+    latitude: 30.0444,
+    longitude: 31.2357,
+    cityName: "القاهرة، مصر",
+    cityNameAr: "القاهرة، مصر",
+    countryNameAr: "مصر",
+    timezoneId: "Africa/Cairo",
+    source: "legacy",
+    capturedAt: Date.now(),
+  };
+}
+
 function AuthenticatedApp() {
   /* ── Existing state ── */
   const [now, setNow] = useState(() => new Date());
@@ -172,7 +219,6 @@ function AuthenticatedApp() {
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
-  const locationPermissionRequested = useRef(false);
   const [showAzkarCounter, setShowAzkarCounter] = useState(false);
   const [showAsmaAlHusna, setShowAsmaAlHusna] = useState(false);
   const [showBatteryModal, setShowBatteryModal] = useState(false);
@@ -202,31 +248,20 @@ function AuthenticatedApp() {
     }
   });
 
-  const [cityName, setCityName] = useState<string>(() => {
-    try {
-      return localStorage.getItem("app_cityName") || "القاهرة، مصر";
-    } catch {
-      return "القاهرة، مصر";
-    }
-  });
+  /* ── PrayerLocation: العقد الموحّد من منظومة Dar-Al-Hikayat المرجعية ── */
+  const [prayerLocation, setPrayerLocation] = useState<PrayerLocation>(() =>
+    loadInitialPrayerLocation(),
+  );
 
-  const [cityLat, setCityLat] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem("app_cityLat");
-      return saved ? parseFloat(saved) : 30.0444;
-    } catch {
-      return 30.0444;
-    }
-  });
-
-  const [cityLon, setCityLon] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem("app_cityLon");
-      return saved ? parseFloat(saved) : 31.2357;
-    } catch {
-      return 31.2357;
-    }
-  });
+  // الاسم التفصيلي الكامل (العزبة/القرية/الحي + المركز + المحافظة) — يُعرض
+  // كاملًا دون اقتصاص في الإعدادات ونافذة الموقع.
+  const cityName = prayerLocation.cityNameAr ?? prayerLocation.cityName;
+  const cityLat = prayerLocation.latitude;
+  const cityLon = prayerLocation.longitude;
+  const timezoneId = prayerLocation.timezoneId;
+  // الكبسولة الخارجية في الصفحة الرئيسية (تحت كبسولة الطقس): اسم المكان
+  // الأول فقط — لا العنوان الكامل.
+  const placeNameOnly = cityName.split("،")[0]?.trim() || cityName;
   const [calcMethod, setCalcMethod] = useState<CalculationMethod>(() => {
     try {
       const saved = localStorage.getItem("app_calcMethod") as CalculationMethod;
@@ -477,7 +512,7 @@ function AuthenticatedApp() {
 
   /* ── Dynamic prayer schedule (recomputes when location/date changes) ── */
   const prayerSchedule = useMemo<PrayerItem[]>(
-    () => calculatePrayerTimes(now, cityLat, cityLon, calcMethod, asrSchool),
+    () => calculatePrayerTimes(now, cityLat, cityLon, calcMethod, asrSchool, timezoneId),
     [
       now.getDate(),
       now.getMonth(),
@@ -486,11 +521,12 @@ function AuthenticatedApp() {
       cityLon,
       calcMethod,
       asrSchool,
+      timezoneId,
     ],
   );
 
   const tomorrowSchedule = useMemo<PrayerItem[]>(
-    () => calculatePrayerTimes(new Date(now.getTime() + 24 * 60 * 60 * 1000), cityLat, cityLon, calcMethod, asrSchool),
+    () => calculatePrayerTimes(new Date(now.getTime() + 24 * 60 * 60 * 1000), cityLat, cityLon, calcMethod, asrSchool, timezoneId),
     [
       now.getDate(),
       now.getMonth(),
@@ -499,6 +535,7 @@ function AuthenticatedApp() {
       cityLon,
       calcMethod,
       asrSchool,
+      timezoneId,
     ],
   );
 
@@ -624,83 +661,53 @@ function AuthenticatedApp() {
     return { hijriDate, gregorianDate };
   }, [now.getDate(), now.getMonth(), now.getFullYear()]);
 
-  /* ── Computed state ── */
-  const state = useMemo(() => {
-    const nowMinutes = getLocalTimeMinutes(now, cityLat, cityLon);
-    // 1. Core Logic: Exclude Sunrise from current/next state machine
-    const mandatorySchedule = prayerSchedule.filter((p) => p.key !== "sunrise");
-    const fajrMinutes = mandatorySchedule[0].minutes;
-
-    // 2. Dynamic State Machine: Find current mandatory prayer
-    let currentIndex = mandatorySchedule.length - 1; // Default to Isha
-    for (let i = mandatorySchedule.length - 1; i >= 0; i--) {
-      if (nowMinutes >= mandatorySchedule[i].minutes) {
-        currentIndex = i;
-        break;
-      }
-    }
-
-    const nextIndex = (currentIndex + 1) % mandatorySchedule.length;
-    const current = mandatorySchedule[currentIndex];
-    const next = mandatorySchedule[nextIndex];
-
-    // 3. Calculate Progress gracefully wrapping across midnight
-    const currentStart = current.minutes;
-    const nextStartRaw = next.minutes;
-    const nextStart =
-      nextStartRaw <= currentStart ? nextStartRaw + 24 * 60 : nextStartRaw;
-    const nowPosition =
-      nowMinutes < currentStart ? nowMinutes + 24 * 60 : nowMinutes;
-
-    const periodDuration = nextStart - currentStart;
-    const elapsed = Math.max(0, nowPosition - currentStart);
-    const progress = Math.min(1, elapsed / periodDuration);
-
-    const nextPrayerTarget = (() => {
-      const sameDayTarget = next.date;
-      if (sameDayTarget && sameDayTarget.getTime() > now.getTime()) return sameDayTarget;
-
-      const tomorrowSchedule = calculatePrayerTimes(
-        new Date(now.getTime() + 24 * 60 * 60 * 1000),
-        cityLat,
-        cityLon,
-        calcMethod,
+  /* ── Prayer Timeline Engine (منظومة Dar-Al-Hikayat المرجعية) ──
+     خط زمني فلكي متصل UTC: عشاء الأمس ← فجر اليوم ← … ← عشاء ← فجر الغد.
+     يُعاد حسابه مع now ليبقى العدّاد التنازلي دقيقًا كل ثانية. */
+  const timeline = useMemo(
+    () =>
+      getPrayerTimeline(
+        prayerLocation,
+        toCalculationMethodId(calcMethod),
+        now,
         asrSchool,
-      );
-      return tomorrowSchedule.find((prayer) => prayer.key === next.key)?.date
-        ?? (sameDayTarget ? new Date(sameDayTarget.getTime() + 24 * 60 * 60 * 1000) : now);
-    })();
-    const countdownSeconds = getCountdownSeconds(now, nextPrayerTarget);
-    const countdownLabel = formatCountdown(countdownSeconds);
-    const reminderEvent = createPrayerReminderEvent(next.key, nextPrayerTarget.getTime());
+      ),
+    [prayerLocation, calcMethod, asrSchool, now],
+  );
+
+  /* ── Computed state (من الخط الزمني الفلكي المتصل) ── */
+  const state = useMemo(() => {
+    const current = {
+      key: timeline.current.key as PrayerItem["key"],
+      name: timeline.current.name,
+      date: timeline.current.date,
+    };
+    const next = {
+      key: timeline.next.key as PrayerItem["key"],
+      name: timeline.next.name,
+      date: timeline.next.date,
+    };
+
+    const reminderEvent = createPrayerReminderEvent(next.key, next.date.getTime());
     const reminderState = getReminderState(reminderEvent, now.getTime());
     const reminderRemainingSeconds = getReminderRemainingSeconds(reminderEvent, now.getTime());
 
-    // 4. Unified Data Flow: Augment original schedule with statuses
-    const augmentedSchedule = prayerSchedule.map((prayer) => {
-      const isCurrent = prayer.key === current.key;
-      const isNext = prayer.key === next.key;
-      let status = "";
-
-      if (isCurrent) {
-        status = "الآن";
-      } else if (isNext) {
-        status = "التالية";
-      } else {
-        if (nowMinutes < fajrMinutes) {
-          status = "قادمة";
-        } else {
-          status = prayer.minutes <= nowMinutes ? "تمت" : "قادمة";
-        }
-      }
-      return { ...prayer, isCurrent, isNext, status, isActive: isCurrent };
+    const augmentedSchedule = timeline.augmentedSchedule.map((prayer) => {
+      const { time, meridiem } = splitFormattedPrayerTime(prayer.timeFormatted);
+      return {
+        ...prayer,
+        key: prayer.key as PrayerItem["key"],
+        time,
+        meridiem,
+        isActive: prayer.isCurrent,
+      };
     });
 
     return {
       current,
       next,
-      progress,
-      countdownLabel,
+      progress: timeline.progress,
+      countdownLabel: timeline.countdownLabel,
       reminderState,
       reminderRemainingSeconds,
       hijriDate: dateStrings.hijriDate,
@@ -708,10 +715,9 @@ function AuthenticatedApp() {
       background: backgrounds[current.key],
       reflection: prayerReflections[current.key],
       heroPrayerName: current.name,
-      nowMinutes,
       augmentedSchedule,
     };
-  }, [now, prayerSchedule, cityLat, cityLon, dateStrings]);
+  }, [timeline, dateStrings, now]);
 
   const todayHadith = useMemo(
     () => dailyHadithData.getTodayHadith(),
@@ -720,36 +726,48 @@ function AuthenticatedApp() {
   const ringOffset = ringLength * (1 - state.progress);
 
   const secondaryTimes = useMemo(() => {
-    const calculated = calculateSecondaryPrayerTimes(
-      now,
-      cityLat,
-      cityLon,
-      calcMethod,
-      asrSchool,
-    );
+    const secondary = timeline.secondaryTimes;
     return {
-      duha: formatPrayerDate(calculated.duha, cityLat, cityLon),
-      midnight: formatPrayerDate(calculated.midnight, cityLat, cityLon),
-      firstThird: formatPrayerDate(calculated.firstThird, cityLat, cityLon),
-      lastThird: formatPrayerDate(calculated.lastThird, cityLat, cityLon),
+      duha: splitFormattedPrayerTime(secondary.duha),
+      midnight: splitFormattedPrayerTime(secondary.midnight),
+      firstThird: splitFormattedPrayerTime(secondary.firstThird),
+      lastThird: splitFormattedPrayerTime(secondary.lastThird),
     };
-  }, [now.getDate(), now.getMonth(), now.getFullYear(), cityLat, cityLon, calcMethod, asrSchool]);
+  }, [timeline]);
 
   /* ── Handlers ── */
-  const handleCitySelected = useCallback(
-    (name: string, lat: number, lon: number) => {
-      setCityName(name);
-      setCityLat(lat);
-      setCityLon(lon);
+  // تطبيق كائن PrayerLocation الناتج من المنظومة المرجعية على الحالة.
+  const applyPrayerLocation = useCallback(
+    (location: PrayerLocation) => {
+      setPrayerLocation(location);
       setLocationError(null);
       if (isAutoCalcMethod) {
-        setCalcMethod(detectCalcMethodByLocation(lat, lon));
+        setCalcMethod(detectCalcMethodByLocation(location.latitude, location.longitude));
       }
       if (isAutoAsrSchool) {
-        setAsrSchool(detectAsrSchoolByLocation(lat, lon));
+        setAsrSchool(detectAsrSchoolByLocation(location.latitude, location.longitude));
       }
     },
     [isAutoCalcMethod, isAutoAsrSchool],
+  );
+
+  // اختيار يدوي من الخريطة: بناء عقد PrayerLocation كامل وحفظه في العقد الموحّد.
+  const handleCitySelected = useCallback(
+    (name: string, lat: number, lon: number) => {
+      const location: PrayerLocation = {
+        latitude: Number(lat.toFixed(6)),
+        longitude: Number(lon.toFixed(6)),
+        cityName: name,
+        cityNameAr: name,
+        timezoneId: guessTimezone(lat, lon),
+        isAutoDetected: false,
+        source: "manual_map",
+        capturedAt: Date.now(),
+      };
+      saveSavedLocation(location);
+      applyPrayerLocation(location);
+    },
+    [applyPrayerLocation],
   );
 
   const handleToggleAutoCalcMethod = useCallback(
@@ -772,44 +790,6 @@ function AuthenticatedApp() {
     [cityLat, cityLon],
   );
 
-  const applyDetectedLocation = useCallback(async (lat: number, lon: number) => {
-    let placeName = "موقعك الحالي";
-    try {
-      const [osmRes, arcgisRes] = await Promise.allSettled([
-        fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1&accept-language=ar`,
-        ),
-        fetch(
-          `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?f=json&location=${lon},${lat}&langCode=ar`,
-        ),
-      ]);
-
-      let foundName: string | null = null;
-      if (arcgisRes.status === "fulfilled") {
-        try {
-          const data = await arcgisRes.value.json();
-          if (data?.address?.Match_addr) foundName = data.address.Match_addr.split(",")[0];
-        } catch {
-          // Keep the generic location label when reverse geocoding fails.
-        }
-      }
-      if (!foundName && osmRes.status === "fulfilled") {
-        try {
-          const data = await osmRes.value.json();
-          if (data?.name) foundName = data.name;
-        } catch {
-          // Keep the generic location label when reverse geocoding fails.
-        }
-      }
-      if (foundName) placeName = foundName;
-    } catch (error) {
-      console.warn("Reverse geocode error:", error);
-    }
-
-    localStorage.setItem("app_lastLocation", JSON.stringify({ name: placeName, lat, lon }));
-    handleCitySelected(placeName, lat, lon);
-    setLocationError(null);
-  }, [handleCitySelected]);
 
   const openLocationAppSettings = useCallback(async () => {
     try {
@@ -820,135 +800,28 @@ function AuthenticatedApp() {
     }
   }, []);
 
-  const requestLocationPermission = useCallback(async (): Promise<boolean> => {
-    if (!Capacitor.isNativePlatform()) return true;
-
-    try {
-      const current = await Geolocation.checkPermissions();
-      if (current.location === "granted" || current.coarseLocation === "granted") return true;
-      if (locationPermissionRequested.current) return false;
-
-      locationPermissionRequested.current = true;
-      const requested = await Geolocation.requestPermissions({
-        permissions: ["location", "coarseLocation"],
-      });
-      return requested.location === "granted" || requested.coarseLocation === "granted";
-    } catch (error) {
-      console.warn("Location permission request failed:", error);
-      return false;
-    }
-  }, []);
-
-  const handleRetryGPS = useCallback(async () => {
+  // نقطة الدخول الرسمية الوحيدة لمنظومة الموقع المرجعية: autoDetectLocation()
+  // تدير الإذن والدقة العالية (enableHighAccuracy) والإثراء بالهرم الجغرافي
+  // والحفظ الفوري في dar_prayer_location — لا دوال فرعية ولا محاولات يدوية.
+  const handleAutoDetectLocation = useCallback(async () => {
     setLocationError(null);
-
-    // Apply a recent last-known position immediately, then refresh it in the background.
     try {
-      const saved = localStorage.getItem("app_lastLocation");
-      if (saved) {
-        const cached = JSON.parse(saved) as { name?: string; lat?: number; lon?: number };
-        if (Number.isFinite(cached.lat) && Number.isFinite(cached.lon)) {
-          handleCitySelected(cached.name || "موقعك الحالي", cached.lat as number, cached.lon as number);
-        }
-      }
-    } catch {
-      // Ignore malformed cache and continue with a fresh request.
-    }
-
-    const permissionGranted = await requestLocationPermission();
-    if (!permissionGranted) {
-      setIsAutoLocation(false);
-      setLocationError("لم يتم السماح بالموقع. يمكنك السماح بالموقع التقريبي أو الدقيق من إعدادات التطبيق.");
-      return;
-    }
-
-    const onSuccess = async (lat: number, lon: number) => {
-      await applyDetectedLocation(lat, lon);
-    };
-
-    try {
-      if (Capacitor.isNativePlatform()) {
-        const position = await Geolocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 120000,
-          enableLocationFallback: true,
-        });
-        await onSuccess(position.coords.latitude, position.coords.longitude);
-        return;
-      }
-
-      if (!navigator.geolocation) throw new Error("Geolocation is unavailable");
-      await new Promise<void>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            try {
-              await onSuccess(position.coords.latitude, position.coords.longitude);
-              resolve();
-            } catch (error) {
-              reject(error);
-            }
-          },
-          reject,
-          { timeout: 10000, enableHighAccuracy: true, maximumAge: 120000 },
-        );
-      });
-    } catch (firstError) {
-      console.warn("High-accuracy GPS failed; trying cached/network fallback:", firstError);
-      try {
-        if (Capacitor.isNativePlatform()) {
-          const fallback = await Geolocation.getCurrentPosition({
-            enableHighAccuracy: false,
-            timeout: 6000,
-            maximumAge: 600000,
-            enableLocationFallback: true,
-          });
-          await onSuccess(fallback.coords.latitude, fallback.coords.longitude);
-          return;
-        }
-        if (navigator.geolocation) {
-          await new Promise<void>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-              async (position) => {
-                try {
-                  await onSuccess(position.coords.latitude, position.coords.longitude);
-                  resolve();
-                } catch (error) {
-                  reject(error);
-                }
-              },
-              reject,
-              { timeout: 6000, enableHighAccuracy: false, maximumAge: 600000 },
-            );
-          });
-          return;
-        }
-      } catch (fallbackError) {
-        console.warn("Location fallback failed:", fallbackError);
-      }
-
-      setIsAutoLocation(false);
-      setLocationError("تعذر تحديد موقعك الآن. استخدم الموقع المحفوظ أو اختر موقعًا يدويًا، ويمكنك فتح إعدادات الموقع للمحاولة مرة أخرى.");
-    }
-    }, [applyDetectedLocation, handleCitySelected, requestLocationPermission]);
-
-  const refreshLocationAfterResume = useCallback(async () => {
-    try {
-      const permission = await Geolocation.checkPermissions();
-      const granted = permission.location === "granted" || permission.coarseLocation === "granted";
-      if (!granted) return;
-
-      const position = await Geolocation.getCurrentPosition({
-        enableHighAccuracy: false,
-        timeout: 8000,
-        maximumAge: 300000,
-        enableLocationFallback: true,
-      });
-      await applyDetectedLocation(position.coords.latitude, position.coords.longitude);
+      const location = await autoDetectLocation();
+      applyPrayerLocation(location);
     } catch (error) {
-      console.warn("Foreground location refresh failed:", error);
+      console.warn("Auto location detection failed:", error);
+      setIsAutoLocation(false);
+      setLocationError(
+        error instanceof Error ? error.message : LOCATION_ACTIONABLE_ERROR_MESSAGE,
+      );
     }
-  }, [applyDetectedLocation]);
+  }, [applyPrayerLocation]);
+
+  // تحديث هادئ عند العودة من الخلفية عبر طبقة المنظومة المرجعية نفسها.
+  const refreshLocationAfterResume = useCallback(async () => {
+    const location = await performSilentResumeLocationRefresh();
+    if (location) applyPrayerLocation(location);
+  }, [applyPrayerLocation]);
 
   // Location is requested on first launch. Notification permission is handled
   // by the dedicated capability onboarding, not in parallel with GPS.
@@ -958,8 +831,8 @@ function AuthenticatedApp() {
       return;
     }
     setLocationPermissionFlowDone(false);
-    void handleRetryGPS().finally(() => setLocationPermissionFlowDone(true));
-  }, [handleRetryGPS, isAutoLocation]);
+    void handleAutoDetectLocation().finally(() => setLocationPermissionFlowDone(true));
+  }, [handleAutoDetectLocation, isAutoLocation]);
 
   // Refresh location after returning from background so travel/timezone changes apply immediately.
   useEffect(() => {
@@ -982,55 +855,18 @@ function AuthenticatedApp() {
     };
   }, [refreshLocationAfterResume, isAutoLocation]);
 
-  // Keep prayer times aligned with movement while auto-location is enabled.
-  useEffect(() => {
-    if (!isAutoLocation || !Capacitor.isNativePlatform()) return;
-
-    let watchId: string | null = null;
-    let disposed = false;
-    void Geolocation.watchPosition(
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 300000,
-        minimumUpdateInterval: 300000,
-        enableLocationFallback: true,
-      },
-      async (position, error) => {
-        if (disposed) return;
-        if (error) {
-          console.warn("Location watch error:", error);
-          return;
-        }
-        if (position) {
-          await applyDetectedLocation(position.coords.latitude, position.coords.longitude);
-        }
-      },
-    ).then((id) => {
-      if (disposed) {
-        void Geolocation.clearWatch({ id });
-      } else {
-        watchId = id;
-      }
-    }).catch((error) => {
-      console.warn("Unable to start location watch:", error);
-    });
-
-    return () => {
-      disposed = true;
-      if (watchId) void Geolocation.clearWatch({ id: watchId });
-    };
-  }, [applyDetectedLocation, isAutoLocation]);
+  // ملاحظة: المنظومة المرجعية لا تستخدم watchPosition مستمرًا؛ التحديث
+  // الهادئ عند العودة من الخلفية (performSilentResumeLocationRefresh) يغطي
+  // تغيّر الموقع/المنطقة الزمنية دون استنزاف البطارية.
 
   useEffect(() => {
     localStorage.setItem("app_isAutoLocation", isAutoLocation.toString());
   }, [isAutoLocation]);
 
+  // حفظ العقد الموحّد dar_prayer_location عند كل تغيير (المصدر الوحيد للحقيقة).
   useEffect(() => {
-    localStorage.setItem("app_cityName", cityName);
-    localStorage.setItem("app_cityLat", cityLat.toString());
-    localStorage.setItem("app_cityLon", cityLon.toString());
-  }, [cityName, cityLat, cityLon]);
+    saveSavedLocation(prayerLocation);
+  }, [prayerLocation]);
 
   useEffect(() => {
     localStorage.setItem("app_calcMethod", calcMethod);
@@ -1151,9 +987,8 @@ function AuthenticatedApp() {
         onClose={() => setShowLocationDialog(false)}
         onCitySelected={handleCitySelected}
         onAutoLocationRequest={() => {
-          locationPermissionRequested.current = false;
           setIsAutoLocation(true);
-          void handleRetryGPS();
+          void handleAutoDetectLocation();
         }}
         locationError={locationError}
         onOpenLocationSettings={openLocationAppSettings}
@@ -1217,10 +1052,11 @@ function AuthenticatedApp() {
                     <WeatherDisplay weather={weather} />
                     <button
                       onClick={() => setShowLocationDialog(true)}
-                      className="flex items-center gap-1.5 text-xs font-bold text-white/90 hover:text-white transition-colors drop-shadow-sm"
+                      className="flex items-center gap-1.5 text-xs font-bold text-white/90 hover:text-white transition-colors drop-shadow-sm max-w-[210px]"
+                      title={cityName}
                     >
                       <LocationPin />
-                      <span>{cityName}</span>
+                      <span className="truncate">{placeNameOnly}</span>
                       <svg
                         viewBox="0 0 24 24"
                         className="h-3 w-3 opacity-70"
@@ -1650,6 +1486,8 @@ function AuthenticatedApp() {
             cityName={cityName}
             cityLat={cityLat}
             cityLon={cityLon}
+            displayAddress={prayerLocation.displayAddress}
+            timezoneId={timezoneId}
             isAutoLocation={isAutoLocation}
             onToggleAutoLocation={setIsAutoLocation}
             calcMethod={calcMethod}
