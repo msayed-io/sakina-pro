@@ -1820,7 +1820,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                                 className={`text-[11px] font-extrabold px-3 py-1 rounded-full border ${
                                   hadith.grade.includes("صحيح") || hadith.grade.includes("Sahih")
                                     ? "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40"
-                                    : "bg-amber-950/10 text-amber-900 border-amber-800/30"
+                                    : "bg-amber-950/10 text-amber-900 border-amber-800/30 dark:bg-amber-100/12 dark:text-amber-100 dark:border-amber-200/25"
                                 }`}
                               >
                                 {localizeHadithGrade(hadith.grade)}
@@ -1847,7 +1847,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
                         {/* Hadith Text with Quran/Traditional Typography */}
                         <div
                           style={{ fontSize: `${fontSize}px` }}
-                          className="font-serif text-[#1c120a] leading-[2.2] text-justify font-normal tracking-tight px-1"
+                          className="font-serif text-[#1c120a] dark:text-[var(--sk-label)] leading-[2.2] text-justify font-normal tracking-tight px-1"
                         >
                           {hadith.text?.trim() ? (
                             hadith.text
