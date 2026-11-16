@@ -1391,9 +1391,6 @@ function AuthenticatedApp() {
               <h3 className="text-[26px] font-display font-bold text-[var(--sk-label)]">
                 مواقيت اليوم
               </h3>
-              <span className="text-[11.5px] font-bold text-[var(--sk-label2)] bg-white/60 backdrop-blur-md border border-[var(--sk-sep)] px-3.5 py-1 rounded-full shadow-sm">
-                {cityName || "الموقع الافتراضي"}
-              </span>
             </div>
 
             {/* Redesigned Premium Unified Card containing all Prayer rows */}

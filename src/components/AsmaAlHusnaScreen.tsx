@@ -118,7 +118,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
       dir="rtl"
       className="fixed inset-0 z-50 w-full max-w-full overflow-x-hidden bg-[var(--sk-bg)] font-sans flex flex-col h-full"
     >
-      <ProgressiveBlur />
+      <ProgressiveBlur inline />
       {/* ── FLOATING HEADER ── */}
       <div className="fixed top-6 left-6 right-6 flex items-center justify-between z-40 pointer-events-none">
         {/* Right Side (First in RTL): Title Capsule */}

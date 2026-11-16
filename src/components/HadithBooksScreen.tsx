@@ -1115,7 +1115,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
             )}
 
             {/* Global Search Bar with Integrated Scope Dropdown Toggle */}
-            <form onSubmit={handleGlobalSearchSubmit} className="relative z-30">
+            <form onSubmit={handleGlobalSearchSubmit} className="relative z-[15]">
               <div className="cut-crystal-input sk-rim flex items-center px-4 py-2">
                 <Search className="w-5 h-5 text-[var(--sk-accent-bright)] shrink-0 ml-3" />
                 <input
@@ -1569,7 +1569,7 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
 
             {/* Header Toolbar Card */}
-            <div className="p-5 cut-crystal-panel rounded-[26px] space-y-4 relative z-30">
+            <div className="p-5 cut-crystal-panel rounded-[26px] space-y-4 relative z-10">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 {/* Book Title & Author Info */}
                 <div className="space-y-1 text-right flex-1 min-w-0">

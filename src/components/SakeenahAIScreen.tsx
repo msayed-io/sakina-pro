@@ -1253,7 +1253,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                     
                     {isUser ? (
                       <>
-                        <div className="relative text-right bg-gradient-to-br from-[var(--sk-shade)] to-[#3f281a] text-[#fff9f1] border border-[#2b1a10]/20 dark:border-[var(--sk-label)]/20 rounded-[28px] shadow-md transition-all duration-300 overflow-hidden">
+                        <div className="relative text-right bg-gradient-to-br from-[var(--sk-shade)] to-[#3f281a] dark:bg-none dark:bg-[var(--sk-bg3)] text-[#fff9f1] dark:text-[var(--sk-label)] border border-[#2b1a10]/20 dark:border-transparent rounded-[28px] shadow-md transition-all duration-300 overflow-hidden">
                           {isEditingThisMessage ? (
                             <textarea
                               autoFocus
@@ -1276,7 +1276,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                                   {m.content}
                                 </p>
                                 {longMsgs.has(m.id) && !expandedMsgs.has(m.id) && (
-                                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[var(--sk-shade)] via-[#2b1a10]/85 dark:via-[var(--sk-shade)]/85 to-transparent pointer-events-none rounded-b-[28px]" />
+                                  <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[var(--sk-shade)] via-[#2b1a10]/85 dark:from-[var(--sk-bg3)] dark:via-[var(--sk-bg3)]/85 to-transparent pointer-events-none rounded-b-[28px]" />
                                 )}
                               </div>
                               {longMsgs.has(m.id) && (

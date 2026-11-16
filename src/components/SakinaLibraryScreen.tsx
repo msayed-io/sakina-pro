@@ -304,7 +304,7 @@ export default function SakinaLibraryScreen({
 
   return (
     <div ref={libraryRootRef} className="min-h-[100dvh] w-full overflow-x-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
-      <ProgressiveBlur />
+      <ProgressiveBlur inline />
       <header className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-8 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-2">
           {view !== "library" ? (
@@ -424,7 +424,7 @@ export default function SakinaLibraryScreen({
                 </div>
               </section>
               {selectedScholar.sources && selectedScholar.sources.length > 0 && (
-                <nav className="relative z-20 -mt-2 flex justify-center" aria-label="مصادر الشيخ">
+                <nav className="relative z-10 -mt-2 flex justify-center" aria-label="مصادر الشيخ">
                   <div className="pointer-events-auto flex items-center gap-1 rounded-[32px] cut-crystal-capsule px-2 py-1.5 shadow-lg max-w-full">
                     {selectedScholar.sources.map((source) => {
                       const isActive = selectedSource?.id === source.id;

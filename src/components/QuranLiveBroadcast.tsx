@@ -184,7 +184,7 @@ export default function QuranLiveBroadcast({
       </div>
 
       {/* Main Beautiful Card */}
-      <div className="relative z-20">
+      <div className="relative z-10">
         <div
           className="w-full overflow-hidden rounded-[26px] relative transition-all duration-500 cut-crystal-panel !border-white/10 !shadow-[0_12px_32px_rgba(0,0,0,0.18)] group select-none"
         >

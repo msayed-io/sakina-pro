@@ -31,10 +31,12 @@
      near-black in dark = app --sk-on-accent-soft value. */
   --sa-on-accent: #2b1a10;
 
+  min-height: 100vh; /* fallback for WebViews without dvh support */
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  background: var(--sk-bg);
+  /* Same paint as .sa-screen: any residual uncovered sliver stays seamless */
+  background: linear-gradient(var(--sk-bg) 42%, var(--sk-bg2));
   color: var(--sk-label);
   font-family: var(--sa-ui);
   -webkit-font-smoothing: antialiased;
@@ -63,6 +65,7 @@ html[data-theme="dark"] .sakinah-auth {
   isolation: isolate;
   overflow: hidden;
   width: min(100vw, 392px);
+  height: 100vh; /* fallback for WebViews without dvh support */
   height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -78,7 +81,7 @@ html[data-theme="dark"] .sakinah-auth {
   mask: radial-gradient(115% 62% at 50% 44%, #000, transparent 78%);
 }
 @media (min-width: 420px) {
-  .sa-screen { height: min(830px, calc(100dvh - 48px)); border-radius: 44px; }
+  .sa-screen { height: min(830px, calc(100vh - 48px)); height: min(830px, calc(100dvh - 48px)); border-radius: 44px; }
 }
 
 /* ------------------------------------------------------- glass capsules */
@@ -163,7 +166,7 @@ html[data-theme="dark"] .sa-back {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 18px 6dvh;
+  padding: 8px 18px 6vh; padding: 8px 18px 6dvh;
   text-align: center;
 }
 
@@ -174,7 +177,7 @@ html[data-theme="dark"] .sa-back {
   --r: 22px; --rt: 6px; --dot: 6px;
   width: 100%;
   max-width: 340px;
-  height: clamp(176px, 30dvh, 214px);
+  height: clamp(176px, 30vh, 214px); height: clamp(176px, 30dvh, 214px);
   flex: none;
   display: flex;
   flex-direction: column;
@@ -185,8 +188,8 @@ html[data-theme="dark"] .sa-back {
 }
 .sa-stack { width: 100%; display: flex; flex-direction: column; align-items: center; animation: sa-fade 1s 1.1s both; }
 .sa-h {
-  margin-top: clamp(20px, 3.8dvh, 34px);
-  font: 900 clamp(31px, 4.8dvh, 39px)/1.3 var(--sa-disp);
+  margin-top: clamp(20px, 3.8vh, 34px); margin-top: clamp(20px, 3.8dvh, 34px);
+  font: 900 clamp(31px, 4.8vh, 39px)/1.3 var(--sa-disp); font: 900 clamp(31px, 4.8dvh, 39px)/1.3 var(--sa-disp);
   color: var(--sk-label);
   text-wrap: balance;
 }
@@ -203,7 +206,7 @@ html[data-theme="dark"] .sa-back {
   align-items: center;
   justify-content: center;
   gap: 11px;
-  margin-top: clamp(22px, 4dvh, 34px);
+  margin-top: clamp(22px, 4vh, 34px); margin-top: clamp(22px, 4dvh, 34px);
   width: 100%;
   max-width: 276px;
   height: 54px;
@@ -345,6 +348,7 @@ html:not([data-theme="dark"]) .sa-av {
 @media (min-width: 900px) {
   .sa-screen {
     width: 100vw;
+    height: 100vh;
     height: 100dvh;
     border-radius: 0;
     display: grid;

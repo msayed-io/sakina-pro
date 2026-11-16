@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { X, Check } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Capacitor } from "@capacitor/core";
 import type {
@@ -10,6 +10,7 @@ import type {
   AllPrayersPreferences,
 } from "@/types/prayer-settings";
 import { UnsavedChangesModal } from "./UnsavedChangesModal";
+import ProgressiveBlur from "@/components/ProgressiveBlur";
 import { MuezzinSelectorSection } from "./MuezzinSelectorSection";
 
 interface PrayerSettingsScreenProps {
@@ -151,6 +152,7 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
       dir="rtl"
       className="mx-auto w-full max-w-[390px] px-5 pt-24 pb-28 font-sans bg-[var(--sk-bg)] min-h-screen relative overflow-hidden"
     >
+      <ProgressiveBlur inline />
       {/* Background soft ambient shapes from Sakineh-2.0.0 design */}
       <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -165,10 +167,10 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
 
         <button
           onClick={handleCloseAttempt}
-          className="w-10 h-10 cut-crystal-capsule sk-rim rounded-full flex items-center justify-center shadow-md text-[var(--sk-label)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
-          aria-label="إغلاق"
+          className="w-10 h-10 cut-crystal-capsule sk-rim flex items-center justify-center text-[var(--sk-label)] active:scale-95 transition-all pointer-events-auto cursor-pointer"
+          aria-label="الخروج"
         >
-          <X size={18} />
+          <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
@@ -370,7 +372,7 @@ export const PrayerSettingsScreen = React.memo(function PrayerSettingsScreen({
           <button
             type="button"
             onClick={handleSaveAndClose}
-            className="w-full h-13 bg-[var(--sk-espresso-fill)] text-[var(--sk-on-accent-soft)] hover:brightness-110 active:scale-[0.99] transition-all text-[14.5px] font-bold rounded-[20px] shadow-md cursor-pointer flex items-center justify-center"
+            className="w-full h-13 bg-[var(--sk-espresso-fill)] text-[var(--sk-on-accent-soft)] hover:brightness-110 active:scale-[0.99] transition-all text-[14.5px] font-bold rounded-full shadow-md cursor-pointer flex items-center justify-center"
           >
             احفظ التغييرات
           </button>

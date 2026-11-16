@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import ProgressiveBlur from "@/components/ProgressiveBlur";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown, ChevronLeft, Check, Search, X, BookOpen, Bookmark, Trash2 } from "lucide-react";
 import { surahMetadataList } from "@/data/quranTextDb";
@@ -94,6 +95,7 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
 
   return (
     <div className="h-full bg-[var(--sk-bg)] text-[var(--sk-label)] flex flex-col font-sans relative overflow-hidden" dir="rtl">
+      <ProgressiveBlur inline />
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-[#deab65]/5 dark:bg-[var(--sk-accent-bright)]/5 rounded-full blur-[100px] pointer-events-none" />
