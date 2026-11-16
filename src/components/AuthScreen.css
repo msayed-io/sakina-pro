@@ -1,0 +1,405 @@
+/* ============================================================================
+   سَكِينَة — Auth (login) screen.
+   Verbatim transfer of the attached dark design (sakinah-login-dark.html),
+   rebuilt against Sakinah's real, local design system:
+   - Dark values keep the attachment's geometry; colors come from the app's
+     dark tokens (--sk-*), which are byte-identical to the attachment's own
+     palette (#000 / #1C1C1E / #2C2C2E / #3A3A3C / #Glass .64 …).
+   - The attachment's gold accent (#C2922F / #E2B456) was REPLACED by the
+     app's accent, per product direction: --sk-accent-bright (light: the
+     Sand Brass #deab65; dark: Parchment Ivory #EEDFC2).
+   - Light theme is built from the app's real light identity (paper #ece7de,
+     espresso ink #2b1a10, cut-crystal capsules, hairlines, ambient shadows).
+     Structure/spacing/motion are identical in both themes; only
+     color/material differ.
+   - The Google button uses the official Google "Sign in with Google" spec:
+     light theme → white fill, 1px #747775 inside stroke, #1F1F1F text;
+     dark theme keeps the attachment's #131314 / #E3E3E3 pill (the 1px stroke
+     is intentionally provided by the specular rim, per the design).
+   - Every selector is scoped under .sakinah-auth — no global leakage
+     (no * / :root / html / body rules).
+   - Fonts: the app's embedded Thmanyah families only (no CDN).
+   ============================================================================ */
+
+.sakinah-auth {
+  --sa-ui: "Thmanyah Sans", ui-sans-serif, system-ui, sans-serif;
+  --sa-disp: "Thmanyah Serif Display", ui-serif, Georgia, serif;
+  /* Dot matrix tints (dark = attachment verbatim; light = app hairline tokens) */
+  --sa-dot: rgba(43, 26, 16, 0.12);        /* = app --sk-fill (light) */
+  --sa-dot-panel: rgba(43, 26, 16, 0.05);  /* = app --sk-fill4 (light) */
+  /* Text drawn on the accent (bright) surface: espresso in light = app --sk-label value;
+     near-black in dark = app --sk-on-accent-soft value. */
+  --sa-on-accent: #2b1a10;
+
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: var(--sk-bg);
+  color: var(--sk-label);
+  font-family: var(--sa-ui);
+  -webkit-font-smoothing: antialiased;
+}
+html[data-theme="dark"] .sakinah-auth {
+  --sa-dot: rgba(255, 255, 255, 0.09);     /* attachment verbatim */
+  --sa-dot-panel: rgba(255, 255, 255, 0.07); /* attachment verbatim */
+  --sa-on-accent: #000000;
+}
+
+/* Framed 392px "device" on larger viewports (backdrop = app surface tokens;
+   ≥900px becomes the split layout, see below) */
+@media (min-width: 420px) {
+  .sakinah-auth { padding: 24px; background: var(--sk-bg4); }
+}
+@media (min-width: 900px) {
+  .sakinah-auth { padding: 0; background: var(--sk-bg); }
+}
+
+.sakinah-auth ::selection { background: var(--sk-selection); }
+.sakinah-auth :focus-visible { outline: 2px solid var(--sk-accent-bright); outline-offset: 3px; }
+
+/* ------------------------------------------------------------------ screen */
+.sa-screen {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100vw, 392px);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(var(--sk-bg) 42%, var(--sk-bg2));
+}
+.sa-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(var(--sa-dot) 1px, transparent 1.3px) 0 0 / 22px 22px;
+  -webkit-mask: radial-gradient(115% 62% at 50% 44%, #000, transparent 78%);
+  mask: radial-gradient(115% 62% at 50% 44%, #000, transparent 78%);
+}
+@media (min-width: 420px) {
+  .sa-screen { height: min(830px, calc(100dvh - 48px)); border-radius: 44px; }
+}
+
+/* ------------------------------------------------------- glass capsules */
+/* Geometry: attachment verbatim. Light material = the app's live light
+   cut-crystal capsule recipe (copied from index.css .cut-crystal-capsule,
+   values unchanged). Dark material = the app's dark capsule recipe
+   (html[data-theme="dark"] .cut-crystal-capsule), whose surface/blur are
+   byte-identical to the attachment's .glass; shadow is the attachment's
+   (var(--sk-drop)) — attachment wins for dark. */
+.sa-cap,
+.sa-back {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(253, 252, 251, 0.82) 0%,
+    rgba(244, 240, 234, 0.68) 100%
+  );
+  border: 1px solid rgba(43, 26, 16, 0.10);
+  -webkit-backdrop-filter: blur(30px) saturate(220%) contrast(99%) brightness(103%);
+  backdrop-filter: blur(30px) saturate(220%) contrast(99%) brightness(103%);
+  box-shadow: 0 16px 36px -10px rgba(43, 26, 16, 0.18),
+              0 4px 10px -2px rgba(43, 26, 16, 0.06),
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
+              inset 0 -1px 0 0 rgba(43, 26, 16, 0.05);
+}
+html[data-theme="dark"] .sa-cap,
+html[data-theme="dark"] .sa-back {
+  background: var(--sk-glass);
+  border-color: transparent;
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: var(--sk-drop);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .sakinah-auth .sa-cap,
+  .sakinah-auth .sa-back {
+    background: var(--sk-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.sa-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 22px 0;
+}
+.sa-cap {
+  height: 43px;
+  padding: 0 20px;
+  border-radius: 22px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--sk-label);
+}
+.sa-brand b { font: 900 19px/1 var(--sa-disp); }
+.sa-brand i { font: 800 17px/1 Georgia, "Times New Roman", serif; font-style: normal; }
+
+.sa-back {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--sk-label);
+  cursor: pointer;
+  font: inherit;
+  transition: transform 0.18s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+.sa-back:active { transform: scale(0.95); }
+.sa-back:disabled { cursor: default; opacity: 0; }
+
+/* -------------------------------------------------------------- middle */
+.sa-mid {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px 6dvh;
+  text-align: center;
+}
+
+/* chat demo (three hard-coded Q/A pairs, looped; cancelled on unmount) */
+.sa-chat {
+  --fs: 15.5px; --px: 16px; --py: 10px; --tw: 230px; --um: 260px;
+  --dw: 64px; --dh: 42px; --av: 30px; --rh: 100px; --uh: 44px;
+  --r: 22px; --rt: 6px; --dot: 6px;
+  width: 100%;
+  max-width: 340px;
+  height: clamp(176px, 30dvh, 214px);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--sa-ui);
+  color: var(--sk-label);
+}
+.sa-stack { width: 100%; display: flex; flex-direction: column; align-items: center; animation: sa-fade 1s 1.1s both; }
+.sa-h {
+  margin-top: clamp(20px, 3.8dvh, 34px);
+  font: 900 clamp(31px, 4.8dvh, 39px)/1.3 var(--sa-disp);
+  color: var(--sk-label);
+  text-wrap: balance;
+}
+@keyframes sa-fade { from { opacity: 0; } }
+
+/* ------------------------------------ Google button (official variants) */
+/* Light = official Google light spec: #FFFFFF fill, 1px #747775 stroke
+   (inside, via inset shadow), #1F1F1F text. G logo keeps original colors.
+   Dark = the attachment's official dark pill: #131314 / #E3E3E3; its 1px
+   edge is the specular rim (.sk-rim in the JSX), per the design. */
+.sa-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  margin-top: clamp(22px, 4dvh, 34px);
+  width: 100%;
+  max-width: 276px;
+  height: 54px;
+  border-radius: 27px;
+  border: 0;
+  cursor: pointer;
+  font: 700 16px/1 var(--sa-ui);
+  background: #FFFFFF;
+  color: #1F1F1F;
+  box-shadow: inset 0 0 0 1px #747775;
+  transition: transform 0.18s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+html[data-theme="dark"] .sa-btn {
+  background: #131314;
+  color: #E3E3E3;
+  box-shadow: var(--sk-drop), 0 10px 26px rgba(0, 0, 0, 0.5);
+}
+.sa-btn:active { transform: scale(0.975); }
+.sa-btn[aria-busy="true"] { pointer-events: none; }
+.sa-g { width: 20px; height: 20px; flex: none; }
+.sa-spin {
+  position: absolute;
+  inset-inline-end: 22px;
+  top: 50%;
+  margin-top: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--sk-label4);
+  border-top-color: var(--sk-accent-bright);
+  display: none;
+  animation: sa-spin 0.8s linear infinite;
+}
+.sa-btn[aria-busy="true"] .sa-spin { display: block; }
+@keyframes sa-spin { to { transform: rotate(360deg); } }
+
+/* ------------------------------------------------------------- legal */
+.sa-legal {
+  padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 18px);
+  text-align: center;
+  font: 500 10px/1.6 var(--sa-ui);
+  color: var(--sk-label2);
+}
+.sa-legal button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ------------------------------------------------------- chat bubbles */
+.sa-row { display: flex; width: 100%; }
+.sa-row-u { min-height: var(--uh); align-items: flex-start; justify-content: flex-start; }
+.sa-row-a {
+  height: var(--rh);
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-inline-end: calc(var(--av) + 10px);
+}
+.sa-wrap { position: relative; }
+.sa-b { position: relative; overflow: hidden; font: 700 var(--fs)/1.6 var(--sa-ui); }
+
+.sa-user {
+  padding: var(--py) var(--px);
+  max-width: var(--um);
+  border-radius: var(--r) var(--r) var(--rt) var(--r);
+  background: var(--sk-bg3);
+  color: var(--sk-label);
+  transform-origin: 100% 100%;
+}
+.sa-ai {
+  width: var(--dw);
+  height: var(--dh);
+  border-radius: var(--r) var(--r) var(--r) var(--rt);
+  background: var(--sk-accent-bright);
+  color: var(--sa-on-accent);
+  transform-origin: 0 100%;
+}
+/* Light only: hairline + soft elevation so the bubble/avatar sit on paper
+   like every other light-theme surface in the app (app light material rule) */
+html:not([data-theme="dark"]) .sa-user,
+html:not([data-theme="dark"]) .sa-av {
+  border: 1px solid var(--sk-hairline);
+  box-shadow: var(--sk-drop);
+}
+@media (min-width: 900px) {
+  html:not([data-theme="dark"]) .sa-chat { border: 1px solid var(--sk-hairline); }
+}
+
+.sa-t {
+  position: absolute;
+  top: var(--py);
+  inset-inline-start: var(--px);
+  width: max-content;
+  max-width: var(--tw);
+  text-align: start;
+}
+.sa-w { display: inline-block; }
+
+.sa-dots {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.sa-dots i {
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: var(--sa-on-accent);
+  opacity: 0.5;
+  animation: sa-bounce 1s ease-in-out infinite;
+}
+.sa-dots i:nth-child(2) { animation-delay: 0.14s; }
+.sa-dots i:nth-child(3) { animation-delay: 0.28s; }
+@keyframes sa-bounce { 50% { transform: translateY(-4px); opacity: 1; } }
+
+.sa-av {
+  position: absolute;
+  inset-inline-end: calc(-8px - var(--av));
+  bottom: 0;
+  width: var(--av);
+  height: var(--av);
+  border-radius: 50%;
+  background: var(--sk-bg3);
+  color: var(--sk-accent-bright);
+  display: grid;
+  place-items: center;
+}
+.sa-av svg { width: calc(var(--av) * 0.53); height: calc(var(--av) * 0.53); }
+
+/* --------------------------------------- wide screens: split layout */
+@media (min-width: 900px) {
+  .sa-screen {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+    display: grid;
+    grid-template-columns: minmax(440px, 5fr) 7fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "top top"
+      "login stage"
+      "legal stage";
+  }
+  .sa-screen::before {
+    -webkit-mask: radial-gradient(55% 75% at 80% 50%, #000, transparent 80%);
+    mask: radial-gradient(55% 75% at 80% 50%, #000, transparent 80%);
+  }
+  .sa-top { grid-area: top; padding: 28px 40px 0; }
+  .sa-mid { display: contents; }
+  .sa-stack {
+    grid-area: login;
+    align-self: center;
+    align-items: flex-start;
+    text-align: start;
+    padding: 0 clamp(40px, 5vw, 88px);
+  }
+  .sa-h {
+    margin-top: 0;
+    font-size: clamp(46px, 4.4vw, 68px);
+    line-height: 1.22;
+    max-width: 10em;
+  }
+  .sa-btn { margin-top: 44px; max-width: 300px; height: 58px; border-radius: 29px; font-size: 17px; }
+  .sa-legal { grid-area: legal; padding: 0 clamp(40px, 5vw, 88px) 32px; text-align: start; font-size: 11px; }
+  .sa-chat {
+    grid-area: stage;
+    --fs: 21px; --px: 22px; --py: 14px; --tw: 360px; --um: 430px;
+    --dw: 84px; --dh: 56px; --av: 40px; --rh: 140px; --uh: 58px;
+    --r: 28px; --rt: 8px; --dot: 8px;
+    width: auto;
+    max-width: none;
+    height: auto;
+    margin: 12px 0 40px 40px;
+    padding: 0 32px;
+    gap: 18px;
+    align-items: center;
+    border-radius: 40px;
+    background: var(--sk-bg2) radial-gradient(var(--sa-dot-panel) 1px, transparent 1.3px) 0 0 / 22px 22px;
+  }
+  .sa-chat > .sa-row { width: min(100%, 560px); }
+}
+
+/* --------------------------------------- reduced motion (scoped to page) */
+@media (prefers-reduced-motion: reduce) {
+  .sakinah-auth *,
+  .sakinah-auth *::before,
+  .sakinah-auth *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

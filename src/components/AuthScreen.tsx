@@ -1,14 +1,13 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import type { User } from "@supabase/supabase-js";
 import { ArrowRight } from "lucide-react";
-import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
-import SakeenahAvatar from "@/components/SakeenahAvatar";
 import {
   signInWithGoogle,
 } from "@/services/auth-service";
 import { trackAndroidUsageSignal } from "@/services/android-usage-signals";
+import "./AuthScreen.css";
 
 type LegalView = "terms" | "privacy";
 
@@ -28,6 +27,166 @@ function authErrorMessage(error: unknown): string {
   return "تعذر إتمام العملية الآن. حاول مرة أخرى.";
 }
 
+/* ------------------------------------------------------------------ */
+/* Hero chat demo — the attached design's conversation, played verbatim: */
+/* same three Q/A pairs, same timings/easings, looped. The loop and its  */
+/* timers are fully cancelled when the page unmounts.                    */
+/* ------------------------------------------------------------------ */
+
+const PAIRS: ReadonlyArray<readonly [string, string]> = [
+  ["ما معنى الطمأنينة؟", "قال تعالى: ﴿أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ﴾ (الرعد: 28)"],
+  ["ماذا أقول قبل النوم؟", "اقرأ آية الكرسي؛ ففي صحيح البخاري أن الله يجعل عليك حافظًا حتى تصبح."],
+  ["ما فضل الصلاة على النبي ﷺ؟", "في صحيح مسلم: من صلى عليّ صلاة صلى الله عليه بها عشرًا."],
+];
+
+const SPARK_SVG =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM18 15v4M16 17h4"/></svg>';
+
+function useChatDemo(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const chat = ref.current;
+    if (!chat) return;
+
+    let cancelled = false;
+    const timers = new Set<number>();
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        const id = window.setTimeout(() => {
+          timers.delete(id);
+          resolve();
+        }, ms);
+        timers.add(id);
+      });
+
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const SPR = "cubic-bezier(.2,1.25,.35,1)";
+    const EASE = "cubic-bezier(.25,.8,.25,1)";
+
+    const play = async ([q, a]: readonly [string, string]) => {
+      chat.innerHTML =
+        '<div class="sa-row sa-row-u"><div class="sa-b sa-user"></div></div>' +
+        '<div class="sa-row sa-row-a"><div class="sa-wrap"><div class="sa-b sa-ai">' +
+        '<span class="sa-dots"><i></i><i></i><i></i></span><span class="sa-t"></span></div>' +
+        `<div class="sa-av">${SPARK_SVG}</div></div></div>`;
+
+      const rowU = chat.children[0] as HTMLElement;
+      const rowA = chat.children[1] as HTMLElement;
+      const ub = rowU.firstElementChild as HTMLElement;
+      const wrap = rowA.firstElementChild as HTMLElement;
+      const ab = wrap.firstElementChild as HTMLElement;
+      const t = ab.querySelector(".sa-t") as HTMLElement;
+      const dots = ab.querySelector(".sa-dots") as HTMLElement;
+      const av = wrap.querySelector(".sa-av") as HTMLElement;
+
+      ub.textContent = q;
+      const ws = a.split(" ").map((x, i, l) => {
+        const s = document.createElement("span");
+        s.className = "sa-w";
+        s.textContent = x;
+        t.append(s);
+        if (i < l.length - 1) t.append(" ");
+        return s;
+      });
+
+      const cs = getComputedStyle(chat);
+      const px = parseFloat(cs.getPropertyValue("--px")) || 0;
+      const py = parseFloat(cs.getPropertyValue("--py")) || 0;
+      const r = t.getBoundingClientRect();
+      const W = Math.ceil(r.width) + px * 2;
+      const H = Math.ceil(r.height) + py * 2;
+      const dw = ab.offsetWidth;
+      const dh = ab.offsetHeight;
+
+      if (still) {
+        ab.style.width = `${W}px`;
+        ab.style.height = `${H}px`;
+        dots.remove();
+        return;
+      }
+      t.style.visibility = "hidden";
+
+      const pop = (el: HTMLElement, delay: number) =>
+        el.animate(
+          [
+            { opacity: 0, transform: "translateY(18px) scale(.84)" },
+            { opacity: 1, transform: "none" },
+          ],
+          { duration: 640, delay, easing: SPR, fill: "both" }
+        );
+      pop(ub, 0);
+      pop(ab, 800);
+      av.animate(
+        [
+          { opacity: 0, transform: "scale(.3) rotate(-60deg)" },
+          { opacity: 1, transform: "none" },
+        ],
+        { duration: 640, delay: 900, easing: SPR, fill: "both" }
+      );
+
+      await sleep(1700);
+      if (cancelled) return;
+      av.animate(
+        [{ transform: "scale(1)" }, { transform: "scale(1.15)" }, { transform: "scale(1)" }],
+        { duration: 900, iterations: 2, easing: "ease-in-out" }
+      );
+      await sleep(1800);
+      if (cancelled) return;
+      dots.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: "forwards" });
+      ab.animate(
+        [
+          { width: `${dw}px`, height: `${dh}px` },
+          { width: `${W}px`, height: `${H}px` },
+        ],
+        { duration: 560, easing: SPR, fill: "both" }
+      );
+      t.style.visibility = "visible";
+      ws.forEach((w, i) =>
+        w.animate(
+          [
+            { opacity: 0, filter: "blur(5px)", transform: "translateY(5px)" },
+            { opacity: 1, filter: "blur(0)", transform: "none" },
+          ],
+          { duration: 440, delay: 240 + i * 55, easing: EASE, fill: "both" }
+        )
+      );
+
+      await sleep(240 + ws.length * 55 + 440 + 3400);
+      if (cancelled) return;
+      await Promise.allSettled(
+        [rowU, rowA].map((x) =>
+          x.animate(
+            [
+              { opacity: 1, transform: "none" },
+              { opacity: 0, transform: "translateY(-10px) scale(.97)" },
+            ],
+            { duration: 420, easing: "ease-in", fill: "forwards" }
+          ).finished
+        )
+      );
+    };
+
+    void (async () => {
+      try {
+        await document.fonts.ready;
+      } catch {
+        /* fonts API unavailable — proceed anyway */
+      }
+      await sleep(350);
+      for (let i = 0; !cancelled; i++) {
+        await play(PAIRS[i % PAIRS.length]);
+        if (still || cancelled) break;
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      timers.forEach((id) => window.clearTimeout(id));
+      timers.clear();
+      chat.replaceChildren();
+    };
+  }, [ref]);
+}
+
 export default function AuthScreen({
   onBack,
   onAuthenticated,
@@ -37,6 +196,8 @@ export default function AuthScreen({
   const [legalView, setLegalView] = useState<LegalView | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+  const chatRef = useRef<HTMLDivElement | null>(null);
+  useChatDemo(chatRef);
 
   useEffect(() => {
     if (!nativeCallbackError) return;
@@ -72,75 +233,67 @@ export default function AuthScreen({
   }
 
   return (
-    <main dir="rtl" className="relative min-h-[100dvh] overflow-hidden bg-[var(--sk-bg)] text-[var(--sk-label)]">
-      {/* خلفية ambient */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -right-36 -top-40 h-[420px] w-[420px] rounded-full bg-[#d8b27b]/18 dark:bg-[var(--sk-gold-mid)]/18 blur-3xl" />
-        <div className="absolute -bottom-52 -left-36 h-[500px] w-[500px] rounded-full bg-[#b9a58e]/16 blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(var(--sk-label)_0.6px,transparent_0.6px)] [background-size:18px_18px]" />
-      </div>
-
-      <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[440px] flex-col items-center px-5 pb-5 pt-4 sm:px-7 sm:pb-8 sm:pt-5">
-        {/* Header */}
-        <header className="flex h-10 w-full items-center justify-between">
-          <div className="cut-crystal-capsule sk-rim flex h-10 items-center justify-center px-5 shadow-md">
-            <span className="pt-0.5 font-display text-[17px] font-black text-[var(--sk-label)]">سَكِينَة</span>
+    <div className="sakinah-auth">
+      <main className="sa-screen" dir="rtl" aria-label="تسجيل الدخول إلى سكينة">
+        <header className="sa-top">
+          <div className="sa-cap sa-brand sk-rim">
+            <b>سَكِينَة</b>
+            <i>AI</i>
           </div>
           <button
             type="button"
             onClick={onBack}
             disabled={!onBack}
             aria-label="رجوع"
-            className="cut-crystal-capsule sk-rim grid h-10 w-10 place-items-center text-[var(--sk-label)] shadow-md transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45 disabled:cursor-default disabled:opacity-0"
+            className="sa-back sk-rim"
           >
-            <ArrowRight size={20} strokeWidth={1.8} className="mr-0.5" />
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </header>
 
-        {/* مجسم سكينة — Hero Position */}
-        <div className="mt-8 flex justify-center">
-          <SakeenahAvatar animation="idle" size={240} />
-        </div>
+        <section className="sa-mid">
+          {/* Hero: two-bubble conversation (looped, decorative) */}
+          <div className="sa-chat" ref={chatRef} role="img" aria-label="مثال لمحادثة بين مستخدم وسكينة AI" />
 
-        {/* العنوان */}
-        <section className="mt-6 text-center">
-          <p className="font-sans text-[12px] font-bold text-[var(--sk-accent-deep)]">طمأنينة في كل يوم</p>
-          <h1 className="mt-1 font-display text-[28px] font-black leading-[1.15] tracking-tight text-[var(--sk-label)]">
-            أهلًا بك في سكينة
-          </h1>
+          <div className="sa-stack">
+            <h1 className="sa-h">اسأل عن دينك بطمأنينة</h1>
+
+            {error && (
+              <p
+                role="alert"
+                className="mt-4 w-full max-w-[300px] rounded-2xl border border-[var(--sk-danger-soft)]/40 bg-[var(--sk-danger-soft)]/10 px-4 py-2 text-center text-[11px] font-bold leading-5 text-[var(--sk-danger-soft)]"
+              >
+                {error}
+              </p>
+            )}
+
+            {/* زر Google — الطريقة الوحيدة */}
+            <button
+              type="button"
+              onClick={handleGoogle}
+              disabled={googleLoading}
+              aria-busy={googleLoading}
+              className="sa-btn sk-rim"
+            >
+              <GoogleIcon />
+              <span className="sa-lbl" aria-live="polite">
+                {googleLoading ? "جارٍ الاتصال بـ Google…" : "المتابعة باستخدام Google"}
+              </span>
+              <span className="sa-spin" aria-hidden="true" />
+            </button>
+          </div>
         </section>
 
-        {/* خطأ */}
-        {error && (
-          <p role="alert" className="mt-5 w-full rounded-full border border-[#a66969]/25 dark:border-[var(--sk-danger-soft)]/25 bg-[#a66969]/10 dark:bg-[var(--sk-danger-soft)]/10 px-4 py-2 text-center text-[11px] font-bold leading-5 text-[#7d3f3f]">
-            {error}
-          </p>
-        )}
-
-        {/* زر Google — الطريقة الوحيدة */}
-        <button
-          type="button"
-          onClick={handleGoogle}
-          disabled={googleLoading}
-          className="cut-crystal-capsule mt-6 flex h-12 w-full max-w-[320px] items-center justify-center gap-3 rounded-full bg-[#f7f2ea]/70 dark:bg-[var(--sk-bg2)]/70 px-5 text-[14px] font-black text-[var(--sk-label)] shadow-[0_10px_28px_-12px_rgba(43,26,16,0.35)] transition-[transform,background-color,box-shadow] duration-200 hover:bg-[#fffdf9] hover:shadow-[0_14px_32px_-12px_rgba(43,26,16,0.42)] active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b88a4f]/45 dark:focus-visible:ring-[var(--sk-accent)]/45 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {googleLoading ? (
-            <SakeenahLineSpinner size={20} color="var(--sk-accent)" label="جارٍ فتح Google" />
-          ) : (
-            <GoogleIcon />
-          )}
-          المتابعة باستخدام Google
-        </button>
-
-        {/* Footer */}
-        <footer className="mt-auto pt-6 text-center text-[10px] leading-5 text-[#8a7d70]">
+        <footer className="sa-legal">
           بتسجيل الدخول، أنت توافق على{" "}
-          <button type="button" onClick={() => setLegalView("terms")} className="underline underline-offset-2">الشروط</button>
+          <button type="button" onClick={() => setLegalView("terms")}>الشروط</button>
           {" "}و{" "}
-          <button type="button" onClick={() => setLegalView("privacy")} className="underline underline-offset-2">سياسة الخصوصية</button>
+          <button type="button" onClick={() => setLegalView("privacy")}>سياسة الخصوصية</button>
         </footer>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
 
@@ -212,11 +365,11 @@ function LegalSection({ title, text }: { title: string; text: string }) {
 
 function GoogleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.75h3.57c2.08-1.92 3.28-4.74 3.28-8.07z" />
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.75c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-      <path fill="#FBBC05" d="M5.84 14.12A6.94 6.94 0 0 1 5.47 12c0-.74.13-1.45.36-2.12V7.04H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.96l3.66-2.84z" />
-      <path fill="#EA4335" d="M12 4.75c1.62 0 3.06.56 4.2 1.64l3.15-3.15C17.45 1.5 14.97.5 12 .5 7.7.5 3.99 2.97 2.18 6.54l3.66 2.84C6.71 6.68 9.14 4.75 12 4.75z" />
+    <svg className="sa-g" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
     </svg>
   );
 }
