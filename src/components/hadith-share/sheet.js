@@ -5,6 +5,15 @@ import { saveHadithImage } from '@/services/hadith-share-native';
 import markup from './sheet.html?raw';
 import './sheet.css';
 
+// The measurement override is shared if two sheet instances export at once.
+let activeMetricExports=0;
+async function withExportMetrics(render){
+ if(activeMetricExports++===0)document.body.classList.add('hshare-export-metrics');
+ try{return await render()}finally{
+  if(--activeMetricExports===0)document.body.classList.remove('hshare-export-metrics');
+ }
+}
+
 export function createHadithShare(){
 const root=document.createElement('div');root.className='hshare-root';root.dir='rtl';root.innerHTML=markup;document.body.appendChild(root);
 
@@ -118,11 +127,11 @@ async function exportImage(){
   if((s>1&&w*h>cap)||!canvasOK(w,h))continue;
   let cv=null;
   try{
-   cv=await h2c(card,{scale:s,backgroundColor:null,logging:false,imageTimeout:0,onclone:d=>{
+   cv=await withExportMetrics(()=>h2c(card,{scale:s,backgroundColor:null,logging:false,imageTimeout:0,onclone:d=>{
     let n=d.getElementById('hshare-card').parentElement;
     while(n&&n!==d.body){n.style.transform='none';n.style.overflow='visible';n=n.parentElement}
     const p=d.getElementById('hshare-pv');p.style.width='auto';p.style.height='auto';
-   }});
+   }}));
    if(!nonBlank(cv))throw new Error('blank canvas');
    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
    if(!blob||!blob.size)throw new Error('empty blob');

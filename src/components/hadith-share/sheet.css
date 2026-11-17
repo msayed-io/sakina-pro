@@ -100,6 +100,10 @@ html:not([data-theme="dark"]) .hshare-root .hshare-menu{box-shadow:var(--sk-amb-
 /* Neutralize global preflight inside the isolated component; the reference uses UA defaults. */
 .hshare-root{line-height:normal}
 .hshare-root *{border-style:none}
+/* html2canvas 1.4.1 measures text baselines with this hidden 1px GIF.
+   The app's global image reset makes it block-level, corrupting those metrics.
+   Restore its inline layout only while a share export is being rendered. */
+body.hshare-export-metrics > div[style*="visibility: hidden"][style*="white-space: nowrap"] > img[src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"]{display:inline}
 html[data-theme="dark"] .hshare-root .hshare-lg-cap{border-color:currentColor;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 
 @media (prefers-reduced-transparency:reduce){

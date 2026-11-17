@@ -143,7 +143,7 @@ async function buildSignal(
     model: String(device?.model ?? "unknown").slice(0, 120),
     androidVersion: String(device?.version ?? "unknown").slice(0, 40),
     sdkVersion: String(device?.sdkVersion ?? "unknown").slice(0, 40),
-    appVersion: String(import.meta.env.VITE_APP_VERSION ?? "2.3.16").slice(0, 40),
+    appVersion: String(import.meta.env.VITE_APP_VERSION ?? "2.3.17").slice(0, 40),
     channel: getChannel(),
     connectionType: getConnectionType(),
     language,
