@@ -45,6 +45,7 @@ import {
 } from "../types/hadith.types";
 import { HadithOfflineSearchService } from "../services/HadithOfflineSearchService";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
+import { createHadithShare } from "@/components/hadith-share/sheet";
 import { getSmartCache, isSmartCacheStale, setSmartCache } from "@/services/smart-cache";
 
 interface HadithBooksScreenProps {
@@ -245,6 +246,14 @@ export function localizeHadithGrade(grade: string | undefined): string | undefin
 }
 
 export default function HadithBooksScreen({ isActive = true, onBack, onHideNavChange, onOpenSakinaLibrary }: HadithBooksScreenProps) {
+  const shareRef = useRef<ReturnType<typeof createHadithShare> | null>(null);
+  useLayoutEffect(() => {
+    const share = createHadithShare();
+    shareRef.current = share;
+    return () => { shareRef.current = null; share.destroy(); };
+  }, []);
+  useEffect(() => { if (!isActive) shareRef.current?.close(); }, [isActive]);
+
   // State: Books metadata
   const [books, setBooks] = useState<HadithBookInfo[]>(() => getCachedHadithBooks() ?? FALLBACK_BOOKS);
   const [loadingBooks, setLoadingBooks] = useState(false);
@@ -862,22 +871,16 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // Share Hadith
-  const handleShareHadith = async (hadith: HadithItem) => {
-    const shareData = {
-      title: `${hadith.bookTitle} - حديث ${hadith.hadithnumber}`,
-      text: `"${hadith.text}"\n\n[${hadith.bookTitle} - ${hadith.chapterTitle}]`,
-      url: window.location.href,
-    };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (e) {
-        // user cancelled share
-      }
-    } else {
-      handleCopyHadith(hadith);
-    }
+  // Open immediately with the currently rendered in-memory record; no fetch.
+  const handleShareHadith = (hadith: HadithItem) => {
+    shareRef.current?.open({
+      source: hadith.bookTitle,
+      book: hadith.chapterTitle,
+      chapter: undefined,
+      number: hadith.hadithnumber,
+      grade: localizeHadithGrade(hadith.grade),
+      text: hadith.text,
+    });
   };
 
   // Speech Audio

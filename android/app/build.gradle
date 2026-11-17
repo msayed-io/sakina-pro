@@ -8,8 +8,8 @@ def releaseKeyAlias = System.getenv('SAKEENAH_RELEASE_KEY_ALIAS')
 def releaseKeyPassword = System.getenv('SAKEENAH_RELEASE_KEY_PASSWORD') ?: releaseStorePassword
 def hasReleaseSigning = [releaseKeystorePath, releaseStorePassword, releaseKeyAlias, releaseKeyPassword].every { it }
 
-def buildVersionCode = (project.findProperty('versionCode') ?: '2').toString().toInteger()
-def buildVersionName = (project.findProperty('versionName') ?: '2.0').toString()
+def buildVersionCode = (project.findProperty('versionCode') ?: '2003016').toString().toInteger()
+def buildVersionName = (project.findProperty('versionName') ?: '2.3.16').toString()
 
 android {
     namespace = "com.sakeenah.app"

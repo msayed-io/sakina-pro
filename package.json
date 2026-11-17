@@ -1,7 +1,7 @@
 {
   "name": "sakineh",
   "private": true,
-  "version": "0.1.0",
+  "version": "2.3.16",
   "type": "module",
   "scripts": {
     "dev": "tsx src/server/index.ts",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@aparajita/capacitor-secure-storage": "^8.0.0",
+    "@capacitor-community/media": "^9.1.0",
     "@capacitor/app": "^8.1.1",
     "@capacitor/browser": "^8.0.4",
     "@capacitor/core": "8.5.0",
@@ -39,6 +40,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
+    "html2canvas": "^1.4.1",
     "kfgqpc-uthmanic-script-hafs-regular": "^1.0.0",
     "leaflet": "^1.9.4",
     "localforage": "^1.10.0",
