@@ -160,11 +160,27 @@ export function observeRims() {
     }
     if (active) animationFrame = requestAnimationFrame(animate);
   }
-  function wake() { if (!animationFrame) animationFrame = requestAnimationFrame(animate); }
+  // A document-wide capture listener sees transitions on every card and
+  // control, including ones with no rim descendants. Only a rim on the event
+  // target or below it can inherit its transform and need a new raster.
+  function affected(event: Event, visit: (element: HTMLElement, owner: Owner) => void) {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    for (const [element, owner] of owners) {
+      if (target === element || target.contains(element)) visit(element, owner);
+    }
+  }
+  function wake(event: Event) {
+    if (animationFrame) return;
+    affected(event, () => { if (!animationFrame) animationFrame = requestAnimationFrame(animate); });
+  }
+  function refreshAffected(event: Event) {
+    if (!stopped) affected(event, draw);
+  }
 
   document.addEventListener('transitionrun', wake, true);
   document.addEventListener('animationstart', wake, true);
-  for (const name of ['transitionend', 'transitioncancel', 'animationend', 'animationcancel']) document.addEventListener(name, refresh, true);
+  for (const name of ['transitionend', 'transitioncancel', 'animationend', 'animationcancel']) document.addEventListener(name, refreshAffected, true);
   addEventListener('resize', refresh);
   document.fonts?.ready.then(() => { if (!stopped) { discover(); refresh(); } });
   discover();
@@ -175,7 +191,7 @@ export function observeRims() {
     document.removeEventListener('transitionrun', wake, true);
     document.removeEventListener('animationstart', wake, true);
     removeEventListener('resize', refresh);
-    for (const name of ['transitionend', 'transitioncancel', 'animationend', 'animationcancel']) document.removeEventListener(name, refresh, true);
+    for (const name of ['transitionend', 'transitioncancel', 'animationend', 'animationcancel']) document.removeEventListener(name, refreshAffected, true);
     owners.forEach((owner, element) => {
       owner.canvas.remove();
       owner.restorePosition?.();

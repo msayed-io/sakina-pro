@@ -88,7 +88,7 @@ async function anchorMain() {
     if (await visible('button[aria-label="الخروج من مكتبة سكينة"]')) { await clickSoft('button[aria-label="الخروج من مكتبة سكينة"]'); continue; }
     if (await visible('button[title="رجوع"]')) { await clickSoft('button[title="رجوع"]'); continue; }          // azkar counter
     if (await visible('button[aria-label="رجوع"]:visible')) { await clickSoft('button[aria-label="رجوع"]'); continue; }   // settings / asma / auth / AI
-    if (await visible('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="إغلاق"]')) { await page.locator('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="إغلاق"]').first().click({ timeout: 5000 }); await wait(700); continue; }
+    if (await visible('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="الخروج"]')) { await page.locator('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="الخروج"]').first().click({ timeout: 5000 }); await wait(700); continue; }
     // surahs screen (quran sub-router): the only visible chevron-right button is back
     if (await page.locator('text=تشغيل الكل').first().isVisible().catch(() => false)) { await clickSoft('button:has(svg.lucide-chevron-right)'); continue; }
     break;
@@ -149,12 +149,19 @@ async function probeNativeScrollAt(page, selector, gesture) {
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await wait(150);
   const target = page.locator(selector).first();
+  await target.scrollIntoViewIfNeeded({ timeout: 5000 });
+  await wait(150);
   const box = await target.boundingBox();
   if (!box) throw new Error(`scroll target not visible: ${selector}`);
   const point = await page.evaluate(({ x, y }) => ({
     x: Math.max(2, Math.min(innerWidth - 2, Math.round(x))),
     y: Math.max(45, Math.min(innerHeight - 70, Math.round(y)))
   }), { x: box.x + box.width / 2, y: box.y + box.height / 2 });
+  const onTarget = await target.evaluate((el, p) => {
+    const hit = document.elementFromPoint(p.x, p.y);
+    return hit === el || (hit && el.contains(hit));
+  }, point);
+  if (!onTarget) throw new Error(`gesture point did not hit the requested target: ${selector}`);
   const before = await page.evaluate(() => window.scrollY);
 
   if (gesture === 'wheel') {
@@ -162,9 +169,11 @@ async function probeNativeScrollAt(page, selector, gesture) {
     await page.mouse.wheel(0, 520);
   } else {
     const cdp = await page.context().newCDPSession(page);
+    // Keep the full swipe on-screen even when the card is near the top.
+    const distance = Math.min(320, point.y - 20);
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 150 }] });
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - 320 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - distance / 2 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: point.x, y: point.y - distance }] });
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     await cdp.detach();
   }
@@ -179,6 +188,9 @@ async function probeNativeScrollAt(page, selector, gesture) {
 async function auditScrollSurfaces({ width, height, mobile, gesture }) {
   const surfaceContext = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: mobile ? 2 : 1, isMobile: mobile, hasTouch: mobile, locale: 'ar', timezoneId: 'Africa/Cairo', colorScheme: 'dark' });
   await surfaceContext.route('**/api.open-meteo.com/**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(weather) }));
+  // Use the app's bundled 114-surah fallback; live API reciters can have only
+  // one surah, in which case there is genuinely no scroll range to test.
+  await surfaceContext.route(/https:\/\/www\.mp3quran\.net\/api\/v3\/reciters/, (r) => r.abort());
   const fixtureCatalog = {
     version: 'scroll-audit',
     reciters: Array.from({ length: 10 }, (_, reciterIndex) => ({
@@ -424,11 +436,11 @@ await step('main', 'speaker icon → prayer-settings panel', async () => {
 await step('prayer-settings', 'close prayer-settings (back to main, position kept)', async () => {
   const before = await measure();
   await scrollAllToBottom(); await wait(300);
-  await clickEvaluate('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="إغلاق"]');
+  await clickEvaluate('div.fixed.inset-0.z-50.overflow-y-auto button[aria-label="الخروج"]');
   // fresh-state guard pops «التغييرات غير محفوظة» — discard is the neutral no-save path
   const discard = page.locator('button:has-text("امسح التغييرات")').first();
   if (await discard.isVisible().catch(() => false)) { await discard.click({ timeout: 5000 }); await wait(800); }
-  const panelGone = !(await page.locator('div.fixed.inset-0.z-50.overflow-y-auto').first().isVisible().catch(() => false));
+  const panelGone = !(await page.locator('div.fixed.inset-0.z-50.overflow-y-auto:has(button[aria-label="الخروج"])').first().isVisible().catch(() => false));
   const entered = await measure();
   const fails = [];
   if (!panelGone) fails.push('prayer-settings panel still visible after close attempt');

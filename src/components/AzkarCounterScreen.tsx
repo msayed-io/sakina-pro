@@ -455,7 +455,15 @@ export default function AzkarCounterScreen({
               </div>
 
               {/* Scrollable text area with robust overflow vertical alignment */}
-              <div className="flex-1 overflow-y-auto hide-scrollbar my-2.5 px-1.5 flex flex-col justify-start">
+              <div
+                className="flex-1 overflow-y-auto hide-scrollbar my-2.5 px-1.5 flex flex-col justify-start"
+                onPointerDownCapture={(event) => {
+                  // A long text owns its scroll gesture. Do not also start the
+                  // parent card's drag navigation, but keep normal taps and
+                  // card swipes unchanged when the text fits.
+                  if (event.currentTarget.scrollHeight > event.currentTarget.clientHeight + 1) event.stopPropagation();
+                }}
+              >
                 <div className="my-auto py-2 w-full">
                   <p
                     className="text-center font-serif font-medium text-[var(--sk-label)] leading-relaxed select-text"
