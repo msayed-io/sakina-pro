@@ -976,6 +976,8 @@ function AuthenticatedApp() {
     [],
   );
 
+  const handleOpenSakinaLibrary = useCallback(() => setShowSakinaLibrary(true), []);
+
   const handleOpenHisnCategory = useCallback((category: string) => {
     setHisnCategory(category);
     setAzkarCounterType("hisn");
@@ -1493,7 +1495,7 @@ function AuthenticatedApp() {
                 isActive={activeTab === "hadith" && !showAzkarCounter}
                 onBack={handleBackToMain}
                 onHideNavChange={setHadithHideNav}
-                onOpenSakinaLibrary={() => setShowSakinaLibrary(true)}
+                onOpenSakinaLibrary={handleOpenSakinaLibrary}
               />
             </div>
           </Suspense>

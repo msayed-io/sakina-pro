@@ -245,7 +245,7 @@ export function localizeHadithGrade(grade: string | undefined): string | undefin
     .replace(/\bMaudu\b/gi, "موضوع");
 }
 
-export default function HadithBooksScreen({ isActive = true, onBack, onHideNavChange, onOpenSakinaLibrary }: HadithBooksScreenProps) {
+const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = true, onBack, onHideNavChange, onOpenSakinaLibrary }: HadithBooksScreenProps) {
   const shareRef = useRef<ReturnType<typeof createHadithShare> | null>(null);
   useLayoutEffect(() => {
     const share = createHadithShare();
@@ -2325,4 +2325,6 @@ export default function HadithBooksScreen({ isActive = true, onBack, onHideNavCh
 
     </div>
   );
-}
+});
+
+export default HadithBooksScreen;
