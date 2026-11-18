@@ -49,18 +49,66 @@ import {
 import { getPrayerTimeline } from "@/lib/prayer-times";
 import type { PrayerLocation } from "@/lib/prayer-config";
 import ManualLocationDialog from "@/components/ManualLocationDialog";
-const AzkarTabScreen = lazy(() => import("@/components/AzkarTabScreen"));
-const AzkarCounterScreen = lazy(() => import("@/components/AzkarCounterScreen"));
 import QcfVerse from "@/components/QcfVerse";
 import { prefetchQcfFont } from "@/hooks/useQcfFont";
 import { PRELOAD_QCF_PAGES } from "@/constants/appVerses";
-const QuranTabScreen = lazy(() => import("@/components/QuranTabScreen"));
-const HadithBooksScreen = lazy(() => import("@/components/HadithBooksScreen"));
-const SakinaLibraryScreen = lazy(() => import("@/components/SakinaLibraryScreen"));
-const SakeenahAIScreen = lazy(() => import("@/components/SakeenahAIScreen"));
-const AsmaAlHusnaScreen = lazy(() => import("@/components/AsmaAlHusnaScreen"));
-const SettingsScreen = lazy(() => import("@/components/SettingsScreen").then((module) => ({ default: module.SettingsScreen })));
-const PrayerSettingsScreen = lazy(() => import("@/components/PrayerSettingsScreen").then((module) => ({ default: module.PrayerSettingsScreen })));
+
+const loadAzkar = () => import("@/components/AzkarTabScreen");
+const loadCounter = () => import("@/components/AzkarCounterScreen");
+const loadQuran = () => import("@/components/QuranTabScreen");
+const loadHadith = () => import("@/components/HadithBooksScreen");
+const loadLibrary = () => import("@/components/SakinaLibraryScreen");
+const loadAi = () => import("@/components/SakeenahAIScreen");
+const loadAsma = () => import("@/components/AsmaAlHusnaScreen");
+const loadSettings = () => import("@/components/SettingsScreen").then((m) => ({ default: m.SettingsScreen }));
+const loadPrayerSettings = () => import("@/components/PrayerSettingsScreen").then((m) => ({ default: m.PrayerSettingsScreen }));
+const LazyAzkar = lazy(loadAzkar), LazyCounter = lazy(loadCounter), LazyQuran = lazy(loadQuran);
+const LazyHadith = lazy(loadHadith), LazyLibrary = lazy(loadLibrary), LazyAi = lazy(loadAi);
+const LazyAsma = lazy(loadAsma), LazySettings = lazy(loadSettings), LazyPrayerSettings = lazy(loadPrayerSettings);
+
+// Prepare screen code during the existing splash without mounting screens or
+// starting their data-fetching effects. Android modules are bundled locally.
+const preparedScreens: {
+  azkar?: Awaited<ReturnType<typeof loadAzkar>>["default"];
+  counter?: Awaited<ReturnType<typeof loadCounter>>["default"];
+  quran?: Awaited<ReturnType<typeof loadQuran>>["default"];
+  hadith?: Awaited<ReturnType<typeof loadHadith>>["default"];
+  library?: Awaited<ReturnType<typeof loadLibrary>>["default"];
+  ai?: Awaited<ReturnType<typeof loadAi>>["default"];
+  asma?: Awaited<ReturnType<typeof loadAsma>>["default"];
+  settings?: Awaited<ReturnType<typeof loadSettings>>["default"];
+  prayerSettings?: Awaited<ReturnType<typeof loadPrayerSettings>>["default"];
+} = {};
+
+export async function prepareScreens(): Promise<void> {
+  // Public conversation links don't mount the main application's screens.
+  if (getPublicShareTokenFromPath()) return;
+  // Keep this temporary object separate: late imports must never change a
+  // mounted component type and discard a screen's state.
+  const ready: typeof preparedScreens = {};
+  const jobs = Promise.allSettled([
+    loadAzkar().then((m) => { ready.azkar = m.default; }),
+    loadCounter().then((m) => { ready.counter = m.default; }),
+    loadQuran().then((m) => { ready.quran = m.default; }),
+    loadHadith().then((m) => { ready.hadith = m.default; }),
+    loadLibrary().then((m) => { ready.library = m.default; }),
+    loadAi().then((m) => { ready.ai = m.default; }),
+    loadAsma().then((m) => { ready.asma = m.default; }),
+    loadSettings().then((m) => { ready.settings = m.default; }),
+    loadPrayerSettings().then((m) => { ready.prayerSettings = m.default; }),
+  ]);
+  // A stalled network or damaged bundle must not block the whole app forever.
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<null>((resolve) => { timer = setTimeout(() => resolve(null), 4000); });
+  const results = await Promise.race([jobs, deadline]);
+  clearTimeout(timer);
+  Object.assign(preparedScreens, ready);
+  if (!results) console.warn("Screen preparation timed out; remaining screens will load on demand.");
+  else results.forEach((result) => {
+    if (result.status === "rejected") console.warn("Unable to prepare a screen:", result.reason);
+  });
+}
+
 import { PrayerCardSpeakerIcon } from "@/components/PrayerCardSpeakerIcon";
 import { WeatherDisplay } from "@/components/WeatherDisplay";
 import { HadithCard } from "@/components/HadithCard";
@@ -204,6 +252,15 @@ function loadInitialPrayerLocation(): PrayerLocation {
 }
 
 function AuthenticatedApp() {
+  const AzkarTabScreen = preparedScreens.azkar ?? LazyAzkar;
+  const AzkarCounterScreen = preparedScreens.counter ?? LazyCounter;
+  const QuranTabScreen = preparedScreens.quran ?? LazyQuran;
+  const HadithBooksScreen = preparedScreens.hadith ?? LazyHadith;
+  const SakinaLibraryScreen = preparedScreens.library ?? LazyLibrary;
+  const SakeenahAIScreen = preparedScreens.ai ?? LazyAi;
+  const AsmaAlHusnaScreen = preparedScreens.asma ?? LazyAsma;
+  const SettingsScreen = preparedScreens.settings ?? LazySettings;
+  const PrayerSettingsScreen = preparedScreens.prayerSettings ?? LazyPrayerSettings;
   /* ── Existing state ── */
   const [now, setNow] = useState(() => new Date());
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -1400,7 +1457,7 @@ function AuthenticatedApp() {
         </div>
 
         {/* TAB: AZKAR */}
-        {visitedTabs.has("azkar") && (
+        {(visitedTabs.has("azkar") || activeTab === "azkar") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الأذكار..." />}>
             {activeTab === "azkar" && !showAzkarCounter && !showAsmaAlHusna && <ProgressiveBlur />}
             <div className={`w-full overflow-x-hidden ${activeTab === "azkar" ? "block" : "hidden"}${activeTab === "azkar" && showAzkarCounter ? " invisible" : ""}`}>
@@ -1414,7 +1471,7 @@ function AuthenticatedApp() {
         )}
 
         {/* TAB: QURAN */}
-        {visitedTabs.has("quran") && (
+        {(visitedTabs.has("quran") || activeTab === "quran") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل القرآن..." />}>
             {activeTab === "quran" && !showAzkarCounter && <ProgressiveBlur />}
             <div className={`relative h-full min-h-screen w-full ${activeTab === "quran" ? "block" : "hidden"}${activeTab === "quran" && showAzkarCounter ? " invisible" : ""}`}>
@@ -1428,7 +1485,7 @@ function AuthenticatedApp() {
         )}
 
         {/* TAB: HADITH BOOKS */}
-        {visitedTabs.has("hadith") && (
+        {(visitedTabs.has("hadith") || activeTab === "hadith") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل كتب الحديث..." />}>
             {activeTab === "hadith" && !showAzkarCounter && !showSakinaLibrary && <ProgressiveBlur />}
             <div className={`relative min-h-screen w-full overflow-x-hidden ${activeTab === "hadith" ? "block" : "hidden"}${activeTab === "hadith" && showAzkarCounter ? " invisible" : ""}`}>
@@ -1443,7 +1500,7 @@ function AuthenticatedApp() {
         )}
 
         {/* TAB: SAKEENAH AI */}
-        {visitedTabs.has("sakeenah-ai") && (
+        {(visitedTabs.has("sakeenah-ai") || activeTab === "sakeenah-ai") && (
           <div
             className={`relative min-h-screen w-full overflow-x-hidden overflow-y-auto ${activeTab === "sakeenah-ai" ? "block" : "hidden"}${activeTab === "sakeenah-ai" && showAzkarCounter ? " invisible" : ""}`}
             data-clarity-mask="true"
@@ -1478,7 +1535,7 @@ function AuthenticatedApp() {
         )}
 
         {/* TAB: SETTINGS */}
-        {visitedTabs.has("settings") && (
+        {(visitedTabs.has("settings") || activeTab === "settings") && (
           <Suspense fallback={<ScreenLoader label="جارٍ تحميل الإعدادات..." />}>
             {activeTab === "settings" && !showAzkarCounter && <ProgressiveBlur />}
             <div className={`${activeTab === "settings" ? "block" : "hidden"}${activeTab === "settings" && showAzkarCounter ? " invisible" : ""}`}>

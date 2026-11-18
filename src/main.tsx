@@ -6,7 +6,14 @@ import "./index.css";
 
 // Start fetching the application bundle immediately, but do not make its
 // synchronous module evaluation part of the first paint.
-const appModulePromise = import("./App");
+const appModulePromise = import("./App").then(async (module) => {
+  try {
+    await module.prepareScreens();
+  } catch (error) {
+    console.warn("Screen preparation failed; loading on demand:", error);
+  }
+  return module;
+});
 const App = lazy(() => appModulePromise);
 
 function Boot() {

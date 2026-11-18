@@ -257,7 +257,7 @@ export default function QuranRecitersScreen({
   onOpenPureRecitations,
 }: Props) {
   const [reciters, setReciters] = useState<Reciter[]>(() => getCachedReciters() ?? FALLBACK_RECITERS);
-  const [isLoading, setIsLoading] = useState(() => !getCachedReciters());
+  const [isLoading, setIsLoading] = useState(() => (getCachedReciters() ?? FALLBACK_RECITERS).length === 0);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
