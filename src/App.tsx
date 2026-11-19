@@ -15,6 +15,7 @@ import { App as CapacitorApp } from "@capacitor/app";
 import AuthScreen from "@/components/AuthScreen";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
 import ProgressiveBlur from "@/components/ProgressiveBlur";
+import HijriMonthScreen, { preloadHijriHero } from "@/features/hijri-month/HijriMonthScreen";
 import type { AuthUser } from "@/services/auth-service";
 import {
   getCurrentSession,
@@ -289,6 +290,28 @@ function AuthenticatedApp() {
   const [hadithHideNav, setHadithHideNav] = useState(false);
   const [showSakinaLibrary, setShowSakinaLibrary] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showHijriMonth, setShowHijriMonth] = useState(false);
+  const hijriOpening = useRef(false);
+
+  useEffect(() => { void preloadHijriHero(); }, []);
+  useEffect(() => {
+    const onHistoryChange = (event: PopStateEvent) => setShowHijriMonth(Boolean(event.state?.sakinahHijriMonth));
+    window.addEventListener("popstate", onHistoryChange);
+    return () => window.removeEventListener("popstate", onHistoryChange);
+  }, []);
+  const openHijriMonth = useCallback(async () => {
+    if (hijriOpening.current) return;
+    hijriOpening.current = true;
+    try {
+      await preloadHijriHero();
+      window.history.pushState({ ...window.history.state, sakinahHijriMonth: true }, "");
+      setShowHijriMonth(true);
+    } finally { hijriOpening.current = false; }
+  }, []);
+  const closeHijriMonth = useCallback(() => {
+    if (window.history.state?.sakinahHijriMonth) window.history.back();
+    else setShowHijriMonth(false);
+  }, []);
 
   /* ── Per-Prayer Notification Preferences ── */
   const [prayerPrefs, setPrayerPrefs] = useState<AllPrayersPreferences>(() => loadPrayerPreferences());
@@ -638,13 +661,13 @@ function AuthenticatedApp() {
   // تبقى مركّبة، فلا حاجة لإعادة الضبط — فقط منع التمرير خلف اللوحة.
   const prevBodyOverflowRef = useRef<string>("");
   useEffect(() => {
-    if (!(showAzkarCounter || showAsmaAlHusna || showSakinaLibrary)) return;
+    if (!(showAzkarCounter || showAsmaAlHusna || showSakinaLibrary || showHijriMonth)) return;
     prevBodyOverflowRef.current = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prevBodyOverflowRef.current;
     };
-  }, [showAzkarCounter, showAsmaAlHusna, showSakinaLibrary]);
+  }, [showAzkarCounter, showAsmaAlHusna, showSakinaLibrary, showHijriMonth]);
 
   useEffect(() => {
     let disposed = false;
@@ -1232,8 +1255,9 @@ function AuthenticatedApp() {
                       <p className="font-bold text-[var(--sk-label2)]">
                         {state.gregorianDate}
                       </p>
-                      <p className="font-bold text-[var(--sk-label)]">
+                      <p className="relative font-bold text-[var(--sk-label)]">
                         {state.hijriDate}
+                        <button type="button" aria-label="فتح صفحة الشهر الهجري" onClick={() => void openHijriMonth()} className="absolute inset-x-0 top-1/2 h-11 -translate-y-1/2 rounded-md active:bg-current/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--sk-accent)]" />
                       </p>
                     </div>
                   </div>
@@ -1598,7 +1622,8 @@ function AuthenticatedApp() {
       {/* ═══════════════════════════════════════════════════════════════
           FLOATING BOTTOM NAVIGATION
           ═══════════════════════════════════════════════════════════════ */}
-      {!showAzkarCounter &&
+      {!showHijriMonth &&
+        !showAzkarCounter &&
         !shouldShowQuranNav &&
         !shouldShowHadithNav &&
         !showAsmaAlHusna &&
@@ -1684,6 +1709,14 @@ function AuthenticatedApp() {
             </div>
           </nav>
         )}
+
+      <AnimatePresence>
+        {showHijriMonth && (
+          <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 300, damping: 30 }}>
+            <HijriMonthScreen onBack={closeHijriMonth} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── PRAYER SETTINGS INTERNAL SCREEN OVERLAY ── */}
       <AnimatePresence>
