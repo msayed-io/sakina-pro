@@ -1203,6 +1203,16 @@ html[data-theme="dark"] :focus-visible {
   outline-offset: 2px;
 }
 
+/* AI text fields: the requested dark-mode treatment excludes focus outlines,
+   without changing keyboard focus styling for buttons or other screens. */
+html[data-theme="dark"] [data-sakeenah-ai-screen] :is(input, textarea):focus-visible {
+  outline: none;
+}
+html[data-theme="dark"] [data-sakeenah-ai-screen] .cut-crystal-input:focus-within {
+  border-color: transparent;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+}
+
 /* Specular rim — display layer (adapted from specular-rim-spec-ar.md §4.3).
    One edge-only canvas per element; no pseudo-element, no second glass layer. */
 [data-qf-rim] > .qf-specular-rim {

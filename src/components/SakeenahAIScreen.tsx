@@ -25,7 +25,6 @@ import {
   ArrowUp,
   ChevronRight,
   MessageCirclePlus,
-  PanelLeftOpen,
   X,
   Trash2,
   ChevronDown,
@@ -369,6 +368,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
   const [feedback, setFeedback] = useState<Record<string, "like" | "dislike">>({});
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const [copiedResponseId, setCopiedResponseId] = useState<string | null>(null);
+  const [selectedResponseId, setSelectedResponseId] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -415,6 +415,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
         isNew: false,
         isStreaming: false,
       })));
+      setSelectedResponseId(null);
       setActiveConversationId(conversationId);
       setIsDrawerOpen(false);
       cancelEditingUserMessage();
@@ -455,6 +456,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
     if (isLoading) return;
     setMessages([]);
     setActiveConversationId(null);
+    setSelectedResponseId(null);
     setStorageError(null);
     cancelEditingUserMessage();
     setIsDrawerOpen(false);
@@ -799,6 +801,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
       return currentIndex === -1 ? prev : [...prev.slice(0, currentIndex), userMsg];
     });
     setInputValue("");
+    setSelectedResponseId(null);
     setIsLoading(true);
 
     const aiMsgId = Math.random().toString();
@@ -857,6 +860,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
 
       let accumulatedContent = "";
       let buffer = "";
+      let streamComplete = false;
 
       while (true) {
         const { value, done } = await reader.read();
@@ -872,28 +876,29 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           if (trimmedLine.startsWith("data: ")) {
             const dataStr = trimmedLine.slice(6);
             if (dataStr === "[DONE]") {
+              streamComplete = true;
               break;
             }
+            let parsed: { text?: string; error?: string };
             try {
-              const parsed = JSON.parse(dataStr);
-              if (parsed.error) {
-                throw new Error(parsed.error);
-              }
-              if (parsed.text) {
-                accumulatedContent += parsed.text;
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === aiMsgId ? { ...msg, content: accumulatedContent } : msg
-                  )
-                );
-              }
-            } catch (e) {
-              console.error("Error parsing stream chunk:", e, trimmedLine);
+              parsed = JSON.parse(dataStr);
+            } catch {
+              throw new Error("Invalid AI stream response");
+            }
+            if (parsed.error) throw new Error("AI stream or response persistence failed");
+            if (parsed.text) {
+              accumulatedContent += parsed.text;
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === aiMsgId ? { ...msg, content: accumulatedContent } : msg
+                )
+              );
             }
           }
         }
       }
 
+      if (!streamComplete || !accumulatedContent.trim()) throw new Error("AI stream ended without a confirmed response");
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === aiMsgId ? { ...msg, isStreaming: false } : msg
@@ -901,10 +906,11 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
       );
       setStorageError(null);
       void trackAndroidUsageSignal("sakina_request_success");
-      await refreshConversations();
+      void refreshConversations().catch((error) => console.error("Failed to refresh conversations", error));
 
     } catch (error) {
       console.error("Sakeenah AI error:", error);
+      setStorageError("تعذر تأكيد حفظ الرد. انسخه قبل مغادرة المحادثة ثم تحقق من الاتصال.");
       void trackAndroidUsageSignal("sakina_request_failed", error instanceof Error ? error.name : "request_error");
       setMessages((prev) => {
         const index = prev.findIndex((m) => m.id === aiMsgId);
@@ -961,7 +967,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
   };
 
   return (
-    <div dir="rtl" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-sans bg-[var(--sk-bg)] h-screen relative flex flex-col overflow-hidden">
+    <div dir="rtl" data-sakeenah-ai-screen="true" className="mx-auto w-full max-w-[390px] px-5 pt-0 pb-4 font-sans bg-[var(--sk-bg)] h-screen relative flex flex-col overflow-hidden">
       
       {/* Background soft ambient shapes */}
       <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-[#b88a4f]/5 dark:bg-[var(--sk-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
@@ -983,7 +989,10 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             aria-label="فتح المحادثات المحفوظة"
             title="المحادثات المحفوظة"
           >
-            <PanelLeftOpen size={17} strokeWidth={2.2} />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5.2" stroke="currentColor" strokeWidth="2.4" />
+              <path d="M7.4 7.3v9.4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
           </button>
           <div className="cut-crystal-capsule sk-rim px-5 h-10 rounded-full shadow-md flex items-center justify-center gap-1.5 transition-all duration-300">
             <span className="text-[14.5px] font-display font-black whitespace-nowrap pt-0.5">سَكِينَة AI</span>
@@ -1027,18 +1036,13 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             />
             <motion.aside
               dir="rtl"
-              className="fixed inset-y-0 right-0 left-auto z-[60] flex w-[min(286px,calc(100vw-16px))] flex-col overflow-hidden rounded-l-[30px] rounded-r-none border border-r-0 border-white/45 shadow-[0_24px_70px_-20px_rgba(43,26,16,0.42)]"
-              style={{
-                background: "linear-gradient(145deg, rgba(255,255,255,0.28), rgba(184,138,79,0.18))",
-                backdropFilter: "blur(28px) saturate(165%)",
-                WebkitBackdropFilter: "blur(28px) saturate(165%)",
-              }}
+              className="fixed inset-y-0 right-0 left-auto z-[60] flex w-[min(286px,calc(100vw-16px))] flex-col overflow-hidden rounded-l-[30px] rounded-r-none bg-[var(--sk-bg2)] shadow-[0_24px_70px_-20px_rgba(43,26,16,0.42)]"
               initial={{ opacity: 0, x: 18, scale: 0.995 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 18, scale: 0.995 }}
               transition={{ duration: 0.14, ease: [0.23, 1, 0.32, 1] }}
             >
-              <div className="flex h-12 shrink-0 items-center justify-between border-b border-[#b88a4f]/15 dark:border-[var(--sk-accent)]/15 px-4">
+              <div className="flex h-12 shrink-0 items-center justify-between px-4">
                 <p className="text-[14px] font-display font-black text-[var(--sk-label)]">سَكِينَة AI</p>
                 <button
                   type="button"
@@ -1075,10 +1079,10 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                     {conversations.map((conversation) => (
                       <div
                         key={conversation.id}
-                        className={`group relative flex items-center gap-1 rounded-[22px] border px-3 py-2 transition-all ${
+                        className={`group relative flex items-center gap-1 rounded-[22px] px-3 py-2 transition-all ${
                           conversation.id === activeConversationId
-                            ? "border-[#b88a4f]/40 dark:border-[var(--sk-accent)]/40 bg-[var(--sk-bg2)] shadow-sm"
-                            : "border-transparent hover:border-[#b88a4f]/20 dark:hover:border-[var(--sk-accent)]/20 hover:bg-[#f7f2ea]/70 dark:hover:bg-[var(--sk-bg2)]/70"
+                            ? "bg-[var(--sk-bg3)]"
+                            : "hover:bg-[var(--sk-bg3)]"
                         }`}
                       >
                         <button
@@ -1113,7 +1117,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               exit={{ opacity: 0, scale: 0.96, y: -4 }}
                               transition={{ duration: 0.12 }}
-                              className="!absolute left-2 top-10 z-[70] w-[184px] cut-crystal-panel rounded-[20px] shadow-2xl overflow-hidden p-1.5"
+                              className="!absolute left-2 top-10 z-[70] w-[184px] bg-[var(--sk-bg3)] rounded-[20px] shadow-2xl overflow-hidden p-1.5"
                             >
                               <button type="button" onClick={() => void handleShareConversation(conversation)} className="flex h-9 w-full items-center gap-2 rounded-[14px] px-3 text-right text-[11px] font-bold text-[var(--sk-label)] transition hover:bg-[var(--sk-cream)] cursor-pointer">
                                 <Share2 size={14} className="text-[var(--sk-accent)]" />
@@ -1194,7 +1198,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            className="fixed bottom-6 left-5 right-5 z-[120] mx-auto max-w-[360px] rounded-[20px] border border-white/45 bg-[#ece7de]/55 dark:bg-[var(--sk-bg)]/55 px-4 py-3 text-center text-[11px] font-black text-[var(--sk-label)] shadow-[0_18px_42px_rgba(43,26,16,0.24)] backdrop-blur-2xl"
+            role="alert"
+            className="pointer-events-none fixed bottom-6 left-5 right-5 z-[120] mx-auto max-w-[360px] rounded-[20px] border border-white/45 bg-[#ece7de]/55 dark:bg-[var(--sk-bg)]/55 px-4 py-3 text-center text-[11px] font-black text-[var(--sk-label)] shadow-[0_18px_42px_rgba(43,26,16,0.24)] backdrop-blur-2xl"
           >
             {storageError}
           </motion.div>
@@ -1236,7 +1241,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
               const isEditingLongMessage = isEditingThisMessage && (
                 longMsgs.has(m.id) || editingContent.length > 110 || editingContent.split("\n").length > 3
               );
-              const isLastAI = !isUser && idx === lastAssistantMessageIndex && m.isNew !== true && m.isStreaming !== true;
+              const isLastAI = !isUser && (selectedResponseId ? selectedResponseId === m.id : idx === lastAssistantMessageIndex) && m.isNew !== true && m.isStreaming !== true;
               return (
                 <div
                   key={m.id}
@@ -1347,7 +1352,20 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                         {/* مهم: لا تضع whitespace-pre-wrap على أي حاوية خارجية —
                             الخاصية موروثة وستحوّل أسطر \n الفاصلة بين البلوكات
                             إلى أسطر فارغة مرئية. pre-wrap مقصور على عناصر النص. */}
-                        <div>
+                        <div
+                          tabIndex={m.isStreaming ? undefined : 0}
+                          aria-label="رد سكينة AI؛ اضغط لإظهار أدوات الرد"
+                          onClick={(event) => {
+                            if (m.isStreaming || window.getSelection()?.toString() || (event.target as HTMLElement).closest("a,button")) return;
+                            setSelectedResponseId(m.id);
+                          }}
+                          onKeyDown={(event) => {
+                            if (!m.isStreaming && event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+                              event.preventDefault();
+                              setSelectedResponseId(m.id);
+                            }
+                          }}
+                        >
                           {m.content.trim() === "" && m.isStreaming ? (
                         <div className="flex items-center gap-1.5 py-3 justify-start">
                           <span className="w-2 h-2 rounded-full bg-[var(--sk-accent)] animate-bounce [animation-delay:-0.3s]"></span>

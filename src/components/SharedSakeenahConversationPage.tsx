@@ -120,9 +120,8 @@ export default function SharedSakeenahConversationPage({ token }: { token: strin
         </header>
 
         <div className="relative z-10 h-[100dvh] overflow-y-auto overscroll-contain px-0 pb-[178px] pt-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <section className="relative mt-24 w-full overflow-hidden rounded-t-[28px] rounded-b-[28px] border border-x-0 border-[#b88a4f]/20 dark:border-[var(--sk-accent)]/20 bg-[#fdfbf7]/75 px-5 py-4 shadow-sm backdrop-blur-xl">
+          <section className="relative mt-24 w-full overflow-hidden rounded-t-[28px] rounded-b-[28px] border border-x-0 border-[#b88a4f]/20 dark:border-[var(--sk-accent)]/20 bg-[#fdfbf7]/75 dark:bg-[var(--sk-bg2)] px-5 py-4 shadow-sm backdrop-blur-xl">
             <h1 className="break-words text-right font-display text-[22px] font-black leading-[1.45] text-[var(--sk-label)]">{payload.conversation.title}</h1>
-            <div className="mt-3 w-full max-w-full overflow-hidden rounded-[16px] border border-[var(--sk-sep)] bg-[var(--sk-bg2)] px-3 py-2 text-left text-[9px] font-bold leading-4 text-[var(--sk-label2)]" dir="ltr" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>{shareUrl}</div>
             <div className="mt-3 flex flex-wrap justify-end gap-x-4 gap-y-1.5 text-[10px] font-bold text-[var(--sk-label2)]">
               <span>تم الإنشاء: {formatDate(payload.conversation.created_at)}</span>
               <span>تاريخ النشر: {formatDate(payload.share.createdAt)}</span>
@@ -132,14 +131,14 @@ export default function SharedSakeenahConversationPage({ token }: { token: strin
 
           <section className="relative z-10 mx-auto mt-5 max-w-[390px] space-y-4 px-5">
             {payload.messages.map((message) => message.role === "user" ? (
-              <div key={message.id} className="mr-auto max-w-[85%] rounded-[28px] border border-[#2b1a10]/20 dark:border-[var(--sk-label)]/20 bg-gradient-to-br from-[var(--sk-shade)] to-[#3f281a] p-4 text-right text-[14px] font-bold leading-relaxed text-[#fff9f1] shadow-md" dir="auto">{message.content}</div>
+              <div key={message.id} className="mr-auto max-w-[85%] rounded-[28px] border border-[#2b1a10]/20 dark:border-[var(--sk-label)]/20 bg-gradient-to-br from-[var(--sk-shade)] to-[#3f281a] dark:bg-none dark:bg-[var(--sk-bg3)] p-4 text-right text-[14px] font-bold leading-relaxed text-[#fff9f1] dark:text-[var(--sk-label)] dark:border-transparent shadow-md" dir="auto">{message.content}</div>
             ) : (
               <article key={message.id} className="w-full bg-transparent px-0 py-2 text-right text-[var(--sk-label)]"><div className="mb-2 flex items-center gap-1.5 text-[11px] font-display font-black text-[var(--sk-accent)] select-none"><span>سَكِينَة AI</span></div><div className="whitespace-pre-wrap"><PublicMarkdown content={message.content} /></div></article>
             ))}
           </section>
         </div>
 
-        <section className="fixed inset-x-0 bottom-0 z-40 overflow-hidden rounded-t-[26px] border border-x-0 border-b-0 border-white/50 bg-[#ece7de]/72 dark:bg-[var(--sk-bg)]/72 shadow-[0_-14px_40px_rgba(43,26,16,0.16)] backdrop-blur-2xl">
+        <section className="fixed inset-x-0 bottom-0 z-40 overflow-hidden rounded-t-[26px] border border-x-0 border-b-0 border-white/50 dark:border-[var(--sk-sep)] bg-[#ece7de]/72 dark:bg-[var(--sk-bg)]/72 shadow-[0_-14px_40px_rgba(43,26,16,0.16)] backdrop-blur-2xl">
           <div className="mx-auto w-full max-w-[390px] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3">
             <div className="flex items-center gap-3 text-right">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[14px] bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-sm"><MessageCirclePlus size={18} /></div>
