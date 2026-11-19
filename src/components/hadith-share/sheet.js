@@ -65,10 +65,10 @@ function layout(){
  if(!S.fmt){c.style.height='auto';c.style.minHeight='1350px';size((L<120?70:L<260?60:L<480?52:L<800?44:L<1200?38:32)*v)}
  else{
   c.style.height=S.fmt+'px';c.style.minHeight='0';let lo=20,hi=86;size(lo);
-  if(blk.offsetHeight>mid.clientHeight){S.fmt=0;sync();layout();toast('النص طويل على هذا المقاس. اختر «تلقائي» أو مقاسًا أطول.','er',3400);return;}
+  if(blk.offsetHeight>mid.clientHeight){S.fmt=0;sync();layout();toast('النص طويل على هذا المقاس. اختر «تلقائي» أو مقاسًا أطول.','er');return;}
   else{while(hi-lo>.4){const m=(lo+hi)/2;size(m);blk.offsetHeight<=mid.clientHeight?lo=m:hi=m}size(lo*Math.min(1,v))}
  }
- if(note)toast(note,'er',3400);view();
+ if(note)toast(note,'er');view();
 }
 function view(){
  const w=$('well'),h=$('card').offsetHeight;if(!h)return;
@@ -100,7 +100,7 @@ async function fonts(){
  if(!specs.every(([w,i])=>document.fonts.check(w+' '+f[i],'ابتثحديث'))) throw new Error('Local fonts unavailable');
  fontUsable=true;
 }
-let tt;function toast(m,k='',ms=2800){if(!isOpen())return;const e=$('toast');e.textContent=m;e.className='hshare-toast app-toast '+(k==='ok'?'app-toast--success':k==='er'?'app-toast--error':'app-toast--info')+' hshare-on';e.setAttribute('role',k==='er'?'alert':'status');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('hshare-on'),Math.min(5000,Math.max(2000,ms)))}
+let tt;function toast(m,k=''){if(!isOpen())return;const e=$('toast');e.textContent=m;e.className='hshare-toast app-toast '+(k==='ok'?'app-toast--success':k==='er'?'app-toast--error':'app-toast--info')+' hshare-on';e.setAttribute('role',k==='er'?'alert':'status');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('hshare-on'),k==='er'?5000:2000)}
 /* ===== التصدير: سلّم جودة تلقائي صامت (4K ثم أقل حتى ينجح) ===== */
 const LADDER=[4,3.5,3,2.5,2,1.5,1],MSG={gallery:'تم الحفظ في المعرض',shared:'تم تجهيز الصورة للمشاركة',download:'تم التنزيل'};
 const frames=n=>new Promise(r=>{const f=()=>n--<=0?r():requestAnimationFrame(f);f()});
@@ -150,7 +150,7 @@ async function dl(){
   const r=await exportImage(),name='sakina-hadith-'+String(D.number||'card')+'.png';
   const how=CFG.saveImage?(await CFG.saveImage(r.blob,name))||'gallery':webDownload(r.blob,name);
   if(how==='cancelled'){t.textContent='تنزيل';b.disabled=false;return}
-  t.textContent='تم ✓';toast(`${MSG[how]||MSG.download}${r.scale>=4?' بجودة 4K':''} · ${r.width}×${r.height}`,'ok',3400);
+  t.textContent='تم ✓';toast(`${MSG[how]||MSG.download}${r.scale>=4?' بجودة 4K':''} · ${r.width}×${r.height}`,'ok');
  }catch(e){console.error('[SakinaShare]',e);t.textContent='أعد المحاولة';toast('تعذّر الحفظ، حاول مرة أخرى','er')}
  setTimeout(()=>{t.textContent='تنزيل'},2200);b.disabled=false;
 }

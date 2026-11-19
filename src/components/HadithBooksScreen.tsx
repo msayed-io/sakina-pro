@@ -596,7 +596,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     setReportingHadith(null);
     setReportNote("");
     setReportSuccessToast(true);
-    setTimeout(() => setReportSuccessToast(false), 3500);
+    setTimeout(() => setReportSuccessToast(false), 2000);
   };
 
   const handleDeleteReport = (id: string) => {
