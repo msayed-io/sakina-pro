@@ -1,7 +1,7 @@
 {
   "name": "sakineh",
   "private": true,
-  "version": "2.3.24",
+  "version": "2.3.25",
   "type": "module",
   "scripts": {
     "dev": "tsx src/server/index.ts",

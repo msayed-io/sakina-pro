@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { fromCivilDay, toCivilDay, OCCASIONS } from '../src/features/hijri-month/calendar';
+import { fromCivilDay, toCivilDay, OCCASIONS } from '../src/services/hijri-calendar';
 import { MONTH_START_RJD } from '../src/features/hijri-month/month-starts';
 const official=JSON.parse(fs.readFileSync(new URL('./hijri-kacst-fixture.json',import.meta.url),'utf8'));
 let count=0;

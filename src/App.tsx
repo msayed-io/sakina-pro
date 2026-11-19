@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
   useCallback,
+  useSyncExternalStore,
   startTransition,
   lazy,
   Suspense,
@@ -16,6 +17,7 @@ import AuthScreen from "@/components/AuthScreen";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
 import ProgressiveBlur from "@/components/ProgressiveBlur";
 import HijriMonthScreen, { preloadHijriHero } from "@/features/hijri-month/HijriMonthScreen";
+import { DEFAULT_HIJRI_OFFSET, formatHijriDate, getHijriOffset, localCivilDay, subscribeHijriOffset, upcomingHijriOccasions } from "@/services/hijri-calendar";
 import type { AuthUser } from "@/services/auth-service";
 import {
   getCurrentSession,
@@ -264,6 +266,9 @@ function AuthenticatedApp() {
   const PrayerSettingsScreen = preparedScreens.prayerSettings ?? LazyPrayerSettings;
   /* ── Existing state ── */
   const [now, setNow] = useState(() => new Date());
+  const hijriOffset = useSyncExternalStore(subscribeHijriOffset, getHijriOffset, () => DEFAULT_HIJRI_OFFSET);
+  const civilDay = localCivilDay(now);
+  const hijriSnapshot = useMemo(() => upcomingHijriOccasions(now, hijriOffset), [civilDay, hijriOffset]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -620,8 +625,15 @@ function AuthenticatedApp() {
   );
 
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(timer);
+    const update = () => setNow(new Date());
+    const timer = window.setInterval(update, 1000);
+    document.addEventListener("visibilitychange", update);
+    window.addEventListener("focus", update);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", update);
+      window.removeEventListener("focus", update);
+    };
   }, []);
 
   useEffect(() => {
@@ -727,11 +739,9 @@ function AuthenticatedApp() {
   ]);
 
   const dateStrings = useMemo(() => {
-    const hijriDate = new Intl.DateTimeFormat("ar-SA-u-ca-islamic", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(now);
+    const hijriDate = hijriSnapshot.today
+      ? `${formatHijriDate(hijriSnapshot.today)} هـ`
+      : "التاريخ الهجري غير متاح";
     const gregorianDate = new Intl.DateTimeFormat("ar-EG", {
       weekday: "long",
       day: "numeric",
@@ -739,7 +749,7 @@ function AuthenticatedApp() {
       year: "numeric",
     }).format(now);
     return { hijriDate, gregorianDate };
-  }, [now.getDate(), now.getMonth(), now.getFullYear()]);
+  }, [civilDay, hijriSnapshot]);
 
   /* ── Prayer Timeline Engine (منظومة Dar-Al-Hikayat المرجعية) ──
      خط زمني فلكي متصل UTC: عشاء الأمس ← فجر اليوم ← … ← عشاء ← فجر الغد.
@@ -1713,7 +1723,7 @@ function AuthenticatedApp() {
       <AnimatePresence>
         {showHijriMonth && (
           <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 300, damping: 30 }}>
-            <HijriMonthScreen onBack={closeHijriMonth} />
+            <HijriMonthScreen data={hijriSnapshot} onBack={closeHijriMonth} />
           </motion.div>
         )}
       </AnimatePresence>
