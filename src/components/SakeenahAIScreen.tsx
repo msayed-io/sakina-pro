@@ -46,7 +46,7 @@ import SakeenahAvatar from "@/components/SakeenahAvatar";
 
 type Message = {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "error";
   content: string;
   timestamp: Date;
   isNew?: boolean;
@@ -383,7 +383,19 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isConversationsLoading, setIsConversationsLoading] = useState(true);
   const [isConversationLoading, setIsConversationLoading] = useState(false);
-  const [storageError, setStorageError] = useState<string | null>(null);
+  const [storageError, setStorageErrorState] = useState<string | null>(null);
+  const noticeTimerRef = useRef<number | null>(null);
+  const setStorageError = useCallback((message: string | null) => {
+    if (noticeTimerRef.current !== null) window.clearTimeout(noticeTimerRef.current);
+    setStorageErrorState(message);
+    noticeTimerRef.current = message ? window.setTimeout(() => {
+      setStorageErrorState(null);
+      noticeTimerRef.current = null;
+    }, 5000) : null;
+  }, []);
+  useEffect(() => () => {
+    if (noticeTimerRef.current !== null) window.clearTimeout(noticeTimerRef.current);
+  }, []);
   const [openConversationMenuId, setOpenConversationMenuId] = useState<string | null>(null);
   const [renameTarget, setRenameTarget] = useState<StoredConversation | null>(null);
   const [renameValue, setRenameValue] = useState("");
@@ -910,34 +922,22 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
 
     } catch (error) {
       console.error("Sakeenah AI error:", error);
-      setStorageError("تعذر تأكيد حفظ الرد. انسخه قبل مغادرة المحادثة ثم تحقق من الاتصال.");
       void trackAndroidUsageSignal("sakina_request_failed", error instanceof Error ? error.name : "request_error");
       setMessages((prev) => {
-        const index = prev.findIndex((m) => m.id === aiMsgId);
-        if (index !== -1) {
-          if (prev[index].content.trim()) {
-            return prev.map((msg) =>
-              msg.id === aiMsgId ? { ...msg, isStreaming: false } : msg
-            );
-          } else {
-            const cleaned = prev.filter((m) => m.id !== aiMsgId);
-            const errorMsg: Message = {
-              id: Math.random().toString(),
-              role: "assistant",
-              content: "عذراً، حدث خطأ أثناء بث الإجابة. يرجى المحاولة مرة أخرى.",
-              timestamp: new Date()
-            };
-            return [...cleaned, errorMsg];
-          }
-        } else {
-          const errorMsg: Message = {
-            id: Math.random().toString(),
-            role: "assistant",
-            content: "عذراً، لم أتمكن من الاتصال بالخادم الشرعي حالياً. يرجى التأكد من اتصالك بالإنترنت والمحاولة مجدداً.",
-            timestamp: new Date()
-          };
-          return [...prev, errorMsg];
-        }
+        const reply = prev.find((item) => item.id === aiMsgId);
+        const hasPartialReply = Boolean(reply?.content.trim());
+        const next = hasPartialReply
+          ? prev.map((item) => item.id === aiMsgId ? { ...item, isStreaming: false } : item)
+          : prev.filter((item) => item.id !== aiMsgId);
+        const errorMessage: Message = {
+          id: `error-${aiMsgId}`,
+          role: "error",
+          content: hasPartialReply
+            ? "توقفت الإجابة قبل اكتمالها، وقد لا تكون حُفظت. حاول مرة أخرى."
+            : "تعذر الحصول على إجابة حاليًا. حاول مرة أخرى.",
+          timestamp: new Date(),
+        };
+        return [...next, errorMessage];
       });
     } finally {
       setIsLoading(false);
@@ -1161,7 +1161,12 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
               </div>
               <div className="cut-crystal-panel mt-4 flex items-center gap-2 rounded-[18px] p-2">
                 <input readOnly value={shareResult.result.url} className="min-w-0 flex-1 bg-transparent px-2 text-left text-[10px] font-bold text-[var(--sk-label)] outline-none" dir="ltr" aria-label="رابط مشاركة المحادثة" />
-                <button type="button" onClick={() => void navigator.clipboard?.writeText(shareResult.result.url)} className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[var(--sk-accent)] px-3 text-[11px] font-black text-[var(--sk-on-espresso)] hover:bg-[var(--sk-accent-deep3)] cursor-pointer"><Copy size={13} />نسخ</button>
+                <button type="button" onClick={() => {
+                  if (!navigator.clipboard) { setStorageError("تعذر نسخ رابط المشاركة."); return; }
+                  void navigator.clipboard.writeText(shareResult.result.url)
+                    .then(() => setStorageError("تم نسخ رابط المشاركة."))
+                    .catch(() => setStorageError("تعذر نسخ رابط المشاركة."));
+                }} className="flex h-9 shrink-0 items-center gap-1 rounded-full bg-[var(--sk-accent)] px-3 text-[11px] font-black text-[var(--sk-on-espresso)] hover:bg-[var(--sk-accent-deep3)] cursor-pointer"><Copy size={13} />نسخ</button>
               </div>
               <div className="mt-4 flex gap-2">
                 <button type="button" onClick={() => setShareResult(null)} className="h-10 flex-1 rounded-full border border-[#b88a4f]/25 dark:border-[var(--sk-accent)]/25 text-[12px] font-black text-[var(--sk-label2)] hover:bg-[var(--sk-cream)] cursor-pointer">تم</button>
@@ -1198,10 +1203,11 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            role="alert"
-            className="pointer-events-none fixed bottom-6 left-5 right-5 z-[120] mx-auto max-w-[360px] rounded-[20px] border border-white/45 bg-[#ece7de]/55 dark:bg-[var(--sk-bg)]/55 px-4 py-3 text-center text-[11px] font-black text-[var(--sk-label)] shadow-[0_18px_42px_rgba(43,26,16,0.24)] backdrop-blur-2xl"
+            role={storageError.startsWith("تعذر") ? "alert" : "status"}
+            className={`app-toast ${storageError.startsWith("تعذر") ? "app-toast--error" : storageError.startsWith("تم") ? "app-toast--success" : "app-toast--info"}`}
           >
-            {storageError}
+            <span className="app-toast__icon" aria-hidden="true">{storageError.startsWith("تعذر") ? "!" : storageError.startsWith("تم") ? "✓" : "•"}</span>
+            <span>{storageError}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1234,6 +1240,12 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           /* Active Chat Thread */
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-1 pt-24 pb-36 space-y-4 scrollbar-thin hide-scrollbar">
             {messages.map((m, idx) => {
+              if (m.role === "error") return (
+                <div key={m.id} role="alert" className="ai-chat-error" dir="rtl">
+                  <AlertCircle size={17} aria-hidden="true" />
+                  <span>{m.content}</span>
+                </div>
+              );
               const isUser = m.role === "user";
               const isEditingThisMessage = isUser && editingMessageId === m.id;
               const canEditThisMessage = isUser && m.id === lastUserMessageId && !isLoading && !hasStreamingAssistantMessage;

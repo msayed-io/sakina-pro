@@ -925,9 +925,10 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 cut-crystal-capsule-dark sk-rim px-5 py-2.5 flex items-center gap-2 text-[#fdfcfb] text-xs font-bold shadow-2xl border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 backdrop-blur-xl"
+            role="status"
+            className="app-toast app-toast--success"
           >
-            <ShieldCheck className="w-4 h-4 text-[var(--sk-accent-bright)]" />
+            <span className="app-toast__icon" aria-hidden="true">✓</span>
             <span>تم تدوين وحفظ ملاحظتك وتصحيحك بنجاح في سجل بلاغاتك المحلية!</span>
           </motion.div>
         )}

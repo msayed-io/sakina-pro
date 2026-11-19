@@ -177,7 +177,7 @@ export default function AzkarCounterScreen({
   // Autoclose toast after delay
   useEffect(() => {
     if (toastMessage) {
-      const t = setTimeout(() => setToastMessage(null), 1500);
+      const t = setTimeout(() => setToastMessage(null), 2000);
       return () => clearTimeout(t);
     }
   }, [toastMessage]);
@@ -610,9 +610,11 @@ export default function AzkarCounterScreen({
             initial={{ opacity: 0, y: 15, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -15, scale: 0.9 }}
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-[#2b1a10]/95 dark:bg-[var(--sk-shade)]/95 text-[var(--sk-bg)] text-[13px] font-bold shadow-lg shadow-black/20 pointer-events-none"
+            role={toastMessage.startsWith("فشل") ? "alert" : "status"}
+            className={`app-toast ${toastMessage.startsWith("فشل") ? "app-toast--error" : "app-toast--success"}`}
           >
-            {toastMessage}
+            <span className="app-toast__icon" aria-hidden="true">{toastMessage.startsWith("فشل") ? "!" : "✓"}</span>
+            <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

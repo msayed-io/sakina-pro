@@ -100,7 +100,7 @@ async function fonts(){
  if(!specs.every(([w,i])=>document.fonts.check(w+' '+f[i],'ابتثحديث'))) throw new Error('Local fonts unavailable');
  fontUsable=true;
 }
-let tt;function toast(m,k='',ms=2800){const e=$('toast');e.textContent=m;e.className='hshare-toast hshare-on '+(k ? 'hshare-'+k : '');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('hshare-on'),ms)}
+let tt;function toast(m,k='',ms=2800){if(!isOpen())return;const e=$('toast');e.textContent=m;e.className='hshare-toast app-toast '+(k==='ok'?'app-toast--success':k==='er'?'app-toast--error':'app-toast--info')+' hshare-on';e.setAttribute('role',k==='er'?'alert':'status');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('hshare-on'),Math.min(5000,Math.max(2000,ms)))}
 /* ===== التصدير: سلّم جودة تلقائي صامت (4K ثم أقل حتى ينجح) ===== */
 const LADDER=[4,3.5,3,2.5,2,1.5,1],MSG={gallery:'تم الحفظ في المعرض',shared:'تم تجهيز الصورة للمشاركة',download:'تم التنزيل'};
 const frames=n=>new Promise(r=>{const f=()=>n--<=0?r():requestAnimationFrame(f);f()});
@@ -170,7 +170,7 @@ function open(d){
  if(d)D=d;for(const id of ['o_bk','o_kt','o_bb','o_nm','o_ld','o_mt','o_gr','o_br','o_tg'])$(id).textContent='';sync();install();$('scrim').classList.add('hshare-on');const s=$('sheet');s.classList.add('hshare-on');s.setAttribute('aria-hidden','false');
  const generation=++drawGeneration;fonts().then(()=>{if(isOpen()&&generation===drawGeneration)draw()}).catch(()=>{if(isOpen()&&generation===drawGeneration)toast('تعذّر تحميل الخطوط، حاول مرة أخرى','er')});$('x').focus({preventScroll:true});
 }
-function close(){++drawGeneration;closeMenu();$('scrim').classList.remove('hshare-on');const s=$('sheet');s.classList.remove('hshare-on');s.setAttribute('aria-hidden','true');uninstall()}
+function close(){++drawGeneration;clearTimeout(tt);$('toast').classList.remove('hshare-on');closeMenu();$('scrim').classList.remove('hshare-on');const s=$('sheet');s.classList.remove('hshare-on');s.setAttribute('aria-hidden','true');uninstall()}
 const isOpen=()=>$('sheet').classList.contains('hshare-on');
 function handleBack(){if(!isOpen())return false;if(openT)closeMenu();else close();return true}
 function configure(o={}){

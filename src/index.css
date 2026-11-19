@@ -1257,3 +1257,59 @@ html:not([data-theme="dark"]) .qf-specular-rim {
     --sk-warning: #FFA056;
   }
 }
+
+/* Temporary in-app feedback, kept separate from native notifications. */
+.app-toast {
+  position: fixed;
+  z-index: 200;
+  top: calc(max(0px, env(safe-area-inset-top)) + 78px);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
+  max-width: min(360px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--toast-border);
+  border-radius: 18px;
+  color: var(--toast-text);
+  background: var(--toast-bg);
+  box-shadow: 0 12px 32px rgba(0,0,0,.22);
+  font-size: 12px; font-weight: 700; line-height: 1.65;
+  text-align: right;
+  pointer-events: none;
+}
+.app-toast--success { --toast-bg:#e5f4e9; --toast-border:#9dceb0; --toast-text:#125b35; --toast-icon:#187346; }
+.app-toast--error { --toast-bg:#fbe9e6; --toast-border:#e6ada6; --toast-text:#8c2822; --toast-icon:#b23b32; }
+.app-toast--info { --toast-bg:#f7edda; --toast-border:#d9bb86; --toast-text:#66440e; --toast-icon:#9a6a1e; }
+html[data-theme="dark"] .app-toast--success { --toast-bg:#103725; --toast-border:#367d53; --toast-text:#e4f8e9; --toast-icon:#328c59; }
+html[data-theme="dark"] .app-toast--error { --toast-bg:#4c211e; --toast-border:#a34a40; --toast-text:#ffe9e5; --toast-icon:#b64337; }
+html[data-theme="dark"] .app-toast--info { --toast-bg:#49361b; --toast-border:#9a7138; --toast-text:#fff2d8; --toast-icon:#a57429; }
+.app-toast__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--toast-icon);
+  color: #fff;
+  font: 800 14px/1 sans-serif;
+}
+.ai-chat-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 4px;
+  padding: 11px 13px;
+  border-radius: 16px;
+  color: #8c2822;
+  background: #fbe9e6;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.ai-chat-error svg { flex: none; margin-top: 2px; }
+html[data-theme="dark"] .ai-chat-error { color:#ffe9e5; background:#4c211e; }

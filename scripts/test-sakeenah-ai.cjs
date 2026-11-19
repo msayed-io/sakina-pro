@@ -9,13 +9,13 @@ const rows=['السؤال الأول','إجابة محفوظة أولى','الس
 async function main(){ const browser=await chromium.launch();try {for(const theme of ['dark','light']) {
  const ctx=await browser.newContext({viewport:{width:390,height:844},colorScheme:theme,permissions:['clipboard-read','clipboard-write']});
  await ctx.addInitScript(()=>{localStorage.setItem('sakeenah-auth:session', JSON.stringify({access_token:'test-token',refresh_token:'test-refresh',expires_at:Math.floor(Date.now()/1000)+3600,token_type:'bearer',user:{id:'test-user',aud:'authenticated',user_metadata:{name:'test'}}}));});
- let mode='fail';
+ let mode='empty';
  await ctx.route('https://mock.invalid/**',async route=>{const req=route.request(); const url=req.url(); let body='{}'; let contentType='application/json';
  if(req.method()==='OPTIONS') return route.fulfill({status:200,headers:{'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'*'}});
  if(url.includes('/rest/v1/ai_conversations')) body=JSON.stringify([conv]);
  else if(url.includes('/rest/v1/ai_messages')) body=JSON.stringify(rows);
- else if(url.includes('/functions/v1/sakeenah-ai')) { contentType='text/event-stream'; body=mode==='fail'?'data: {"text":"رد لم يؤكد حفظه"}\n\ndata: {"error":"Failed to generate stream response"}\n\ndata: [DONE]\n\n':'data: {"text":"رد ناجح"}\n\ndata: [DONE]\n\n'; }
- else if(url.includes('/functions/v1/sakeenah-sharing')) body=JSON.stringify({conversation:conv,messages:rows.map(x=>({id:x.id,role:x.role,content:x.content,createdAt:x.created_at})),share:{createdAt:now,expiresAt:null}});
+ else if(url.includes('/functions/v1/sakeenah-ai')) { contentType='text/event-stream'; body=mode==='empty'?'data: {"error":"Failed to generate stream response"}\n\ndata: [DONE]\n\n':mode==='partial'?'data: {"text":"جزء من إجابة"}\n\ndata: {"error":"Failed to generate stream response"}\n\ndata: [DONE]\n\n':'data: {"text":"رد ناجح"}\n\ndata: [DONE]\n\n'; }
+ else if(url.includes('/functions/v1/sakeenah-sharing')) body=JSON.stringify(req.method()==='POST'?{shareId:'s',token:'a'.repeat(32),url:'https://example.test/shared/chat/'+ 'a'.repeat(32),createdAt:now,expiresAt:null}:{conversation:conv,messages:rows.map(x=>({id:x.id,role:x.role,content:x.content,createdAt:x.created_at})),share:{createdAt:now,expiresAt:null}});
  await route.fulfill({status:200,contentType,body,headers:{'access-control-allow-origin':'*'}});
  });
  const page=await ctx.newPage(); let errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -29,9 +29,20 @@ async function main(){ const browser=await chromium.launch();try {for(const them
  await page.getByRole('button',{name:'فتح المحادثات المحفوظة'}).click(); await page.waitForTimeout(200);
  const drawer=await page.locator('aside').evaluate(el=>{let s=getComputedStyle(el);return {bg:s.backgroundColor,blur:s.backdropFilter,border:s.borderWidth}}); assert.equal(drawer.blur,'none');assert(!drawer.bg.includes('rgba'),JSON.stringify(drawer));assert.equal(drawer.border,'0px');
  await page.locator('aside').getByRole('button',{name:'إغلاق قائمة المحادثات'}).click();
+ // A failure before any AI text must not be rendered as an AI response or get response controls.
  await textarea.fill('سؤال تجريبي');await page.getByRole('button',{name:'إرسال السؤال'}).click();
- await page.getByText('رد لم يؤكد حفظه').waitFor();await page.getByText('تعذر تأكيد حفظ الرد.',{exact:false}).waitFor(); await page.getByText('رد لم يؤكد حفظه').click(); await page.getByTitle('نسخ الإجابة').click(); assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),'رد لم يؤكد حفظه');
- mode='success'; await textarea.fill('سؤال ناجح'); await page.getByRole('button',{name:'إرسال السؤال'}).click(); await page.getByText('رد ناجح',{exact:true}).waitFor(); await page.getByText('تعذر تأكيد حفظ الرد.',{exact:false}).waitFor({state:'hidden'}); assert.deepEqual(errors,[]); console.log(theme,'saved replies render and recoverable tools, opaque drawer, focus and failed-save warning: PASS');
+ const failure=page.getByRole('alert').filter({hasText:'تعذر الحصول على إجابة'});await failure.waitFor();
+ assert.equal(await failure.locator('button').count(),0);assert.equal(await page.getByText('تعذر تأكيد حفظ الرد.',{exact:false}).count(),0);
+ // A genuine partial reply stays visible, with a distinct error, and remains copyable.
+ mode='partial'; await textarea.fill('سؤال آخر'); await page.getByRole('button',{name:'إرسال السؤال'}).click();
+ await page.getByText('جزء من إجابة').waitFor(); await page.getByRole('alert').filter({hasText:'توقفت الإجابة قبل اكتمالها'}).waitFor();
+ await page.getByText('جزء من إجابة').click(); await page.getByTitle('نسخ الإجابة').click(); assert.equal(await page.evaluate(()=>navigator.clipboard.readText()),'جزء من إجابة');
+ mode='success'; await textarea.fill('سؤال ناجح'); await page.getByRole('button',{name:'إرسال السؤال'}).click(); await page.getByText('رد ناجح',{exact:true}).waitFor();
+ // Generate an in-app share notification, validate the top placement, semantic color and expiry.
+ await page.getByRole('button',{name:'فتح المحادثات المحفوظة'}).click(); await page.getByRole('button',{name:'إجراءات محادثة اختبار'}).click(); await page.getByRole('button',{name:'مشاركة المحادثة'}).click();
+ await page.getByText('يمكن لأي شخص يملك الرابط مشاهدة هذه المحادثة.').waitFor(); await page.getByRole('button',{name:'نسخ',exact:true}).click();
+ const toast=page.locator('.app-toast').filter({hasText:'تم نسخ رابط المشاركة'}); await toast.waitFor(); const box=await toast.boundingBox(); assert(box.y >= 70 && box.y < 200,JSON.stringify(box)); assert(await toast.evaluate(e=>e.classList.contains('app-toast--success'))); await toast.waitFor({state:'hidden',timeout:7000});
+ assert.deepEqual(errors,[]); console.log(theme,'stored replies, previous copy, drawer, empty/partial failures, success and temporary top notice: PASS');
  const shared=await ctx.newPage();await shared.goto(base+'?shared=1'); await shared.getByText('محادثة اختبار').waitFor(); assert.equal(await shared.locator('text='+base).count(),0);
  let s=await shared.locator('h1').evaluate(el=>({bg:getComputedStyle(el.parentElement).backgroundColor,bubble:getComputedStyle([...document.querySelectorAll('div')].find(e=>e.textContent==='السؤال الأول')).backgroundImage}));
  if(theme==='dark') { assert.equal(s.bg,'rgb(28, 28, 30)');assert.equal(s.bubble,'none'); }

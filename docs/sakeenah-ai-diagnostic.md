@@ -19,3 +19,11 @@ The client now treats server errors, an incomplete stream and an empty reply as 
 ## Reproducible browser regression
 
 Start Vite with `VITE_SUPABASE_URL=https://mock.invalid VITE_SUPABASE_PUBLISHABLE_KEY=public-test-key DISABLE_HMR=true` on port 4189 and run `node scripts/test-sakeenah-ai.cjs`. The test intercepts `mock.invalid` and uses synthetic conversation rows, synthetic session and SSE; it does not access a real user account. It tests both themes, displayed loaded replies, previous-reply copying, drawer opacity, input focus, mocked SSE failure and success, public dark surfaces, hidden URL and copy link. It is not an Android WebView or a production storage test.
+
+## Follow-up: failure presentation and public-link startup
+
+A subsequent request showed that a stream can fail before any answer appears. The previous UI created an `assistant` message containing an error, gave it assistant controls, and displayed an unconditional instruction to copy even when there was nothing to copy. The UI now uses a separate, non-persisted error row without assistant tools; a genuine partial answer remains available with a separate interruption explanation. This change does not identify the upstream failure or prove persistence of the user's existing data.
+
+On public share routes the startup splash previously remained visible for at least two seconds after startup. Only that public-route splash is bypassed; the normal app splash, public-token validation, Clarity policy and share API remain. Three local production Chromium runs using the same mocked 150 ms sharing response took 2.89–2.94 seconds before and 0.97–1.02 seconds after to reach an interactive share header. This is a controlled local measurement, not a real network, server, Android WebView or guarantee of speed.
+
+Temporary in-app toast cards for AI, Azkar, Hadith report and Hadith image export use a top placement and finite lifetimes; system/Android notifications, inline status text and persistent errors are separate and unchanged. `scripts/test-sakeenah-ai.cjs` tests simulated empty/partial/success streams and toast timing; `scripts/test-feedback-toasts.cjs` exercises Azkar, local Hadith report and image export feedback in both themes. No real AI service was called in these tests.

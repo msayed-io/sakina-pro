@@ -16,6 +16,8 @@ const appModulePromise = import("./App").then(async (module) => {
 });
 const App = lazy(() => appModulePromise);
 
+const isPublicShare = /^\/shared\/chat\/[A-Za-z0-9_-]{32,96}\/?$/.test(window.location.pathname);
+
 function Boot() {
   const [isAppReady, setIsAppReady] = useState(false);
   const [isSplashComplete, setIsSplashComplete] = useState(false);
@@ -39,7 +41,7 @@ function Boot() {
         </Suspense>
       )}
 
-      {!isSplashComplete && (
+      {!isPublicShare && !isSplashComplete && (
         <SplashScreen canComplete={isAppReady} onComplete={() => setIsSplashComplete(true)} />
       )}
     </div>
