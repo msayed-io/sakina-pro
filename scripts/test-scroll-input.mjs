@@ -67,32 +67,31 @@ try {
     await page.getByRole('button', { name: 'الخروج من مكتبة سكينة' }).click();
     await nav(3); await probe('azkar');
     await page.getByRole('button', { name: /أذكار الصباح إشراقة يومك/ }).click();
-    await page.getByTitle('رجوع').waitFor({ state: 'visible' }); await page.waitForTimeout(800);
-    const text = page.locator('div.flex-1.overflow-y-auto p').first();
-    const beforeText = await text.innerText();
-    await probe('long azkar text');
-    assert.equal(await text.innerText(), beforeText, 'Scrolling text must not navigate to another item');
-    assert((await page.locator('div.touch-none').first().innerText()).includes('0 من 1'), 'Scrolling must not increment the counter');
-    await text.click();
-    assert((await page.locator('div.touch-none').first().innerText()).includes('1 من 1'), 'Tapping text must still increment the counter');
-    rows.push('azkar tap: counter incremented');
+    await page.locator('#az_back').waitFor({ state: 'visible' });
+    await page.waitForFunction(() => document.querySelector('.azref-root .tx')?.style.fontSize);
     if (gesture === 'touch') {
-      // Preserve the distinct card-swipe navigation gesture outside the text.
-      const card = await page.locator('div.touch-none').first().boundingBox();
-      const x = card.x + 12, y = card.y + card.height * .8;
+      const card = await page.locator('#az_stage').boundingBox();
+      const x = card.x + card.width / 2, y = card.y + card.height * .8;
       const cdp = await context.newCDPSession(page);
       await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
-      for (const dy of [35, 70, 115, 165]) {
+      for (const dy of [35,70,115,165]) {
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - dy }] });
         await page.waitForTimeout(35);
       }
       await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
       await cdp.detach(); await page.waitForTimeout(700);
-      const secondText = await text.innerText();
-      assert.notEqual(secondText, beforeText, 'Card swipe should still navigate');
+      await page.locator('#az_share').click();
+      await page.waitForFunction(() => document.querySelector('#az_k_o_mt')?.textContent?.startsWith('اللَّهُمَّ بِكَ أَصْبَحْنَا'));
+      await page.keyboard.press('Escape');
       rows.push('azkar card swipe: next item');
     }
-    await page.getByTitle('رجوع').click();
+    const itemIndex = gesture === 'touch' ? 1 : 0;
+    const card = page.locator('.azref-root .card').nth(itemIndex);
+    assert((await card.locator('.cnt span').innerText()).includes('0 من 1'));
+    await page.locator('#az_stage').click({position:{x:100,y:100}});
+    assert((await card.locator('.cnt span').innerText()).includes('تم'));
+    rows.push('azkar tap: counter incremented');
+    await page.locator('#az_back').click();
     await page.getByRole('button', { name: /أسماء الله الحسنى تعلّم/ }).click();
     await page.getByRole('button', { name: 'رجوع', exact: true }).waitFor({ state: 'visible' }); await page.waitForTimeout(800);
     await probe('names panel');

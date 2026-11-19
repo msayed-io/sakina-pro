@@ -1,18 +1,10 @@
+import { exportShareImage } from './export-engine';
 import html2canvas from 'html2canvas';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { saveHadithImage } from '@/services/hadith-share-native';
 import markup from './sheet.html?raw';
 import './sheet.css';
-
-// The measurement override is shared if two sheet instances export at once.
-let activeMetricExports=0;
-async function withExportMetrics(render){
- if(activeMetricExports++===0)document.body.classList.add('hshare-export-metrics');
- try{return await render()}finally{
-  if(--activeMetricExports===0)document.body.classList.remove('hshare-export-metrics');
- }
-}
 
 export function createHadithShare(){
 const root=document.createElement('div');root.className='hshare-root';root.dir='rtl';root.innerHTML=markup;document.body.appendChild(root);
@@ -102,44 +94,8 @@ async function fonts(){
 }
 let tt;function toast(m,k=''){if(!isOpen())return;const e=$('toast');e.textContent=m;e.className='hshare-toast app-toast '+(k==='ok'?'app-toast--success':k==='er'?'app-toast--error':'app-toast--info')+' hshare-on';e.setAttribute('role',k==='er'?'alert':'status');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('hshare-on'),k==='er'?5000:2000)}
 /* ===== التصدير: سلّم جودة تلقائي صامت (4K ثم أقل حتى ينجح) ===== */
-const LADDER=[4,3.5,3,2.5,2,1.5,1],MSG={gallery:'تم الحفظ في المعرض',shared:'تم تجهيز الصورة للمشاركة',download:'تم التنزيل'};
-const frames=n=>new Promise(r=>{const f=()=>n--<=0?r():requestAnimationFrame(f);f()});
-function pixelBudget(){
- if(CFG.maxPixels)return CFG.maxPixels;const m=navigator.deviceMemory;
- let c=m>=8?48e6:m>=6?40e6:m>=4?28e6:m>=3?20e6:m>=2?14e6:m?8e6:24e6;
- if(/iP(hone|ad|od)/.test(navigator.userAgent))c=Math.min(c,16e6);return c;
-}
-function canvasOK(w,h){ /* بعض الـWebView يعيد لوحة فارغة بلا خطأ: نتحقق بكتابة بكسل وقراءته */
- try{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');if(!x)return false;
-  x.fillStyle='#f00';x.fillRect(w-1,h-1,1,1);const ok=x.getImageData(w-1,h-1,1,1).data[0]===255;c.width=c.height=0;return ok}catch(e){return false}
-}
-function nonBlank(cv){
- try{const x=cv.getContext('2d');let n=0;
-  for(let i=1;i<=5;i++)for(let j=1;j<=5;j++)if(x.getImageData(Math.floor(cv.width*i/6),Math.floor(cv.height*j/6),1,1).data[3]>0)n++;
-  return n>=12}catch(e){return false}
-}
-async function exportImage(){
- const h2c=CFG.html2canvas||window.html2canvas;if(!h2c)throw new Error('SakinaShare: html2canvas غير مُمرَّرة عبر configure()');
- await fonts();draw();await frames(2);
- const card=$('card'),H=card.offsetHeight,cap=pixelBudget();let last=null;
- for(const s of LADDER){
-  const w=Math.round(1080*s),h=Math.round(H*s);
-  if((s>1&&w*h>cap)||!canvasOK(w,h))continue;
-  let cv=null;
-  try{
-   cv=await withExportMetrics(()=>h2c(card,{scale:s,backgroundColor:null,logging:false,imageTimeout:0,onclone:d=>{
-    let n=d.getElementById('hshare-card').parentElement;
-    while(n&&n!==d.body){n.style.transform='none';n.style.overflow='visible';n=n.parentElement}
-    const p=d.getElementById('hshare-pv');p.style.width='auto';p.style.height='auto';
-   }}));
-   if(!nonBlank(cv))throw new Error('blank canvas');
-   const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
-   if(!blob||!blob.size)throw new Error('empty blob');
-   const out={blob,width:cv.width,height:cv.height,scale:s};cv.width=cv.height=0;return out;
-  }catch(e){last=e;if(cv)cv.width=cv.height=0;await frames(1)}
- }
- throw last||new Error('export failed');
-}
+const MSG={gallery:'تم الحفظ في المعرض',shared:'تم تجهيز الصورة للمشاركة',download:'تم التنزيل'};
+function exportImage(){return exportShareImage({CFG,fonts,draw,card:$('card'),preview:$('pv')})}
 function webDownload(blob,name){
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(a.href),5000);return 'download';

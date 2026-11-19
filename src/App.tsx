@@ -57,7 +57,7 @@ import { prefetchQcfFont } from "@/hooks/useQcfFont";
 import { PRELOAD_QCF_PAGES } from "@/constants/appVerses";
 
 const loadAzkar = () => import("@/components/AzkarTabScreen");
-const loadCounter = () => import("@/components/AzkarCounterScreen");
+const loadCounter = () => import("@/features/azkar-reference/AzkarReferenceScreen");
 const loadQuran = () => import("@/components/QuranTabScreen");
 const loadHadith = () => import("@/components/HadithBooksScreen");
 const loadLibrary = () => import("@/components/SakinaLibraryScreen");

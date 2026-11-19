@@ -34,7 +34,7 @@ const { chromium } = require('playwright');
     const bootRequests = requests.slice();
     assert(!bootRequests.some(url => url.includes('/api/hadith/') || url.includes('mp3quran.net/api/')),
       'A screen data request ran before navigation');
-    const labels = ['AzkarTabScreen-', 'AzkarCounterScreen-', 'QuranTabScreen-', 'HadithBooksScreen-', 'SakinaLibraryScreen-', 'SakeenahAIScreen-', 'AsmaAlHusnaScreen-', 'SettingsScreen-', 'PrayerSettingsScreen-'];
+    const labels = ['AzkarTabScreen-', 'AzkarReferenceScreen-', 'QuranTabScreen-', 'HadithBooksScreen-', 'SakinaLibraryScreen-', 'SakeenahAIScreen-', 'AsmaAlHusnaScreen-', 'SettingsScreen-', 'PrayerSettingsScreen-'];
     for (const label of labels) assert(bootRequests.some(url => url.includes(label)), `Not prepared at boot: ${label}`);
 
     await page.locator('nav button').nth(1).click();
@@ -46,8 +46,8 @@ const { chromium } = require('playwright');
     await page.getByRole('button', { name: 'الخروج من مكتبة سكينة' }).click();
     await page.locator('nav button').nth(3).click();
     await page.getByRole('button', { name: /أذكار الصباح إشراقة يومك/ }).click();
-    await page.getByTitle('رجوع').waitFor({ state: 'visible' });
-    await page.getByTitle('رجوع').click();
+    await page.locator('#az_back').waitFor({ state: 'visible' });
+    await page.locator('#az_back').click();
     await page.getByRole('button', { name: /أسماء الله الحسنى تعلّم/ }).click();
     await page.getByRole('button', { name: 'رجوع', exact: true }).waitFor({ state: 'visible' });
     await page.getByRole('button', { name: 'رجوع', exact: true }).click();

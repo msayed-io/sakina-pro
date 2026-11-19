@@ -1,0 +1,57 @@
+<div class="app">
+  <div class="bar">
+    <button class="ib sk-rim" id="az_bm" aria-label="حفظ"><svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg></button>
+    <button class="ib sk-rim" id="az_back" aria-label="رجوع"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <h1></h1>
+  <button class="ch" id="az_up" aria-label="السابق"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+  <div class="stage" id="az_stage"></div>
+  <button class="ch" id="az_down" aria-label="التالي"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+  <div class="dock sk-rim">
+    <button class="dk" id="az_share" aria-label="مشاركة"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg></button>
+    <div class="sep"></div>
+    <button class="dk" id="az_src" aria-label="المصدر"><svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5.3 8.5 4.8 5 5v13c3.5-.2 5.5.3 7 1.5 1.5-1.2 3.5-1.7 7-1.5V5c-3.5-.2-5.5.3-7 1.5zM12 6.5v13"/></svg></button>
+  </div>
+</div>
+<div class="done" id="az_done" aria-hidden="true"><div class="panel">
+<div class="rw" id="az_rw"><svg viewBox="0 0 100 100"><circle class="rb" cx="50" cy="50" r="44"/><circle class="rg" cx="50" cy="50" r="44"/><path class="ck" d="M33 51l12 12 22-25"/></svg></div>
+<h2>تقبّل الله منك</h2><p class="sub"></p>
+<div class="stats"><div><b id="az_s1"></b><span>أذكار</span></div><div><b id="az_s2"></b><span>تسبيحة وتكرار</span></div><div><b id="az_s3"></b><span id="az_s3l"></span></div></div>
+<p class="hd">«أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ»<small>متفق عليه</small></p>
+<button class="btn sk-rim" id="az_dclose">تم</button><button class="lnk" id="az_dreset">البدء من جديد</button>
+</div></div>
+<div class="scrim" id="az_scrim"></div>
+<div class="sheet" id="az_sheet" role="dialog" aria-modal="true"><div class="grab" id="az_sgrab"><i></i></div>
+<div class="sh-h"><span class="sh-ic"><svg viewBox="0 0 24 24"><path d="M12 6.5C10.5 5.3 8.5 4.8 5 5v13c3.5-.2 5.5.3 7 1.5 1.5-1.2 3.5-1.7 7-1.5V5c-3.5-.2-5.5.3-7 1.5zM12 6.5v13"/></svg></span><h2>المصدر والفضل</h2><button class="ib sk-rim" id="az_sclose" aria-label="إغلاق"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="sec" id="az_secF"><small>الفضل</small><p id="az_srcF"></p></div>
+<div class="sec"><small>التخريج</small><div class="chips" id="az_srcC"></div></div></div>
+<div class="toast" id="az_toast"></div>
+
+
+<div class="k-scrim" id="az_k_scrim"></div>
+<section class="k-sheet" id="az_k_sheet" role="dialog" aria-modal="true" aria-label="مشاركة الذكر كصورة" aria-hidden="true">
+ <div class="k-grab" id="az_k_grab"><i></i></div>
+ <div class="k-sh">
+  <button class="sk-rim lg-cap ic" id="az_k_x" aria-label="إغلاق"><svg class="k-i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <b>مشاركة كصورة</b>
+  <button class="sk-rim lg-cap dlp" id="az_k_dl"><span id="az_k_dlt">حفظ</span></button>
+ </div>
+ <div class="k-well" id="az_k_well"><div class="k-pv" id="az_k_pv"><div class="k-st" id="az_k_st">
+  <div class="kc" id="az_k_card">
+   <div class="orb"></div><div class="ring r1"></div><div class="ring r2"></div><div class="vg"></div><div class="gr" id="az_k_grn"></div>
+   <div class="kin">
+    <div class="kh"><div class="src"><b id="az_k_o_bk"></b><span id="az_k_o_kt"></span><span id="az_k_o_bb"></span></div>
+     <div class="num"><small>يُقال</small><b id="az_k_o_nm"></b></div></div>
+    <div class="mid" id="az_k_mid"><div class="blk" id="az_k_blk"><div class="ld" id="az_k_o_ld"></div><div class="mt" id="az_k_o_mt"></div></div></div>
+    <div class="ft"><span class="gd" id="az_k_o_gr"></span><div class="bm"><div><i class="kdot"></i><b id="az_k_o_br"></b></div><small id="az_k_o_tg"></small></div></div>
+   </div>
+  </div>
+ </div></div><div class="k-toast" id="az_k_toast"></div></div>
+ <div class="k-tools">
+  <button class="sk-rim lg-cap tool" id="az_k_tc" aria-haspopup="menu" aria-expanded="false"><i class="dotc" id="az_k_tcd"></i><span id="az_k_tcn"></span><svg class="k-i cv" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg></button>
+  <button class="sk-rim lg-cap tool" id="az_k_tf" aria-haspopup="menu" aria-expanded="false"><svg class="k-i" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="3.5"/></svg><span id="az_k_tfn"></span><svg class="k-i cv" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg></button>
+  <button class="sk-rim lg-cap tool" id="az_k_tz" aria-haspopup="menu" aria-expanded="false"><b class="fa">أ</b><span>الخط</span><svg class="k-i cv" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg></button>
+  <button class="sk-rim lg-cap tool tgl on" id="az_k_ss" aria-pressed="true"><svg class="k-i ck2" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg><span>الفضل</span></button>
+ </div>
+ <div class="menu" id="az_k_menu" role="menu"></div>
+</section>

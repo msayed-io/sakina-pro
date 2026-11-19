@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';
+import {getAzkarReferenceData as get} from '../src/features/azkar-reference/adapter.ts';
+import {azkarData} from '../src/data/azkarData.ts';
+import {hisnAlMuslimData as hisn} from '../src/data/hisnAlMuslimData.ts';
+for(const [type,key] of [['morning','morningAzkar'],['evening','eveningAzkar'],['sleep','sleepAzkar'],['post_prayer','postPrayerAzkar']] as const){const result=get(type); const source=azkarData[key];assert.equal(result.items.length,source.length);source.forEach((s,i)=>{const a=result.items[i];assert.equal(a.text,s.text);assert.equal(a.count,s.count);assert.equal(a.source,s.source);assert.equal(a.id,s.id);assert.equal(a.bookmarkKey,`${type}_${s.id}`)});}
+let n=0;for(const [name] of hisn.getCategoriesWithCount()){let src=hisn.getAzkarByCategory(name),got=get('hisn',name);assert.equal(got.title,name);assert.equal(got.items.length,src.length);src.forEach((s,i)=>{let a=got.items[i];assert.equal(a.text,s.text);assert.equal(a.count,s.count);assert.equal(a.source,s.source);assert.equal(a.bookmarkKey,`hisn_${name}_${s.id}`);n++})}assert.deepEqual(get('hisn').items,[]);console.log('PASS: four main categories and',n,'hisn items; exact text/order/count/source/bookmark keys; no fallback');
