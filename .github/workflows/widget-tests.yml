@@ -53,9 +53,11 @@ jobs:
       # له حزمة في المستودع فيفشل بـ "Failed to find package 'tools'".
       - name: Install Android SDK platform
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" > /dev/null
+          # sdkmanager ليس في PATH على الـ runner؛ نستدعيه بمساره المطلق.
+          SDKMGR=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -1)
+          echo "sdkmanager: $SDKMGR"
+          yes | "$SDKMGR" --licenses > /dev/null 2>&1 || true
+          "$SDKMGR" "platforms;android-36" "build-tools;36.0.0" > /dev/null
 
       - name: Install JavaScript dependencies
         run: npm ci --no-audit --no-fund
