@@ -343,6 +343,41 @@ class PrayerWidgetRemoteViewsTest {
         assertEquals(sizePx, bitmap.height)
     }
 
+    /**
+     * v2.3.34 — حمولة الويدجت تحمل اليوم **وغدًا** (نفس prayerSchedule +
+     * tomorrowSchedule التي يعرضها التطبيق). هذا يحرس أن البلاطات تعرض
+     * مواقيت اليوم الحقيقي فقط، وأن «القادمة» بعد العشاء هي فجر الغد
+     * الحقيقي لا قيمة مُقدَّرة.
+     */
+    @Test
+    fun payloadWithTomorrow_usesTodaysTilesAndTomorrowsNext() {
+        val today = slotsFor()
+        val tomorrow = today.map { it.copy(timeMs = it.timeMs + 24L * 3_600_000L) }
+        val d = WidgetData(
+            slots = (today + tomorrow).sortedBy { it.timeMs },
+            cityName = "الزقازيق",
+            hijriDate = null,
+            hasLocation = true,
+            sunriseTimeMs = today[1].timeMs,
+            gregorianDate = null,
+        )
+
+        // بعد العشاء بنصف ساعة ⇒ «القادمة» = فجر الغد الحقيقي.
+        val now = today[5].timeMs + 30 * 60_000L
+        val state = d.stateAt(now)
+        assertEquals("الفجر", state.next?.name)
+        assertEquals("يجب استخدام فجر الغد الحقيقي", tomorrow[0].timeMs, state.next?.timeMs)
+        assertEquals("العشاء", state.current?.name)
+
+        // البلاطات = مواقيت اليوم فقط (6)، لا 12.
+        val shown = d.todaySlots(now)
+        assertEquals(6, shown.size)
+        assertTrue(
+            "بلاطة الفجر يجب أن تحمل وقت اليوم لا الغد",
+            shown.first { it.key == WidgetData.FAJR }.timeMs == today[0].timeMs,
+        )
+    }
+
     /** التحقق من صحة النصوص دون ص/م (لا يعتمد على جهاز). */
     @Test
     fun timeFormatting_hasNoMeridiem() {

@@ -116,6 +116,7 @@ import { PrayerCardSpeakerIcon } from "@/components/PrayerCardSpeakerIcon";
 import { WeatherDisplay } from "@/components/WeatherDisplay";
 import { HadithCard } from "@/components/HadithCard";
 import { PrayerNotificationsService } from "@/services/PrayerNotificationsService";
+import { PrayerAlarmService } from "@/services/PrayerAlarmService";
 import { syncSakeenahClarity } from "@/services/sakeenah-clarity";
 import {
   createAndroidUsageSignalTransport,
@@ -701,6 +702,36 @@ function AuthenticatedApp() {
           }))
           .filter((prayer, index, all) => all.findIndex((candidate) => candidate.key === prayer.key && candidate.timeMs === prayer.timeMs) === index);
 
+        /* ═══ ربط الويدجت بمصدر الحقيقة (v2.3.34) ═══════════════════════
+           نفس قيمة prayerSchedule/tomorrowSchedule التي يعرضها التطبيق —
+           لا حاسبة ثانية ولا خدمة جديدة. تُكتب **قبل** بوابة إذن الإشعارات
+           لأن الويدجت لا يحتاج أي إذن؛ وكانت الكتابة سابقًا داخل
+           syncPrayerSchedule بعد بوابات (الإشعارات + المنبّهات الدقيقة +
+           وجود صلوات مستقبلية) فيبقى الويدجت على مواقيت قديمة.
+           تشمل الغد أيضًا: يبقى الويدجت صحيحًا بعد منتصف الليل حتى لو لم
+           يُفتح التطبيق، والويدجت يختار مواقيت اليوم المحلي بنفسه. */
+        const widgetPayload = {
+          sunriseTimeMs: prayerSchedule.find((p) => p.key === "sunrise")?.date?.getTime(),
+          cityName: placeNameOnly,
+          hijriDate: hijriSnapshot.today ? formatHijriDate(hijriSnapshot.today) : undefined,
+          gregorianDate: dateStrings.gregorianDate,
+          dayTimes: [...prayerSchedule, ...tomorrowSchedule]
+            .filter((prayer) => prayer.date)
+            .map((prayer) => ({
+              key: prayer.key,
+              name: prayer.name,
+              timeMs: prayer.date!.getTime(),
+            }))
+            .filter(
+              (item, index, all) =>
+                all.findIndex(
+                  (candidate) => candidate.key === item.key && candidate.timeMs === item.timeMs,
+                ) === index,
+            ),
+        };
+
+        await PrayerAlarmService.updateWidgetData(widgetPayload);
+
         if (!granted) {
           await PrayerNotificationsService.clearAllScheduled();
           return;
@@ -717,18 +748,9 @@ function AuthenticatedApp() {
             mulk: isMulkReminderEnabled ? mulkReminderTime : undefined,
             baqarah: isBaqarahReminderEnabled ? baqarahReminderTime : undefined,
           },
-          // بيانات ويدجت الشاشة الرئيسية — تمرَّر عبر نفس النداء فلا يوجد
-          // مسار كتابة ثانٍ. (docs/widget-data-flow.md §2)
-          widget: {
-            sunriseTimeMs: prayerSchedule.find((p) => p.key === "sunrise")?.date?.getTime(),
-            cityName: placeNameOnly,
-            hijriDate: hijriSnapshot.today ? formatHijriDate(hijriSnapshot.today) : undefined,
-            gregorianDate: dateStrings.gregorianDate,
-            // مواقيت اليوم كاملة (بما مضى) — للبطاقة المصغّرة في الويدجت.
-            dayTimes: prayerSchedule
-              .filter((p) => p.date)
-              .map((p) => ({ key: p.key, name: p.name, timeMs: p.date!.getTime() })),
-          },
+          // نفس حِزمة الويدجت المكتوبة أعلاه — تمرير القيم نفسها لمسار
+          // المنبّهات حتى لا يوجد مساران بقيمتين مختلفتين. (docs/widget-data-flow.md §2)
+          widget: widgetPayload,
         });
       } catch (error) {
         console.warn("Notification scheduling failed:", error);

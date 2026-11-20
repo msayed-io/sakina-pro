@@ -91,6 +91,12 @@ export class PrayerNotificationsService {
     this.scheduleQueue = this.scheduleQueue.then(async () => {
       if (version !== this.scheduleVersion) return;
 
+      // ✅ بيانات الويدجت أولًا وقبل كل بوابة: لا تعتمد على إذن الإشعارات
+      // ولا على صلاحية المنبّهات الدقيقة ولا على وجود صلوات مستقبلية.
+      // (كانت تُكتب داخل scheduleAllPrayers بعد هذه البوابات، فيبقى الويدجت
+      // على مواقيت قديمة — سبب اختلافه عن مواقيت التطبيق.)
+      if (widget) await PrayerAlarmService.updateWidgetData(widget);
+
       await this.clearAllScheduled();
       const futurePrayers = prayers.filter((prayer) => prayer.timeMs > Date.now());
       if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {

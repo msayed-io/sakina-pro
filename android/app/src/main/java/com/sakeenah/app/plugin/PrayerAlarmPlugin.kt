@@ -53,30 +53,11 @@ class PrayerAlarmPlugin : Plugin() {
     @PluginMethod
     fun scheduleAllPrayers(call: PluginCall) {
         try {
+            // بيانات الويدجت تُحفظ أولًا وقبل أي بوابة صلاحيات — انظر updateWidget.
+            persistWidgetData(call)
+
             val prayersArray = call.getArray("prayers")
             val prayers = mutableListOf<PrayerScheduleEntry>()
-
-            // ── Widget metadata (optional; absent values are simply ignored) ──
-            // The web layer supplies these so the widget can render sunrise,
-            // the city name and the Hijri date without a second calculator.
-            val sunriseTimeMs = call.getLong("sunriseTimeMs", 0L) ?: 0L
-            val cityName = call.getString("cityName")
-            val hijriDate = call.getString("hijriDate")
-            val gregorianDate = call.getString("gregorianDate")
-
-            // مواقيت اليوم كاملة (بما مضى) — يستهلكها شريط المواقيت في الويدجت.
-            // نداء prayers يحمل المستقبل فقط، فهذا مسار مستقل بلا حساب.
-            val dayTimesArray = call.getArray("dayTimes")
-            val dayTimes = mutableListOf<PrayerAlarmStore.Entry>()
-            for (i in 0 until (dayTimesArray?.length() ?: 0)) {
-                val item = dayTimesArray?.getJSONObject(i) ?: continue
-                val key = item.optString("key")
-                val name = item.optString("name")
-                val timeMs = item.optLong("timeMs", 0L)
-                if (key.isNotBlank() && name.isNotBlank() && timeMs > 0L) {
-                    dayTimes.add(PrayerAlarmStore.Entry(key, name, timeMs))
-                }
-            }
 
             for (i in 0 until (prayersArray?.length() ?: 0)) {
                 val prayer = prayersArray?.getJSONObject(i)
@@ -112,18 +93,11 @@ class PrayerAlarmPlugin : Plugin() {
                     )
                 }
             )
-            PrayerAlarmStore.writeWidgetMetadata(
-                context = context,
-                sunriseTimeMs = sunriseTimeMs,
-                cityName = cityName,
-                hijriDate = hijriDate,
-                gregorianDate = gregorianDate,
-            )
-            if (dayTimes.isNotEmpty()) PrayerAlarmStore.writeDayTimes(context, dayTimes)
             Log.d(TAG, "Scheduled ${prayers.size} prayers")
 
-            // ── Widget hook (single line, isolated) ──────────────────────
-            // Redraws every placed widget with the freshly persisted schedule.
+            // ── Widget hook ──────────────────────────────────────────────
+            // البيانات كُتبت بالفعل في persistWidgetData أعلى الدالة؛
+            // هنا نعيد الرسم فقط ليقرأ الويدجت الجدول الجديد.
             PrayerWidgetUpdater.requestUpdate(context)
 
             call.resolve(JSObject().apply {
@@ -133,6 +107,73 @@ class PrayerAlarmPlugin : Plugin() {
         } catch (e: Exception) {
             Log.e(TAG, "Failed to schedule all prayers", e)
             call.reject("Failed to schedule all prayers: ${e.message}")
+        }
+    }
+
+    /**
+     * ═══ ربط الويدجت بمصدر الحقيقة (v2.3.34) ══════════════════════════════
+     * يقرأ بيانات الويدجت التي أرسلتها طبقة الويب (نفس قيم حساب التطبيق
+     * الداخلي حرفيًا) ويحفظها في PrayerAlarmStore ثم يطلب إعادة رسم.
+     *
+     * ❗ لماذا دالة مستقلة؟ لأن هذه البيانات كانت تُحفظ **بعد** بوابتين لا
+     * علاقة لهما بالويدجت في scheduleAllPrayers:
+     *   • prayers.isEmpty()            → reject
+     *   • !scheduler.canScheduleExactAlarms() → reject
+     * ومع بوابات JS (إذن الإشعارات + futurePrayers فارغة) كان الويدجت
+     * يبقى على بيانات قديمة إلى ما لا نهاية — وهو سبب اختلاف مواقيته عن
+     * مواقيت التطبيق. الآن تُكتب البيانات دائمًا، مستقلة عن أي إذن.
+     *
+     * @return عدد المواقيت المكتوبة (0 = لم تُرسل dayTimes، فلا نمسح القديم)
+     */
+    private fun persistWidgetData(call: PluginCall): Int {
+        val sunriseTimeMs = call.getLong("sunriseTimeMs", 0L) ?: 0L
+        val cityName = call.getString("cityName")
+        val hijriDate = call.getString("hijriDate")
+        val gregorianDate = call.getString("gregorianDate")
+
+        // مواقيت اليوم (وغدًا إن أرسلتها الويب) — يستهلكها شريط المواقيت.
+        // نداء prayers يحمل المستقبل فقط، فهذا مسار مستقل بلا أي حساب.
+        val dayTimesArray = call.getArray("dayTimes")
+        val dayTimes = mutableListOf<PrayerAlarmStore.Entry>()
+        for (i in 0 until (dayTimesArray?.length() ?: 0)) {
+            val item = dayTimesArray?.getJSONObject(i) ?: continue
+            val key = item.optString("key")
+            val name = item.optString("name")
+            val timeMs = item.optLong("timeMs", 0L)
+            if (key.isNotBlank() && name.isNotBlank() && timeMs > 0L) {
+                dayTimes.add(PrayerAlarmStore.Entry(key, name, timeMs))
+            }
+        }
+
+        PrayerAlarmStore.writeWidgetMetadata(
+            context = context,
+            sunriseTimeMs = sunriseTimeMs,
+            cityName = cityName,
+            hijriDate = hijriDate,
+            gregorianDate = gregorianDate,
+        )
+        if (dayTimes.isNotEmpty()) PrayerAlarmStore.writeDayTimes(context, dayTimes)
+        PrayerWidgetUpdater.requestUpdate(context)
+        Log.d(TAG, "Widget data persisted: ${dayTimes.size} times")
+        return dayTimes.size
+    }
+
+    /**
+     * تحديث بيانات الويدجت فقط — بلا أي جدولة منبّهات وبلا أي صلاحية.
+     * تستدعيها طبقة الويب في كل مرة تتغيّر فيها المواقيت أو الموقع أو اليوم،
+     * حتى لو كانت الإشعارات مرفوضة أو صلاحية المنبّهات الدقيقة غير ممنوحة.
+     */
+    @PluginMethod
+    fun updateWidget(call: PluginCall) {
+        try {
+            val count = persistWidgetData(call)
+            call.resolve(JSObject().apply {
+                put("success", true)
+                put("count", count)
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update widget data", e)
+            call.reject("Failed to update widget data: ${e.message}")
         }
     }
 

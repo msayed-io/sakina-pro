@@ -76,7 +76,7 @@ android/.../util/PrayerAlarmStore.kt:15
 
 | # | الحدث | الموقع الدقيق | نوع التعديل |
 |---|---|---|---|
-| 1 | **تغيير المواقيت/الموقع/التاريخ** | `PrayerAlarmPlugin.scheduleAllPrayers()` بعد `PrayerAlarmStore.replace()` | سطر واحد: `PrayerWidgetUpdater.requestUpdate(context)` |
+| 1 | **تغيير المواقيت/الموقع/التاريخ** | `PrayerAlarmPlugin.updateWidget()` → `persistWidgetData()` (مستقل عن كل الأذونات) | `PrayerWidgetUpdater.requestUpdate(context)` |
 | 2 | **انتهاء وقت صلاة** | `AlarmReceiver.ACTION_PRAYER_ALARM` (موجود ومجدول بالملي ثانية) | سطر واحد في نفس الـ receiver |
 | 3 | **إعادة تشغيل الهاتف** | `BootReceiver` بعد `scheduler.scheduleAllPrayers()` | سطر واحد |
 | 4 | **تغيير حجم الويدجت** | `PrayerWidgetReceiver.onAppWidgetOptionsChanged()` | override قياسي في Glance |
@@ -140,3 +140,34 @@ val isDark = (context.resources.configuration.uiMode and
 | `FOREGROUND_SERVICE` | ❌ |
 | `SCHEDULE_EXACT_ALARM` | ❌ (مستخدَم أصلًا — لا نطلب زيادة) |
 | `BIND_APPWIDGET` | ❌ (اختياري، للتحديث المباشر فقط — غير ضروري) |
+
+---
+
+## 6. إصلاح v2.3.34 — لماذا كانت مواقيت الويدجت تختلف عن التطبيق
+
+**العَرَض:** بطاقة الويدجت تعرض مواقيت لا تشبه مواقيت التطبيق الداخلية.
+
+**السبب الجذري (مؤكد بالكود):** حفظ بيانات الويدجت كان موضوعًا **داخل**
+`scheduleAllPrayers` **بعد** بوابتين لا علاقة لهما بالويدجت:
+
+1. `if (prayers.isEmpty()) { call.reject(...); return }`
+2. `if (!scheduler.canScheduleExactAlarms()) { call.reject(...); return }`
+
+وفي طبقة الويب بوابتان إضافيتان قبل الوصول أصلًا:
+
+3. `App.tsx`: `if (!granted) { clearAllScheduled(); return }` — إذن الإشعارات.
+4. `PrayerNotificationsService`: `if (!canSchedule) return` — صلاحية المنبّهات الدقيقة
+   (وهي **غير ممنوحة افتراضيًا** على أندرويد 14+).
+
+وأي من هذه البوابات يمنع الكتابة ⇒ يبقى الويدجت على **أول حمولة نجحت يومًا ما**
+إلى الأبد. `PrayerAlarmStore.clear()` يمسح جدول المنبّهات فقط ولا يمسح مفاتيح
+الويدجت، فالبيانات القديمة تبقى معروضة (وهو ما جعل القيم تبدو «لأرض أخرى»).
+
+**الحل:**
+- طريقة مستقلة `updateWidget` في الـ plugin + دالة مشتركة `persistWidgetData()`
+  تُستدعى **قبل** أي بوابة.
+- `PrayerAlarmService.updateWidgetData()` في JS، تُستدعى من `App.tsx`
+  **قبل** فحص إذن الإشعارات ومن `syncPrayerSchedule` **قبل** بوابة المنبّهات.
+- الحمولة تحمل **اليوم وغدًا** (نفس `prayerSchedule + tomorrowSchedule`) فيبقى
+  الويدجت صحيحًا بعد منتصف الليل، و`WidgetData.todaySlots` يختار اليوم المحلي.
+- **لا حاسبة جديدة ولا خدمة جديدة:** نفس القيم التي يعرضها التطبيق حرفيًا.

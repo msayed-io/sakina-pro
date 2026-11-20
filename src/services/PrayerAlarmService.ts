@@ -132,6 +132,38 @@ class PrayerAlarmServiceImpl {
   }
 
   /**
+   * ═══ تحديث بيانات الويدجت فقط (v2.3.34) ═══════════════════════════════
+   * تكتب مواقيت اليوم في PrayerAlarmStore بلا أي جدولة منبّهات وبلا أي
+   * صلاحية. سبب وجودها: كان حفظ بيانات الويدجت معلَّقًا داخل
+   * scheduleAllPrayers بعد بوابتين (prayers غير فارغة + SCHEDULE_EXACT_ALARM)،
+   * فإذا كانت الإشعارات مرفوضة أو صلاحية المنبّهات الدقيقة غير ممنوحة —
+   * وهي الحالة الافتراضية على أندرويد 14+ — لا يصل للويدجت شيء أبدًا
+   * ويبقى على بيانات قديمة تختلف عن مواقيت التطبيق.
+   *
+   * لا حساب هنا ولا خدمة جديدة: نفس قيم prayerSchedule التي يعرضها التطبيق.
+   */
+  async updateWidgetData(widget?: PrayerWidgetMetadata): Promise<boolean> {
+    if (!this.isNative) return false;
+    if (!widget?.dayTimes?.length) return false;
+
+    try {
+      const args: Record<string, unknown> = { dayTimes: widget.dayTimes };
+      if (widget.sunriseTimeMs && widget.sunriseTimeMs > 0) {
+        args.sunriseTimeMs = widget.sunriseTimeMs;
+      }
+      if (widget.cityName) args.cityName = widget.cityName;
+      if (widget.hijriDate) args.hijriDate = widget.hijriDate;
+      if (widget.gregorianDate) args.gregorianDate = widget.gregorianDate;
+
+      const result = await this.callPlugin('updateWidget', args);
+      return result?.success ?? false;
+    } catch (e) {
+      console.warn('PrayerAlarmService.updateWidgetData failed:', e);
+      return false;
+    }
+  }
+
+  /**
    * Cancel ALL scheduled prayer alarms.
    * Use this before rescheduling (e.g., when location changes).
    */
