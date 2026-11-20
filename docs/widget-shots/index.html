@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>أدلة ويدجت الصلاة — v3</title>
+<style>
+:root{--fg:#1c1c1e;--mut:#6b6b73;--line:#e6e1da;--bg:#faf9f7;--card:#fff}
+@media (prefers-color-scheme:dark){:root{--fg:#f2f2f7;--mut:#98989f;--line:#33333a;--bg:#141416;--card:#1c1c1e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;line-height:1.6}
+main{max-width:1120px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:28px;margin:0 0 4px;font-weight:800}
+.sub{color:var(--mut);font-size:14px;margin-bottom:28px}
+h2{font-size:19px;margin:44px 0 6px;font-weight:700;padding-top:18px;border-top:1px solid var(--line)}
+h2 small{font-weight:400;color:var(--mut);font-size:13px;display:block;margin-top:2px}
+.notice{border-radius:12px;padding:14px 16px;font-size:14px;margin:16px 0;border:1px solid}
+.warn{background:#fff8e6;border-color:#f0d491;color:#6b4e00}
+@media (prefers-color-scheme:dark){.warn{background:#2a2210;border-color:#5c4a1c;color:#f0d491}}
+.gallery{display:flex;flex-wrap:wrap;gap:26px;margin-top:18px}
+.shot{margin:0}
+.shot figcaption{font-size:13px;color:var(--mut);margin-bottom:8px}
+.shot .hint{display:block;font-size:11.5px;color:var(--mut);opacity:.8}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px;background:var(--card);
+border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:rgba(128,128,128,.08);font-size:13px;font-weight:700}
+tr:last-child td{border-bottom:none}
+td.c,th.c{text-align:center}
+td.n{color:var(--mut);font-size:13px}
+td.v{font-family:ui-monospace,'SF Mono',monospace;font-size:12.5px;white-space:nowrap}
+.sw{display:inline-block;width:13px;height:13px;border-radius:3px;vertical-align:-2px;
+margin-left:5px;border:1px solid rgba(128,128,128,.45)}
+code{font-family:ui-monospace,'SF Mono',monospace;font-size:12px}
+.b{font-size:12px;white-space:nowrap;font-weight:600}
+.b.ok{color:#1a7f37} .b.no{color:#c62828} .b.ask{color:#9a6b00}
+@media (prefers-color-scheme:dark){.b.ok{color:#4ade80}.b.no{color:#f87171}.b.ask{color:#fbbf24}}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+</style></head><body><main>
+
+<h1>ويدجت الصلاة — أدلة v3</h1>
+<div class="sub">الالتزام <code>2253d3e</code> · الإصدار <b>v2.3.29</b> · المرجع البصري الوحيد
+<code>prayer-widget-design.html</code></div>
+
+<div class="notice warn"><b>اقرأ هذا أولًا —</b> لا يوجد محاكي أندرويد ولا جهاز متصل ببيئة البناء،
+لذلك <b>لا توجد لقطات شاشة حقيقية</b> في هذه الصفحة. ما تراه أدناه هو رندر مرجعي بُنِي من
+قيم التصميم المعتمد نفسه ليعمل كمرجع بصري للمقارنة، مع جدول يطابق كل عنصر بمكانه في
+ملفات المشروع. الحالات التي تحتاج جهازًا مُدرجة صراحةً تحت «غير مُتحقَّق منه» مع خطوات
+الاختبار اليدوي — ولم تُدَّعَ كنجاح.</div>
+
+<h2>1 · المعرض<small>الرندر المرجعي مقابل قيم المشروع — الوضعان</small></h2>
+<div class="gallery"><figure class="shot"><figcaption>رندر مرجعي — الوضع الفاتح · بين الفجر والظهر<span class=hint>قيم الـ HTML نفسها</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#FDFCFB;
+border-radius:28px;padding:14px 16px 12px;display:flex;flex-direction:column;
+font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;direction:rtl;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.10)">
+<div style="height:72px;display:flex;align-items:center;gap:10px;padding:0 4px">
+ <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+  <div style="font-size:12.0px;color:#7F6A55">الصلاة الحالية</div>
+  <div style="font-size:38.0px;line-height:1.1;color:#2B1A10;font-weight:900;margin-top:1px">الفجر</div>
+  <div style="font-size:13.0px;color:#8A6A3D;font-weight:700;margin-top:3px">التالية: الظهر</div>
+ </div>
+ <div style="position:relative;width:72px;height:72px;flex:none"><svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;inset:0">
+<circle cx="36" cy="36" r="32" fill="none" stroke="#E8DFD4" stroke-width="5.5"/>
+<circle cx="36" cy="36" r="32" fill="none" stroke="#B88A4F" stroke-width="5.5"
+ stroke-linecap="round" stroke-dasharray="201.1" stroke-dashoffset="1e+02"
+ transform="rotate(-90 36 36)"/></svg>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+   justify-content:center;gap:1px">
+   <div style="font-size:10.0px;color:#7F6A55">متبقي</div>
+   <div style="font-size:12.0px;font-weight:700;color:#2B1A10;
+    font-variant-numeric:tabular-nums;direction:ltr">02:49:31</div>
+  </div></div>
+</div>
+<div style="display:flex;gap:5px;margin-top:10px"><div style="flex:1;height:46px;border-radius:14px;background:#B88A4F;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:rgba(0,0,0,.85);line-height:1">الفجر</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">5:12</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:.75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">الشروق</b><span style="font-size:13.5px;font-weight:700;color:#7F6A55;line-height:1;font-variant-numeric:tabular-nums">6:28</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">الظهر</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">11:41</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">العصر</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">2:57</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">المغرب</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">5:06</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">العشاء</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">6:36</span></div></div>
+</div></figure><figure class="shot"><figcaption>رندر مرجعي — الوضع الداكن · بين الفجر والظهر<span class=hint>قيم الـ HTML نفسها</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#1C1C1E;
+border-radius:28px;padding:14px 16px 12px;display:flex;flex-direction:column;
+font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;direction:rtl;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.55)">
+<div style="height:72px;display:flex;align-items:center;gap:10px;padding:0 4px">
+ <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+  <div style="font-size:12.0px;color:#98989F">الصلاة الحالية</div>
+  <div style="font-size:38.0px;line-height:1.1;color:#FFFFFF;font-weight:900;margin-top:1px">الفجر</div>
+  <div style="font-size:13.0px;color:#EEDFC2;font-weight:700;margin-top:3px">التالية: الظهر</div>
+ </div>
+ <div style="position:relative;width:72px;height:72px;flex:none"><svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;inset:0">
+<circle cx="36" cy="36" r="32" fill="none" stroke="#353538" stroke-width="5.5"/>
+<circle cx="36" cy="36" r="32" fill="none" stroke="#EEDFC2" stroke-width="5.5"
+ stroke-linecap="round" stroke-dasharray="201.1" stroke-dashoffset="1e+02"
+ transform="rotate(-90 36 36)"/></svg>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+   justify-content:center;gap:1px">
+   <div style="font-size:10.0px;color:#98989F">متبقي</div>
+   <div style="font-size:12.0px;font-weight:700;color:#FFFFFF;
+    font-variant-numeric:tabular-nums;direction:ltr">02:49:31</div>
+  </div></div>
+</div>
+<div style="display:flex;gap:5px;margin-top:10px"><div style="flex:1;height:46px;border-radius:14px;background:#EEDFC2;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:rgba(0,0,0,.85);line-height:1">الفجر</b><span style="font-size:13.5px;font-weight:700;color:#000000;line-height:1;font-variant-numeric:tabular-nums">5:12</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:.75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">الشروق</b><span style="font-size:13.5px;font-weight:700;color:#98989F;line-height:1;font-variant-numeric:tabular-nums">6:28</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">الظهر</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">11:41</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">العصر</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">2:57</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">المغرب</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">5:06</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">العشاء</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">6:36</span></div></div>
+</div></figure><figure class="shot"><figcaption>رندر مرجعي — الفاتح · بعد العشاء<span class=hint>العشاء منقضٍ .55 · القادم فجر الغد — لا تواريخ</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#FDFCFB;
+border-radius:28px;padding:14px 16px 12px;display:flex;flex-direction:column;
+font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;direction:rtl;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.10)">
+<div style="height:72px;display:flex;align-items:center;gap:10px;padding:0 4px">
+ <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+  <div style="font-size:12.0px;color:#7F6A55">الصلاة الحالية</div>
+  <div style="font-size:38.0px;line-height:1.1;color:#2B1A10;font-weight:900;margin-top:1px">العشاء</div>
+  <div style="font-size:13.0px;color:#8A6A3D;font-weight:700;margin-top:3px">التالية: الفجر</div>
+ </div>
+ <div style="position:relative;width:72px;height:72px;flex:none"><svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;inset:0">
+<circle cx="36" cy="36" r="32" fill="none" stroke="#E8DFD4" stroke-width="5.5"/>
+<circle cx="36" cy="36" r="32" fill="none" stroke="#B88A4F" stroke-width="5.5"
+ stroke-linecap="round" stroke-dasharray="201.1" stroke-dashoffset="1e+01"
+ transform="rotate(-90 36 36)"/></svg>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+   justify-content:center;gap:1px">
+   <div style="font-size:10.0px;color:#7F6A55">متبقي</div>
+   <div style="font-size:12.0px;font-weight:700;color:#2B1A10;
+    font-variant-numeric:tabular-nums;direction:ltr">07:41:08</div>
+  </div></div>
+</div>
+<div style="display:flex;gap:5px;margin-top:10px"><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">الفجر</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">5:13</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:.75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">الشروق</b><span style="font-size:13.5px;font-weight:700;color:#7F6A55;line-height:1;font-variant-numeric:tabular-nums">6:29</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">الظهر</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">11:41</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">العصر</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">2:57</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">المغرب</b><span style="font-size:13.5px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">5:06</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:.55;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#7F6A55;line-height:1">العشاء</b><span style="font-size:13.5px;font-weight:700;color:#7F6A55;line-height:1;font-variant-numeric:tabular-nums">6:36</span></div></div>
+</div></figure><figure class="shot"><figcaption>رندر مرجعي — الداكن · منتصف النهار<span class=hint>الشروق ممتلئ + المتبقي باهت</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#1C1C1E;
+border-radius:28px;padding:14px 16px 12px;display:flex;flex-direction:column;
+font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;direction:rtl;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.55)">
+<div style="height:72px;display:flex;align-items:center;gap:10px;padding:0 4px">
+ <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+  <div style="font-size:12.0px;color:#98989F">الصلاة الحالية</div>
+  <div style="font-size:38.0px;line-height:1.1;color:#FFFFFF;font-weight:900;margin-top:1px">الشروق</div>
+  <div style="font-size:13.0px;color:#EEDFC2;font-weight:700;margin-top:3px">التالية: الظهر</div>
+ </div>
+ <div style="position:relative;width:72px;height:72px;flex:none"><svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;inset:0">
+<circle cx="36" cy="36" r="32" fill="none" stroke="#353538" stroke-width="5.5"/>
+<circle cx="36" cy="36" r="32" fill="none" stroke="#EEDFC2" stroke-width="5.5"
+ stroke-linecap="round" stroke-dasharray="201.1" stroke-dashoffset="2e+02"
+ transform="rotate(-90 36 36)"/></svg>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+   justify-content:center;gap:1px">
+   <div style="font-size:10.0px;color:#98989F">متبقي</div>
+   <div style="font-size:12.0px;font-weight:700;color:#FFFFFF;
+    font-variant-numeric:tabular-nums;direction:ltr">03:12:44</div>
+  </div></div>
+</div>
+<div style="display:flex;gap:5px;margin-top:10px"><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:.55;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">الفجر</b><span style="font-size:13.5px;font-weight:700;color:#98989F;line-height:1;font-variant-numeric:tabular-nums">5:12</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:.55;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">الشروق</b><span style="font-size:13.5px;font-weight:700;color:#98989F;line-height:1;font-variant-numeric:tabular-nums">6:28</span></div><div style="flex:1;height:46px;border-radius:14px;background:#EEDFC2;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:rgba(0,0,0,.85);line-height:1">الظهر</b><span style="font-size:13.5px;font-weight:700;color:#000000;line-height:1;font-variant-numeric:tabular-nums">11:41</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">العصر</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">2:57</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">المغرب</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">5:06</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:10.5px;font-weight:400;color:#98989F;line-height:1">العشاء</b><span style="font-size:13.5px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">6:36</span></div></div>
+</div></figure><figure class="shot"><figcaption>رندر مرجعي — الفاتح · بلا موقع<span class=hint>فراغ مقصود</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#FDFCFB;
+border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:6px;direction:rtl;font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.10)">
+<div style="font-size:22px;font-weight:900;color:#2B1A10">سَكِينَة</div>
+<div style="font-size:12px;color:#7F6A55;text-align:center;max-width:280px;line-height:1.5">
+افتح التطبيق لتحديد موقعك وعرض مواقيت الصلاة</div></div></figure><figure class="shot"><figcaption>رندر مرجعي — الداكن · بلا موقع<span class=hint>فراغ مقصود</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#1C1C1E;
+border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:6px;direction:rtl;font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.55)">
+<div style="font-size:22px;font-weight:900;color:#FFFFFF">سَكِينَة</div>
+<div style="font-size:12px;color:#98989F;text-align:center;max-width:280px;line-height:1.5">
+افتح التطبيق لتحديد موقعك وعرض مواقيت الصلاة</div></div></figure><figure class="shot"><figcaption>محاكاة 130% — الفاتح<span class=hint>تحقق بصري من عدم القص</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#FDFCFB;
+border-radius:28px;padding:14px 16px 12px;display:flex;flex-direction:column;
+font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;direction:rtl;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.10)">
+<div style="height:72px;display:flex;align-items:center;gap:10px;padding:0 4px">
+ <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+  <div style="font-size:15.6px;color:#7F6A55">الصلاة الحالية</div>
+  <div style="font-size:49.4px;line-height:1.1;color:#2B1A10;font-weight:900;margin-top:1px">الفجر</div>
+  <div style="font-size:16.9px;color:#8A6A3D;font-weight:700;margin-top:3px">التالية: الظهر</div>
+ </div>
+ <div style="position:relative;width:72px;height:72px;flex:none"><svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;inset:0">
+<circle cx="36" cy="36" r="32" fill="none" stroke="#E8DFD4" stroke-width="5.5"/>
+<circle cx="36" cy="36" r="32" fill="none" stroke="#B88A4F" stroke-width="5.5"
+ stroke-linecap="round" stroke-dasharray="201.1" stroke-dashoffset="1e+02"
+ transform="rotate(-90 36 36)"/></svg>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+   justify-content:center;gap:1px">
+   <div style="font-size:13.0px;color:#7F6A55">متبقي</div>
+   <div style="font-size:15.6px;font-weight:700;color:#2B1A10;
+    font-variant-numeric:tabular-nums;direction:ltr">02:49:31</div>
+  </div></div>
+</div>
+<div style="display:flex;gap:5px;margin-top:10px"><div style="flex:1;height:46px;border-radius:14px;background:#B88A4F;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:rgba(0,0,0,.85);line-height:1">الفجر</b><span style="font-size:17.6px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">5:12</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:.75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#7F6A55;line-height:1">الشروق</b><span style="font-size:17.6px;font-weight:700;color:#7F6A55;line-height:1;font-variant-numeric:tabular-nums">6:28</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#7F6A55;line-height:1">الظهر</b><span style="font-size:17.6px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">11:41</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#7F6A55;line-height:1">العصر</b><span style="font-size:17.6px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">2:57</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#7F6A55;line-height:1">المغرب</b><span style="font-size:17.6px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">5:06</span></div><div style="flex:1;height:46px;border-radius:14px;background:#F7F2EA;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#7F6A55;line-height:1">العشاء</b><span style="font-size:17.6px;font-weight:700;color:#2B1A10;line-height:1;font-variant-numeric:tabular-nums">6:36</span></div></div>
+</div></figure><figure class="shot"><figcaption>محاكاة 130% — الداكن<span class=hint>تحقق بصري من عدم القص</span></figcaption><div style="width:360px;height:154px;box-sizing:border-box;background:#1C1C1E;
+border-radius:28px;padding:14px 16px 12px;display:flex;flex-direction:column;
+font-family:system-ui,-apple-system,'Segoe UI','Noto Naskh Arabic',sans-serif;direction:rtl;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.55)">
+<div style="height:72px;display:flex;align-items:center;gap:10px;padding:0 4px">
+ <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+  <div style="font-size:15.6px;color:#98989F">الصلاة الحالية</div>
+  <div style="font-size:49.4px;line-height:1.1;color:#FFFFFF;font-weight:900;margin-top:1px">الفجر</div>
+  <div style="font-size:16.9px;color:#EEDFC2;font-weight:700;margin-top:3px">التالية: الظهر</div>
+ </div>
+ <div style="position:relative;width:72px;height:72px;flex:none"><svg width="72" height="72" viewBox="0 0 72 72" style="position:absolute;inset:0">
+<circle cx="36" cy="36" r="32" fill="none" stroke="#353538" stroke-width="5.5"/>
+<circle cx="36" cy="36" r="32" fill="none" stroke="#EEDFC2" stroke-width="5.5"
+ stroke-linecap="round" stroke-dasharray="201.1" stroke-dashoffset="1e+02"
+ transform="rotate(-90 36 36)"/></svg>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+   justify-content:center;gap:1px">
+   <div style="font-size:13.0px;color:#98989F">متبقي</div>
+   <div style="font-size:15.6px;font-weight:700;color:#FFFFFF;
+    font-variant-numeric:tabular-nums;direction:ltr">02:49:31</div>
+  </div></div>
+</div>
+<div style="display:flex;gap:5px;margin-top:10px"><div style="flex:1;height:46px;border-radius:14px;background:#EEDFC2;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:rgba(0,0,0,.85);line-height:1">الفجر</b><span style="font-size:17.6px;font-weight:700;color:#000000;line-height:1;font-variant-numeric:tabular-nums">5:12</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:.75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#98989F;line-height:1">الشروق</b><span style="font-size:17.6px;font-weight:700;color:#98989F;line-height:1;font-variant-numeric:tabular-nums">6:28</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#98989F;line-height:1">الظهر</b><span style="font-size:17.6px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">11:41</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#98989F;line-height:1">العصر</b><span style="font-size:17.6px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">2:57</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#98989F;line-height:1">المغرب</b><span style="font-size:17.6px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">5:06</span></div><div style="flex:1;height:46px;border-radius:14px;background:#2C2C2E;opacity:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><b style="font-size:13.7px;font-weight:400;color:#98989F;line-height:1">العشاء</b><span style="font-size:17.6px;font-weight:700;color:#FFFFFF;line-height:1;font-variant-numeric:tabular-nums">6:36</span></div></div>
+</div></figure></div>
+
+<h2>2 · الألوان عنصرًا بعنصر<small>القيم مقروءة آليًا من <code>values/colors.xml</code> و
+<code>values-night/colors.xml</code> وقت توليد هذه الصفحة</small></h2>
+<table><thead><tr><th>الدور في الـ HTML</th><th>القيمة في التطبيق — فاتح / داكن</th>
+<th class="c">الحالة</th><th>الملاحظة</th></tr></thead><tbody><tr><td>--bg (خلفية البطاقة)</td><td class=v><span class="sw" style="background:#FDFCFB"></span><code>#FDFCFB</code> / <span class="sw" style="background:#1C1C1E"></span><code>#1C1C1E</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>--sk-bg3 (فاتح:902) · --sk-bg2 (داكن:992) — مطابق لتقدير الـ HTML حرفًا بحرف</td></tr><tr><td>--tile (خلفية البلاطة)</td><td class=v><span class="sw" style="background:#F7F2EA"></span><code>#F7F2EA</code> / <span class="sw" style="background:#2C2C2E"></span><code>#2C2C2E</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>سلم الارتفاع المعتمد: bg2 فاتح · bg3 داكن</td></tr><tr><td>--text (النص الأساسي)</td><td class=v><span class="sw" style="background:#2B1A10"></span><code>#2B1A10</code> / <span class="sw" style="background:#FFFFFF"></span><code>#FFFFFF</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>مطابق</td></tr><tr><td>--text2 (النص الثانوي)</td><td class=v><span class="sw" style="background:#7F6A55"></span><code>#7F6A55</code> / <span class="sw" style="background:#98989F"></span><code>#98989F</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>الداكن rgba(235,235,245,.60) مُسطَّح إلى #98989F فوق البطاقة</td></tr><tr><td>--accent (تعبئة + قوس)</td><td class=v><span class="sw" style="background:#B88A4F"></span><code>#B88A4F</code> / <span class="sw" style="background:#EEDFC2"></span><code>#EEDFC2</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>التعبئة والقوس فقط؛ نسبة التباين كواجهة 3.02:1 ✔ (WCAG 1.4.11 ≥ 3)</td></tr><tr><td>--track (مسارات الحلقة)</td><td class=v><span class="sw" style="background:#E8DFD4"></span><code>#E8DFD4</code> / <span class="sw" style="background:#353538"></span><code>#353538</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>rgba(.12) داكنًا مُسطَّح</td></tr><tr><td>--on-accent (فوق التعبئة)</td><td class=v><span class="sw" style="background:#2B1A10"></span><code>#2B1A10</code> / <span class="sw" style="background:#000000"></span><code>#000000</code></td><td><span class="b ok">✅ مطابق</span></td><td class=n>الداكن = --sk-on-accent-soft #000000 (قرار معتمد: accent نفسه كان 1.00:1)</td></tr><tr><td>نص «التالية»</td><td class=v><span class="sw" style="background:#8A6A3D"></span><code>#8A6A3D</code> / <span class="sw" style="background:#EEDFC2"></span><code>#EEDFC2</code></td><td><span class="b ask">⚠️ قرار معتمد</span></td><td class=n>فاتح: #8A6A3D — فصلٌ معتمد لأن accent كنص = 3.02:1 (❌ AA). الناتج 4.87:1 ✔</td></tr><tr><td>padding</td><td class=v>14 / 16 / 16 / 12 dp</td><td><span class="b ok">✅ مطابق</span></td><td class=n>widget_main.xml — أعلى/جانبان/أسفل</td></tr><tr><td>الفجوة بين الصفين</td><td class=v>10 dp</td><td><span class="b ok">✅ مطابق</span></td><td class=n>marginTop على شريط المواقيت</td></tr><tr><td>الحلقة</td><td class=v>72 × 72 dp · stroke 5.5 · r 32</td><td><span class="b ok">✅ مطابق</span></td><td class=n>ArabicRingRenderer.kt — Bitmap 72dp×density، تُعاد للتدوير بعد الاستخدام</td></tr><tr><td>بداية القوس</td><td class=v>drawArc(-90° …)</td><td><span class="b ok">✅ مطابق</span></td><td class=n>مكافئ لـ rotate(-90) في الـ HTML: يبدأ من 12 تمامًا</td></tr><tr><td>طول القوس</td><td class=v>(now − start) / (next − start)</td><td><span class="b ok">✅ مطابق</span></td><td class=n>الـ HTML يعرض 41% كثابت توضيحي؛ التنفيذ يحسب النسبة الحية</td></tr><tr><td>التسمية فوق الحلقة / العد</td><td class=v>10 sp · 12 sp bold</td><td><span class="b ok">✅ مطابق</span></td><td class=n>Chronometer أصلي isCountDown · أرقام لاتينية LTR</td></tr><tr><td>اسم الصلاة</td><td class=v>38 sp · Serif Display Black (900)</td><td><span class="b ok">✅ مطابق</span></td><td class=n>Bitmap عبر ArabicTextBitmapRenderer (تشكيل عربي صحيح)</td></tr><tr><td>اسم الصلاة السابق/التالي</td><td class=v>12 sp Regular · 13 sp Bold</td><td><span class="b ok">✅ مطابق</span></td><td class=n>لا يوجد وزن 500 — الأقرب المتاح (معتمد)</td></tr><tr><td>بلاطة الوقت</td><td class=v>46 dp · radius 14 dp · gap 5 dp</td><td><span class="b ok">✅ مطابق</span></td><td class=n>widget_times_row.xml</td></tr><tr><td>نص البلاطة</td><td class=v>10.5 sp Regular · 13.5 sp Bold</td><td><span class="b ok">✅ مطابق</span></td><td class=n>h:mm بأرقام عربية هندية، بلا ص/م</td></tr><tr><td>شبكة المواقيت</td><td class=v>6 أعمدة متساوية weight=1</td><td><span class="b ok">✅ مطابق</span></td><td class=n>متساوية تمامًا</td></tr><tr><td>.past</td><td class=v>alpha 0.55</td><td><span class="b ok">✅ مطابق</span></td><td class=n>ما مضى من اليوم</td></tr><tr><td>.sun</td><td class=v>alpha 0.75 · شروق منقضٍ 0.4125</td><td><span class="b ok">✅ مطابق</span></td><td class=n>0.55 × 0.75</td></tr><tr><td>.on</td><td class=v>تعبئة accent · الاسم alpha .85</td><td><span class="b ok">✅ مطابق</span></td><td class=n>الصلاة القادمة</td></tr><tr><td>ترتيب الصف العلوي</td><td class=v>SpaceBetween (Spacer weight=1)</td><td><span class="b ok">✅ مطابق</span></td><td class=n>Glance لا يملك Arrangement</td></tr><tr><td>اتجاه الصف</td><td class=v>layoutDirection=rtl → [نص, حلقة]</td><td><span class="b ok">✅ مطابق</span></td><td class=n>الحلقة يسارًا فعليًا — HTML هو المرجع، لا §0-1</td></tr><tr><td>التواريخ</td><td class=v>لا تواريخ في أي مكان</td><td><span class="b ok">✅ مطابق</span></td><td class=n>حُذفت نهائيًا</td></tr><tr><td>حالة «بلا موقع»</td><td class=v>فراغ مقصود — صفر أصفار وهمية</td><td><span class="b ok">✅ مطابق</span></td><td class=n>widget_empty.xml</td></tr></tbody></table>
+
+<h2>3 · التعارضات بين المواصفات والـ HTML<small>الـ HTML هو الحاكم في كل حالة</small></h2>
+<table><thead><tr><th>ما تقوله <code>prayer-widget-spec.md</code></th><th>الـ HTML</th>
+<th class="c">الحاكم</th><th>ما نُفِّذ</th></tr></thead><tbody><tr><td>§0-1: «الحلقة على اليمين في RTL»</td><td>HTML: الحلقة على اليسار</td><td class=c><b>HTML</b></td><td class=n>صُحِّح: layoutDirection=rtl على الصف يجعل الحق = النص، اليسار = الحلقة</td></tr><tr><td>§4: «حلقة تقدم متحركة/progress»</td><td>HTML: قوس SVG ثابت</td><td class=c><b>HTML</b></td><td class=n>Bitmap ثابتة تُرسم مرة واحدة — ممنوع أي spinner أو مؤقّت حركة</td></tr><tr><td>§3: «يعرض التاريخ الهجري والميلادي»</td><td>HTML: لا تواريخ</td><td class=c><b>HTML</b></td><td class=n>صفر تواريخ في كل التخطيطات</td></tr><tr><td>§6: «accent واحد للنص والتعبئة»</td><td>HTML: نفس القيمة للدورين</td><td class=c><b>HTML + قرار</b></td><td class=n>فُصل إلى تعبئة #B88A4F / نص #8A6A3D لبلوغ AA — وثّق في جدول الألوان</td></tr><tr><td>§2: «زوايا 28 ثابتة»</td><td>HTML: 28 (مستنتج)</td><td class=c><b>النظام</b></td><td class=n>28dp في values/ ومرجع زاوية النظام في values-v31/ (قرار معتمد)</td></tr></tbody></table>
+
+<h2>4 · غير مُتحقَّق منه<small>لم يُشاهد على جهاز — لا ادعاء نجاح</small></h2>
+<table><thead><tr><th>البند</th><th>لماذا لم يُتحقَّق</th><th>خطوات التحقق اليدوي</th></tr></thead>
+<tbody><tr><td>الوضع الداكن/الفاتح على جهاز حقيقي</td><td class=n>لا محاكي ولا جهاز في بيئة البناء</td><td class=n>ثبِّت APK من صفحة الإصدارات v2.3.29، أضف الويدجت، بدّل بين الوضعين من الإعدادات السريعة، وقارن مع docs/widget-shots/index.html</td></tr><tr><td>حالة «بعد العشاء» (الفجر القادم غدًا)</td><td class=n>تحتاج تغيير ساعة الجهاز</td><td class=n>اضبط ساعة الجهاز إلى 11:00 مساءً محليًا ثم أعد إضافة الويدجت: يجب أن يظهر اسم الفجر، والعد حتى فجر الغد، والحلقة شبه مكتملة</td></tr><tr><td>حالة «بلا موقع»</td><td class=n>تحتاج تثبيتًا جديدًا بدون صلاحية موقع</td><td class=n>امسح بيانات التطبيق (Settings ← Apps ← Sakeenah ← Storage ← Clear data) ولا تفتح التطبيق: يجب أن تظهر البطاقة الفارغة بلا أصفار</td></tr><tr><td>تكبير الخط 130% بدون قص/تراكب</td><td class=n>يحتاج محاكيًا أو جهازًا</td><td class=n>Settings ← Display ← Font size = الأكبر، وWidth 360dp: الاسم 38sp يجب أن يبقى كاملًا غير مقطوع</td></tr><tr><td>logcat نظيف (صفر استثناءات، صفر تحذيرات RemoteViews)</td><td class=n>يحتاج جهازًا</td><td class=n>adb logcat | grep -E 'RemoteViews|Sakeenah|Glance' أثناء إضافة الويدجت وتبديل الوضع</td></tr><tr><td>زوايا النظام على API 31+</td><td class=n>AAPT قبل البناء هو المرجح؛ الاختبار البصري يحتاج جهازًا</td><td class=n>على أندرويد 12+ يجب أن تطابق زاوية البطاقة زاوية أي ويدجت نظام آخر على نفس الشاشة</td></tr></tbody></table>
+
+<footer>
+توليد آلي: <code>docs/widget-shots/build_evidence.py</code> — أعد تشغيله بعد أي تعديل على
+<code>colors.xml</code> ليعكس الألوان الجديدة. الأرقام والأسماء في الرندر أمثلة عرض ثابتة
+(كمعاينة المنتقي)؛ البيانات الحية تأتي من <code>PrayerAlarmStore</code>.
+</footer>
+</main></body></html>
