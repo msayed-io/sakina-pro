@@ -9,8 +9,12 @@
     • resizeMode = "horizontal"           → التمدد أفقي فقط
   فيبقى المحتوى (≈154dp) ملتصقًا بحدود الشبكة بلا فراغ سفلي.
 
-  minHeight 154dp = ارتفاع المحتوى المحسوب من التصميم:
-      14 (حشوة أعلى) + 72 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (أسفل) = 154
+  minHeight 160dp = ارتفاع المحتوى المحسوب فعليًا من التصميم بمقاييس خطوطنا:
+      14 (حشوة أعلى) + 77.7 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (أسفل)
+      = 159.7dp  ≈ 160dp
+  «154» السابقة كانت تفترض صفًا علويًا 72dp، لكن الصف لا بد أن يتّسع
+  للوصفية + الاسم + سطر «التالية» = 77.7dp. الارتفاع الثابت 160dp يضمن
+  ألّا يقصّ المُشغّل (Launcher) أسفل البلاطات.
 
   updatePeriodMillis = 0 — لا wakeup دوري من النظام.
   التحديث: أحداث التطبيق (updateAll) + منبّه غير دقيق كل 10 دقائق
@@ -20,13 +24,13 @@
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="250dp"
-    android:minHeight="154dp"
+    android:minHeight="160dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
     android:minResizeWidth="250dp"
-    android:minResizeHeight="154dp"
+    android:minResizeHeight="160dp"
     android:maxResizeWidth="420dp"
-    android:maxResizeHeight="154dp"
+    android:maxResizeHeight="160dp"
     android:resizeMode="horizontal"
     android:widgetCategory="home_screen|keyguard"
     android:initialLayout="@layout/glance_default_loading_layout"

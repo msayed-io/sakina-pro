@@ -20,7 +20,8 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="wrap_content"
+    android:minHeight="72dp"
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:paddingStart="4dp"
@@ -46,12 +47,21 @@
             android:fontFamily="@font/thmanyah_sans_regular"
             android:textColor="@color/sk_w_text2" />
 
-        <!-- اسم الصلاة 38sp / 800 / text — يُرسم Bitmap بـ ArabicTextBitmapRenderer -->
+        <!-- اسم الصلاة 38sp / 800 / text — يُرسم Bitmap بـ ArabicTextBitmapRenderer.
+
+             الهوامش السالبة ليست حيلة: هي الطريقة الوحيدة لمطابقة سلوك CSS.
+             في CSS صندوق سطر الاسم = 38 × 1.1 = 41.8dp بينما حبر الخط يبلغ
+             48.45dp، فيرسم المتصفح الحبر فائضًا خارج الصندوق ولا يقصّه.
+             أما Bitmap فلا يمكن أن يرسم خارج حدوده، فنُبقي الـ Bitmap 49dp
+             (يحتوي الحبر كاملًا) ونقلّص مساهمته في التخطيط إلى 43dp بهذين
+             الهامشين — فتصبح المساهمة الرأسية مطابقة للتصميم (41.8dp) والحبر
+             كاملًا بلا أي قصّ. -->
         <ImageView
             android:id="@+id/w_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="-3dp"
+            android:layout_marginBottom="-3dp"
             android:adjustViewBounds="true"
             android:scaleType="fitStart"
             android:contentDescription="@string/widget_label"

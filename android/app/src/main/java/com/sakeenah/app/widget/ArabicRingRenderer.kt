@@ -53,13 +53,15 @@ internal object ArabicRingRenderer {
             val radius = sizePx * RADIUS_RATIO
             val center = sizePx / 2f
 
-            // الدائرة تُرسم داخل حدود الـ bitmap بالضبط؛ الأطراف الدائرية
-            // تمتد نصف سمك للخارج، لذا نضيّق نصف القطر بذلك المقدار.
+            // الدائرة تُرسم على خطِّ منتصف نصف قطره 32px في viewBox 72×72
+            // (cx=36 cy=36 r=32) — نفس قيم الـ SVG حرفيًا. الأطراف الدائرية
+            // تمتد نصف سمك (2.75px) خارج خط المنتصف فتبلغ 34.75px، وهذا
+            // داخل حدود الـ bitmap (36px) بلا أي قصّ.
             val oval = RectF(
-                center - (radius - stroke / 2f),
-                center - (radius - stroke / 2f),
-                center + (radius - stroke / 2f),
-                center + (radius - stroke / 2f),
+                center - radius,
+                center - radius,
+                center + radius,
+                center + radius,
             )
 
             // ── المسار الكامل (track) ────────────────────────────────

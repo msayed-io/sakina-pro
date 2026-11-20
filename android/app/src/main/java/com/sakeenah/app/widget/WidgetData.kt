@@ -87,11 +87,32 @@ data class WidgetData(
      *
      * progress = (now − current) / (next − current) — نفس تعريف الحلقة
      * في البطاقة الأصلية (App.tsx:827 strokeDashoffset).
-     * إذا غاب أحد الطرفين نرجع 0f بهدوء بدل قسمة على صفر.
+     *
+     * ═══ النافذة تعبر منتصف الليل (إصلاح جذري) ═══════════════════════════
+     * فترة الصلاة تمتد على اليومين: من العشاء (أمس) إلى الفجر (اليوم)،
+     * ومن العشاء (اليوم) إلى الفجر (غدًا). أما `slots` فتحمل مواقيت يوم
+     * واحد فقط، فكانت [currentPrayer] ترجع null في نافذة ما بعد منتصف
+     * الليل وقبل الفجر، و[progress] يصبح 0f — فيختفي قوس الحلقة تمامًا
+     * وتظهر الوصفية «الصلاة القادمة» بلا سطر «التالية».
+     *
+     * الحل: نُمدّد طرفي النافذة بيوم كامل عند الحاجة:
+     *   • لا حالية  → حالية = العشاء (أمس)  = عشاء اليوم − ٢٤ ساعة
+     *   • لا قادمة  → قادمة  = الفجر (غدًا)  = فجر اليوم  + ٢٤ ساعة
+     * الفرق بين مواقيت اليوم واليوم السابق لا يتجاوز دقيقة أو دقيقتين،
+     * وأثره على نسبة القوس أقل من ٠٫٥٪ — أي غير مرئي.
+     * المواقيت المعروضة في البلاطات تبقى مواقيت اليوم الحقيقي كما هي.
      */
     fun stateAt(nowMs: Long): State {
-        val next = nextPrayer(nowMs)
-        val current = currentPrayer(nowMs)
+        val dayMs = 24L * 60L * 60L * 1000L
+
+        val next = nextPrayer(nowMs) ?: slots
+            .firstOrNull { it.key == FAJR }
+            ?.let { it.copy(timeMs = it.timeMs + dayMs) }
+
+        val current = currentPrayer(nowMs) ?: slots
+            .firstOrNull { it.key == ISHA }
+            ?.let { it.copy(timeMs = it.timeMs - dayMs) }
+
         val remaining = next?.let { (it.timeMs - nowMs).coerceAtLeast(0L) } ?: 0L
         val progress = if (current != null && next != null && next.timeMs > current.timeMs) {
             val total = (next.timeMs - current.timeMs).toDouble()

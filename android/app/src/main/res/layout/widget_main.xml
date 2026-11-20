@@ -7,16 +7,21 @@
                  padding:14px 16px 12px;        ← أعلى 14 · جانبان 16 · أسفل 12
                  display:flex; flex-direction:column; gap:10px
 
-  المحتوى مرجعه ≈154dp:
-      14 (حشوة أعلى) + 72 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (حشوة أسفل) = 154 ✔
+  ارتفاع البطاقة بالمقاييس الحقيقية لخطوطنا = 159.7dp:
+      14 (حشوة أعلى) + 77.7 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (أسفل)
+  الصف العلوي 77.7 لا 72: الوصفية 15 + الاسم 43.5 + «التالية» 16.25 + الهوامش.
 
-  المسافة 10dp بين الصفين = marginTop على شريط المواقيت. لا نستخدم
-  SpaceBetween لأن RemoteViews/Glance لا يملك arrangement، والمحتوى
-  يملأ البطاقة بـ fillMaxSize فيبقى الفراغ السفلي صفرًا.
+  ⚠️ layout_height = wrap_content وليس match_parent.
+  السبب الجذري للفراغ السفلي في الصورة الحقيقية: الجذر كان match_parent
+  (مع fillMaxSize في Glance) فيأخذ كل ارتفاع الخلية — قياس فعلي: البطاقة
+  400dp والمحتوى 154dp ⇒ 246dp فراغ. التصميم في CSS عمود flex بارتفاع
+  تلقائي، فالبطاقة ترتفع بمقدار محتواها فقط ولا تتمدّد أبدًا.
+
+  المسافة 10dp بين الصفين = marginTop على شريط المواقيت.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/widget_card_bg"
     android:paddingStart="16dp"

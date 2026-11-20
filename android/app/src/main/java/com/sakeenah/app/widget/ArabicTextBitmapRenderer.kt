@@ -37,6 +37,12 @@ internal object ArabicTextBitmapRenderer {
     /**
      * يرسم [text] بخط [fontRes] بحجم [sizeSp] ولون [color].
      *
+     * @param boxHeightDp ارتفاع ثابت للـ Bitmap بالـ dp. عند تمريره يُرسم النص
+     *        في منتصفه رأسيًا، فيصبح صندوق الاسم ثابتًا لكل الصلوات.
+     *        السبب: حبر هذا الخط يبلغ ١٫٢٧em بينما صندوق السطر في CSS
+     *        (line-height:1.1) يبلغ ١٫١em، فكان ارتفاع Bitmap يتغيّر بين
+     *        «الظهر» (٣٧٫٧dp) و«المغرب» (٤٨٫٥dp) فيتغيّر ارتفاع البطاقة
+     *        كل صلاة. تثبيت الصندوق يُثبّت الارتفاع على ١٥٩٫٧dp دائمًا.
      * @return Bitmap بأبعاد النص الفعلية، أو null إن تعذّر/تجاوز الحد.
      *         **المتصل مسؤول عن استدعاء recycle().**
      */
@@ -47,6 +53,7 @@ internal object ArabicTextBitmapRenderer {
         sizeSp: Float,
         color: Int,
         letterSpacing: Float = 0f,
+        boxHeightDp: Float? = null,
     ): Bitmap? {
         if (text.isBlank()) return null
 
@@ -58,27 +65,37 @@ internal object ArabicTextBitmapRenderer {
         val textWidth = paint.measureText(text)
         val textHeight = metrics.descent - metrics.ascent
 
+        // الحبر الفعلي: أعلى/أدنى نقطة تُرسم فعلًا. الحبر قد يتجاوز
+        // صندوق المقاييس (حبر «الفجر» ٤٨٫١٥dp مقابل مقاييس ٤٧٫٥dp).
+        val ink = android.graphics.Rect()
+        paint.getTextBounds(text, 0, text.length, ink)
+
         val padH = dp(context, 2)
         val padV = dp(context, 1)
+        val boxHeight = boxHeightDp?.let { dp(context, it) } ?: 0
         val width = (textWidth.ceil()).toInt() + padH * 2
-        val height = (textHeight.ceil()).toInt() + padV * 2
+        val height = maxOf((textHeight.ceil()).toInt(), ink.height()) + padV * 2
+        val finalHeight = maxOf(height, boxHeight)
 
-        if (width <= 0 || height <= 0) return null
+        if (width <= 0 || finalHeight <= 0) return null
 
-        val bytes = width.toLong() * height.toLong() * 4L
+        val bytes = width.toLong() * finalHeight.toLong() * 4L
         if (bytes > MAX_BITMAP_BYTES) {
             android.util.Log.w(
                 "ArabicTextBitmap",
-                "Bitmap too large (${width}x$height = ${bytes}B > $MAX_BITMAP_BYTES) — skipping",
+                "Bitmap too large (${width}x$finalHeight = ${bytes}B > $MAX_BITMAP_BYTES) — skipping",
             )
             return null
         }
 
+        // خط الأساس: في منتصف الصندوق رأسيًا (حبر النص هو ما يُوسَّط).
+        val baseline = finalHeight / 2f - (ink.top + ink.bottom) / 2f
+
         return try {
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val bitmap = Bitmap.createBitmap(width, finalHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             // الخلفية شفافة افتراضيًا؛ لا نملؤها حتى تندمج مع البطاقة.
-            canvas.drawText(text, padH.toFloat(), padV - metrics.ascent, paint)
+            canvas.drawText(text, padH.toFloat(), baseline, paint)
             bitmap
         } catch (error: Throwable) {
             // OutOfMemory أو أي فشل رسم: نرتد إلى نص عادي بدل إسقاط الويدجت.
@@ -111,8 +128,10 @@ internal object ArabicTextBitmapRenderer {
         if (letterSpacing != 0f) this.letterSpacing = letterSpacing
     }
 
-    private fun dp(context: Context, value: Int): Int =
+    private fun dp(context: Context, value: Float): Int =
         (value * context.resources.displayMetrics.density).toInt()
+
+    private fun dp(context: Context, value: Int): Int = dp(context, value.toFloat())
 
     private fun sp(context: Context, value: Float): Float =
         TypedValue.applyDimension(

@@ -12,6 +12,7 @@ import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import com.sakeenah.app.R
 import java.util.Locale
 
@@ -45,8 +46,14 @@ internal object PrayerWidgetSizes {
     /**
      * المقاس الحقيقي 4×2 مضغوط (المواصفات §1): صفان لا يتسعان في خلية.
      * نعلن حجمًا واحدًا فقط لأن الارتفاع لا يتمدد (min = max).
+     *
+     * الارتفاع 160dp لا 154dp: الحساب الحقيقي للتصميم بمقاييس خطوطنا هو
+     *   14 (حشوة أعلى) + 77.7 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (أسفل)
+     *   = 159.7dp
+     * و«154» في المواصفات كانت تفترض صفًا علويًا 72dp، وهو لا يتّسع للوصفية
+     * (15dp) + الاسم (43.5dp) + «التالية» (16.25dp) + الهوامش = 77.7dp.
      */
-    val COMPACT_4x2 = DpSize(360.dp, 154.dp)
+    val COMPACT_4x2 = DpSize(360.dp, 160.dp)
     val ALL = setOf(COMPACT_4x2)
 }
 
@@ -90,7 +97,17 @@ internal fun PrayerWidgetContent(
             }
             AndroidRemoteViews(
                 remoteViews = rv,
-                modifier = GlanceModifier.fillMaxSize(),
+                // ⚠️ fillMaxWidth فقط، **بلا fillMaxSize**.
+                //
+                // Glance يضع الـ RemoteViews داخل حاوية يولّدها من تخطيطاته
+                // الجاهزة (row_*/box_*/…_Nchildren.xml) ويُمرّر للابن
+                // LayoutParams المطابقة لمُعدِّل Glance: fillMaxSize ⇒
+                // match_parent ارتفاعًا، فيأخذ الجذر كل ارتفاع الخلية
+                // (قياس الصورة الحقيقية: البطاقة 400dp والمحتوى 154dp،
+                // أي 246dp فراغ سفلي). حذف مُعدِّل الارتفاع يجعل الحاوية
+                // تنسب إليه wrap_content فيرتفع بمقدار محتواه فقط، وهو
+                // سلوك CSS نفسه (flex-column بارتفاع تلقائي).
+                modifier = GlanceModifier.fillMaxWidth(),
             )
         }
     }
@@ -132,6 +149,9 @@ internal fun buildWidgetRemoteViews(
         fontRes = R.font.thmanyah_serif_display_black,
         sizeSp = 38f,
         color = nameColor,
+        // صندوق ثابت 49dp = أقصى حبر في أسماء الصلوات الست عند 38sp
+        // («المغرب» 48.45dp). يمنع تغيّر ارتفاع البطاقة بين صلاة وأخرى.
+        boxHeightDp = 49f,
     )
     if (nameBitmap != null) {
         // ⚠️ ممنوع recycle() هنا — وهذا هو سبب «يتعذّر عرض المحتوى».
