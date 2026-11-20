@@ -1,0 +1,94 @@
+name: Widget unit tests
+
+# اختبارات الويدجت على JVM عبر Robolectric — لا تحتاج جهازًا ولا محاكيًا.
+# تُشغَّل على كل دفع إلى main يمسّ كود الويدجت أو موارد الويدجت.
+#
+# سبب وجودها: الويدجت فشل على جهاز حقيقي بخطأ لا تكشفه الترجمة ولا CI البناء
+# (recycle() لِـ Bitmap قبل ترميز RemoteViews). هذا الـ workflow ينفّذ
+# الطريق الحقيقي: build → apply() → writeToParcel()، وهو ما يكشفه.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/app/src/main/java/com/sakeenah/app/widget/**'
+      - 'android/app/src/main/res/layout/widget_*.xml'
+      - 'android/app/src/main/res/layout/prayer_widget_preview.xml'
+      - 'android/app/src/main/res/drawable/widget_*.xml'
+      - 'android/app/src/main/res/values*/**'
+      - 'android/app/src/test/java/com/sakeenah/app/widget/**'
+      - 'android/app/build.gradle'
+      - 'android/variables.gradle'
+      - '.github/workflows/widget-tests.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: widget-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Robolectric — RemoteViews apply + parcel
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK platform
+        run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" > /dev/null
+
+      - name: Install JavaScript dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build Android web assets
+        env:
+          VITE_SUPABASE_URL: https://vmidpocwksqdvsyrvcog.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_6oJeyINnyeSn6m8wLkxIPQ_-5ogMkzI
+        run: npm run build:android
+
+      - name: Sync Capacitor Android project
+        run: npx cap sync android
+
+      - name: Run widget unit tests
+        working-directory: android
+        run: ./gradlew :app:testDebugUnitTest --no-daemon --stacktrace
+
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: widget-test-results-${{ github.sha }}
+          path: |
+            android/app/build/test-results/testDebugUnitTest/*.xml
+            android/app/build/reports/tests/testDebugUnitTest/**
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Print parcel sizes from results
+        if: always()
+        run: |
+          echo "════ أحجام Parcel المسجّلة ════"
+          grep -rhoE "PARCEL [a-z_]+ = [0-9]+ B" \
+            android/app/build/test-results/testDebugUnitTest/ 2>/dev/null || echo "(لا نتائج)"
+          echo "════ نتيجة الاختبارات ════"
+          grep -rhoE 'tests="[0-9]+" skipped="[0-9]+" failures="[0-9]+" errors="[0-9]+"' \
+            android/app/build/test-results/testDebugUnitTest/*.xml 2>/dev/null || echo "(لا ملفات نتائج)"

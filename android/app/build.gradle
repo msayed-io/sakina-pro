@@ -40,6 +40,20 @@ android {
             }
         }
     }
+    testOptions {
+        unitTests {
+            // يمنح Robolectric الوصول إلى res/ و R class الحقيقية
+            isIncludeAndroidResources = true
+            all { test ->
+                test.systemProperty "robolectric.graphicsMode", "NATIVE"
+                test.testLogging {
+                    showStandardStreams = true
+                    events "passed", "failed", "skipped"
+                }
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -64,6 +78,12 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
     testImplementation "junit:junit:$junitVersion"
+    // ═══ اختبارات الويدجت (لا تدخل الـ APK) ═══════════════════════════════
+    // Robolectric يشغّل RemoteViews على JVM: تضخيم حقيقي + ترميز Parcel،
+    // وهو الطريق الوحيد لإثبات أن Bitmaps قابلة للإرسال بلا جهاز.
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "androidx.test:core:$androidxTestCoreVersion"
+    testImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')

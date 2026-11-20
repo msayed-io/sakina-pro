@@ -102,7 +102,7 @@ internal fun PrayerWidgetContent(
  * RemoteViews **لا تدعم** setCompoundDrawables، فيجب بناء الشجرة كاملة
  * من تخطيطات XML مُدرَجة (include) ثم تعديل الحقول بمعرّفاتها.
  */
-private fun buildWidgetRemoteViews(
+internal fun buildWidgetRemoteViews(
     context: Context,
     data: WidgetData,
     nowMs: Long,
