@@ -130,6 +130,15 @@
                 android:resource="@xml/prayer_widget_info" />
         </receiver>
 
+        <!-- مستقبل تحديث قوس الحلقة كل 10 دقائق.
+             منبّه في AlarmManager غير دقيق (setInexactRepeating) — لا يطلب
+             أي صلاحية، ولا خدمة، ولا WorkManager. عند إزالة آخر ويدجت
+             يُلغى من onDisabled فلا يبقى عمل بلا مستهلك. -->
+        <receiver
+            android:name=".widget.WidgetRingRefreshReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
         <!-- مستقبل خفيف: تغيّر الوقت أو المنطقة الزمنية.
              لا يملك أي منطق حساب — فقط يطلب إعادة رسم الويدجت لأن
              التوقيت المعروض (12/24 ساعة) قد يتغيّر مع إعدادات النظام. -->

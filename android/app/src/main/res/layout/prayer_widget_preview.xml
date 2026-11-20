@@ -1,147 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  prayer_widget_preview.xml — معاينة منتقي الويدجت.
-  نسخة ثابتة من DetailedLayout بنفس: المادة، الحلقة، التواريخ، المواقيت.
-  المرجع: PrayerWidgetContent.kt (DetailedLayout) و App.tsx:1224-1290.
+  معاينة منتقي الويدجت — تُبنى من **نفس** التخطيطات المستخدمة في العرض
+  الحقيقي (widget_top_row + widget_times_row)، فلا يمكن أن تنحرف عن
+  التصميم المعتمد. المحتوى هنا أمثلة ثابتة فقط (المواصفات §1):
+  البيانات الحقيقية تأتي من PrayerAlarmStore وقت العرض.
+
+  الألوان من الثيم الحي (@color/sk_w_*) فتتبدّل تلقائيًا مع الوضع.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/widget_background_light"
-    android:paddingStart="18dp"
-    android:paddingEnd="18dp"
+    android:background="@drawable/widget_card_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
     android:paddingTop="14dp"
-    android:paddingBottom="14dp"
+    android:paddingBottom="12dp"
     android:layoutDirection="rtl">
 
-    <!-- ═══ الرأس: الصلاة الحالية + الحلقة ═══ -->
-    <LinearLayout
+    <include layout="@layout/widget_top_row_preview" />
+
+    <include
+        layout="@layout/widget_times_row"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="الصلاة الحالية"
-                android:textSize="10sp"
-                android:fontFamily="@font/thmanyah_sans_bold"
-                android:textColor="#7F6A55" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:includeFontPadding="false"
-                android:text="الفجر"
-                android:textSize="24sp"
-                android:fontFamily="@font/thmanyah_serif_display_black"
-                android:textColor="#2B1A10" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:includeFontPadding="false"
-                android:text="التالية: الشروق"
-                android:textSize="10sp"
-                android:fontFamily="@font/thmanyah_sans_bold"
-                android:textColor="#B88A4F" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:includeFontPadding="false"
-                android:text="٢٩ جمادى الأولى ١٤٤٨"
-                android:textSize="9sp"
-                android:fontFamily="@font/thmanyah_sans_bold"
-                android:textColor="#A39282" />
-        </LinearLayout>
-
-        <!-- الحلقة 80dp بنفس هندسة الأصل -->
-        <FrameLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="8dp">
-
-            <ProgressBar
-                style="@style/WidgetRing"
-        android:rotation="-90"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:progressDrawable="@drawable/widget_ring_arc"
-                android:background="@drawable/widget_ring_track"
-                android:progress="720"
-                android:max="1000"
-                android:indeterminate="false" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
-                    android:text="متبقي"
-                    android:textSize="7sp"
-                    android:fontFamily="@font/thmanyah_sans_bold"
-                    android:textColor="#7F6A55" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:includeFontPadding="false"
-                    android:text="٠١:٢٤:٣٠"
-                    android:textSize="11sp"
-                    android:fontFamily="@font/thmanyah_sans_bold"
-                    android:textColor="#2B1A10" />
-            </LinearLayout>
-        </FrameLayout>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:background="#99E6DCCF" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:includeFontPadding="false"
-        android:text="الزقازيق"
-        android:textSize="9.5sp"
-        android:fontFamily="@font/thmanyah_sans_bold"
-        android:textColor="#7F6A55" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <TextView style="@style/PreviewCell" android:text="الفجر" />
-        <TextView style="@style/PreviewCell" android:text="الشروق" />
-        <TextView style="@style/PreviewCell" android:text="الظهر" />
-        <TextView style="@style/PreviewCellAccent" android:text="العصر" />
-        <TextView style="@style/PreviewCell" android:text="المغرب" />
-        <TextView style="@style/PreviewCell" android:text="العشاء" />
-    </LinearLayout>
+        android:layout_height="46dp"
+        android:layout_marginTop="10dp" />
 </LinearLayout>

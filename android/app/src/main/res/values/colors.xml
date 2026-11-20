@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ألوان الويدجت — الوضع الفاتح.
-  كل قيمة مأخوذة حرفيًا من src/index.css مع رقم السطر.
-  لا لون واحد مخترع.
+  أدوار ويدجت الصلاة — الوضع الفاتح.
+  كل قيمة = رمز حي من src/index.css، والملف:السطر مذكور لكلٍّ.
+
+  الأدوار مطابقة لأسماء متغيرات prayer-widget-design.html
+  (bg / tile / text / text2 / accent / on-accent / track).
 -->
 <resources>
-    <!-- الأسطح (:root) -->
-    <color name="sk_widget_page">#ECE7DE</color>          <!-- :898  —sk-bg -->
-    <color name="sk_widget_card">#FDFCFB</color>          <!-- :233  satin top -->
-    <color name="sk_widget_card_low">#F8F5F0</color>      <!-- :235  satin bottom -->
-    <color name="sk_widget_surface">#F7F2EA</color>       <!-- :899  —sk-bg2 -->
-    <color name="sk_widget_separator">#99E6DCCF</color>   <!-- :902  —sk-sep @60% -->
+    <!-- —bg    : index.css:902  —sk-bg3   #fdfcfb -->
+    <color name="sk_w_page">#FDFCFB</color>
 
-    <!-- النصوص (:root) -->
-    <color name="sk_widget_label">#2B1A10</color>         <!-- :908  —sk-label -->
-    <color name="sk_widget_label2">#7F6A55</color>        <!-- :909  —sk-label2 -->
-    <color name="sk_widget_label3">#A39282</color>        <!-- :910  —sk-label3 -->
-    <color name="sk_widget_accent">#B88A4F</color>        <!-- :915  —sk-accent -->
-    <color name="sk_widget_accent_bright">#DEAB65</color> <!-- :916  —sk-accent-bright -->
-    <color name="sk_widget_danger">#C94A4A</color>        <!-- :924  —sk-danger -->
+    <!-- —tile  : index.css:901  —sk-bg2   #f7f2ea  (قرار ③ سلم الارتفاع) -->
+    <color name="sk_w_tile">#F7F2EA</color>
 
-    <!-- الحلقة -->
-    <color name="sk_widget_ring_track">#E8DFD4</color>    <!-- :948  —sk-ring-track -->
-    <color name="sk_widget_progress_arc">#2B1A10</color>  <!-- :980  —sk-progress-arc = —sk-label -->
+    <!-- —text  : index.css:912  —sk-label  #2b1a10 -->
+    <color name="sk_w_text">#2B1A10</color>
 
-    <!-- صف الصلاة القادمة (App.tsx:1347) bg-[#b88a4f]/22 -->
-    <color name="sk_widget_next_fill">#38B88A4F</color>
-    <color name="sk_widget_next_border">#4DB88A4F</color> <!-- border-[#b88a4f]/30 -->
+    <!-- —text2 : index.css:913  —sk-label2 #7f6a55 -->
+    <color name="sk_w_text2">#7F6A55</color>
 
-    <!-- حدّ المادة (index.css:242) border rgba(43,26,16,.08) -->
-    <color name="sk_widget_border">#142B1A10</color>
+    <!-- —accent (تعبئة وقوس، عنصر واجهة 3:1)
+           index.css:918  —sk-accent  #b88a4f   = 3.02:1 ✔ -->
+    <color name="sk_w_accent">#B88A4F</color>
+
+    <!-- —accent (نص «التالية» 13sp، يحتاج 4.5:1)
+           index.css:920  —sk-accent-deep #8a6a3d = 4.87:1 ✔
+           (قرار ① فصل دور accent) -->
+    <color name="sk_w_accent_text">#8A6A3D</color>
+
+    <!-- —on-accent : index.css:921  —sk-on-accent #2b1a10 = 5.39:1 ✔ -->
+    <color name="sk_w_on_accent">#2B1A10</color>
+
+    <!-- —track : index.css:948  —sk-ring-track #e8dfd4 -->
+    <color name="sk_w_track">#E8DFD4</color>
 </resources>

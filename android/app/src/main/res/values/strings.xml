@@ -14,4 +14,13 @@
     <string name="widget_description">الصلاة القادمة والعد التنازلي ومواقيت اليوم والتاريخ الهجري، على الشاشة الرئيسية وشاشة القفل.</string>
     <string name="widget_pin_label">إضافة ويدجت للشاشة الرئيسية</string>
     <string name="widget_pin_description">أضف بطاقة الصلاة القادمة إلى شاشتك الرئيسية أو شاشة القفل</string>
+
+    <!-- ── ويدجت الصلاة (التصميم المعتمد) ── -->
+    <string name="widget_ring_desc">قوس الوقت المنقضي حتى الصلاة القادمة</string>
+    <string name="widget_remaining">متبقي</string>
+    <string name="widget_caption_current">الصلاة الحالية</string>
+    <string name="widget_caption_next">الصلاة القادمة</string>
+    <string name="widget_next_prefix">التالية: %1$s</string>
+    <string name="widget_empty_title">سَكِينَة</string>
+    <string name="widget_empty_body">افتح التطبيق لتحديد موقعك وعرض مواقيت الصلاة</string>
 </resources>

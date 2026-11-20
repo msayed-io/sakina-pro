@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  زوايا الويدجت — القاعدة العامة (كل الإصدارات).
+
+  system_app_widget_background_radius غير موجود في android.R$dimen
+  (تحقق بـ javap على android-34.jar)، أي أنه مورد غير عام. تجاوز
+  في القاعدة العامة يوقف البناء بـ "resource not found" على
+  compileSdk. لذلك:
+    • القاعدة: 28dp — القيمة التي يحددها المواصفات كبديل معتمد.
+    • values-v31: مرجع النظام الحقيقي (يعمل فقط على API 31+
+      حيث المورد موجود في المنصة).
+
+  ⚠️ الحشوة هنا لا تُقرأ من RemoteViews (لا يمكن تمرير dimen إلى
+  GlanceModifier)، لكننا نستخدمها في تخطيطات XML للمعاينة.
+-->
+<resources>
+    <dimen name="sk_w_card_radius">28dp</dimen>
+    <dimen name="sk_w_tile_radius">14dp</dimen>
+    <dimen name="sk_w_tile_height">46dp</dimen>
+    <dimen name="sk_w_tile_gap">5dp</dimen>
+    <dimen name="sk_w_ring_size">72dp</dimen>
+</resources>

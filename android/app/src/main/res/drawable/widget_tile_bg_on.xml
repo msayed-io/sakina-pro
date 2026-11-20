@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  خلفية بلاطة «القادمة» — تعبئة accent ممتلئة (المواصفات §5).
+  القرار ①: —sk-accent (عنصر واجهة) هو لون التعبئة، لا —sk-accent-deep.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/sk_w_accent" />
+    <corners android:radius="@dimen/sk_w_tile_radius" />
+</shape>

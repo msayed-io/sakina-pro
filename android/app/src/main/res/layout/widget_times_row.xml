@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  شريط المواقيت — نسخة حرفية من DOM الـ HTML:
+
+    <div class="times">        display:grid; grid-template-columns:repeat(6,1fr); gap:5px
+      <div class="t">          background:tile; border-radius:14px; height:46px;
+                               flex-direction:column; align-items:center;
+                               justify-content:center; gap:2px
+        <b>  10.5px weight:500 color:text2
+        <span> 13.5px weight:700 color:text
+
+  الحالات:
+    .past  → opacity:.55  (المنقضية)
+    .sun   → opacity:.75 على الاسم والوقت معًا (الشروق أخفت)
+    .on    → background:accent؛ b:on-accent opacity .85؛ span:on-accent
+
+  RTL: الأبناء بترتيب DOM (الفجر أولًا) فتظهر الفجر على اليمين تلقائيًا.
+  الفجوة 5dp عبر layout_marginStart على كل بلاطة بعد الأولى
+  (LinearLayout لا يملك gap).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="46dp"
+    android:orientation="horizontal"
+    android:layoutDirection="rtl">
+
+    <!-- ═══ الفجر ═══ -->
+    <LinearLayout
+        android:id="@+id/w_tile_fajr"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/widget_tile_bg"
+        android:layout_marginStart="0dp">
+
+        <TextView
+            android:id="@+id/w_tile_fajr_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="الفجر"
+            android:textSize="10.5sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:textColor="@color/sk_w_text2" />
+
+        <TextView
+            android:id="@+id/w_tile_fajr_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="@color/sk_w_text"
+            android:textDirection="ltr" />
+    </LinearLayout>
+    <!-- ═══ الشروق ═══ -->
+    <LinearLayout
+        android:id="@+id/w_tile_sunrise"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/widget_tile_bg"
+        android:layout_marginStart="5dp">
+
+        <TextView
+            android:id="@+id/w_tile_sunrise_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="الشروق"
+            android:textSize="10.5sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:textColor="@color/sk_w_text2" />
+
+        <TextView
+            android:id="@+id/w_tile_sunrise_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="@color/sk_w_text"
+            android:textDirection="ltr" />
+    </LinearLayout>
+    <!-- ═══ الظهر ═══ -->
+    <LinearLayout
+        android:id="@+id/w_tile_dhuhr"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/widget_tile_bg"
+        android:layout_marginStart="5dp">
+
+        <TextView
+            android:id="@+id/w_tile_dhuhr_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="الظهر"
+            android:textSize="10.5sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:textColor="@color/sk_w_text2" />
+
+        <TextView
+            android:id="@+id/w_tile_dhuhr_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="@color/sk_w_text"
+            android:textDirection="ltr" />
+    </LinearLayout>
+    <!-- ═══ العصر ═══ -->
+    <LinearLayout
+        android:id="@+id/w_tile_asr"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/widget_tile_bg"
+        android:layout_marginStart="5dp">
+
+        <TextView
+            android:id="@+id/w_tile_asr_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="العصر"
+            android:textSize="10.5sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:textColor="@color/sk_w_text2" />
+
+        <TextView
+            android:id="@+id/w_tile_asr_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="@color/sk_w_text"
+            android:textDirection="ltr" />
+    </LinearLayout>
+    <!-- ═══ المغرب ═══ -->
+    <LinearLayout
+        android:id="@+id/w_tile_maghrib"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/widget_tile_bg"
+        android:layout_marginStart="5dp">
+
+        <TextView
+            android:id="@+id/w_tile_maghrib_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="المغرب"
+            android:textSize="10.5sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:textColor="@color/sk_w_text2" />
+
+        <TextView
+            android:id="@+id/w_tile_maghrib_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="@color/sk_w_text"
+            android:textDirection="ltr" />
+    </LinearLayout>
+    <!-- ═══ العشاء ═══ -->
+    <LinearLayout
+        android:id="@+id/w_tile_isha"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/widget_tile_bg"
+        android:layout_marginStart="5dp">
+
+        <TextView
+            android:id="@+id/w_tile_isha_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="العشاء"
+            android:textSize="10.5sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:textColor="@color/sk_w_text2" />
+
+        <TextView
+            android:id="@+id/w_tile_isha_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="@color/sk_w_text"
+            android:textDirection="ltr" />
+    </LinearLayout>
+</LinearLayout>

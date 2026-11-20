@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  [معاينة فقط] حلقة ثابتة تحاكي ArabicRingRenderer:
+  track دائري + قوس accent يبدأ من الأعلى.
+  العرض الحقيقي يرسم Bitmap بـ Canvas (دقة أعلى، تحكم كامل بالقوس).
+  قطر 72dp · سمك 5.5dp · أطراف دائرية.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="ring"
+            android:innerRadius="30dp"
+            android:thickness="5.5dp"
+            android:useLevel="false">
+            <solid android:color="@color/sk_w_track" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="ring"
+            android:innerRadius="30dp"
+            android:thickness="5.5dp"
+            android:useLevel="true"
+            android:level="59">
+            <solid android:color="@color/sk_w_accent" />
+        </shape>
+    </item>
+</layer-list>

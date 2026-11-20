@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  خلفية البطاقة — صلبة بلا تدرّج ولا صورة (المواصفات §2: ذاكرة RemoteViews).
+
+  الزاوية من @dimen/sk_w_card_radius:
+    • values/    → 28dp
+    • values-v31 → @android:dimen/system_app_widget_background_radius
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/sk_w_page" />
+    <corners android:radius="@dimen/sk_w_card_radius" />
+</shape>

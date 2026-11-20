@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  البطاقة الكاملة — نسخة حرفية من DOM الـ HTML:
+
+    .widget      width:100%; max-width:360px; border-radius:28px;
+                 background:var(—bg);
+                 padding:14px 16px 12px;        ← أعلى 14 · جانبان 16 · أسفل 12
+                 display:flex; flex-direction:column; gap:10px
+
+  المحتوى مرجعه ≈154dp:
+      14 (حشوة أعلى) + 72 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (حشوة أسفل) = 154 ✔
+
+  المسافة 10dp بين الصفين = marginTop على شريط المواقيت. لا نستخدم
+  SpaceBetween لأن RemoteViews/Glance لا يملك arrangement، والمحتوى
+  يملأ البطاقة بـ fillMaxSize فيبقى الفراغ السفلي صفرًا.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_card_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="12dp"
+    android:layoutDirection="rtl">
+
+    <include layout="@layout/widget_top_row" />
+
+    <!-- gap:10px -->
+    <include
+        layout="@layout/widget_times_row"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="10dp" />
+</LinearLayout>

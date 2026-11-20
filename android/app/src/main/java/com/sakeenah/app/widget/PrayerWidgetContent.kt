@@ -1,76 +1,54 @@
 package com.sakeenah.app.widget
 
 import android.content.Context
+import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.appwidget.cornerRadius
-import androidx.glance.background
-import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.Column
-import androidx.glance.layout.Row
-import androidx.glance.layout.RowScope
-import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.height
-import androidx.glance.layout.padding
-import androidx.glance.layout.width
-import java.text.SimpleDateFormat
-import java.util.Date
+import com.sakeenah.app.R
 import java.util.Locale
 
 /**
- * PrayerWidgetContent — نسخٌ أمين لبطاقة الصلاة في الشاشة الرئيسية.
+ * PrayerWidgetContent — التنفيذ الحرفي لـ `prayer-widget-design.html`.
  *
- * ═══ المرجع البصري (لا اختراع) ═══════════════════════════════════════
- *  • البطاقة العليا   : App.tsx:1224-1290  (.cut-crystal-satin)
- *  • شريط المواقيت    : App.tsx:1338-1398  (.cut-crystal-panel + صفوف pill)
- *  • ألوان الوضعين    : src/index.css  (:root و html[data-theme="dark"])
- *  • الحلقة الدائرية  : App.tsx:1238-1276  (SVG → ProgressBar أصلي)
+ * ═══ المرجع الأعلى ════════════════════════════════════════════════════
+ * prayer-widget-design.html (CSS + DOM سطرًا بسطر) — لا اجتهاد.
+ * عند أي تعارض بينه وبين prayer-widget-spec.md فالـ HTML يحكم.
+ * الألوان فقط من ثيم التطبيق الحي (WidgetPalette)، لا من الـ HTML.
  *
- * ═══ البنية (مطابقة للأصل) ═══════════════════════════════════════════
+ * ═══ البنية ═══════════════════════════════════════════════════════════
+ *   .widget  →  RemoteViews(widget_main.xml)
+ *     padding 14/16/16/12 · gap 10 · radius @dimen/sk_w_card_radius
+ *   .top     →  RemoteViews(widget_top_row.xml)  h=72dp
+ *     [info: cap 12sp · name 38sp Bitmap · next 13sp]  [ring 72dp]
+ *     في RTL: النص يمينًا والحلقة يسارًا.
+ *   .times   →  RemoteViews(widget_times_row.xml) h=46dp
+ *     6 بلاطات weight=1 · gap 5dp · radius 14dp
  *
- *   ┌─────────────────────────────────────────────┐
- *   │ الصلاة الحالية            ╭───────────╮     │  ← 11px label2
- *   │ الفجر                     │  متبقي    │     │  ← 28px serif display
- *   │ التالية: الشروق           │ 08:24:05  │     │  ← 11px accent
- *   │                           ╰───────────╯     │  ← حلقة 80dp
- *   ├─────────────────────────────────────────────┤
- *   │ الأحد ٢٠ نوفمبر   ٢٩ جمادى الأولى ١٤٤٨      │  ← 11px, بينهما فاصل
- *   ├─────────────────────────────────────────────┤
- *   │  الفجر       ٥:١٢ ص   ← صفوف pill          │
- *   │  الشروق      ٦:٣٤ ص                          │
- *   └─────────────────────────────────────────────┘
+ * ═══ ما يتحرّك وما يثبت ═══════════════════════════════════════════════
+ *   • الحلقة **ثابتة تمامًا**: Bitmap لقوس واحد يرسمه
+ *     ArabicRingRenderer — لا CircularProgressIndicator ولا دوران.
+ *   • العد التنازلي: `Chronometer` أصلي بـ isCountDown — يتولّاه النظام.
  *
- * ═══ ثلاثة عيوب في الإصدار السابق عولجت هنا ══════════════════════════
- *  1. **القصّ**: 6 خلايا × defaultWeight على 250dp = 41dp للخلية، أقل من
- *     «الفجر + ٥:١٢ ص» بهامش. الحل: عدد الخلايا يُحسب من العرض الحقيقي،
- *     والعدد يُقلَّص بدل أن يُقصّ النص. (+ minHeight الفعلي في XML رُفع)
- *  2. **التصميم البدائي**: كان صفًّا أفقيًا مسطّحًا. الآن: تدرّج المادة
- *     الحقيقي، زاوية 28dp، الحلقة الدائرية، صفوف pill، خطوط بالحجم الأصلي.
- *  3. **«—» في المواقيت**: كان سببه أن loadFuture يُسقط ما مضى. الآن
- *     تُقرأ قائمة اليوم كاملة (loadDay) فتُعرض المواقيت كلها.
+ * ═══ صفر Bitmap إلا موضعين ════════════════════════════════════════════
+ *   اسم الصلاة (38sp، المواصفات §7) + قوس الحلقة (المواصفات §4).
+ *   كلاهما بأبعاد فعلية ويُحرَّر فورًا.
  */
 internal object PrayerWidgetSizes {
-    /** 4×1 — الشريط المدمج */
-    val COMPACT = DpSize(250.dp, 60.dp)
-    /** 4×2 — البطاقة التفصيلية */
-    val DETAILED = DpSize(250.dp, 180.dp)
-    /** 4×2 عريض — مساحة أكبر = مواقيت أكثر */
-    val WIDE = DpSize(340.dp, 180.dp)
-    /** 4×3 — الحد الأقصى */
-    val TALL = DpSize(340.dp, 260.dp)
-
-    val ALL = setOf(COMPACT, DETAILED, WIDE, TALL)
+    /**
+     * المقاس الحقيقي 4×2 مضغوط (المواصفات §1): صفان لا يتسعان في خلية.
+     * نعلن حجمًا واحدًا فقط لأن الارتفاع لا يتمدد (min = max).
+     */
+    val COMPACT_4x2 = DpSize(360.dp, 154.dp)
+    val ALL = setOf(COMPACT_4x2)
 }
-
-private val ARABIC = Locale.forLanguageTag("ar")
 
 @Composable
 internal fun PrayerWidgetContent(
@@ -80,7 +58,6 @@ internal fun PrayerWidgetContent(
 ) {
     val context = LocalContext.current
     val nowMs = System.currentTimeMillis()
-    val state = data.stateAt(nowMs)
 
     Box(
         modifier = GlanceModifier
@@ -92,286 +69,185 @@ internal fun PrayerWidgetContent(
                 ),
             ),
     ) {
-        when {
-            !data.hasLocation -> EmptyState(context)
-            size.height < 100.dp -> CompactLayout(context, data, state, nowMs, isKeyguard)
-            else -> DetailedLayout(context, data, state, nowMs, size, isKeyguard)
-        }
-    }
-}
-
-// ═════════════════════════════════════════════════════════════════════
-//  الحالة الفارغة — قبل تحديد الموقع
-// ═════════════════════════════════════════════════════════════════════
-@Composable
-private fun EmptyState(context: Context) {
-    Row(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(WidgetPalette.card(context))
-            .cornerRadius(28.dp)
-            .padding(horizontal = 18.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        BrandText(
-            text = "سَكِينَة",
-            sizeSp = 17f,
-            color = rawLabel(context),
-            face = BrandFace.SERIF,
-        )
-        Spacer(modifier = GlanceModifier.width(10.dp))
-        BrandText(
-            text = "افتح سَكِينَة لتحديد موقعك",
-            sizeSp = 11f,
-            color = rawLabel2(context),
-            face = BrandFace.SANS,
-        )
-    }
-}
-
-// ═════════════════════════════════════════════════════════════════════
-//  4×1 — الشريط المدمج
-//  يبقي العناصر الحرجة فقط: الصلاة القادمة + العدّاد + وقتها.
-// ═════════════════════════════════════════════════════════════════════
-@Composable
-private fun CompactLayout(
-    context: Context,
-    data: WidgetData,
-    state: WidgetData.State,
-    nowMs: Long,
-    isKeyguard: Boolean,
-) {
-    val next = state.next
-
-    Row(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(WidgetPalette.card(context))
-            .cornerRadius(28.dp)
-            .padding(horizontal = 18.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        // ── يمين (RTL): التسمية + اسم الصلاة القادمة ──
-        Column(modifier = GlanceModifier.defaultWeight()) {
-            BrandText(
-                text = "الصلاة القادمة",
-                sizeSp = 10f,
-                color = rawLabel2(context),
-                face = BrandFace.SANS,
+        if (!data.hasLocation) {
+            AndroidRemoteViews(
+                remoteViews = RemoteViews(context.packageName, R.layout.widget_empty),
+                modifier = GlanceModifier.fillMaxSize(),
             )
-            Spacer(modifier = GlanceModifier.height(1.dp))
-            BrandText(
-                text = next?.name ?: "—",
-                sizeSp = 22f,
-                color = rawLabel(context),
-                face = BrandFace.SERIF,
+        } else {
+            AndroidRemoteViews(
+                remoteViews = buildWidgetRemoteViews(context, data, nowMs),
+                modifier = GlanceModifier.fillMaxSize(),
             )
-        }
-
-        // ── الوسط: العدّاد التنازلي (Chronometer أصلي) ──
-        if (next != null) {
-            val urgent = state.remainingMs in 1..(10 * 60 * 1000L)
-            androidx.glance.appwidget.AndroidRemoteViews(
-                remoteViews = buildChronometerRemoteViews(
-                    packageName = context.packageName,
-                    remainingMs = state.remainingMs,
-                    color = if (urgent) rawDanger(context) else rawAccent(context),
-                    sizeSp = 14f,
-                ),
-                modifier = GlanceModifier.width(60.dp),
-            )
-        }
-
-        // ── يسار: وقت الصلاة ──
-        if (!isKeyguard && next != null) {
-            Spacer(modifier = GlanceModifier.width(6.dp))
-            BrandText(
-                text = formatClock(context, next.timeMs),
-                sizeSp = 15f,
-                color = rawLabel(context),
-                face = BrandFace.SANS,
-            )
-        }
-    }
-}
-
-// ═════════════════════════════════════════════════════════════════════
-//  4×2 / 4×3 — البطاقة التفصيلية
-//  ثلاث طبقات مطابقة للأصل: الرأس + الفاصل والتواريخ + المواقيت.
-// ═════════════════════════════════════════════════════════════════════
-@Composable
-private fun DetailedLayout(
-    context: Context,
-    data: WidgetData,
-    state: WidgetData.State,
-    nowMs: Long,
-    size: DpSize,
-    isKeyguard: Boolean,
-) {
-    val next = state.next
-    val current = state.current
-
-    Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(WidgetPalette.card(context))
-            .cornerRadius(28.dp)
-            .padding(horizontal = 18.dp, vertical = 14.dp),
-    ) {
-        // ═══ الطبقة 1: الرأس — التسمية + الصلاة + التالية + الحلقة ═══
-        Row(
-            modifier = GlanceModifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = GlanceModifier.defaultWeight()) {
-                // «الصلاة الحالية» — يتغيّر إلى «الصلاة القادمة» قبل الفجر
-                BrandText(
-                    text = if (current != null) "الصلاة الحالية" else "الصلاة القادمة",
-                    sizeSp = 10f,
-                    color = rawLabel2(context),
-                    face = BrandFace.SANS,
-                )
-                Spacer(modifier = GlanceModifier.height(2.dp))
-                // اسم الصلاة — 22sp Serif Display Black (الأصل 28px)
-                BrandText(
-                    text = current?.name ?: next?.name ?: "—",
-                    sizeSp = 24f,
-                    color = rawLabel(context),
-                    face = BrandFace.SERIF,
-                )
-                // «التالية: …» — 10sp accent (الأصل 11px accent)
-                next?.let {
-                    Spacer(modifier = GlanceModifier.height(2.dp))
-                    BrandText(
-                        text = "التالية: ${it.name}",
-                        sizeSp = 10f,
-                        color = rawAccent(context),
-                        face = BrandFace.SANS,
-                    )
-                }
-                // التاريخ الهجري — هنا لا تحت الرأس، فتُحرَّر مساحة كاملة
-                // لشريط المواقيت فيزيد عدد الخلايا قبل أن يبدأ أي قصّ.
-                if (!isKeyguard && !data.hijriDate.isNullOrBlank()) {
-                    Spacer(modifier = GlanceModifier.height(3.dp))
-                    BrandText(
-                        text = data.hijriDate.orEmpty(),
-                        sizeSp = 9f,
-                        color = rawLabel3(context),
-                        face = BrandFace.SANS,
-                    )
-                }
-            }
-
-            // الحلقة — 80dp كما في الأصل (h-20 w-20)
-            if (next != null && !isKeyguard) {
-                Spacer(modifier = GlanceModifier.width(8.dp))
-                androidx.glance.appwidget.AndroidRemoteViews(
-                    remoteViews = buildRingRemoteViews(
-                        packageName = context.packageName,
-                        progress = state.progress,
-                        remainingMs = state.remainingMs,
-                        arcColor = rawArc(context),
-                        trackColor = rawRingTrack(context),
-                        labelColor = rawLabel2(context),
-                        countdownColor = if (state.remainingMs in 1..(10 * 60 * 1000L)) {
-                            rawDanger(context)
-                        } else {
-                            rawLabel(context)
-                        },
-                        labelText = "متبقي",
-                        sizeSp = 12f,
-                    ),
-                    modifier = GlanceModifier.width(80.dp).height(80.dp),
-                )
-            }
-        }
-
-        Spacer(modifier = GlanceModifier.height(10.dp))
-
-        // ═══ الطبقة 2: فاصل + التاريخ الميلادي والهجري ═══
-        Box(
-            modifier = GlanceModifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(WidgetPalette.separator(context)),
-        ) {}
-        Spacer(modifier = GlanceModifier.height(6.dp))
-
-        if (!isKeyguard && !data.cityName.isNullOrBlank()) {
-            // المدينة — صغيرة وباهتة، تحت الفاصل مباشرة (طبق الأصل).
-            BrandText(
-                text = data.cityName.orEmpty(),
-                sizeSp = 9.5f,
-                color = rawLabel3(context),
-                face = BrandFace.SANS,
-            )
-            Spacer(modifier = GlanceModifier.height(6.dp))
-        }
-
-        // ═══ الطبقة 3: المواقيت — صفوف pill مطابقة للأصل ═══
-        // العدد يُحسب من العرض الحقيقي: كل خلية تحتاج 62dp على الأقل،
-        // فيمنع القصّ بدل أن يسمح له بالحدوث.
-        val available = size.width.value - 36f
-        val maxCells = (available / 62f).toInt().coerceIn(2, 6)
-        val slots = data.upcomingSlots(nowMs, maxCells)
-
-        if (slots.isNotEmpty()) {
-            Row(modifier = GlanceModifier.fillMaxWidth()) {
-                for (slot in slots) {
-                    PrayerTimeCell(
-                        context = context,
-                        slot = slot,
-                        isNext = slot.key == next?.key,
-                    )
-                }
-            }
         }
     }
 }
 
 /**
- * خلية وقت — نظير الصف/العمود في الأصل.
- * المدمج: اسم فوق وقت، كلاهما بخط Sans، واللون يتدرّج مع الحالة.
+ * يبني البطاقة كاملة كـ RemoteViews واحدة.
+ *
+ * RemoteViews **لا تدعم** setCompoundDrawables، فيجب بناء الشجرة كاملة
+ * من تخطيطات XML مُدرَجة (include) ثم تعديل الحقول بمعرّفاتها.
  */
-@Composable
-private fun RowScope.PrayerTimeCell(
+private fun buildWidgetRemoteViews(
     context: Context,
-    slot: WidgetData.Slot,
-    isNext: Boolean,
-) {
-    val nameColor = if (isNext) rawAccent(context) else rawLabel2(context)
-    val timeColor = if (isNext) rawAccent(context) else rawLabel(context)
+    data: WidgetData,
+    nowMs: Long,
+): RemoteViews {
+    val pkg = context.packageName
+    val state = data.stateAt(nowMs)
+    val current = state.current
+    val next = state.next
 
-    Column(
-        modifier = GlanceModifier
-            .defaultWeight()
-            .padding(horizontal = 1.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        BrandText(
-            text = slot.name,
-            sizeSp = 9.5f,
-            color = nameColor,
-            face = BrandFace.SANS,
+    val root = RemoteViews(pkg, R.layout.widget_main)
+
+    // ═══ الصف العلوي: النصوص ═══
+    root.setTextViewText(
+        R.id.w_cap,
+        context.getString(
+            if (current != null) R.string.widget_caption_current
+            else R.string.widget_caption_next,
+        ),
+    )
+
+    // اسم الصلاة — Bitmap بالخط الحقيقي (38sp / Serif Display Black)
+    val nameText = current?.name ?: next?.name.orEmpty()
+    val nameColor = WidgetPalette.text(context)
+    val nameBitmap = ArabicTextBitmapRenderer.render(
+        context = context,
+        text = nameText,
+        fontRes = R.font.thmanyah_serif_display_black,
+        sizeSp = 38f,
+        color = nameColor,
+    )
+    if (nameBitmap != null) {
+        try {
+            root.setImageViewBitmap(R.id.w_name, nameBitmap)
+        } finally {
+            // تحرير فوري بعد الالتقاط (المواصفات §7)
+            nameBitmap.recycle()
+        }
+    } else {
+        // ارتداد آمن: نص RemoteViews عادي بدل إسقاط الويدجت.
+        root.setViewVisibility(R.id.w_name, android.view.View.GONE)
+    }
+
+    // «التالية: X» — بلون accent للنص (القرار ①)
+    if (next != null) {
+        root.setTextViewText(
+            R.id.w_next,
+            context.getString(R.string.widget_next_prefix, next.name),
         )
-        Spacer(modifier = GlanceModifier.height(2.dp))
-        BrandText(
-            text = formatClock(context, slot.timeMs),
-            sizeSp = 11f,
-            color = timeColor,
-            face = BrandFace.SANS,
-        )
+    } else {
+        root.setViewVisibility(R.id.w_next, android.view.View.GONE)
+    }
+
+    // ═══ الحلقة — Bitmap ثابت ═══
+    val ringSizePx = (72 * context.resources.displayMetrics.density).toInt()
+    val ring = ArabicRingRenderer.render(
+        context = context,
+        sizePx = ringSizePx,
+        progress = state.progress,
+        trackColor = WidgetPalette.track(context),
+        arcColor = WidgetPalette.accent(context),
+    )
+    if (ring != null) {
+        try {
+            root.setImageViewBitmap(R.id.w_ring_arc, ring)
+        } finally {
+            ring.recycle()
+        }
+    }
+
+    // ═══ العد التنازلي — Chronometer أصلي ═══
+    val base = android.os.SystemClock.elapsedRealtime() + state.remainingMs
+    root.setChronometer(R.id.w_ring_chronometer, base, "%s", true)
+    root.setChronometerCountDown(R.id.w_ring_chronometer, true)
+
+    // ═══ شريط المواقيت — 6 بلاطات ═══
+    applyTiles(context, root, data, state, nowMs)
+
+    return root
+}
+
+/**
+ * البلاطات الست — نسخة حرفية من منطق الحالات في CSS:
+ *   .on   → القادمة: تعبئة accent، الاسم on-accent بـ .85، الوقت on-accent
+ *   .past → opacity .55
+ *   .sun  → opacity .75 على الاسم والوقت (فوق .past إن انقضى)
+ */
+private fun applyTiles(
+    context: Context,
+    root: RemoteViews,
+    data: WidgetData,
+    state: WidgetData.State,
+    nowMs: Long,
+) {
+    val keys = WidgetData.DISPLAY_ORDER
+    val today = data.todaySlots(nowMs).associateBy { it.key }
+    val nextKey = state.next?.key
+
+    val tileBg = R.drawable.widget_tile_bg
+    val tileBgOn = R.drawable.widget_tile_bg_on
+    val onAccent = WidgetPalette.onAccent(context)
+
+    for (key in keys) {
+        val nameId = tileNameId(key)
+        val timeId = tileTimeId(key)
+        val tileId = tileId(key)
+        val slot = today[key]
+
+        // ── الوقت: بلا «ص/م» (المواصفات §5) ──
+        if (slot != null) {
+            root.setTextViewText(timeId, formatTimeNoMeridiem(slot.timeMs))
+        } else {
+            root.setTextViewText(timeId, "")
+        }
+
+        val isNext = key == nextKey
+        val isPast = slot != null && slot.timeMs <= nowMs
+        val isSunrise = key == WidgetData.SUNRISE
+
+        // ── الخلفية ──
+        root.setInt(tileId, "setBackgroundResource", if (isNext) tileBgOn else tileBg)
+
+        // ── الألوان: النص والأسماء ──
+        if (isNext) {
+            root.setTextColor(nameId, applyAlpha(onAccent, 0.85f))
+            root.setTextColor(timeId, onAccent)
+        } else {
+            root.setTextColor(nameId, WidgetPalette.text2(context))
+            root.setTextColor(timeId, WidgetPalette.text(context))
+        }
+
+        // ── الشفافية: .past = .55 · .sun = .75 (الشروق أخفت) ──
+        val alpha = when {
+            isSunrise && isPast -> 0.75f * 0.55f
+            isPast -> 0.55f
+            isSunrise -> 0.75f
+            else -> 1f
+        }
+        root.setFloat(tileId, "setAlpha", alpha)
     }
 }
 
-// ═════════════════════════════════════════════════════════════════════
-//  تنسيق الوقت — أرقام هندية + ص/م كما في شاشة سَكِينَة
-// ═════════════════════════════════════════════════════════════════════
-private val ARABIC_DIGITS = charArrayOf(
-    '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩',
-)
+/** الخلط مع قناة ألفا — يعادل opacity:.85 على النص في CSS. */
+private fun applyAlpha(color: Int, alpha: Float): Int {
+    val a = (android.graphics.Color.alpha(color) * alpha).toInt().coerceIn(0, 255)
+    return android.graphics.Color.argb(
+        a,
+        android.graphics.Color.red(color),
+        android.graphics.Color.green(color),
+        android.graphics.Color.blue(color),
+    )
+}
 
-/** يحوّل 0-9 إلى ٠-٩ — يطابق toArabicIndicDigits في src/utils/prayerTimes.ts. */
+/**
+ * «٤:٤٩» — أرقام هندية بلا ص/م، مطابقة لما يعرضه التطبيق
+ * (toArabicIndicDigits في src/utils/prayerTimes.ts).
+ */
+private val ARABIC_DIGITS = charArrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+
 internal fun toArabicIndic(input: String): String {
     val out = StringBuilder(input.length)
     for (ch in input) {
@@ -380,57 +256,46 @@ internal fun toArabicIndic(input: String): String {
     return out.toString()
 }
 
-/**
- * «٥:١٢ ص» — مطابق لـ splitFormattedPrayerTime + toArabicIndicDigits في
- * التطبيق: ساعة:دقيقة بأرقام هندية ثم كلمة ص/م منفصلة بمسافة.
- */
-internal fun formatClock(context: Context, timeMs: Long): String {
-    val is24 = android.text.format.DateFormat.is24HourFormat(context)
+internal fun formatTimeNoMeridiem(timeMs: Long): String {
+    val is24 = false // التطبيق يعرض 12 ساعة بلا ص/م في هذه البطاقة
+    val pattern = if (is24) "HH:mm" else "h:mm"
     return try {
-        if (is24) {
-            toArabicIndic(SimpleDateFormat("HH:mm", Locale.US).format(Date(timeMs)))
-        } else {
-            val raw = SimpleDateFormat("h:mm", Locale.US).format(Date(timeMs))
-            val meridiem = SimpleDateFormat("a", Locale.US).format(Date(timeMs))
-                .let { if (it.uppercase(Locale.US).startsWith("P")) "م" else "ص" }
-            "${toArabicIndic(raw)} $meridiem"
-        }
+        toArabicIndic(
+            java.text.SimpleDateFormat(pattern, Locale.US)
+                .format(java.util.Date(timeMs)),
+        )
     } catch (_: Exception) {
-        toArabicIndic(SimpleDateFormat("HH:mm", Locale.US).format(Date(timeMs)))
+        ""
     }
 }
 
-/** «الأحد ٢٠ نوفمبر» — التاريخ الميلادي كما في الأصل (11px label2). */
-internal fun formatGregorian(timeMs: Long): String = try {
-    val fmt = SimpleDateFormat("EEEE d MMMM", ARABIC)
-    toArabicIndic(fmt.format(Date(timeMs)))
-} catch (_: Exception) {
-    ""
+// ── معرّفات البلاطات (مطابقة لأسماء widget_times_row.xml) ──────────────
+private fun tileId(key: String): Int = when (key) {
+    WidgetData.FAJR -> R.id.w_tile_fajr
+    WidgetData.SUNRISE -> R.id.w_tile_sunrise
+    WidgetData.DHUHR -> R.id.w_tile_dhuhr
+    WidgetData.ASR -> R.id.w_tile_asr
+    WidgetData.MAGHRIB -> R.id.w_tile_maghrib
+    WidgetData.ISHA -> R.id.w_tile_isha
+    else -> R.id.w_tile_fajr
 }
 
-// ═════════════════════════════════════════════════════════════════════
-//  ألوان خام — تمرَّر إلى TextView / drawable مباشرة
-//  كل قيمة = رموز index.css نفسها (انظر values*/colors.xml)
-// ═════════════════════════════════════════════════════════════════════
-internal fun rawLabel(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0xFFFFFFFF.toInt() else 0xFF2B1A10.toInt()
+private fun tileNameId(key: String): Int = when (key) {
+    WidgetData.FAJR -> R.id.w_tile_fajr_name
+    WidgetData.SUNRISE -> R.id.w_tile_sunrise_name
+    WidgetData.DHUHR -> R.id.w_tile_dhuhr_name
+    WidgetData.ASR -> R.id.w_tile_asr_name
+    WidgetData.MAGHRIB -> R.id.w_tile_maghrib_name
+    WidgetData.ISHA -> R.id.w_tile_isha_name
+    else -> R.id.w_tile_fajr_name
+}
 
-internal fun rawLabel2(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0x99EBEBF5.toInt() else 0xFF7F6A55.toInt()
-
-internal fun rawLabel3(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0x4DEBEBF5.toInt() else 0xFFA39282.toInt()
-
-internal fun rawAccent(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0xFFEEDFC2.toInt() else 0xFFB88A4F.toInt()
-
-internal fun rawDanger(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0xFFFF4245.toInt() else 0xFFC94A4A.toInt()
-
-/** --sk-progress-arc: label فاتح / #EEDFC2 داكن (index.css:980 / :1068) */
-internal fun rawArc(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0xFFEEDFC2.toInt() else 0xFF2B1A10.toInt()
-
-/** --sk-ring-track: #E8DFD4 / rgba(235,235,245,.12) (index.css:948 / :1038) */
-internal fun rawRingTrack(context: Context): Int =
-    if (WidgetPalette.isDark(context)) 0x1FEBEBF5 else 0xFFE8DFD4.toInt()
+private fun tileTimeId(key: String): Int = when (key) {
+    WidgetData.FAJR -> R.id.w_tile_fajr_time
+    WidgetData.SUNRISE -> R.id.w_tile_sunrise_time
+    WidgetData.DHUHR -> R.id.w_tile_dhuhr_time
+    WidgetData.ASR -> R.id.w_tile_asr_time
+    WidgetData.MAGHRIB -> R.id.w_tile_maghrib_time
+    WidgetData.ISHA -> R.id.w_tile_isha_time
+    else -> R.id.w_tile_fajr_time
+}

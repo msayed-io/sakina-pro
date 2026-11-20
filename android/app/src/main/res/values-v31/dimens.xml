@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  زوايا الويدجت — API 31+.
+  المواصفات §2 تلزم زوايا الشركة المصنّعة. هذان الموردان العامّان
+  متاحان على API 31+ فقط (رفع compileSdk إلى 36 يجعل مرجع النظام
+  قابلاً للحل). إن لم يتوفرا أثناء البناء سنعود إلى 28dp في values/.
+-->
+<resources>
+    <dimen name="sk_w_card_radius">@android:dimen/system_app_widget_background_radius</dimen>
+    <dimen name="sk_w_tile_radius">@android:dimen/system_app_widget_inner_radius</dimen>
+</resources>

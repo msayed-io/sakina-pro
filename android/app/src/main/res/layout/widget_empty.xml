@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  الحالة الفارغة — أول تشغيل بلا موقع (المواصفات §8).
+  «حالة فارغة مقصودة تملأ البطاقة بتوازن، بلا أصفار وهمية»، بنفس هوية البطاقة.
+  لا تشغل حقول وقت ولا تعرض «—» أو 00:00.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/widget_card_bg"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="12dp"
+    android:layoutDirection="rtl">
+
+    <TextView
+        android:id="@+id/w_empty_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:text="@string/widget_empty_title"
+        android:textSize="22sp"
+        android:fontFamily="@font/thmanyah_serif_display_black"
+        android:textColor="@color/sk_w_text" />
+
+    <TextView
+        android:id="@+id/w_empty_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:includeFontPadding="false"
+        android:gravity="center"
+        android:text="@string/widget_empty_body"
+        android:textSize="12sp"
+        android:fontFamily="@font/thmanyah_sans_regular"
+        android:textColor="@color/sk_w_text2" />
+</LinearLayout>

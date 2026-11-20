@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  [معاينة] الصف العلوي — نسخة ثابتة المحتوى من widget_top_row.xml.
+
+    <div class="top">            display:flex; align-items:center;
+                                 justify-content:space-between; padding-inline:4px
+      <div class="info">         (يمين في RTL)
+        <div class="cap">        font-size:12px; weight:500; color:text2
+        <div class="name">       font-size:38px; line-height:1.1; weight:800; color:text
+        <div class="next">       font-size:13px; weight:700; color:accent
+      <div class="ring">         width:72px; height:72px; flex:none   (يسار في RTL)
+        <svg 72×72 rotate(-90)>  circle track + circle arc stroke 5.5 round
+        <div class="mid">        «متبقي» 10px text2 + العد 12px bold text
+
+  RTL: في LinearLayout بـ layoutDirection=rtl، أول طفل يظهر على اليمين،
+  فالترتيب هنا [info, ring] يضع النص يمينًا والحلقة يسارًا — كما في
+  بطاقة التطبيق، وكما صحّحته المواصفات §0-1 و §3.
+
+  padding-inline:4px → paddingStart/End = 4dp.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:layoutDirection="rtl">
+
+    <!-- ═══ كتلة النص (يمين) ═══ -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- «الصلاة الحالية» 12sp / 500 / text2 -->
+        <TextView
+            android:id="@+id/w_cap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:fontFamily="@font/thmanyah_sans_regular"
+            android:text="@string/widget_caption_current"
+            android:textColor="@color/sk_w_text2" />
+
+        <!-- اسم الصلاة 38sp / 800 / text — يُرسم Bitmap بـ ArabicTextBitmapRenderer -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="الفجر"
+            android:textSize="38sp"
+            android:fontFamily="@font/thmanyah_serif_display_black"
+            android:textColor="@color/sk_w_text" />
+
+        <!-- «التالية: X» 13sp / 700 / accent(text) -->
+        <TextView
+            android:id="@+id/w_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="13sp"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:text="التالية: الظهر"
+            android:textColor="@color/sk_w_accent_text" />
+    </LinearLayout>
+
+    <!-- ═══ الحلقة (يسار) — 72dp ثابتة ═══ -->
+    <FrameLayout
+        android:id="@+id/w_ring"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="10dp">
+
+        <!-- في المعاينة: قوس ثابت مرسوم بـ shape بدل Bitmap -->
+        <View
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/widget_preview_ring" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- «متبقي» 10sp / text2 -->
+            <TextView
+                android:id="@+id/w_ring_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@string/widget_remaining"
+                android:textSize="10sp"
+                android:fontFamily="@font/thmanyah_sans_regular"
+                android:textColor="@color/sk_w_text2" />
+
+            <!-- العد HH:MM:SS — Chronometer أصلي، أرقام لاتينية -->
+            <TextView
+                android:id="@+id/w_ring_chronometer_preview"
+                android:text="02:49:31"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:includeFontPadding="false"
+                android:textSize="12sp"
+                android:fontFamily="@font/thmanyah_sans_bold"
+                android:textColor="@color/sk_w_text"
+                android:textDirection="ltr" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

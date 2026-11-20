@@ -25,7 +25,7 @@ import com.sakeenah.app.util.PrayerAlarmStore
 class PrayerWidget : GlanceAppWidget() {
 
     companion object {
-        private const val TAG = "PrayerWidget"
+        internal const val TAG = "PrayerWidget"
     }
 
     override val stateDefinition = PreferencesGlanceStateDefinition
@@ -57,7 +57,7 @@ class PrayerWidget : GlanceAppWidget() {
         provideContent {
             PrayerWidgetContent(
                 data = data,
-                size = PrayerWidgetSizes.DETAILED,
+                size = PrayerWidgetSizes.COMPACT_4x2,
                 isKeyguard = isKeyguard,
             )
         }
@@ -83,12 +83,20 @@ class PrayerWidget : GlanceAppWidget() {
 
         if (slots.isEmpty()) return WidgetData.EMPTY
 
-        // الشروق: حقل مستقل لأن AlarmScheduler لا يجدوله (ليس صلاة).
-        val sunrise = PrayerAlarmStore.sunriseTimeMs(context)
-        val withSunrise = if (sunrise > 0L) {
-            slots + WidgetData.Slot(WidgetData.SUNRISE, "الشروق", sunrise)
+        // الشروق: قد يأتي داخل dayTimes (من نفس prayerSchedule) وقد يأتي
+        // من الحقل المستقل. نُضيفه فقط إن لم يكن موجودًا — منعًا لتكرار
+        // المفتاح الذي يجعل associateBy يلتقط نسخة عشوائية.
+        val sunriseFromStore = PrayerAlarmStore.sunriseTimeMs(context)
+        val hasSunrise = slots.any { it.key == WidgetData.SUNRISE }
+        val withSunrise = if (!hasSunrise && sunriseFromStore > 0L) {
+            slots + WidgetData.Slot(WidgetData.SUNRISE, "الشروق", sunriseFromStore)
         } else {
             slots
+        }
+        val sunrise = if (hasSunrise) {
+            slots.first { it.key == WidgetData.SUNRISE }.timeMs
+        } else {
+            sunriseFromStore
         }
 
         return WidgetData(
@@ -107,5 +115,35 @@ class PrayerWidget : GlanceAppWidget() {
  * GlanceAppWidgetReceiver يتولّى ACTION_APPWIDGET_UPDATE وحده.
  */
 class PrayerWidgetReceiver : GlanceAppWidgetReceiver() {
+
+    private companion object {
+        // اسم متمايز: GlanceAppWidgetReceiver يملك TAG خاصًا به، وأي مرجع
+        // غير مؤهَّل داخل الصنف يُحلّ إلى عضو الوراثة الخاص فيفشل الترجمة.
+        const val RECEIVER_TAG = "PrayerWidgetReceiver"
+    }
+
     override val glanceAppWidget: GlanceAppWidget = PrayerWidget()
+
+    /**
+     * ويدجت أُضيف → ابدأ تحديث قوس الحلقة كل 10 دقائق.
+     * (لا يمكن بدء التقليب من provideGlance لأنها تُستدعى كثيرًا.)
+     */
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        try {
+            WidgetRingRefreshScheduler.start(context.applicationContext)
+        } catch (error: Throwable) {
+            Log.w(RECEIVER_TAG, "onEnabled ring schedule failed: ${error.message}")
+        }
+    }
+
+    /** آخر ويدجت أُزيل → أوقف العمل الدوري فلا يبقى بلا مستهلك. */
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        try {
+            WidgetRingRefreshScheduler.stop(context.applicationContext)
+        } catch (error: Throwable) {
+            Log.w(RECEIVER_TAG, "onDisabled ring stop failed: ${error.message}")
+        }
+    }
 }

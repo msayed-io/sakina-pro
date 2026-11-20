@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  prayer_widget_info.xml — AppWidgetProviderInfo لسَكِينَة.
+  prayer_widget_info.xml — المواصفات §1 (الحجم والشبكة).
 
-  ═══ إصلاح القصّ (العيب الأهم في v2.3.27) ═══════════════════════════
-  كان minHeight=40dp بينما المحتوى التفصيلي يحتاج ~156dp. النتيجة:
-  المشغّل يمنح الويدجت 40dp فقط، فيُقصّ شريط المواقيت من الأسفل
-  — وهو بالضبط ما ظهر في لقطة المستخدم.
+  «المقاس الحقيقي 4×2 مضغوط (لأن صفين لا يتسعان في خلية واحدة)»
+    • targetCellWidth  = 4
+    • targetCellHeight = 2
+    • minResizeHeight  = maxResizeHeight  → لا تمدد رأسي إطلاقًا
+    • resizeMode = "horizontal"           → التمدد أفقي فقط
+  فيبقى المحتوى (≈154dp) ملتصقًا بحدود الشبكة بلا فراغ سفلي.
 
-  الأرقام الآن محسوبة من محتوى PrayerWidgetContent.DetailedLayout:
-    padding رأسي            14 + 14  =  28dp
-    الرأس (الحلقة 80dp)            =  80dp
-    فاصل + مسافات           10+1+6  =  17dp
-    التواريخ + مسافة             ~15 + 8 = 23dp
-    شريط المواقيت (سطران)          ≈  26dp
-    ────────────────────────────────────────
-    الإجمالي الأدنى                ≈ 174dp  →  نطلب 180dp
+  minHeight 154dp = ارتفاع المحتوى المحسوب من التصميم:
+      14 (حشوة أعلى) + 72 (صف علوي) + 10 (فاصل) + 46 (بلاطات) + 12 (أسفل) = 154
 
-  minResizeHeight = 180dp يضمن ألّا يسحب المستخدم الويدجت أصغر من
-  قدرة محتواه، فلا قصّ حتى عند التصغير اليدوي.
+  updatePeriodMillis = 0 — لا wakeup دوري من النظام.
+  التحديث: أحداث التطبيق (updateAll) + منبّه غير دقيق كل 10 دقائق
+  للحلقة فقط (المواصفات §4، قرار المستخدم الصريح).
 
-  المقاسات:
-    • 4×1 : minWidth 250dp / high 60dp   → الشريط المدمج
-    • 4×2 : 250×180dp                    → البطاقة الكاملة
-    • 4×3 : حتى 400×260dp                → مساحة أكبر، مواقيت أكثر
+  widgetCategory = home_screen|keyguard — الشاشة الرئيسية وشاشة القفل.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="250dp"
-    android:minHeight="180dp"
+    android:minWidth="320dp"
+    android:minHeight="154dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
     android:minResizeWidth="250dp"
-    android:minResizeHeight="180dp"
-    android:maxResizeWidth="400dp"
-    android:maxResizeHeight="280dp"
-    android:resizeMode="horizontal|vertical"
+    android:minResizeHeight="154dp"
+    android:maxResizeWidth="420dp"
+    android:maxResizeHeight="154dp"
+    android:resizeMode="horizontal"
     android:widgetCategory="home_screen|keyguard"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:previewLayout="@layout/prayer_widget_preview"
