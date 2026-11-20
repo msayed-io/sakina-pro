@@ -75,8 +75,21 @@ internal fun PrayerWidgetContent(
                 modifier = GlanceModifier.fillMaxSize(),
             )
         } else {
+            // ═══ شبكة أمان: أي فشل في البناء أو الرسم لا يجب أن يصل إلى
+            // onCompositionError في Glance فيُظهر «يتعذّر عرض المحتوى.».
+            // عند الفشل نعرض البطاقة الفارغة المصمّمة ونسجّل الاستثناء.
+            val rv = try {
+                buildWidgetRemoteViews(context, data, nowMs)
+            } catch (error: Throwable) {
+                android.util.Log.e(
+                    "PrayerWidget",
+                    "buildWidgetRemoteViews failed — falling back to empty state",
+                    error,
+                )
+                RemoteViews(context.packageName, R.layout.widget_empty)
+            }
             AndroidRemoteViews(
-                remoteViews = buildWidgetRemoteViews(context, data, nowMs),
+                remoteViews = rv,
                 modifier = GlanceModifier.fillMaxSize(),
             )
         }
@@ -121,12 +134,18 @@ private fun buildWidgetRemoteViews(
         color = nameColor,
     )
     if (nameBitmap != null) {
-        try {
-            root.setImageViewBitmap(R.id.w_name, nameBitmap)
-        } finally {
-            // تحرير فوري بعد الالتقاط (المواصفات §7)
-            nameBitmap.recycle()
-        }
+        // ⚠️ ممنوع recycle() هنا — وهذا هو سبب «يتعذّر عرض المحتوى».
+        //
+        // RemoteViews لا ينسخ الـ Bitmap عند setImageViewBitmap: يخزّنه
+        // بالمرجع في BitmapCache (RemoteViews.java:1610 getBitmapId →
+        // mBitmaps.add(b))، ولا يُرمَّز إلى Parcel إلا لاحقًا في
+        // BitmapCache.writeBitmapsToParcel → Bitmap.writeToParcel الذي
+        // يبدأ بـ checkRecycled("Can't parcel a recycled bitmap").
+        // فأي recycle() قبل الإرسال يجعل النظام يرمي IllegalStateException،
+        // يلتقطه Glance في onCompositionError ويعرض «يتعذّر عرض المحتوى.».
+        //
+        // الحل: نترك الـ Bitmap حيًّا ونفوّض تحريره إلى جامع المهملات.
+        root.setImageViewBitmap(R.id.w_name, nameBitmap)
     } else {
         // ارتداد آمن: نص RemoteViews عادي بدل إسقاط الويدجت.
         root.setViewVisibility(R.id.w_name, android.view.View.GONE)
@@ -152,11 +171,9 @@ private fun buildWidgetRemoteViews(
         arcColor = WidgetPalette.accent(context),
     )
     if (ring != null) {
-        try {
-            root.setImageViewBitmap(R.id.w_ring_arc, ring)
-        } finally {
-            ring.recycle()
-        }
+        // نفس القاعدة: لا recycle() — RemoteViews يحتفظ بالمرجع ويُرمّزه
+        // لاحقًا عند الإرسال (انظر شرح w_name أعلاه).
+        root.setImageViewBitmap(R.id.w_ring_arc, ring)
     }
 
     // ═══ العد التنازلي — Chronometer أصلي ═══

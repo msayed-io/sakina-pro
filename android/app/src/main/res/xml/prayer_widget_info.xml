@@ -19,7 +19,7 @@
   widgetCategory = home_screen|keyguard — الشاشة الرئيسية وشاشة القفل.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="320dp"
+    android:minWidth="250dp"
     android:minHeight="154dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"

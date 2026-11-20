@@ -64,6 +64,32 @@ class PrayerWidget : GlanceAppWidget() {
     }
 
     /**
+     * ═══ شبكة أمان أخيرة ═══════════════════════════════════════════════════
+     * Glance يستدعي هذه الدالة عند أي استثناء أثناء التركيب، وتنفيذه الافتراضي
+     * يعرض `R.layout.glance_error_layout` — الذي نصّه العربي «يتعذّر عرض المحتوى.».
+     *
+     * نُغيّره هنا إلى البطاقة الفارغة المصمّمة + سجل كامل للاستثناء، فلا يرى
+     * المستخدم رسالة خطأ خام أبدًا. (GlanceAppWidget.kt:219 دالة onCompositionError)
+     */
+    override fun onCompositionError(
+        context: Context,
+        glanceId: GlanceId,
+        appWidgetId: Int,
+        throwable: Throwable,
+    ) {
+        Log.e(TAG, "Composition error (widget=$appWidgetId) — showing empty state", throwable)
+        try {
+            val rv = android.widget.RemoteViews(context.packageName, R.layout.widget_empty)
+            android.appwidget.AppWidgetManager
+                .getInstance(context)
+                .updateAppWidget(appWidgetId, rv)
+        } catch (secondary: Throwable) {
+            // لا شيء نفعله أكثر؛ السجل أعلاه يحمل السبب الأصلي.
+            Log.e(TAG, "onCompositionError fallback failed", secondary)
+        }
+    }
+
+    /**
      * قراءة واحدة موحّدة. عند غياب أي بيانات → WidgetData.EMPTY
      * (الحالة الفارغة الآمنة، لا انهيار ولا أصفار وهمية).
      */
