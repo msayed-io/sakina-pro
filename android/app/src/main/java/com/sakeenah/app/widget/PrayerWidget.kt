@@ -69,7 +69,7 @@ class PrayerWidget : GlanceAppWidget() {
      */
     private fun readData(context: Context): WidgetData {
         val entries = try {
-            PrayerAlarmStore.loadFuture(context)
+            PrayerAlarmStore.loadDay(context)
         } catch (error: Throwable) {
             Log.w(TAG, "Failed to read prayer store: ${error.message}")
             return WidgetData.EMPTY
@@ -96,6 +96,8 @@ class PrayerWidget : GlanceAppWidget() {
             cityName = PrayerAlarmStore.cityName(context),
             hijriDate = PrayerAlarmStore.hijriDate(context),
             hasLocation = true,
+            sunriseTimeMs = sunrise,
+            gregorianDate = PrayerAlarmStore.gregorianDate(context),
         )
     }
 }

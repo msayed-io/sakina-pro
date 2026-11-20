@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  نمط الحلقة. Widget.ProgressBar هو النمط النظامي الصحيح للـ process
+  القابل للتحكم؛ نستبدل progressDrawable بـ ring خاص بنا.
+  startAngle/endAngle متاحة من API 21 (minSdk=24 ✔).
+-->
+<resources>
+    <style name="WidgetRing" parent="android:style/Widget.ProgressBar">
+        <item name="android:progressDrawable">@drawable/widget_ring_arc</item>
+        <item name="android:background">@drawable/widget_ring_track</item>
+        <item name="android:startAngle">-90</item>
+        <item name="android:endAngle">270</item>
+        <item name="android:max">1000</item>
+        <item name="android:indeterminate">false</item>
+        <item name="android:interpolator">@android:anim/linear_interpolator</item>
+    </style>
+</resources>

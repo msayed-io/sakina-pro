@@ -723,6 +723,11 @@ function AuthenticatedApp() {
             sunriseTimeMs: prayerSchedule.find((p) => p.key === "sunrise")?.date?.getTime(),
             cityName: placeNameOnly,
             hijriDate: hijriSnapshot.today ? formatHijriDate(hijriSnapshot.today) : undefined,
+            gregorianDate: dateStrings.gregorianDate,
+            // مواقيت اليوم كاملة (بما مضى) — للبطاقة المصغّرة في الويدجت.
+            dayTimes: prayerSchedule
+              .filter((p) => p.date)
+              .map((p) => ({ key: p.key, name: p.name, timeMs: p.date!.getTime() })),
           },
         });
       } catch (error) {
@@ -747,6 +752,8 @@ function AuthenticatedApp() {
     // تُحدِّث الويدجت أيضًا دون مسار إضافي.
     placeNameOnly,
     hijriSnapshot.today,
+    // التاريخ الميلادي يتغيّر مع civilDay فقط — لا نضيف اعتمادًا جديدًا.
+    civilDay,
   ]);
 
   const dateStrings = useMemo(() => {

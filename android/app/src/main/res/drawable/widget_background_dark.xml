@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  سطح cut-crystal-satin — الوضع الداكن.
-  المصدر: src/index.css:1145  background: rgba(28, 28, 30, 0.90)
-  (blur مستحيل في RemoteViews → سطح صلب مطابق اللون.)
+  مادة cut-crystal-satin — الوضع الداكن.
+
+  الأصل الحرفي (index.css:1144-1150):
+    background: rgba(28,28,30,0.90);
+    border-color: transparent;
+    box-shadow: var(—sk-amb-card) = 0 14px 34px rgba(0,0,0,0.55);
+    (زاوية 28dp موروثة من القاعدة)
+
+  في الداكن لا حدود إطلاقًا — التمييز بالإضاءة فقط (فلسفة OLED
+  في index.css:985 «separated by luminance not strokes»).
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#1C1C1E" />
-    <corners android:radius="26dp" />
+    <solid android:color="#E61C1C1E" />
+    <corners android:radius="28dp" />
 </shape>

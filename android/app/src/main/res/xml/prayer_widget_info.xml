@@ -2,27 +2,37 @@
 <!--
   prayer_widget_info.xml — AppWidgetProviderInfo لسَكِينَة.
 
-  المقاسات (رسمي — Android Developers: AppWidgetProviderInfo):
-    4x1  = minWidth 250dp / minHeight 40dp  → المقاس المدمج
-    4x2  = minWidth 250dp / minHeight 110dp → المقاس التفصيلي
-  targetCellWidth/Height متاحة من API 31 وتُحسّن الشبكة على أندرويد 12+؛
-  تُتجاهل تلقائيًا على الإصدارات الأقدم (لا خطر توافق).
+  ═══ إصلاح القصّ (العيب الأهم في v2.3.27) ═══════════════════════════
+  كان minHeight=40dp بينما المحتوى التفصيلي يحتاج ~156dp. النتيجة:
+  المشغّل يمنح الويدجت 40dp فقط، فيُقصّ شريط المواقيت من الأسفل
+  — وهو بالضبط ما ظهر في لقطة المستخدم.
 
-  widgetCategory="home_screen|keyguard" = يعمل على الشاشة الرئيسية **وشاشة القفل**.
-  المرجع: AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD (=2).
+  الأرقام الآن محسوبة من محتوى PrayerWidgetContent.DetailedLayout:
+    padding رأسي            14 + 14  =  28dp
+    الرأس (الحلقة 80dp)            =  80dp
+    فاصل + مسافات           10+1+6  =  17dp
+    التواريخ + مسافة             ~15 + 8 = 23dp
+    شريط المواقيت (سطران)          ≈  26dp
+    ────────────────────────────────────────
+    الإجمالي الأدنى                ≈ 174dp  →  نطلب 180dp
 
-  لا updatePeriodMillis: لا نريد أي wakeup دوري. كل التحديثات مدفوعة
-  بأحداث موجودة أصلًا (تغيير المواقيت / دخول وقت صلاة / إعادة التشغيل).
+  minResizeHeight = 180dp يضمن ألّا يسحب المستخدم الويدجت أصغر من
+  قدرة محتواه، فلا قصّ حتى عند التصغير اليدوي.
+
+  المقاسات:
+    • 4×1 : minWidth 250dp / high 60dp   → الشريط المدمج
+    • 4×2 : 250×180dp                    → البطاقة الكاملة
+    • 4×3 : حتى 400×260dp                → مساحة أكبر، مواقيت أكثر
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="250dp"
-    android:minHeight="40dp"
+    android:minHeight="180dp"
     android:targetCellWidth="4"
-    android:targetCellHeight="1"
-    android:minResizeWidth="180dp"
-    android:minResizeHeight="40dp"
+    android:targetCellHeight="2"
+    android:minResizeWidth="250dp"
+    android:minResizeHeight="180dp"
     android:maxResizeWidth="400dp"
-    android:maxResizeHeight="200dp"
+    android:maxResizeHeight="280dp"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen|keyguard"
     android:initialLayout="@layout/glance_default_loading_layout"

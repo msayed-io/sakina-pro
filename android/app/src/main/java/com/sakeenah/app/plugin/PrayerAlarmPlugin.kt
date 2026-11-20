@@ -62,6 +62,21 @@ class PrayerAlarmPlugin : Plugin() {
             val sunriseTimeMs = call.getLong("sunriseTimeMs", 0L) ?: 0L
             val cityName = call.getString("cityName")
             val hijriDate = call.getString("hijriDate")
+            val gregorianDate = call.getString("gregorianDate")
+
+            // مواقيت اليوم كاملة (بما مضى) — يستهلكها شريط المواقيت في الويدجت.
+            // نداء prayers يحمل المستقبل فقط، فهذا مسار مستقل بلا حساب.
+            val dayTimesArray = call.getArray("dayTimes")
+            val dayTimes = mutableListOf<PrayerAlarmStore.Entry>()
+            for (i in 0 until (dayTimesArray?.length() ?: 0)) {
+                val item = dayTimesArray?.getJSONObject(i) ?: continue
+                val key = item.optString("key")
+                val name = item.optString("name")
+                val timeMs = item.optLong("timeMs", 0L)
+                if (key.isNotBlank() && name.isNotBlank() && timeMs > 0L) {
+                    dayTimes.add(PrayerAlarmStore.Entry(key, name, timeMs))
+                }
+            }
 
             for (i in 0 until (prayersArray?.length() ?: 0)) {
                 val prayer = prayersArray?.getJSONObject(i)
@@ -97,7 +112,14 @@ class PrayerAlarmPlugin : Plugin() {
                     )
                 }
             )
-            PrayerAlarmStore.writeWidgetMetadata(context, sunriseTimeMs, cityName, hijriDate)
+            PrayerAlarmStore.writeWidgetMetadata(
+                context = context,
+                sunriseTimeMs = sunriseTimeMs,
+                cityName = cityName,
+                hijriDate = hijriDate,
+                gregorianDate = gregorianDate,
+            )
+            if (dayTimes.isNotEmpty()) PrayerAlarmStore.writeDayTimes(context, dayTimes)
             Log.d(TAG, "Scheduled ${prayers.size} prayers")
 
             // ── Widget hook (single line, isolated) ──────────────────────

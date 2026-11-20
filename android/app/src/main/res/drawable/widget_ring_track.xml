@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  مسار الحلقة (الخلفية) — نظير SVG ring-track في البطاقة الأصلية.
+  الأصل: App.tsx:1244-1253
+  —sk-ring-track = #e8dfd4 (light, index.css:948)
+                    rgba(235,235,245,0.12) (dark, index.css:1038)
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="ring"
+    android:innerRadiusRatio="3.4"
+    android:thicknessRatio="15"
+    android:useLevel="false">
+    <solid android:color="@color/sk_widget_ring_track" />
+</shape>

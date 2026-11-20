@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ألوان الويدجت — الوضع الداكن.
-  المصدر: src/index.css (html[data-theme="dark"])
+  ألوان الويدجت — الوضع الداكن (html[data-theme="dark"]).
+  كل قيمة مأخوذة حرفيًا من src/index.css مع رقم السطر.
 -->
 <resources>
-    <color name="sk_widget_page">#000000</color>       <!-- index.css:991 -->
-    <color name="sk_widget_card">#1C1C1E</color>       <!-- index.css:1145 -->
-    <color name="sk_widget_surface">#1C1C1E</color>    <!-- index.css:992 -->
-    <color name="sk_widget_separator">#99545458</color><!-- index.css:996 -->
+    <!-- الأسطح OLED -->
+    <color name="sk_widget_page">#000000</color>          <!-- :991  —sk-bg -->
+    <color name="sk_widget_card">#1C1C1E</color>          <!-- :1145 satin rgba(28,28,30,.90) -->
+    <color name="sk_widget_card_low">#1C1C1E</color>
+    <color name="sk_widget_surface">#1C1C1E</color>       <!-- :992  —sk-bg2 -->
+    <color name="sk_widget_separator">#99545458</color>   <!-- :996  —sk-sep -->
+
+    <!-- النصوص -->
+    <color name="sk_widget_label">#FFFFFF</color>         <!-- :1003 —sk-label -->
+    <color name="sk_widget_label2">#99EBEBF5</color>      <!-- :1004 —sk-label2 .60 -->
+    <color name="sk_widget_label3">#4DEBEBF5</color>      <!-- :1005 —sk-label3 .30 -->
+    <color name="sk_widget_accent">#EEDFC2</color>        <!-- :1012 —sk-accent -->
+    <color name="sk_widget_accent_bright">#EEDFC2</color> <!-- :1013 -->
+    <color name="sk_widget_danger">#FF4245</color>        <!-- :1021 —sk-danger -->
+
+    <!-- الحلقة -->
+    <color name="sk_widget_ring_track">#1FEBEBF5</color>  <!-- :1038 —sk-ring-track .12 -->
+    <color name="sk_widget_progress_arc">#EEDFC2</color>  <!-- :1068 —sk-progress-arc -->
+
+    <!-- صف الصلاة القادمة — dark:bg-[var(—sk-accent)]/22 (App.tsx:1347) -->
+    <color name="sk_widget_next_fill">#38EEDFC2</color>
+    <color name="sk_widget_next_border">#4DEEDFC2</color>
+
+    <!-- في الداكن لا حدود: border-color transparent (index.css:1148) -->
+    <color name="sk_widget_border">#00000000</color>
 </resources>

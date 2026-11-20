@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  prayer_widget_preview.xml — المعاينة الثابتة في منتقي الويدجت.
-  تحاكي مخرج المقاس 4x2 (PrayerWidgetContent.DetailedLayout) بنفس:
-    - الخلفية cut-crystal-satin
-    - الخط Thmanyah Serif Display للاسم
-    - الخط Thmanyah Sans للبقية
-    - لون التمييز accent
-  هذه معاينة فقط؛ العرض الحقيقي ينتجه Glance عبر providePreview.
+  prayer_widget_preview.xml — معاينة منتقي الويدجت.
+  نسخة ثابتة من DetailedLayout بنفس: المادة، الحلقة، التواريخ، المواقيت.
+  المرجع: PrayerWidgetContent.kt (DetailedLayout) و App.tsx:1224-1290.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/widget_background_light"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingStart="18dp"
+    android:paddingEnd="18dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
     android:layoutDirection="rtl">
 
-    <!-- الصف العلوي -->
+    <!-- ═══ الرأس: الصلاة الحالية + الحلقة ═══ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,55 +31,87 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="الصلاة القادمة"
+                android:includeFontPadding="false"
+                android:text="الصلاة الحالية"
                 android:textSize="10sp"
-                android:textStyle="bold"
                 android:fontFamily="@font/thmanyah_sans_bold"
                 android:textColor="#7F6A55" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="العصر"
-                android:textSize="22sp"
-                android:textStyle="bold"
+                android:layout_marginTop="2dp"
+                android:includeFontPadding="false"
+                android:text="الفجر"
+                android:textSize="24sp"
                 android:fontFamily="@font/thmanyah_serif_display_black"
-                android:textColor="#B88A4F" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="01:24:30"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/thmanyah_sans_bold"
-            android:textColor="#2B1A10" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="end">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="الزقازيق"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/thmanyah_sans_bold"
                 android:textColor="#2B1A10" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="٢٩ جمادى الأولى ١٤٤٨"
+                android:layout_marginTop="2dp"
+                android:includeFontPadding="false"
+                android:text="التالية: الشروق"
                 android:textSize="10sp"
-                android:fontFamily="@font/thmanyah_sans_regular"
+                android:fontFamily="@font/thmanyah_sans_bold"
+                android:textColor="#B88A4F" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:includeFontPadding="false"
+                android:text="٢٩ جمادى الأولى ١٤٤٨"
+                android:textSize="9sp"
+                android:fontFamily="@font/thmanyah_sans_bold"
                 android:textColor="#A39282" />
         </LinearLayout>
+
+        <!-- الحلقة 80dp بنفس هندسة الأصل -->
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp">
+
+            <ProgressBar
+                style="@style/WidgetRing"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:progressDrawable="@drawable/widget_ring_arc"
+                android:background="@drawable/widget_ring_track"
+                android:progress="720"
+                android:max="1000"
+                android:indeterminate="false" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="متبقي"
+                    android:textSize="7sp"
+                    android:fontFamily="@font/thmanyah_sans_bold"
+                    android:textColor="#7F6A55" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:includeFontPadding="false"
+                    android:text="٠١:٢٤:٣٠"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/thmanyah_sans_bold"
+                    android:textColor="#2B1A10" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <View
@@ -92,7 +120,16 @@
         android:layout_marginTop="10dp"
         android:background="#99E6DCCF" />
 
-    <!-- شريط المواقيت -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:includeFontPadding="false"
+        android:text="الزقازيق"
+        android:textSize="9.5sp"
+        android:fontFamily="@font/thmanyah_sans_bold"
+        android:textColor="#7F6A55" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -19,6 +19,8 @@ object PrayerAlarmStore {
     private const val KEY_SUNRISE_TIME_MS = "widget_sunrise_time_ms"
     private const val KEY_CITY_NAME = "widget_city_name"
     private const val KEY_HIJRI_DATE = "widget_hijri_date"
+    private const val KEY_GREGORIAN_DATE = "widget_gregorian_date"
+    private const val KEY_DAY_TIMES = "widget_day_times"
 
     data class Entry(
         val key: String,
@@ -38,6 +40,31 @@ object PrayerAlarmStore {
     fun hijriDate(context: Context): String? =
         preferences(context).getString(KEY_HIJRI_DATE, null)?.takeIf { it.isNotBlank() }
 
+    /** يقرأ قائمة اليوم المكتوبة من الويب، أو null إن لم تُكتب بعد. */
+    @Synchronized
+    fun dayTimes(context: Context): List<Entry>? {
+        val raw = preferences(context).getString(KEY_DAY_TIMES, null) ?: return null
+        return try {
+            val json = JSONArray(raw)
+            buildList {
+                for (index in 0 until json.length()) {
+                    val item = json.optJSONObject(index) ?: continue
+                    val key = item.optString("key")
+                    val name = item.optString("name")
+                    val timeMs = item.optLong("timeMs", 0L)
+                    if (key.isNotBlank() && name.isNotBlank() && timeMs > 0L) {
+                        add(Entry(key, name, timeMs))
+                    }
+                }
+            }.sortedBy { it.timeMs }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    fun gregorianDate(context: Context): String? =
+        preferences(context).getString(KEY_GREGORIAN_DATE, null)?.takeIf { it.isNotBlank() }
+
     /**
      * يكتب بيانات الويدجت الإضافية. قيم null/0 = لا تغيير للقيمة السابقة غير
      * موجودة؛ نستخدم remove صراحةً حتى تبقى الحالة الفارغة الآمنة ممكنة.
@@ -48,6 +75,7 @@ object PrayerAlarmStore {
         sunriseTimeMs: Long?,
         cityName: String?,
         hijriDate: String?,
+        gregorianDate: String? = null,
     ) {
         val editor = preferences(context).edit()
         if (sunriseTimeMs != null && sunriseTimeMs > 0L) {
@@ -57,6 +85,7 @@ object PrayerAlarmStore {
         }
         if (!cityName.isNullOrBlank()) editor.putString(KEY_CITY_NAME, cityName) else editor.remove(KEY_CITY_NAME)
         if (!hijriDate.isNullOrBlank()) editor.putString(KEY_HIJRI_DATE, hijriDate) else editor.remove(KEY_HIJRI_DATE)
+        if (!gregorianDate.isNullOrBlank()) editor.putString(KEY_GREGORIAN_DATE, gregorianDate) else editor.remove(KEY_GREGORIAN_DATE)
         editor.apply()
     }
 
@@ -82,6 +111,49 @@ object PrayerAlarmStore {
         val entries = load(context).filterNot { it.key == entry.key }.toMutableList()
         entries += entry
         replace(context, entries)
+    }
+
+    /**
+     * مواقيت اليوم كاملة (بما مضى) — يكتبها الجانب الويب من نفس
+     * prayerSchedule الذي يغذّي البطاقة الأصلية. صفر حساب هنا.
+     */
+    @Synchronized
+    fun writeDayTimes(context: Context, entries: List<Entry>) {
+        val json = JSONArray()
+        for (entry in entries) {
+            json.put(
+                JSONObject().apply {
+                    put("key", entry.key)
+                    put("name", entry.name)
+                    put("timeMs", entry.timeMs)
+                }
+            )
+        }
+        preferences(context).edit().putString(KEY_DAY_TIMES, json.toString()).apply()
+    }
+
+    /**
+     * قائمة اليوم الكاملة — **بما مضى**.
+     *
+     * سبب الوجود: loadFuture يُسقط ما مضى، فكان الويدجت يعرض «—» لكل
+     * وقت سابق. البطاقة الأصلية تعرض مواقيت اليوم كاملة، فلزم مصدر
+     * يحتفظ بالماضي. (عيب مؤكَّد في v2.3.27)
+     */
+    @Synchronized
+    fun loadDay(context: Context): List<Entry> {
+        // المصدر الأدق أولًا: القائمة الكاملة القادمة من الويب.
+        dayTimes(context)?.let { if (it.isNotEmpty()) return it }
+
+        val cal = java.util.Calendar.getInstance()
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        cal.set(java.util.Calendar.MINUTE, 0)
+        cal.set(java.util.Calendar.SECOND, 0)
+        cal.set(java.util.Calendar.MILLISECOND, 0)
+        val dayStart = cal.timeInMillis
+        val dayEnd = dayStart + 25L * 60L * 60L * 1000L
+        return load(context)
+            .filter { it.timeMs in (dayStart - 6L * 60L * 60L * 1000L) until dayEnd }
+            .sortedBy { it.timeMs }
     }
 
     @Synchronized

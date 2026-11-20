@@ -41,6 +41,14 @@ export interface PrayerWidgetMetadata {
   cityName?: string;
   /** التاريخ الهجري نصًا جاهزًا من formatHijriDate. */
   hijriDate?: string;
+  /** التاريخ الميلادي نصًا جاهزًا (نفس صيغة dateStrings في App.tsx). */
+  gregorianDate?: string;
+  /**
+   * مواقيت اليوم كاملة — **بما مضى**.
+   * ضرورية لأن الويدجت يعرض «مواقيت اليوم» كما في البطاقة الأصلية،
+   * ونداء scheduleAllPrayers يحمل المستقبل فقط (AlarmScheduler).
+   */
+  dayTimes?: Array<{ key: string; name: string; timeMs: number }>;
 }
 
 class PrayerAlarmServiceImpl {
@@ -112,6 +120,8 @@ class PrayerAlarmServiceImpl {
       }
       if (widget?.cityName) args.cityName = widget.cityName;
       if (widget?.hijriDate) args.hijriDate = widget.hijriDate;
+      if (widget?.gregorianDate) args.gregorianDate = widget.gregorianDate;
+      if (widget?.dayTimes?.length) args.dayTimes = widget.dayTimes;
 
       const result = await this.callPlugin('scheduleAllPrayers', args);
       return result?.success ?? false;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  قوس التقدّم — نظير SVG progress-arc.
+  الأصل: App.tsx:1254-1263 (-rotate-90 + strokeDasharray/strokeDashoffset)
+  —sk-progress-arc = var(—sk-label) → #2b1a10 (light, index.css:980)
+                      #EEDFC2 (dark, index.css:1068)
+  useLevel=true لأن ProgressBar يتغذى من progress (level).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="ring"
+    android:innerRadiusRatio="3.4"
+    android:thicknessRatio="15"
+    android:useLevel="true">
+    <solid android:color="@color/sk_widget_progress_arc" />
+</shape>
