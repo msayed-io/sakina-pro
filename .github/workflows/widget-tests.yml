@@ -48,11 +48,12 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
+      # الـ runner يحمل Android SDK جاهزًا (ANDROID_HOME=/usr/local/lib/android/sdk)
+      # فلا نستخدم setup-android: إصداره v3 يُشغّل `sdkmanager tools` الذي لم يبق
+      # له حزمة في المستودع فيفشل بـ "Failed to find package 'tools'".
       - name: Install Android SDK platform
         run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
           sdkmanager "platforms;android-36" "build-tools;36.0.0" > /dev/null
 
