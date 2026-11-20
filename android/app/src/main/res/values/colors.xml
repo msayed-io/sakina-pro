@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ألوان الويدجت — الوضع الفاتح.
+  المصدر: src/index.css (:root) — الأسطر مذكورة في docs/widget-design-tokens.md
+  النسخة الداكنة في values-night/colors.xml (تبديل تلقائي من النظام).
+-->
+<resources>
+    <color name="sk_widget_page">#ECE7DE</color>       <!-- index.css:898 -->
+    <color name="sk_widget_card">#FDFCFB</color>       <!-- index.css:234 -->
+    <color name="sk_widget_surface">#F7F2EA</color>    <!-- index.css:899 -->
+    <color name="sk_widget_separator">#99E6DCCF</color><!-- index.css:902 -->
+</resources>

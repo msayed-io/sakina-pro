@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ألوان الويدجت — الوضع الداكن.
+  المصدر: src/index.css (html[data-theme="dark"])
+-->
+<resources>
+    <color name="sk_widget_page">#000000</color>       <!-- index.css:991 -->
+    <color name="sk_widget_card">#1C1C1E</color>       <!-- index.css:1145 -->
+    <color name="sk_widget_surface">#1C1C1E</color>    <!-- index.css:992 -->
+    <color name="sk_widget_separator">#99545458</color><!-- index.css:996 -->
+</resources>

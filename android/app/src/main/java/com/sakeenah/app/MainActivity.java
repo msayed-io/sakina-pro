@@ -28,6 +28,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(AdhanPlayerPlugin.class);
         registerPlugin(PrayerAlarmPlugin.class);
         registerPlugin(RadioCapturePlugin.class);
+        registerPlugin(com.sakeenah.app.plugin.PrayerWidgetPlugin.class);
         super.onCreate(savedInstanceState);
         disableWebViewAlgorithmicDarkening(); // الوضع الداكن تديره الويب، لا تعتيم WebView الخوارزمي
         hideWebViewScrollbarsAndOverscroll(); // ملكية التمرير — الطبقة الثالثة (scroll-ownership-spec-ar.md)
@@ -40,6 +41,35 @@ public class MainActivity extends BridgeActivity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             hideSystemBars(); // إعادة التطبيق عند كل focus
+        }
+    }
+
+    /**
+     * نتيجة نافذة تثبيت الويدجت تصل عبر PendingIntent إلى هذه الـ Activity.
+     * نبلّغ طبقة الويب حتى تُحدِّث الزر إلى «تمت الإضافة».
+     */
+    @Override
+    protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        dispatchWidgetPinResult(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        dispatchWidgetPinResult(getIntent());
+    }
+
+    private void dispatchWidgetPinResult(android.content.Intent intent) {
+        if (intent == null) return;
+        if (!"com.sakeenah.app.action.WIDGET_PIN_RESULT".equals(intent.getAction())) return;
+        boolean success = intent.getBooleanExtra("pin_success", true);
+        try {
+            com.sakeenah.app.plugin.PrayerWidgetPlugin plugin =
+                (com.sakeenah.app.plugin.PrayerWidgetPlugin) getBridge().getPlugin("PrayerWidget").getInstance();
+            if (plugin != null) plugin.dispatchPinResult(success);
+        } catch (Throwable ignored) {
+            // الويدجت اختياري — أي فشل هنا لا يجب أن يؤثر على التطبيق.
         }
     }
 

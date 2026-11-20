@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  prayer_widget_preview.xml — المعاينة الثابتة في منتقي الويدجت.
+  تحاكي مخرج المقاس 4x2 (PrayerWidgetContent.DetailedLayout) بنفس:
+    - الخلفية cut-crystal-satin
+    - الخط Thmanyah Serif Display للاسم
+    - الخط Thmanyah Sans للبقية
+    - لون التمييز accent
+  هذه معاينة فقط؛ العرض الحقيقي ينتجه Glance عبر providePreview.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background_light"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:layoutDirection="rtl">
+
+    <!-- الصف العلوي -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الصلاة القادمة"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/thmanyah_sans_bold"
+                android:textColor="#7F6A55" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="العصر"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/thmanyah_serif_display_black"
+                android:textColor="#B88A4F" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="01:24:30"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/thmanyah_sans_bold"
+            android:textColor="#2B1A10" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الزقازيق"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/thmanyah_sans_bold"
+                android:textColor="#2B1A10" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="٢٩ جمادى الأولى ١٤٤٨"
+                android:textSize="10sp"
+                android:fontFamily="@font/thmanyah_sans_regular"
+                android:textColor="#A39282" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#99E6DCCF" />
+
+    <!-- شريط المواقيت -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <TextView style="@style/PreviewCell" android:text="الفجر" />
+        <TextView style="@style/PreviewCell" android:text="الشروق" />
+        <TextView style="@style/PreviewCell" android:text="الظهر" />
+        <TextView style="@style/PreviewCellAccent" android:text="العصر" />
+        <TextView style="@style/PreviewCell" android:text="المغرب" />
+        <TextView style="@style/PreviewCell" android:text="العشاء" />
+    </LinearLayout>
+</LinearLayout>

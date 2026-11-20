@@ -14,6 +14,7 @@ import com.sakeenah.app.R
 import com.sakeenah.app.service.CountdownForegroundService
 import com.sakeenah.app.service.AdhanPlayerService
 import com.sakeenah.app.util.PrayerPreferencesReader
+import com.sakeenah.app.widget.PrayerWidgetUpdater
 
 /**
  * AlarmReceiver — fires Exact Alarms scheduled by AlarmScheduler.
@@ -59,6 +60,10 @@ class AlarmReceiver : BroadcastReceiver() {
             ACTION_PRAYER_ALARM -> {
                 // Cancel the countdown service (10 minutes are up)
                 CountdownForegroundService.stop(context, prayerKey)
+
+                // الصلاة القادمة تغيّرت الآن — أعد رسم الويدجت.
+                // (سطر واحد؛ لا يمسّ منطق الإشعار أو الأذان أدناه.)
+                PrayerWidgetUpdater.requestUpdate(context)
 
                 // ═══════════════════════════════════════════════════════════════
                 // READ PRAYER PREFERENCES BEFORE PLAYING ADHAN

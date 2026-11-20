@@ -29,6 +29,20 @@ export interface PrayerSchedule {
   schedulePrayerTime?: boolean;
 }
 
+/**
+ * بيانات الويدجت الإضافية (اختيارية بالكامل).
+ * تُمرَّر مع نفس نداء scheduleAllPrayers حتى لا يوجد مسار كتابة ثانٍ.
+ * docs/widget-data-flow.md §2
+ */
+export interface PrayerWidgetMetadata {
+  /** الشروق — مستثنى من جدول المنبّهات لأنه ليس صلاة. */
+  sunriseTimeMs?: number;
+  /** اسم المدينة كما يعرضه التطبيق. */
+  cityName?: string;
+  /** التاريخ الهجري نصًا جاهزًا من formatHijriDate. */
+  hijriDate?: string;
+}
+
 class PrayerAlarmServiceImpl {
   private isNative: boolean;
   private plugin: any = null;
@@ -81,14 +95,25 @@ class PrayerAlarmServiceImpl {
    * @param prayers Array of {key, name, timeMs} objects
    * @returns true if all prayers were scheduled successfully
    */
-  async scheduleAllPrayers(prayers: PrayerSchedule[]): Promise<boolean> {
+  async scheduleAllPrayers(
+    prayers: PrayerSchedule[],
+    widget?: PrayerWidgetMetadata,
+  ): Promise<boolean> {
     if (!this.isNative) {
       console.warn('PrayerAlarmService: Not on native Android — using fallback');
       return false;
     }
 
     try {
-      const result = await this.callPlugin('scheduleAllPrayers', { prayers });
+      const args: Record<string, unknown> = { prayers };
+      // حقول اختيارية: نرسلها فقط عند وجودها حتى لا نمسح قيمة سابقة بقيمة فارغة.
+      if (widget?.sunriseTimeMs && widget.sunriseTimeMs > 0) {
+        args.sunriseTimeMs = widget.sunriseTimeMs;
+      }
+      if (widget?.cityName) args.cityName = widget.cityName;
+      if (widget?.hijriDate) args.hijriDate = widget.hijriDate;
+
+      const result = await this.callPlugin('scheduleAllPrayers', args);
       return result?.success ?? false;
     } catch (e) {
       console.warn('PrayerAlarmService.scheduleAllPrayers failed:', e);

@@ -8,4 +8,10 @@
     <string name="countdown_channel_description">عدّاد تنازلي حيّ يظهر قبل الأذان بـ 10 دقائق — لا يمكن تعطيله</string>
     <string name="pre_prayer_channel_name">تنبيه ما قبل الصلاة</string>
     <string name="pre_prayer_channel_description">عدّاد تنازلي حيّ يظهر قبل الصلاة بـ 10 دقائق</string>
+
+    <!-- ── Home & Lock Screen Widget ── -->
+    <string name="widget_label">سَكِينَة — مواقيت الصلاة</string>
+    <string name="widget_description">الصلاة القادمة والعد التنازلي ومواقيت اليوم والتاريخ الهجري، على الشاشة الرئيسية وشاشة القفل.</string>
+    <string name="widget_pin_label">إضافة ويدجت للشاشة الرئيسية</string>
+    <string name="widget_pin_description">أضف بطاقة الصلاة القادمة إلى شاشتك الرئيسية أو شاشة القفل</string>
 </resources>

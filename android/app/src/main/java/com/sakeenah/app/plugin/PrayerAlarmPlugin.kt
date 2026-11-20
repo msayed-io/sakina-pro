@@ -10,6 +10,7 @@ import com.sakeenah.app.util.PrayerScheduleEntry
 import com.sakeenah.app.util.MuezzinHelper
 import com.sakeenah.app.util.PrayerPreferencesReader
 import com.sakeenah.app.util.PrayerAlarmStore
+import com.sakeenah.app.widget.PrayerWidgetUpdater
 import android.util.Log
 
 /**
@@ -55,6 +56,13 @@ class PrayerAlarmPlugin : Plugin() {
             val prayersArray = call.getArray("prayers")
             val prayers = mutableListOf<PrayerScheduleEntry>()
 
+            // ── Widget metadata (optional; absent values are simply ignored) ──
+            // The web layer supplies these so the widget can render sunrise,
+            // the city name and the Hijri date without a second calculator.
+            val sunriseTimeMs = call.getLong("sunriseTimeMs", 0L) ?: 0L
+            val cityName = call.getString("cityName")
+            val hijriDate = call.getString("hijriDate")
+
             for (i in 0 until (prayersArray?.length() ?: 0)) {
                 val prayer = prayersArray?.getJSONObject(i)
                 val key = prayer?.getString("key") ?: ""
@@ -89,7 +97,12 @@ class PrayerAlarmPlugin : Plugin() {
                     )
                 }
             )
+            PrayerAlarmStore.writeWidgetMetadata(context, sunriseTimeMs, cityName, hijriDate)
             Log.d(TAG, "Scheduled ${prayers.size} prayers")
+
+            // ── Widget hook (single line, isolated) ──────────────────────
+            // Redraws every placed widget with the freshly persisted schedule.
+            PrayerWidgetUpdater.requestUpdate(context)
 
             call.resolve(JSObject().apply {
                 put("success", true)

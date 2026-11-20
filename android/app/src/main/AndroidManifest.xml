@@ -115,6 +115,34 @@
             </intent-filter>
         </receiver>
 
+        <!-- ═══ سَكِينَة — ويدجت الشاشة الرئيسية وشاشة القفل ═══
+             exported=true إلزامي (النظام هو من يبثّ ACTION_APPWIDGET_UPDATE).
+             التسمية من strings.xml بهوية التطبيق. -->
+        <receiver
+            android:name=".widget.PrayerWidgetReceiver"
+            android:label="@string/widget_label"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/prayer_widget_info" />
+        </receiver>
+
+        <!-- مستقبل خفيف: تغيّر الوقت أو المنطقة الزمنية.
+             لا يملك أي منطق حساب — فقط يطلب إعادة رسم الويدجت لأن
+             التوقيت المعروض (12/24 ساعة) قد يتغيّر مع إعدادات النظام. -->
+        <receiver
+            android:name=".widget.WidgetTimeChangeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <!--  Alarm Receiver — fires Exact Alarms -->
         <receiver
             android:name=".receiver.AlarmReceiver"

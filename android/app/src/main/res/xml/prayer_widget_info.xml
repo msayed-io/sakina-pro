@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  prayer_widget_info.xml — AppWidgetProviderInfo لسَكِينَة.
+
+  المقاسات (رسمي — Android Developers: AppWidgetProviderInfo):
+    4x1  = minWidth 250dp / minHeight 40dp  → المقاس المدمج
+    4x2  = minWidth 250dp / minHeight 110dp → المقاس التفصيلي
+  targetCellWidth/Height متاحة من API 31 وتُحسّن الشبكة على أندرويد 12+؛
+  تُتجاهل تلقائيًا على الإصدارات الأقدم (لا خطر توافق).
+
+  widgetCategory="home_screen|keyguard" = يعمل على الشاشة الرئيسية **وشاشة القفل**.
+  المرجع: AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD (=2).
+
+  لا updatePeriodMillis: لا نريد أي wakeup دوري. كل التحديثات مدفوعة
+  بأحداث موجودة أصلًا (تغيير المواقيت / دخول وقت صلاة / إعادة التشغيل).
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="40dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="1"
+    android:minResizeWidth="180dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="400dp"
+    android:maxResizeHeight="200dp"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen|keyguard"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:previewLayout="@layout/prayer_widget_preview"
+    android:description="@string/widget_description"
+    android:updatePeriodMillis="0" />

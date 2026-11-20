@@ -7,6 +7,7 @@ import android.util.Log
 import com.sakeenah.app.util.AlarmScheduler
 import com.sakeenah.app.util.PrayerScheduleEntry
 import com.sakeenah.app.util.PrayerAlarmStore
+import com.sakeenah.app.widget.PrayerWidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +47,8 @@ class BootReceiver : BroadcastReceiver() {
                     }
                 )
                 Log.i(TAG, "Restored ${entries.size} persisted prayer alarms after boot")
+                // الويدجت يعيد بناء نفسه من نفس الـ store بعد إعادة التشغيل.
+                PrayerWidgetUpdater.requestUpdate(context)
             } catch (error: Exception) {
                 Log.e(TAG, "Failed to restore prayer alarms after boot", error)
             } finally {

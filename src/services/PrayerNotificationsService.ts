@@ -3,7 +3,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import type { AllPrayersPreferences, PrayerSettingsId, PrayerNotificationMode } from '@/types/prayer-settings';
 import { prayerKeyToSettingsId } from '@/types/prayer-settings';
 import { PrayerAlarmService } from './PrayerAlarmService';
-import type { PrayerSchedule } from './PrayerAlarmService';
+import type { PrayerSchedule, PrayerWidgetMetadata } from './PrayerAlarmService';
 
 type ScheduledPrayer = {
   key: string;
@@ -78,12 +78,14 @@ export class PrayerNotificationsService {
     prayerTimeNotificationsEnabled,
     prePrayerRemindersEnabled,
     secondaryReminders,
+    widget,
   }: {
     prayers: ScheduledPrayer[];
     prayerPrefs: AllPrayersPreferences;
     prayerTimeNotificationsEnabled: boolean;
     prePrayerRemindersEnabled: boolean;
     secondaryReminders?: { mulk?: string; baqarah?: string };
+    widget?: PrayerWidgetMetadata;
   }): Promise<{ ok: boolean; exactAlarmRequired?: boolean }> {
     const version = ++this.scheduleVersion;
     this.scheduleQueue = this.scheduleQueue.then(async () => {
@@ -107,7 +109,7 @@ export class PrayerNotificationsService {
         });
 
         if (version !== this.scheduleVersion || nativePrayers.length === 0) return;
-        await PrayerAlarmService.scheduleAllPrayers(nativePrayers);
+        await PrayerAlarmService.scheduleAllPrayers(nativePrayers, widget);
 
         if (this.isSupported()) {
           const secondary = this.buildSecondaryNotifications(secondaryReminders);

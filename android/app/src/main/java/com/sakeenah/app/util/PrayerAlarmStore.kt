@@ -13,6 +13,13 @@ object PrayerAlarmStore {
     private const val PREFS_NAME = "sakeenah_prayer_alarm_store"
     private const val ENTRIES_KEY = "scheduled_prayers"
 
+    // ── Widget metadata (additive only; no existing key is altered) ──────
+    // Stored alongside the schedule so the home/lock-screen widget can show
+    // sunrise, the city name and the Hijri date without recomputing anything.
+    private const val KEY_SUNRISE_TIME_MS = "widget_sunrise_time_ms"
+    private const val KEY_CITY_NAME = "widget_city_name"
+    private const val KEY_HIJRI_DATE = "widget_hijri_date"
+
     data class Entry(
         val key: String,
         val name: String,
@@ -20,6 +27,38 @@ object PrayerAlarmStore {
         val schedulePrePrayer: Boolean = true,
         val schedulePrayerTime: Boolean = true,
     )
+
+    /** فجر اليوم التالي — يُستنتج من الأداة نفسها، لا يُخزَّن. */
+    fun sunriseTimeMs(context: Context): Long =
+        preferences(context).getLong(KEY_SUNRISE_TIME_MS, 0L)
+
+    fun cityName(context: Context): String? =
+        preferences(context).getString(KEY_CITY_NAME, null)?.takeIf { it.isNotBlank() }
+
+    fun hijriDate(context: Context): String? =
+        preferences(context).getString(KEY_HIJRI_DATE, null)?.takeIf { it.isNotBlank() }
+
+    /**
+     * يكتب بيانات الويدجت الإضافية. قيم null/0 = لا تغيير للقيمة السابقة غير
+     * موجودة؛ نستخدم remove صراحةً حتى تبقى الحالة الفارغة الآمنة ممكنة.
+     */
+    @Synchronized
+    fun writeWidgetMetadata(
+        context: Context,
+        sunriseTimeMs: Long?,
+        cityName: String?,
+        hijriDate: String?,
+    ) {
+        val editor = preferences(context).edit()
+        if (sunriseTimeMs != null && sunriseTimeMs > 0L) {
+            editor.putLong(KEY_SUNRISE_TIME_MS, sunriseTimeMs)
+        } else {
+            editor.remove(KEY_SUNRISE_TIME_MS)
+        }
+        if (!cityName.isNullOrBlank()) editor.putString(KEY_CITY_NAME, cityName) else editor.remove(KEY_CITY_NAME)
+        if (!hijriDate.isNullOrBlank()) editor.putString(KEY_HIJRI_DATE, hijriDate) else editor.remove(KEY_HIJRI_DATE)
+        editor.apply()
+    }
 
     @Synchronized
     fun replace(context: Context, entries: List<Entry>) {
@@ -54,6 +93,9 @@ object PrayerAlarmStore {
 
     @Synchronized
     fun clear(context: Context) {
+        // Only the schedule entries are cleared here. Widget metadata is
+        // independent so a cancelled schedule leaves the widget in its
+        // safe empty state rather than showing stale city/Hijri values.
         preferences(context).edit().remove(ENTRIES_KEY).apply()
     }
 

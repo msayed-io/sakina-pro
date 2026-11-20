@@ -13,7 +13,10 @@ import {
   ChevronDown,
   Compass,
   ChevronRight,
+  ChevronLeft,
   Bell,
+  LayoutGrid,
+  Smartphone,
 } from "lucide-react";
 
 type SettingsScreenProps = {
@@ -85,6 +88,108 @@ const Switch = React.memo(function Switch({
         data-checked={checked}
         className="w-4.5 h-4.5 rounded-full bg-white shadow-md border border-white dark:data-[checked=true]:bg-black dark:data-[checked=true]:border-black"
       />
+    </button>
+  );
+});
+
+/**
+ * WidgetPinSection — «إضافة ويدجت للشاشة الرئيسية».
+ *
+ * يستخدم الواجهة الرسمية requestPinGlanceAppWidget.
+ * البصريات مطابقة تمامًا لأقسام الشاشة القائمة (cut-crystal-panel + نفس
+ * المقاسات والخطوط والألوان) فلا تبدو عنصرًا غريبًا.
+ *
+ * الحالات:
+ *   - غير أندرويد / غير مدعوم → إرشاد لطيف بنفس أسلوب رسائل التطبيق
+ *   - مدعوم                 → نافذة تأكيد النظام
+ */
+const WidgetPinSection = React.memo(function WidgetPinSection() {
+  const [state, setState] = React.useState<
+    "idle" | "checking" | "opening" | "done" | "unsupported"
+  >("checking");
+  const [pinned, setPinned] = React.useState(false);
+
+  React.useEffect(() => {
+    let alive = true;
+    void (async () => {
+      const { PrayerWidgetService } = await import("@/services/PrayerWidgetService");
+      const supported = await PrayerWidgetService.isSupported();
+      if (!alive) return;
+      setState(supported ? "idle" : "unsupported");
+      if (supported) {
+        void PrayerWidgetService.onPinResult((success) => {
+          if (success) {
+            setPinned(true);
+            setState("done");
+          }
+        });
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const handleAdd = async () => {
+    if (state === "opening") return;
+    setState("opening");
+    const { PrayerWidgetService } = await import("@/services/PrayerWidgetService");
+    const result = await PrayerWidgetService.requestPin();
+    if (!result.supported) {
+      setState("unsupported");
+      return;
+    }
+    // النافذة النظامية الآن مفتوحة؛ نعيد الحالة إلى idle بعد لحظة
+    // حتى يستطيع المستخدم إعادة المحاولة إن أغلقها.
+    window.setTimeout(() => setState((s) => (s === "opening" ? "idle" : s)), 1200);
+  };
+
+  // خارج أندرويد أو مشغّل لا يدعم التثبيت: لا نعرض شيئًا في الويب،
+  // ونعرض الإرشاد على أندرويد فقط.
+  if (state === "unsupported") {
+    return (
+      <div className="cut-crystal-panel rounded-[26px] p-5 relative overflow-hidden shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e6dccf]/20 dark:bg-[var(--sk-sep)]/20 text-[var(--sk-label2)]">
+            <Smartphone size={18} strokeWidth={2} />
+          </div>
+          <div className="text-right">
+            <p className="text-[14px] font-bold text-[var(--sk-label)]">
+              ويدجت الشاشة الرئيسية
+            </p>
+            <p className="mt-0.5 text-[11.5px] font-bold leading-relaxed text-[var(--sk-label2)]">
+              مشغّل الشاشة الحالي لا يدعم الإضافة المباشرة. أضِفه من قائمة الويدجت في شاشتك الرئيسية.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === "checking") return null;
+
+  return (
+    <button
+      type="button"
+      onClick={() => void handleAdd()}
+      disabled={state === "opening"}
+      className="cut-crystal-panel sk-rim w-full rounded-[26px] p-5 text-right relative overflow-hidden shadow-md transition-transform active:scale-[0.99] disabled:opacity-70"
+    >
+      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#b88a4f]/5 dark:from-[var(--sk-accent)]/5 to-transparent rounded-full -mr-10 -mt-10 pointer-events-none" />
+      <div className="relative flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#b88a4f]/10 dark:bg-[var(--sk-accent)]/10 text-[var(--sk-accent)]">
+          {pinned ? <Check size={18} strokeWidth={2.5} /> : <LayoutGrid size={18} strokeWidth={2} />}
+        </div>
+        <div className="flex-1 text-right">
+          <p className="text-[14px] font-bold text-[var(--sk-label)]">
+            {pinned ? "تمت الإضافة" : "إضافة ويدجت للشاشة الرئيسية"}
+          </p>
+          <p className="mt-0.5 text-[11.5px] font-bold leading-relaxed text-[var(--sk-label2)]">
+            الصلاة القادمة والعد التنازلي على شاشتك — وشاشة القفل
+          </p>
+        </div>
+        <ChevronLeft size={18} className="shrink-0 text-[var(--sk-label3)]" strokeWidth={2} />
+      </div>
     </button>
   );
 });
@@ -545,6 +650,9 @@ export const SettingsScreen = React.memo(function SettingsScreen({
             </div>
           </div>
         </div>
+
+        {/* ── SECTION 3.5: HOME & LOCK SCREEN WIDGET ── */}
+        <WidgetPinSection />
 
         {/* ── SECTION 4: ABOUT THE APPLICATION ── */}
         <div className="cut-crystal-panel rounded-[26px] p-5 text-center relative overflow-hidden shadow-md">

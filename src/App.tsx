@@ -717,6 +717,13 @@ function AuthenticatedApp() {
             mulk: isMulkReminderEnabled ? mulkReminderTime : undefined,
             baqarah: isBaqarahReminderEnabled ? baqarahReminderTime : undefined,
           },
+          // بيانات ويدجت الشاشة الرئيسية — تمرَّر عبر نفس النداء فلا يوجد
+          // مسار كتابة ثانٍ. (docs/widget-data-flow.md §2)
+          widget: {
+            sunriseTimeMs: prayerSchedule.find((p) => p.key === "sunrise")?.date?.getTime(),
+            cityName: placeNameOnly,
+            hijriDate: hijriSnapshot.today ? formatHijriDate(hijriSnapshot.today) : undefined,
+          },
         });
       } catch (error) {
         console.warn("Notification scheduling failed:", error);
@@ -736,6 +743,10 @@ function AuthenticatedApp() {
     baqarahReminderTime,
     prayerPrefs,
     permissionRevision,
+    // بيانات الويدجت — تُرسَل مع نفس النداء، فإعادة الجدولة عند تغيّرها
+    // تُحدِّث الويدجت أيضًا دون مسار إضافي.
+    placeNameOnly,
+    hijriSnapshot.today,
   ]);
 
   const dateStrings = useMemo(() => {
