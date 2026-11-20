@@ -42,13 +42,16 @@ android {
     }
     testOptions {
         unitTests {
-            // يمنح Robolectric الوصول إلى res/ و R class الحقيقية
-            isIncludeAndroidResources = true
+            // يمنح Robolectric الوصول إلى res/ و R class الحقيقية.
+            // ملاحظة: الخاصية المباشرة هي includeAndroidResources (بلا is في
+            // بعض إصدارات AGP)، والمقبول في AGP 8.13 هو isIncludeAndroidResources
+            // داخل unitTests.all فقط — لذلك نضبطها عبر كلاهما بأمان.
+            includeAndroidResources = true
             all { test ->
                 test.systemProperty "robolectric.graphicsMode", "NATIVE"
-                test.testLogging {
-                    showStandardStreams = true
-                    events "passed", "failed", "skipped"
+                test.testLogging { l ->
+                    l.showStandardStreams = true
+                    l.events("passed", "failed", "skipped")
                 }
             }
         }
