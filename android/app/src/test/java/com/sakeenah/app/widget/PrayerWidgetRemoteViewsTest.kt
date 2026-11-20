@@ -85,10 +85,13 @@ class PrayerWidgetRemoteViewsTest {
         // ① البناء من نفس كود الويدجت
         val rv: RemoteViews = buildWidgetRemoteViews(context, data, nowMs)
 
-        // ② تضخيم فعلي — يكشف أخطاء XML والموارد المفقودة
+        // ② تضخيم فعلي — يكشف أخطاء XML والموارد المفقودة.
+        // إن فشل التضخيم يرمي InflateException هنا مباشرة.
+        // ملاحظة: apply() على RemoteViews لا يضيف بالضرورة ابنًا مباشرًا
+        // إلى الجذر المُمرَّر (قد يعمل على الشجرة الداخلية)، فلا نتحقق من
+        // childCount بل نتحقق أن التضخيم لم يرمِ استثناءً — وهو الهدف.
         val root = FrameLayout(context)
         rv.apply(context, root)
-        assertTrue("[$label] الشجرة يجب أن تحتوي عناصر بعد التضخيم", root.childCount > 0)
 
         // ③ الترميز إلى Parcel — هنا يُقتل أي Bitmap مُحرَّر
         val parcel = Parcel.obtain()
@@ -151,8 +154,7 @@ class PrayerWidgetRemoteViewsTest {
     fun emptyState_noLocation() {
         val rv = RemoteViews(context.packageName, com.sakeenah.app.R.layout.widget_empty)
         val root = FrameLayout(context)
-        rv.apply(context, root)
-        assertTrue("حالة بلا موقع يجب أن تُضخَّم", root.childCount > 0)
+        rv.apply(context, root)   // يرمي InflateException إن فشل التضخيم
 
         val parcel = Parcel.obtain()
         try {
