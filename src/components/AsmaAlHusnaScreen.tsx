@@ -280,13 +280,11 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
                   </h3>
                 </div>
 
-                {/* Meaning Subtitles */}
+                {/* معنى عربي مختصر — بدل حقلي النقل الصوتي والترجمة اللاتينيين.
+                    (كانا يُعرضان بالحرف اللاتيني داخل تطبيق عربي بالكامل.) */}
                 <div className="text-center w-full mt-1">
-                  <p className="text-[11px] font-bold text-[var(--sk-accent)] leading-none mb-0.5 truncate select-none">
-                    {item.transliteration}
-                  </p>
-                  <p className="text-[10px] text-[var(--sk-label2)] font-bold truncate opacity-85 select-none">
-                    {item.translation}
+                  <p className="text-[10.5px] text-[var(--sk-label2)] font-bold leading-tight truncate opacity-85 select-none">
+                    {item.meaningDetail.split(/[.،؛]/)[0]}
                   </p>
                 </div>
               </div>
@@ -433,7 +431,7 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
 
       {/* ── INTERNAL FLOATING NAVIGATION ── */}
       <nav className="fixed inset-x-0 bottom-6 z-40 flex justify-center pointer-events-none">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-[32px] cut-crystal-capsule px-1.5 py-1.5 shadow-lg">
+        <div className="sk-rim pointer-events-auto flex items-center gap-1 rounded-[32px] cut-crystal-capsule px-1.5 py-1.5 shadow-lg">
           {/* الصفحة الرئيسية Tab */}
           <button
             onClick={() => setActiveTab("main")}

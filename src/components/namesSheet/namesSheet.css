@@ -129,14 +129,25 @@ html:not([data-theme="dark"]) .ns-sheet::before {
 }
 
 /* ══ تدرج التطبيق الأصلي داخل النافذة ══
-   نفس صنفَي .progressive-blur / .progressive-blur-bottom وبنفس قواعدهما في
-   src/index.css:925-957 — نُعيد فقط تثبيتهما داخل النافذة بدل الشاشة. */
+   نفس صنفَي .progressive-blur / .progressive-blur-bottom وبنفس هندستهما
+   وألوانهما (src/index.css:925-957) — نُعيد تثبيتهما داخل النافذة بدل الشاشة.
+
+   الأداء: طبقات backdrop-filter فوق شجرة تمرير داخل WebView تُعيد حساب البكسل
+   كل إطار فتُثقل التمرير بشدة. لذلك نستخدم هنا **وصفة التطبيق نفسها للحالة
+   المنخفضة الطاقة** (src/index.css:412-419): تعبئة متدرجة بلا ضباب، بنفس
+   اللون والاتجاه والارتفاع — فلا يتغيّر شكل التدرج ولا يتأثر التمرير. */
 .ns-sheet .progressive-blur {
   position: absolute;
   inset-inline: 0;
   top: 0;
   bottom: auto;
   z-index: 4;
+  background: linear-gradient(var(--qf-fade), var(--bg) 25%, transparent);
+}
+.ns-sheet .progressive-blur i {
+  display: none !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 .ns-sheet .progressive-blur-bottom {
   top: auto;
@@ -321,8 +332,24 @@ html:not([data-theme="dark"]) .ns-namecard {
     opacity 0.25s,
     color 0.25s;
 }
+/* منظومة الكبسولات في الوضع الفاتح = وصفة التطبيق نفسها بالحرف
+   (src/index.css:118-134 .cut-crystal-capsule) — زجاج لؤلؤي، حدّ شعري
+   دافئ، وحلقة ضوء علوية فقط بلا حلقات جانبية. */
 html:not([data-theme="dark"]) .ns-glass {
-  box-shadow: var(--sk-drop);
+  background: linear-gradient(
+    180deg,
+    rgba(253, 252, 251, 0.82) 0%,
+    rgba(244, 240, 234, 0.68) 100%
+  );
+  -webkit-backdrop-filter: blur(30px) saturate(220%) contrast(99%) brightness(103%);
+  backdrop-filter: blur(30px) saturate(220%) contrast(99%) brightness(103%);
+  border: 1px solid rgba(43, 26, 16, 0.1);
+  box-shadow:
+    0 16px 36px -10px rgba(43, 26, 16, 0.18),
+    0 4px 10px -2px rgba(43, 26, 16, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 0 rgba(43, 26, 16, 0.05);
+  color: var(--sk-label);
 }
 .ns-glass:active {
   transform: scale(0.95);

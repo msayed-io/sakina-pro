@@ -1833,20 +1833,6 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             )}
                           </div>
 
-                          <div className="flex items-center gap-1">
-                            {/* Bookmark Toggle */}
-                            <button
-                              onClick={() => saveBookmarkToggle(hadith)}
-                              className={`p-2 transition rounded-full ${
-                                bookmarked
-                                  ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
-                                  : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
-                              }`}
-                              title={bookmarked ? "محفوظ في المفضلة" : "حفظ الحديث"}
-                            >
-                              <Bookmark className={`w-4 h-4 ${bookmarked ? "fill-[var(--sk-label)]" : ""}`} />
-                            </button>
-                          </div>
                         </div>
 
                         {/* Hadith Text with Quran/Traditional Typography */}
@@ -1867,10 +1853,28 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                         <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                           {/* Left: Standard Actions */}
                           <div className="flex items-center gap-1.5">
+                            {/* زر الحفظ — انتقل من رأس البطاقة إلى شريط الأدوات السفلي */}
+                            <button
+                              onClick={() => saveBookmarkToggle(hadith)}
+                              className={`p-2.5 transition cursor-pointer flex items-center justify-center rounded-full sk-rim ${
+                                bookmarked
+                                  ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
+                                  : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                              }`}
+                              title={bookmarked ? "محفوظ في المفضلة" : "حفظ الحديث"}
+                              aria-label={bookmarked ? "إزالة من المحفوظات" : "حفظ الحديث"}
+                            >
+                              <Bookmark
+                                className={`w-4 h-4 ${
+                                  bookmarked ? "fill-current" : "text-[var(--sk-accent-bright)]"
+                                }`}
+                              />
+                            </button>
+
                             {/* Sakeenah AI attachment button */}
                             <button
                               onClick={() => onAskSakeenah?.(hadith)}
-                              className="p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                              className="p-2.5 cut-crystal-capsule sk-rim transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
                               title="اسأل سكينة AI عن الحديث"
                               aria-label="إرفاق الحديث مع سكينة AI"
                             >
@@ -1880,7 +1884,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             {/* Copy button */}
                             <button
                               onClick={() => handleCopyHadith(hadith)}
-                              className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
+                              className={`p-2.5 cut-crystal-capsule sk-rim transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
                                 isCopied ? "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40" : ""
                               }`}
                               title="نسخ الحديث الشريف"
@@ -1891,7 +1895,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             {/* Share button */}
                             <button
                               onClick={() => handleShareHadith(hadith)}
-                              className="p-2.5 cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] transition cursor-pointer flex items-center justify-center"
+                              className="p-2.5 cut-crystal-capsule sk-rim text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] transition cursor-pointer flex items-center justify-center"
                               title="مشاركة الحديث"
                             >
                               <Share2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />
@@ -1900,7 +1904,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             {/* Report Typo / Note button */}
                             <button
                               onClick={() => setReportingHadith(hadith)}
-                              className="px-3 py-1.5 cut-crystal-capsule text-rose-800 hover:bg-rose-50/50 transition cursor-pointer flex items-center gap-1.5 text-[11px] font-bold"
+                              className="px-3 py-1.5 cut-crystal-capsule sk-rim text-rose-800 hover:bg-rose-50/50 transition cursor-pointer flex items-center gap-1.5 text-[11px] font-bold"
                               title="الإبلاغ عن تصحيح في التشكيل أو النص"
                             >
                               <Flag className="w-3.5 h-3.5 text-rose-600" />
@@ -2177,10 +2181,28 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                       <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                         {/* Left: Standard Actions */}
                         <div className="flex items-center gap-1.5">
+                          {/* زر الحفظ — انتقل من رأس البطاقة إلى شريط الأدوات السفلي */}
+                          <button
+                            onClick={() => saveBookmarkToggle(hadith)}
+                            className={`p-2.5 transition cursor-pointer flex items-center justify-center rounded-full sk-rim ${
+                              isBookmarked(hadith)
+                                ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
+                                : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                            }`}
+                            title={isBookmarked(hadith) ? "محفوظ في المفضلة" : "حفظ الحديث"}
+                            aria-label={isBookmarked(hadith) ? "إزالة من المحفوظات" : "حفظ الحديث"}
+                          >
+                            <Bookmark
+                              className={`w-4 h-4 ${
+                                isBookmarked(hadith) ? "fill-current" : "text-[var(--sk-accent-bright)]"
+                              }`}
+                            />
+                          </button>
+
                           {/* Sakeenah AI attachment button */}
                           <button
                             onClick={() => onAskSakeenah?.(hadith)}
-                            className="p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                            className="p-2.5 cut-crystal-capsule sk-rim transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
                             title="اسأل سكينة AI عن الحديث"
                             aria-label="إرفاق الحديث مع سكينة AI"
                           >
@@ -2190,7 +2212,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           {/* Copy button */}
                           <button
                             onClick={() => handleCopyHadith(hadith)}
-                            className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
+                            className={`p-2.5 cut-crystal-capsule sk-rim transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
                               isCopied ? "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40" : ""
                             }`}
                             title="نسخ الحديث الشريف"
@@ -2201,7 +2223,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           {/* Share button */}
                           <button
                             onClick={() => handleShareHadith(hadith)}
-                            className="p-2.5 cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] transition cursor-pointer flex items-center justify-center"
+                            className="p-2.5 cut-crystal-capsule sk-rim text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] transition cursor-pointer flex items-center justify-center"
                             title="مشاركة الحديث"
                           >
                             <Share2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />
@@ -2214,7 +2236,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                               setReportNote("");
                               setReportCategory("خطأ في التشكيل أو الإعراب");
                             }}
-                            className="px-3 py-1.5 cut-crystal-capsule text-rose-800 hover:bg-rose-50/50 transition cursor-pointer flex items-center gap-1.5 text-[11px] font-bold"
+                            className="px-3 py-1.5 cut-crystal-capsule sk-rim text-rose-800 hover:bg-rose-50/50 transition cursor-pointer flex items-center gap-1.5 text-[11px] font-bold"
                             title="الإبلاغ عن تصحيح أو ملحوظة"
                           >
                             <Flag className="w-3.5 h-3.5 text-rose-600" />
