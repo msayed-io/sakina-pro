@@ -1,3 +1,9 @@
+import {
+  arabicChapterByNumber,
+  arabicChapterFor,
+  isPlaceholderChapterTitle,
+  resolveChapterTitle,
+} from "../../data/hadithArabicChapters";
 import express from "express";
 import type { Request, Response } from "express";
 import fs from "fs";
@@ -372,46 +378,17 @@ const ENGLISH_WORD_MAP: [RegExp, string][] = [
 ];
 
 function formatArabicChapterTitle(sectionNum: string, rawTitle?: string, bookId?: string): string {
-  // If book is Sahih Muslim, use the 100% correct dedicated map
-  if (bookId === "muslim" && MUSLIM_ARABIC_SECTIONS[sectionNum]) {
-    return MUSLIM_ARABIC_SECTIONS[sectionNum];
-  }
+  // المصدر الوحيد للحقيقة: الجدول المنقول آليًا من مصدر عربي موثوق.
+  // لا أرقام بديلة ولا أسماء مخترعة داخل هذا المسار.
+  const resolved = resolveChapterTitle(bookId ?? "", sectionNum, rawTitle);
+  if (resolved) return resolved;
 
-  if (!rawTitle || !rawTitle.trim()) {
-    if (bookId === "bukhari") {
-      return COMMON_ARABIC_SECTIONS[sectionNum] || `كتاب رقم ${sectionNum}`;
-    }
-    return `كتاب رقم ${sectionNum}`;
-  }
+  // احتياطي أخير: عنوان عربي أصلي موجود في البيانات نفسها.
+  const raw = String(rawTitle ?? "").trim();
+  if (/[\u0600-\u06FF]/.test(raw) && !/^(كتاب|باب)\s*رقم/.test(raw)) return raw;
 
-  const trimmed = rawTitle.trim();
-
-  // If title is purely a number (e.g. "1", "2")
-  if (/^\d+$/.test(trimmed)) {
-    if (bookId === "bukhari") {
-      return COMMON_ARABIC_SECTIONS[trimmed] || COMMON_ARABIC_SECTIONS[sectionNum] || `كتاب رقم ${trimmed}`;
-    }
-    return `كتاب رقم ${trimmed}`;
-  }
-
-  // Check if title contains Arabic characters
-  if (/[\u0600-\u06FF]/.test(trimmed)) {
-    return trimmed;
-  }
-
-  // Check English keywords map
-  for (const [pattern, arTitle] of ENGLISH_WORD_MAP) {
-    if (pattern.test(trimmed)) {
-      return arTitle;
-    }
-  }
-
-  // Check numeric map only for Bukhari as a fallback
-  if (bookId === "bukhari" && COMMON_ARABIC_SECTIONS[sectionNum]) {
-    return COMMON_ARABIC_SECTIONS[sectionNum];
-  }
-
-  return `كتاب رقم ${sectionNum}`;
+  // كتاب بلا تقسيم أصلي في مصدره: اسم الكتاب نفسه هو الباب.
+  return "";
 }
 
 /**
@@ -493,7 +470,10 @@ async function getBookDataset(bookId: string): Promise<{ metadata: any; hadiths:
   const hadiths: HadithItem[] = rawHadithsList.map((h: any, index: number) => {
     const sectionNum = h.reference?.book?.toString() || "0";
     const rawSectionTitle = sectionMap[sectionNum] || "";
-    const sectionTitle = formatArabicChapterTitle(sectionNum, rawSectionTitle, bookId);
+    let sectionTitle = formatArabicChapterTitle(sectionNum, rawSectionTitle, bookId);
+    // الباب 0 عند كتبه بلا عنوان: القسم غير مسمّى في المصدر ⇒ اسم الكتاب، لا رقم.
+    if (!sectionTitle && sectionNum === "0") sectionTitle = book.titleArabic;
+    if (!sectionTitle) sectionTitle = book.titleArabic;
     const rawHadithNumber = h.hadithnumber ?? h.arabicnumber;
     const parsedHadithNumber = Number(rawHadithNumber);
     const hadithnumber = Number.isFinite(parsedHadithNumber) ? parsedHadithNumber : index + 1;
@@ -568,6 +548,11 @@ router.get("/book/:bookId", async (req: Request, res: Response) => {
       const num = parseInt(numStr, 10) || 0;
       // Count how many hadiths belong to this chapter
       const count = dataset.hadiths.filter((h) => h.chapterId === numStr).length;
+      // الباب 0: قسم غير مسمّى في المصدر نفسه (نص الكتاب يظهر بلا عنوان باب).
+      // يُعرض باسم الكتاب لا برقم ولا بفراغ ولا باسم مخترَع.
+      if (num === 0 && !String(title ?? "").trim()) {
+        return { id: numStr, number: num, title: book.titleArabic, hadithCount: count };
+      }
       return {
         id: numStr,
         number: num,
@@ -586,7 +571,10 @@ router.get("/book/:bookId", async (req: Request, res: Response) => {
           existing.count++;
         } else {
           chapterMap.set(cid, {
-            title: h.chapterTitle || `باب رقم ${cid}`,
+            title:
+              formatArabicChapterTitle(cid, h.chapterTitle, bookId) ||
+              arabicChapterByNumber(bookId, cid) ||
+              h.chapterTitle,
             count: 1,
           });
         }

@@ -354,7 +354,8 @@ export default function QuranReadingGatewayScreen({ onReadSurah, onModeChange }:
           <motion.div
             animate={{
               width: isSearchActive ? "100%" : 56,
-              borderRadius: isSearchActive ? 24 : 28,
+              // كبسولة التطبيق كاملة عند الانفتاح أيضًا — كانت تنزل إلى 24 فتبدو مستطيلة.
+            borderRadius: 999,
             }}
             transition={{ type: "spring", damping: 25, stiffness: 250 }}
             className="h-14 cut-crystal-capsule shadow-lg flex items-center overflow-hidden pointer-events-auto relative"

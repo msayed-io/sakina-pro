@@ -1,3 +1,8 @@
+import {
+  arabicChapterByNumber,
+  isPlaceholderChapterTitle,
+  resolveChapterTitle,
+} from "../data/hadithArabicChapters";
 import React, { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -88,6 +93,7 @@ interface HadithReport {
   bookId: string;
   bookTitle: string;
   hadithnumber: number;
+  chapterId?: string;
   chapterTitle: string;
   category: string;
   note: string;
@@ -513,11 +519,27 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     }
   };
 
+  /** يرقّي بلاغًا محفوظًا: يستخرج رقم الباب عند غيابه ثم يحلّ اسمه الأصلي. */
+  const migrateReport = (r: HadithReport): HadithReport => {
+    if (r.chapterTitle && !isPlaceholderChapterTitle(r.chapterTitle)) return r;
+    const fromStored = r.chapterId ?? "";
+    const fromTitle = /(?:كتاب|باب)\s*رقم\s*([0-9]+)/.exec(r.chapterTitle ?? "")?.[1] ?? "";
+    const chapterNumber = fromStored || fromTitle;
+    const resolved = chapterNumber ? arabicChapterByNumber(r.bookId, chapterNumber) : null;
+    return {
+      ...r,
+      chapterId: chapterNumber || r.chapterId,
+      chapterTitle: resolved ?? r.chapterTitle,
+    };
+  };
+
   const loadReportsFromStorage = () => {
     try {
       const saved = localStorage.getItem(REPORTS_STORAGE_KEY);
       if (saved) {
-        setReports(JSON.parse(saved));
+        // ترحيل وقت العرض: البلاغات المحفوظة قبل إصلاح الأسماء تحمل «كتاب رقم N».
+        // نستبدلها بالاسم الأصلي من رقم الباب داخل كتابه، بلا لمس أي بيان آخر.
+        setReports((JSON.parse(saved) as HadithReport[]).map(migrateReport));
       }
     } catch (e) {
       console.warn("Could not load reports:", e);
@@ -580,6 +602,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
       bookId: reportingHadith.bookId,
       bookTitle: reportingHadith.bookTitle,
       hadithnumber: reportingHadith.hadithnumber,
+      chapterId: reportingHadith.chapterId,
       chapterTitle: reportingHadith.chapterTitle,
       category: reportCategory,
       note: reportNote.trim(),
@@ -698,7 +721,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               existing.count++;
             } else {
               chapterMap.set(cid, {
-                title: h.chapterTitle || `الباب رقم ${cid}`,
+                title: resolveChapterTitle(book.id ?? "", cid, h.chapterTitle),
                 count: 1,
               });
             }
@@ -983,7 +1006,11 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               <BookmarkCheck className={`w-3.5 h-3.5 ${viewMode === "bookmarks" ? "text-[var(--sk-on-espresso)]" : "text-[var(--sk-accent-deep)]"}`} />
               <span className="hidden sm:inline">المحفوظات</span>
               {bookmarks.length > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim">
+                <span className={`px-1.5 py-0.5 text-[10px] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim ${
+                  viewMode === "bookmarks"
+                    ? "bg-[var(--sk-accent-bright)] text-[var(--sk-on-espresso)]"
+                    : "bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)]"
+                }`}>
                   {bookmarks.length}
                 </span>
               )}
@@ -1002,7 +1029,11 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               <Flag className={`w-3.5 h-3.5 ${viewMode === "reports" ? "text-[var(--sk-on-espresso)]" : "text-[var(--sk-accent-deep)]"}`} />
               <span className="hidden sm:inline">ملاحظاتي</span>
               {reports.length > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim">
+                <span className={`px-1.5 py-0.5 text-[10px] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim ${
+                  viewMode === "reports"
+                    ? "bg-[var(--sk-accent-bright)] text-[var(--sk-on-espresso)]"
+                    : "bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)]"
+                }`}>
                   {reports.length}
                 </span>
               )}
@@ -1635,7 +1666,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                   <span className="text-[var(--sk-label)]">
                     {activeChapterId === "all"
                       ? "جميع الأبواب"
-                      : chapters.find((c) => c.id === activeChapterId)?.title || `الباب رقم ${activeChapterId}`}
+                      : chapters.find((c) => c.id === activeChapterId)?.title || ""}
                   </span>
                 </div>
 
@@ -1651,7 +1682,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                     <span className="font-extrabold max-w-[120px] sm:max-w-[180px] truncate">
                       {activeChapterId === "all"
                         ? "جميع الأبواب"
-                        : chapters.find((c) => c.id === activeChapterId)?.title || `الباب رقم ${activeChapterId}`}
+                        : chapters.find((c) => c.id === activeChapterId)?.title || ""}
                     </span>
                     <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80" />
                   </button>
@@ -1669,10 +1700,18 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: -8, scale: 0.97 }}
                           transition={{ duration: 0.15, ease: "easeOut" }}
-                          className="absolute right-0 top-full mt-2 w-[290px] sm:w-[340px] bg-[#fdfcfb]/95 dark:bg-[var(--sk-bg3)]/95 backdrop-blur-xl rounded-[24px] border border-[var(--sk-sep)] shadow-[0_12px_28px_rgba(43,26,16,0.12)] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
+                          className="hadith-index-sheet absolute right-0 top-full mt-2 w-[268px] sm:w-[300px] cut-crystal-panel rounded-[24px] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
                         >
-                          {/* Search bar inside Dropdown */}
-                          <div className="p-3 border-b border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 bg-[#fbf8f3]/85">
+                          {/* تدرج التطبيق الأصلي: نفس صنف .progressive-blur ونفس
+                              طبقتَي الضباب، مُثبَّت في أعلى النافذة بدل أعلى الشاشة. */}
+                          <div className="progressive-blur" aria-hidden="true">
+                            <i />
+                            <i />
+                          </div>
+
+                          {/* شريط البحث الداخلي: بلا خلفية ولا حدّ — الطبقة المصمتة
+                              كانت تحته مباشرة فتبدو كتلة بيضاء في الداكن. */}
+                          <div className="relative z-[2] px-2.5 pt-2.5 pb-1.5 shrink-0">
                             <div className="cut-crystal-input flex items-center px-2.5 py-1">
                               <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
                               <input
@@ -1694,7 +1733,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           </div>
 
                           {/* List of Chapters with scrollbar */}
-                          <div className="flex-1 overflow-y-auto p-2 space-y-1 player-hide-scrollbar max-h-[300px]">
+                          <div className="relative flex-1 overflow-y-auto px-2 pt-1 pb-2 space-y-1 player-hide-scrollbar max-h-[300px]">
                             {/* All Chapters option */}
                             {!chapterSearchQuery && (
                               <button
@@ -2026,60 +2065,86 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
             VIEW 4: USER TYPO REPORTS VIEW (سجل ملاحظاتي وبلاغاتي)
             ════════════════════════════════════════════════════════════════ */}
         {viewMode === "reports" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <div className="p-4 cut-crystal-panel rounded-[26px] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Flag className="w-5 h-5 text-[var(--sk-accent-bright)]" />
-                <h2 className="text-base font-extrabold text-[var(--sk-label)]">سجل ملاحظاتي وبلاغاتي عن النصوص والتشكيل</h2>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            {/* رأس الصفحة: عنوان بكلمتين + عدّاد — بلا تكرار ولا وصف إنشائي */}
+            <div className="cut-crystal-panel rounded-[26px] px-4 py-3.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="w-9 h-9 rounded-full bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] grid place-items-center shrink-0">
+                  <Flag className="w-4 h-4" />
+                </span>
+                <div className="min-w-0">
+                  <h2 className="text-[15px] font-extrabold leading-tight text-[var(--sk-label)]">
+                    ملاحظاتي وبلاغاتي
+                  </h2>
+                  <p className="text-[10.5px] font-bold text-[var(--sk-label2)] mt-0.5 leading-none">
+                    سجل ما دوّنته على النصوص والتشكيل
+                  </p>
+                </div>
               </div>
-              <span className="text-xs font-bold text-[var(--sk-label2)]">{reports.length} بلاغًا مسجلاً</span>
+              <span className="shrink-0 px-2.5 py-1 rounded-full bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-[10.5px] font-extrabold tabular-nums">
+                {reports.length} بلاغ
+              </span>
             </div>
 
             {reports.length === 0 ? (
-              <div className="py-20 text-center cut-crystal-satin rounded-[26px] space-y-3">
-                <ShieldCheck className="w-12 h-12 text-[#deab65]/40 dark:text-[var(--sk-accent-bright)]/40 mx-auto" />
-                <p className="text-sm font-bold text-[var(--sk-label2)]">لا توجد ملاحظات أو بلاغات مسجلة لديك حالياً.</p>
-                <p className="text-xs text-[#7f6a55]/80 dark:text-[var(--sk-label2)]/80 max-w-md mx-auto">
-                  يمكنك أثناء تصفح أي حديث النقر على زر "إبلاغ عن تصحيح" لتدوين أي ملحوظة حول التشكيل أو الألفاظ وحفظها.
+              <div className="py-16 px-6 text-center cut-crystal-satin rounded-[26px] space-y-2.5">
+                <ShieldCheck className="w-10 h-10 text-[var(--sk-accent)]/40 mx-auto" />
+                <p className="text-[13px] font-extrabold text-[var(--sk-label)]">لا توجد ملاحظات مسجّلة بعد</p>
+                <p className="text-[11px] font-medium leading-relaxed text-[var(--sk-label2)] max-w-[44ch] mx-auto">
+                  أثناء تصفح أي حديث، اضغط «بلاغ تصحيح» لتدوين ملحوظة على التشكيل أو اللفظ.
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {reports.map((rep) => (
-                  <div
-                    key={rep.id}
-                    className="p-4 cut-crystal-satin rounded-[22px] space-y-2 border border-amber-900/10"
-                  >
-                    <div className="flex items-center justify-between gap-2 border-b border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 pb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-md bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-xs font-bold">
-                          {rep.bookTitle}
-                        </span>
-                        <span className="text-xs font-bold text-[var(--sk-label2)]">حديث رقم [{rep.hadithnumber}]</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100/80 text-amber-900 font-bold border border-amber-300/50">
-                          {rep.category}
-                        </span>
+              <div className="space-y-2.5">
+                {reports.map((rep) => {
+                  // حل وقت العرض: أي بلاغ قديم خُزّن برقم بدل اسم الباب يُعرض باسمه الأصلي.
+                  const resolvedChapter = migrateReport(rep).chapterTitle;
+                  return (
+                    <article
+                      key={rep.id}
+                      className="cut-crystal-satin rounded-[22px] px-4 py-3 space-y-2.5"
+                    >
+                      {/* سطر مرجعي واحد: الكتاب · الحديث · الباب */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 space-y-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="px-2 py-0.5 rounded-md bg-[var(--sk-espresso-fill)] text-[var(--sk-on-espresso)] text-[10px] font-extrabold">
+                              {rep.bookTitle}
+                            </span>
+                            <span className="text-[10.5px] font-bold text-[var(--sk-label2)] tabular-nums">
+                              حديث {rep.hadithnumber}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded bg-[var(--sk-accent)]/12 text-[var(--sk-accent)] text-[9.5px] font-extrabold">
+                              {rep.category}
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] font-bold text-[var(--sk-label2)] truncate">
+                            {resolvedChapter}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteReport(rep.id)}
+                          aria-label="حذف البلاغ"
+                          className="p-1.5 shrink-0 rounded-full text-[var(--sk-label2)] hover:text-[#b4545a] hover:bg-[#b4545a]/10 active:scale-90 transition"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
 
-                      <button
-                        onClick={() => handleDeleteReport(rep.id)}
-                        className="p-1.5 cut-crystal-capsule text-rose-700 hover:bg-rose-100 transition cursor-pointer"
-                        title="حذف البلاغ"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                      {/* النص المقتبس: هو محور البطاقة لا هامشها */}
+                      <p className="text-[12.5px] font-bold leading-relaxed text-[var(--sk-label)] border-r-2 border-[var(--sk-accent)]/35 pr-2.5">
+                        {rep.note}
+                      </p>
 
-                    <p className="text-xs font-bold text-[var(--sk-label)] leading-relaxed">
-                      الملاحظة المدونة: <span className="font-normal text-[var(--sk-espresso2)]">"{rep.note}"</span>
-                    </p>
-
-                    <div className="text-[10px] text-[#7f6a55]/70 dark:text-[var(--sk-label2)]/70 flex items-center justify-between pt-1">
-                      <span>{rep.chapterTitle}</span>
-                      <span>{new Date(rep.createdAt).toLocaleDateString("ar-EG")}</span>
-                    </div>
-                  </div>
-                ))}
+                      <div className="flex items-center justify-between pt-0.5 text-[9.5px] font-bold text-[var(--sk-label2)]/75">
+                        <span>ملاحظة على التشكيل</span>
+                        <time className="tabular-nums">
+                          {new Date(rep.createdAt).toLocaleDateString("ar-EG")}
+                        </time>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </motion.div>

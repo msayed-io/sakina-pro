@@ -1,3 +1,9 @@
+import {
+  arabicChapterByNumber,
+  arabicChapterFor,
+  isPlaceholderChapterTitle,
+  resolveChapterTitle,
+} from "../data/hadithArabicChapters";
 import localforage from "localforage";
 import { HadithItem, HadithBookInfo } from "../types/hadith.types";
 
@@ -293,41 +299,17 @@ const ENGLISH_WORD_MAP: [RegExp, string][] = [
 ];
 
 function formatArabicChapterTitle(sectionNum: string, rawTitle?: string, bookId?: string): string {
-  if (bookId === "muslim" && MUSLIM_ARABIC_SECTIONS[sectionNum]) {
-    return MUSLIM_ARABIC_SECTIONS[sectionNum];
-  }
+  // المصدر الوحيد للحقيقة: الجدول المنقول آليًا من مصدر عربي موثوق.
+  // لا أرقام بديلة ولا أسماء مخترعة داخل هذا المسار.
+  const resolved = resolveChapterTitle(bookId ?? "", sectionNum, rawTitle);
+  if (resolved) return resolved;
 
-  if (!rawTitle || !rawTitle.trim()) {
-    if (bookId === "bukhari") {
-      return COMMON_ARABIC_SECTIONS[sectionNum] || `كتاب رقم ${sectionNum}`;
-    }
-    return `كتاب رقم ${sectionNum}`;
-  }
+  // احتياطي أخير: عنوان عربي أصلي موجود في البيانات نفسها.
+  const raw = String(rawTitle ?? "").trim();
+  if (/[\u0600-\u06FF]/.test(raw) && !/^(كتاب|باب)\s*رقم/.test(raw)) return raw;
 
-  const trimmed = rawTitle.trim();
-
-  if (/^\d+$/.test(trimmed)) {
-    if (bookId === "bukhari") {
-      return COMMON_ARABIC_SECTIONS[trimmed] || COMMON_ARABIC_SECTIONS[sectionNum] || `كتاب رقم ${trimmed}`;
-    }
-    return `كتاب رقم ${trimmed}`;
-  }
-
-  if (/[\u0600-\u06FF]/.test(trimmed)) {
-    return trimmed;
-  }
-
-  for (const [pattern, arTitle] of ENGLISH_WORD_MAP) {
-    if (pattern.test(trimmed)) {
-      return arTitle;
-    }
-  }
-
-  if (bookId === "bukhari" && COMMON_ARABIC_SECTIONS[sectionNum]) {
-    return COMMON_ARABIC_SECTIONS[sectionNum];
-  }
-
-  return `كتاب رقم ${sectionNum}`;
+  // كتاب بلا تقسيم أصلي في مصدره: اسم الكتاب نفسه هو الباب.
+  return "";
 }
 
 // Expand a query string to a comprehensive set of search keywords (including stems and synonyms)
@@ -431,7 +413,13 @@ export const HadithOfflineSearchService = {
     const hadiths: (HadithItem & { normalizedText: string; normalizedChapter: string })[] = rawHadithsList.map((h: any, index: number) => {
       const sectionNum = h.reference?.book?.toString() || "0";
       const rawSectionTitle = sectionMap[sectionNum] || "";
-      const chapterTitle = formatArabicChapterTitle(sectionNum, rawSectionTitle, book.id);
+      let chapterTitle = formatArabicChapterTitle(sectionNum, rawSectionTitle, book.id);
+      // كتاب بلا تقسيم أبواب في مصدره: الباب هو الكتاب، فاسمه الحقيقي اسم الكتاب.
+      if (!chapterTitle && Object.keys(sectionMap).length <= 2) {
+        chapterTitle = book.titleArabic;
+      }
+      // لا بديل رقمي إطلاقًا: لو ظل فارغًا يُعرض عنوان الكتاب بدل رقم مخترَع.
+      if (!chapterTitle) chapterTitle = book.titleArabic;
       const rawHadithNumber = h.hadithnumber ?? h.arabicnumber;
       const parsedHadithNumber = Number(rawHadithNumber);
       const hadithnumber = Number.isFinite(parsedHadithNumber) ? parsedHadithNumber : index + 1;
@@ -598,7 +586,14 @@ export const HadithOfflineSearchService = {
               hadithnumber: h.hadithnumber,
               arabicnumber: h.arabicnumber,
               chapterId: h.chapterId,
-              chapterTitle: h.chapterTitle,
+              // حل وقت العرض: السجلات المحفوظة قبل الإصلاح تحمل عنوانًا بديلًا
+              // («كتاب رقم N»). نستبدله بالاسم الأصلي من رقم الباب نفسه، فلا
+              // نحتاج إلى مسح بيانات المستخدم.
+              chapterTitle:
+                !isPlaceholderChapterTitle(h.chapterTitle ?? "")
+                  ? h.chapterTitle
+                  : arabicChapterByNumber(h.bookId ?? "", h.chapterId ?? "") ??
+                    h.chapterTitle,
               text: h.text,
               grade: h.grade,
               reference: h.reference

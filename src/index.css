@@ -1194,6 +1194,17 @@ html[data-theme="dark"] .cut-crystal-capsule-gold:hover {
 html[data-theme="dark"] .cut-crystal-capsule-gold:active {
   background: #DCD0B2;
 }
+/* الكبسولة الذهبية كبسولة فاتحة في الوضعين: ما بداخلها يُقرأ بالأسود المعتمد
+   للنصوص على السطح الفاتح (--sk-on-espresso)، لا بالأبيض. كان العنصر الداخلي
+   يفرض --sk-label (أبيض في الداكن) فيطغى على لون الكبسولة ويظهر النص غير مقروء. */
+html[data-theme="dark"] .cut-crystal-capsule-gold,
+html[data-theme="dark"] .cut-crystal-capsule-gold * {
+  color: var(--sk-on-espresso);
+}
+html[data-theme="dark"] .cut-crystal-capsule-gold svg {
+  color: var(--sk-on-espresso);
+  stroke: var(--sk-on-espresso);
+}
 
 html[data-theme="dark"] .cut-crystal-input {
   background: var(--sk-fill3);
@@ -1395,3 +1406,21 @@ html[data-theme="dark"] .app-toast--info { --toast-bg:#49361b; --toast-border:#9
 }
 .ai-chat-error svg { flex: none; margin-top: 2px; }
 html[data-theme="dark"] .ai-chat-error { color:#ffe9e5; background:#4c211e; }
+
+/* ── تدرج التطبيق الأصلي داخل نافذة فهرس الكتاب ──────────────────────────
+   .progressive-blur ثابت للشاشة (position: fixed؛ أعلى الشاشة). داخل النافذة
+   نحتاج نفس التدرج ونفس طبقتي الضباب لكن مثبّتًا على رأس النافذة لا الشاشة.
+   لا تغيير في أي قيمة لونية أو هندسية — فقط موضع التثبيت والحجم ليطابق رأس
+   النافذة. */
+.hadith-index-sheet { position: relative; }
+.hadith-index-sheet > .progressive-blur {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  bottom: auto;
+  height: 64px;
+  z-index: 1;
+  border-radius: 24px 24px 0 0;
+  /* --bg يبقى var(--sk-bg) كما في كل شاشات التطبيق بالحرف — لا تجاوز:
+     تجاوزه إلى transparent يقتل التدرج في طبقة sk-lowpower لأنه هو بديلها. */
+}

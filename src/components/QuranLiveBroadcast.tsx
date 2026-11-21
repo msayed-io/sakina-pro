@@ -138,7 +138,6 @@ export default function QuranLiveBroadcast({
       <div className="mb-3.5 flex min-h-8 items-center gap-2 px-1">
         <h2 className="flex items-center gap-2 text-[20px] font-bold text-[var(--sk-label)]">
           <span>البث الصوتي</span>
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--sk-success-soft)]"></span>
         </h2>
         <div className="mr-auto flex items-center gap-2">
           {showCaptureControl && (
