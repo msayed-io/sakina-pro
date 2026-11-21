@@ -418,7 +418,10 @@ class PrayerWidgetRemoteViewsTest {
         )
         for ((key, id) in ids) {
             val text = view.findViewById<TextView>(id).text.toString()
-            assertEquals("بلاطة $key يجب أن تعرض نص البطاقة حرفيًا", labels[key], text)
+            // نفس أرقام البطاقة، لكن بأرقام إنجليزية (طلب المالك).
+            val expected = toLatinDigits(labels.getValue(key))
+            assertEquals("بلاطة $key يجب أن تعرض وقت البطاقة نفسه", expected, text)
+            assertTrue("يجب ألا تظهر أرقام هندية: $text", text.none { it in '٠'..'٩' })
         }
     }
 
@@ -444,12 +447,12 @@ class PrayerWidgetRemoteViewsTest {
         assertTrue("لا يجب أن تكون فارغة", fajr.isNotBlank())
     }
 
-    /** التحقق من صحة النصوص دون ص/م (لا يعتمد على جهاز). */
+    /** التحقق من صحة النصوص: بلا ص/م، وبأرقام إنجليزية. */
     @Test
     fun timeFormatting_hasNoMeridiem() {
         val formatted = formatTimeNoMeridiem(System.currentTimeMillis())
         assertTrue("يجب ألا يحتوي على ص أو م: $formatted", !formatted.contains('ص') && !formatted.contains('م'))
-        assertTrue("يجب أن يحتوي على أرقام عربية هندية: $formatted",
-            formatted.any { it in '٠'..'٩' })
+        assertTrue("يجب أن يحتوي على أرقام إنجليزية: $formatted", formatted.any { it in '0'..'9' })
+        assertTrue("يجب ألا يحتوي على أرقام هندية: $formatted", formatted.none { it in '٠'..'٩' })
     }
 }

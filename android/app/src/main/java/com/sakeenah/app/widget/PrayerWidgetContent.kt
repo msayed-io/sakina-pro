@@ -240,7 +240,8 @@ private fun applyTiles(
         if (slot != null) {
             root.setTextViewText(
                 timeId,
-                slot.label?.takeIf { it.isNotBlank() } ?: formatTimeNoMeridiem(slot.timeMs),
+                slot.label?.takeIf { it.isNotBlank() }?.let { toLatinDigits(it) }
+                    ?: formatTimeNoMeridiem(slot.timeMs),
             )
         } else {
             root.setTextViewText(timeId, "")
@@ -289,6 +290,7 @@ private fun applyAlpha(color: Int, alpha: Float): Int {
  * (toArabicIndicDigits في src/utils/prayerTimes.ts).
  */
 private val ARABIC_DIGITS = charArrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+private val LATIN_DIGITS = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 
 internal fun toArabicIndic(input: String): String {
     val out = StringBuilder(input.length)
@@ -298,14 +300,27 @@ internal fun toArabicIndic(input: String): String {
     return out.toString()
 }
 
+/** ٠١٢٣ → 0123 — أرقام الويدجت إنجليزية (طلب المالك)، بخط التطبيق نفسه. */
+internal fun toLatinDigits(input: String): String {
+    val out = StringBuilder(input.length)
+    for (ch in input) {
+        out.append(
+            when (ch) {
+                in '٠'..'٩' -> LATIN_DIGITS[ch - '٠']
+                else -> ch
+            },
+        )
+    }
+    return out.toString()
+}
+
 internal fun formatTimeNoMeridiem(timeMs: Long): String {
     val is24 = false // التطبيق يعرض 12 ساعة بلا ص/م في هذه البطاقة
     val pattern = if (is24) "HH:mm" else "h:mm"
     return try {
-        toArabicIndic(
-            java.text.SimpleDateFormat(pattern, Locale.US)
-                .format(java.util.Date(timeMs)),
-        )
+        // أرقام إنجليزية: لا toArabicIndic هنا.
+        java.text.SimpleDateFormat(pattern, Locale.US)
+            .format(java.util.Date(timeMs))
     } catch (_: Exception) {
         ""
     }
