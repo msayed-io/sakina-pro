@@ -1,0 +1,412 @@
+/* ==========================================================================
+   NamesSheet — نافذة «تفاصيل الاسم» المنقولة حرفيًا من names-of-allah.html
+   --------------------------------------------------------------------------
+   عزل كامل: كل قاعدة تحت الجذر .ns-root وبادئة ns- في الأصناف والمتغيرات.
+   لا قاعدة عامة واحدة تتسرّب (لا * ولا html/body ولا button ولا :root).
+   الداكن = قيم الملف المرفق بالحرف، عدا اللون الذهبي/الكريمي ⇒ تمييز التطبيق.
+   الفاتح = رموز هوية التطبيق (src/index.css:967-1170).
+   التدرجان العلوي والسفلي = تدرج التطبيق نفسه (.progressive-blur) لا تدرج المرجع.
+   ========================================================================== */
+
+.ns-root {
+  /* ── الوضع الداكن: قيم المرجع حرفيًا ── */
+  --ns-bg: #000;
+  --ns-surf: #141416;
+  --ns-surf2: #1c1c1f;
+  --ns-line: rgba(255, 255, 255, 0.09);
+  --ns-tx: #f5f0e6;
+  --ns-mut: #9a948a;
+  --ns-glass: rgba(28, 28, 31, 0.55);
+  /* التمييز: لون التطبيق الفعلي في الداكن (--sk-accent = #EEDFC2) */
+  --ns-gold: var(--sk-accent);
+  /* توهج الذهبي في المرجع rgba(227,201,155,.07/.10) ⇒ التمييز نفسه بنفس الشفافية */
+  --ns-glow-soft: rgba(238, 223, 194, 0.07);
+  --ns-glow-card: rgba(238, 223, 194, 0.1);
+  --ns-namecard-bg: linear-gradient(180deg, #1b1b1e, #111113);
+  --ns-name-text: linear-gradient(180deg, #fff 25%, #ecd8b2 100%);
+  --ns-scrim: rgba(0, 0, 0, 0.14);
+
+  /* ── حركة المرجع حرفيًا ── */
+  --ns-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ns-sheet-ease: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── الوضع الفاتح: نظير كل دور من رموز التطبيق ── */
+html:not([data-theme="dark"]) .ns-root {
+  --ns-bg: var(--sk-bg);          /* سطح الشاشة الفاتح، ونفس سطح النافذة القديمة */
+  --ns-surf: var(--sk-bg2);       /* بطاقات المحتوى */
+  --ns-surf2: var(--sk-bg3);      /* سطح احتياطي عند تقليل الشفافية */
+  --ns-line: var(--sk-sep);       /* الخطوط الشعرية */
+  --ns-tx: var(--sk-label);       /* النص الأساسي */
+  --ns-mut: var(--sk-label2);     /* النص الثانوي */
+  --ns-glass: var(--sk-glass);    /* زجاج الكبسولات */
+  --ns-gold: var(--sk-accent);    /* التمييز */
+  --ns-glow-soft: rgba(184, 138, 79, 0.07);
+  --ns-glow-card: rgba(184, 138, 79, 0.1);
+  --ns-namecard-bg: var(--sk-bg2);
+  --ns-name-text: linear-gradient(180deg, var(--sk-label) 25%, var(--sk-accent-deep) 100%);
+  --ns-scrim: rgba(43, 26, 16, 0.28); /* = تعتيم النافذة القديمة bg-[#2b1a10]/28 */
+}
+
+/* تصغير خلفية الشاشة أثناء الفتح — حركة النافذة في المرجع (scale .965 / .6s) */
+.ns-dim {
+  transform-origin: 50% 0;
+  transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+.ns-dim[data-ns-dim="1"] {
+  transform: scale(0.965);
+}
+
+/* ══ الستارة ══ */
+.ns-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 94;
+  background: var(--ns-scrim);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ns-ease);
+}
+.ns-root[data-open="1"] .ns-scrim {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ══ النافذة ══ */
+.ns-sheet {
+  position: fixed;
+  z-index: 95;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  max-width: 480px;
+  height: calc(100% - 44px - env(safe-area-inset-top, 0px));
+  background:
+    radial-gradient(120% 36% at 50% 0, var(--ns-glow-soft), transparent 70%),
+    var(--ns-bg);
+  border-radius: 40px 40px 0 0;
+  isolation: isolate;
+  box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transform: translateY(105%);
+  visibility: hidden;
+  transition:
+    transform 0.6s var(--ns-sheet-ease),
+    visibility 0s 0.6s;
+  will-change: transform;
+  font-family: "Thmanyah Sans", sans-serif;
+}
+.ns-root[data-open="1"] .ns-sheet {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform 0.6s var(--ns-sheet-ease),
+    visibility 0s;
+}
+.ns-sheet.ns-drag {
+  transition: none !important;
+}
+/* الخط اللامع على حافة السطح العلوية — جزء من تصميم السطح لا حافة لامعة */
+.ns-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 25%, transparent 75%);
+  mask-image: linear-gradient(#000 25%, transparent 75%);
+}
+html:not([data-theme="dark"]) .ns-sheet::before {
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.ns-sheet:focus {
+  outline: none;
+}
+
+/* ══ تدرج التطبيق الأصلي داخل النافذة ══
+   نفس صنفَي .progressive-blur / .progressive-blur-bottom وبنفس قواعدهما في
+   src/index.css:925-957 — نُعيد فقط تثبيتهما داخل النافذة بدل الشاشة. */
+.ns-sheet .progressive-blur {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  bottom: auto;
+  z-index: 4;
+}
+.ns-sheet .progressive-blur-bottom {
+  top: auto;
+  bottom: 0;
+}
+
+/* ══ المقبض ══ */
+.ns-grab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  z-index: 6;
+  touch-action: none;
+  cursor: grab;
+}
+.ns-grab i {
+  width: 36px;
+  height: 4px;
+  border-radius: 9px;
+  background: var(--ns-mut);
+  opacity: 0.45;
+}
+
+/* ══ منطقة التمرير ══ */
+.ns-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  contain: layout paint;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  padding: 84px 16px 120px;
+  scrollbar-width: none;
+}
+.ns-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* انتقال المحتوى بين الأسماء: تلاشٍ وإزاحة وتتابع أقسام */
+.ns-content > * {
+  transition:
+    opacity 0.45s var(--ns-ease) calc(var(--k, 0) * 38ms),
+    transform 0.6s var(--ns-ease) calc(var(--k, 0) * 38ms);
+}
+.ns-content.ns-out > * {
+  opacity: 0;
+  transform: translateX(calc(var(--s) * -6px));
+  transition:
+    opacity 0.14s ease-in,
+    transform 0.14s ease-in;
+}
+.ns-content.ns-pre > * {
+  opacity: 0;
+  transform: translateX(calc(var(--s) * 8px));
+  transition: none;
+}
+
+/* ══ بطاقة الاسم ══ */
+.ns-namecard {
+  display: grid;
+  place-items: center;
+  min-height: 131px;
+  padding: 22px 20px;
+  text-align: center;
+  border-radius: 30px;
+  background:
+    radial-gradient(60% 90% at 50% 0, var(--ns-glow-card), transparent 75%),
+    var(--ns-namecard-bg);
+  box-shadow:
+    inset 0 0 0 1px var(--ns-line),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+html:not([data-theme="dark"]) .ns-namecard {
+  box-shadow:
+    inset 0 0 0 1px var(--ns-line),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.ns-namecard h2 {
+  margin: 0;
+  font-family: "Thmanyah Serif Display", serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1.8;
+  color: transparent;
+  background: var(--ns-name-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ══ الأقسام ══ */
+.ns-sh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 4px 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ns-tx);
+}
+.ns-sh svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--ns-gold);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ns-card {
+  padding: 15px 18px;
+  border-radius: 24px;
+  background: var(--ns-surf);
+  box-shadow: inset 0 0 0 1px var(--ns-line);
+}
+.ns-card p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 2.05;
+  font-weight: 400;
+}
+.ns-ev p {
+  font-family: "Thmanyah Serif Text", serif;
+  font-weight: 500;
+  font-size: 17.5px;
+  line-height: 2;
+  color: var(--ns-gold);
+  text-align: center;
+}
+.ns-ev small {
+  display: block;
+  margin-top: 2px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ns-mut);
+}
+
+/* ══ الكبسولات الزجاجية (خمسة عناصر فقط) ══ */
+.ns-topbar,
+.ns-botbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+}
+.ns-topbar {
+  top: 28px;
+  justify-content: space-between;
+  touch-action: none;
+}
+.ns-topbar .ns-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ns-botbar {
+  bottom: 0;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.ns-glass {
+  position: relative;
+  border: 0;
+  padding: 0;
+  color: var(--ns-tx);
+  background: var(--ns-glass);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    transform 0.25s var(--ns-ease),
+    opacity 0.25s,
+    color 0.25s;
+}
+html:not([data-theme="dark"]) .ns-glass {
+  box-shadow: var(--sk-drop);
+}
+.ns-glass:active {
+  transform: scale(0.95);
+}
+button.ns-glass::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+}
+button.ns-nav::before {
+  inset: -3px 0;
+}
+.ns-glass svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ns-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+.ns-cap {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 99px;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+span.ns-cap {
+  cursor: default;
+  font-variant-numeric: tabular-nums;
+}
+span.ns-cap:active {
+  transform: none;
+}
+.ns-nav {
+  flex: 1;
+  height: 38px;
+  font-size: 13.5px;
+}
+.ns-nav[disabled] {
+  opacity: 0.32;
+  pointer-events: none;
+}
+.ns-fav[data-on="1"] {
+  color: var(--ns-gold);
+}
+.ns-fav[data-on="1"] svg {
+  fill: var(--ns-gold);
+}
+
+/* الفوكس: الظاهر لمستخدم الكيبورد فقط (المرجع: :focus-visible) */
+.ns-glass:focus-visible {
+  outline: 2px solid var(--ns-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ns-glass {
+    background: var(--ns-surf2);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .ns-sheet {
+    background: var(--ns-bg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-sheet,
+  .ns-dim,
+  .ns-scrim,
+  .ns-content > * {
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
+  }
+  .ns-content.ns-out > *,
+  .ns-content.ns-pre > * {
+    transform: none;
+  }
+}

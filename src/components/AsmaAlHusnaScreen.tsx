@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { HomeIcon } from "@/components/icons/AppIcons";
 import ProgressiveBlur from "@/components/ProgressiveBlur";
+import NamesSheet, {
+  NAMES_SHEET_BACKDROP_ID,
+} from "@/components/namesSheet/NamesSheet";
 
 type Props = {
   onClose: () => void;
@@ -26,13 +29,27 @@ type Props = {
 
 export default function AsmaAlHusnaScreen({ onClose }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
+  /* النافذة القديمة: بقيت في الكود بلا ربط (سياسة v2.3.37) — لا شيء يضبط
+     selectedNameId بعد الآن، فمساره غير قابل للوصول. */
   const [selectedNameId, setSelectedNameId] = useState<number | null>(null);
+  /* النافذة الجديدة: فهرس الاسم داخل asmaAlHusnaData (ترتيب شاشة الأسماء). */
+  const [sheetIndex, setSheetIndex] = useState<number | null>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<"main" | "favorites">("main");
 
   // Defer the active tab to prioritize the UI animation for tab switching
   const deferredTab = useDeferredValue(activeTab);
   const filterFavoritesOnly = deferredTab === "favorites";
+
+  /* تسخيب الخطوط المحلية قبل أول فتح حتى لا ينتظر أول اسم تحميلها.
+     لا شبكة: ملفات woff2 مضمّنة في التطبيق (src/index.css @font-face). */
+  useEffect(() => {
+    const set = (document as Document & { fonts?: FontFaceSet }).fonts;
+    if (!set) return;
+    void set.load('700 38px "Thmanyah Serif Display"');
+    void set.load('500 17.5px "Thmanyah Serif Text"');
+    void set.load('600 13.5px "Thmanyah Sans"');
+  }, []);
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -116,7 +133,9 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
   return (
     <div
       dir="rtl"
-      className="fixed inset-0 z-50 w-full max-w-full overflow-x-hidden bg-[var(--sk-bg)] font-sans flex flex-col h-full"
+      id={NAMES_SHEET_BACKDROP_ID}
+      data-ns-dim={sheetIndex !== null ? "1" : "0"}
+      className="ns-dim fixed inset-0 z-50 w-full max-w-full overflow-x-hidden bg-[var(--sk-bg)] font-sans flex flex-col h-full"
     >
       <ProgressiveBlur inline />
       {/* ── FLOATING HEADER ── */}
@@ -225,7 +244,9 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
             return (
               <div
                 key={item.id}
-                onClick={() => setSelectedNameId(item.id)}
+                onClick={() =>
+                  setSheetIndex(asmaAlHusnaData.findIndex((n) => n.id === item.id))
+                }
                 className="cut-crystal-panel rounded-[26px] p-4 flex flex-col justify-between cursor-pointer hover:scale-[1.02] active:scale-95 transition-all min-h-[145px]"
               >
                 {/* Card top */}
@@ -491,6 +512,15 @@ export default function AsmaAlHusnaScreen({ onClose }: Props) {
           </button>
         </div>
       </nav>
+
+      <NamesSheet
+        names={asmaAlHusnaData}
+        index={sheetIndex}
+        onClose={() => setSheetIndex(null)}
+        isFavorite={(id) => favorites.includes(id)}
+        onToggleFavorite={(id) => toggleFavorite(id)}
+        backdropId={NAMES_SHEET_BACKDROP_ID}
+      />
     </div>
   );
 }
