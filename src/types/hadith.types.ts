@@ -36,6 +36,15 @@ export interface HadithItem {
   };
 }
 
+export interface HadithAttachmentContext {
+  bookTitle?: string;
+  hadithNumber?: number | string;
+  arabicNumber?: number | string;
+  chapterTitle?: string;
+  grade?: string;
+  text: string;
+  reference?: string;
+}
 export interface HadithBookmark {
   id: string; // `${bookId}_${hadithnumber}`
   bookId: string;

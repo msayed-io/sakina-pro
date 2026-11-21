@@ -39,6 +39,7 @@ import {
   Pin,
   Share2,
 } from "lucide-react";
+import type { HadithAttachmentContext } from "@/types/hadith.types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import SakeenahAvatar from "@/components/SakeenahAvatar";
@@ -58,6 +59,8 @@ type SakeenahAIScreenProps = {
   user: AuthUser;
   initialConversationId?: string | null;
   onInitialConversationConsumed?: () => void;
+  initialHadithAttachment?: HadithAttachmentContext | null;
+  onHadithAttachmentChange?: (attachment: HadithAttachmentContext | null) => void;
 };
 
 type WelcomeLine = {
@@ -361,9 +364,10 @@ const cleanArabicTextForSpeech = (rawText: string) => {
   return text.trim();
 };
 
-export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, user, initialConversationId, onInitialConversationConsumed }: SakeenahAIScreenProps) {
+export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, user, initialConversationId, onInitialConversationConsumed, initialHadithAttachment, onHadithAttachmentChange }: SakeenahAIScreenProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [hadithAttachment, setHadithAttachment] = useState<HadithAttachmentContext | null>(initialHadithAttachment ?? null);
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<Record<string, "like" | "dislike">>({});
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
@@ -374,6 +378,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { if (initialHadithAttachment) setHadithAttachment(initialHadithAttachment); }, [initialHadithAttachment]);
   const [isMultiline, setIsMultiline] = useState(false);
   const [longMsgs, setLongMsgs] = useState<Set<string>>(new Set());
   const [expandedMsgs, setExpandedMsgs] = useState<Set<string>>(new Set());
@@ -429,6 +434,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
       })));
       setSelectedResponseId(null);
       setActiveConversationId(conversationId);
+      setHadithAttachment(null);
+      onHadithAttachmentChange?.(null);
       setIsDrawerOpen(false);
       cancelEditingUserMessage();
     } catch (error) {
@@ -437,7 +444,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
     } finally {
       setIsConversationLoading(false);
     }
-  }, [isLoading]);
+  }, [isLoading, onHadithAttachmentChange]);
 
   useEffect(() => {
     let cancelled = false;
@@ -468,11 +475,13 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
     if (isLoading) return;
     setMessages([]);
     setActiveConversationId(null);
+    setHadithAttachment(null);
+    onHadithAttachmentChange?.(null);
     setSelectedResponseId(null);
     setStorageError(null);
     cancelEditingUserMessage();
     setIsDrawerOpen(false);
-  }, [isLoading]);
+  }, [isLoading, onHadithAttachmentChange]);
 
   const handleDeleteConversation = useCallback(async (conversationId: string) => {
     if (isLoading || actionLoading) return;
@@ -845,7 +854,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           apikey: supabaseKey,
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ conversationId, message: trimmed, stream: true }),
+        body: JSON.stringify({ conversationId, message: trimmed, stream: true, ...(hadithAttachment ? { hadithContext: hadithAttachment } : {}) }),
       });
 
       if (!res.ok) {
@@ -1473,6 +1482,15 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
         {/* ── FLOATING INPUT FIELD BAR ── */}
         <div className="fixed inset-x-0 bottom-0 z-20 flex justify-center pointer-events-none px-4 pb-4">
           <div className="w-full max-w-[390px] pointer-events-auto">
+            {hadithAttachment && (
+              <div className="mb-2 flex items-center gap-2 rounded-[18px] border border-[var(--sk-accent)]/25 bg-[var(--sk-bg3)]/90 px-3 py-2 shadow-sm" dir="rtl" aria-label="مرفق الحديث">
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-[11px] font-black text-[var(--sk-accent)]">{hadithAttachment.bookTitle || "حديث مرفق"}</div>
+                  <div className="truncate text-[10px] font-bold text-[var(--sk-label2)]">حديث رقم [{hadithAttachment.hadithNumber ?? "غير متوفر"}] · {hadithAttachment.chapterTitle || "الباب غير متوفر"}</div>
+                </div>
+                <button type="button" onClick={() => { setHadithAttachment(null); onHadithAttachmentChange?.(null); }} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--sk-label2)] transition hover:bg-[var(--sk-accent)]/15 hover:text-[var(--sk-accent)]" aria-label="إزالة مرفق الحديث" title="إزالة المرفق"><X size={14} /></button>
+              </div>
+            )}
             <form
               onSubmit={(e) => {
                 e.preventDefault();

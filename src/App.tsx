@@ -41,6 +41,7 @@ import {
   splitFormattedPrayerTime,
 } from "@/utils/prayerTimes";
 import type { PrayerItem } from "@/utils/prayerTimes";
+import type { HadithAttachmentContext, HadithItem } from "@/types/hadith.types";
 import {
   autoDetectLocation,
   performSilentResumeLocationRefresh,
@@ -275,6 +276,7 @@ function AuthenticatedApp() {
 
   /* ── NEW state ── */
   const [activeTab, setActiveTab] = useState<TabType>("main");
+  const [hadithAttachment, setHadithAttachment] = useState<HadithAttachmentContext | null>(null);
   const [visitedTabs, setVisitedTabs] = useState<Set<TabType>>(() => new Set(["main"]));
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [nativeAuthError, setNativeAuthError] = useState<string | null>(null);
@@ -1058,9 +1060,23 @@ function AuthenticatedApp() {
   }, []);
 
   const handleBackToMain = useCallback(() => {
+    setHadithAttachment(null);
     startTransition(() => {
       setActiveTab("main");
     });
+  }, []);
+  const handleAskSakeenahAboutHadith = useCallback((hadith: HadithItem) => {
+    const attachment: HadithAttachmentContext = {
+      bookTitle: hadith.bookTitle,
+      hadithNumber: hadith.hadithnumber,
+      arabicNumber: hadith.arabicnumber,
+      chapterTitle: hadith.chapterTitle,
+      grade: hadith.grade,
+      text: hadith.text,
+      reference: hadith.reference ? JSON.stringify(hadith.reference) : undefined,
+    };
+    setHadithAttachment(attachment);
+    startTransition(() => setActiveTab("sakeenah-ai"));
   }, []);
 
   const handleSignOut = useCallback(async () => {
@@ -1570,6 +1586,7 @@ function AuthenticatedApp() {
                 onBack={handleBackToMain}
                 onHideNavChange={setHadithHideNav}
                 onOpenSakinaLibrary={handleOpenSakinaLibrary}
+                onAskSakeenah={handleAskSakeenahAboutHadith}
               />
             </div>
           </Suspense>
@@ -1592,6 +1609,8 @@ function AuthenticatedApp() {
                 <SakeenahAIScreen
                   onBack={handleBackToMain}
                   user={currentUser}
+                  initialHadithAttachment={hadithAttachment}
+                  onHadithAttachmentChange={setHadithAttachment}
                   initialConversationId={pendingForkConversationId}
                   onInitialConversationConsumed={() => {
                     localStorage.removeItem("sakeenah_pending_fork_conversation_id");

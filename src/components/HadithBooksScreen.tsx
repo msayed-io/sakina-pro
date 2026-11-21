@@ -53,6 +53,7 @@ interface HadithBooksScreenProps {
   onBack?: () => void;
   onHideNavChange?: (hide: boolean) => void;
   onOpenSakinaLibrary?: () => void;
+  onAskSakeenah?: (hadith: HadithItem) => void;
 }
 
 // Local Storage Keys
@@ -245,7 +246,7 @@ export function localizeHadithGrade(grade: string | undefined): string | undefin
     .replace(/\bMaudu\b/gi, "موضوع");
 }
 
-const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = true, onBack, onHideNavChange, onOpenSakinaLibrary }: HadithBooksScreenProps) {
+const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = true, onBack, onHideNavChange, onOpenSakinaLibrary, onAskSakeenah }: HadithBooksScreenProps) {
   const shareRef = useRef<ReturnType<typeof createHadithShare> | null>(null);
   useLayoutEffect(() => {
     const share = createHadithShare();
@@ -1866,15 +1867,14 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                         <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                           {/* Left: Standard Actions */}
                           <div className="flex items-center gap-1.5">
-                            {/* Speak button */}
+                            {/* Sakeenah AI attachment button */}
                             <button
-                              onClick={() => handleSpeechHadith(hadith)}
-                              className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
-                                isSpeaking ? "bg-rose-50 text-rose-700 border-rose-200" : ""
-                              }`}
-                              title={isSpeaking ? "إيقاف القراءة الصوتية" : "قراءة صوتية للحديث"}
+                              onClick={() => onAskSakeenah?.(hadith)}
+                              className="p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                              title="اسأل سكينة AI عن الحديث"
+                              aria-label="إرفاق الحديث مع سكينة AI"
                             >
-                              {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />}
+                              <Sparkles className="w-4 h-4 text-[var(--sk-accent-bright)]" />
                             </button>
 
                             {/* Copy button */}
@@ -2177,15 +2177,14 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                       <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                         {/* Left: Standard Actions */}
                         <div className="flex items-center gap-1.5">
-                          {/* Speak button */}
+                          {/* Sakeenah AI attachment button */}
                           <button
-                            onClick={() => handleSpeechHadith(hadith)}
-                            className={`p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)] ${
-                              isSpeaking ? "bg-rose-50 text-rose-700 border-rose-200" : ""
-                            }`}
-                            title={isSpeaking ? "إيقاف القراءة الصوتية" : "قراءة صوتية للحديث"}
+                            onClick={() => onAskSakeenah?.(hadith)}
+                            className="p-2.5 cut-crystal-capsule transition cursor-pointer flex items-center justify-center text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                            title="اسأل سكينة AI عن الحديث"
+                            aria-label="إرفاق الحديث مع سكينة AI"
                           >
-                            {isSpeaking ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4 text-[var(--sk-accent-bright)]" />}
+                            <Sparkles className="w-4 h-4 text-[var(--sk-accent-bright)]" />
                           </button>
 
                           {/* Copy button */}
