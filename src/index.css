@@ -215,6 +215,7 @@ html[data-theme="dark"] .ai-composer-pill {
 /* Sakeenah AI hadith attachment: the reference chip only; no rim on the chip itself. */
 .sakeenah-hadith-chip-root {
   display: flex;
+  align-items: flex-start;
   width: 100%;
   padding: 10px 8px 12px;
   animation: sakeenah-hadith-chip-in 560ms cubic-bezier(.2,.8,.2,1) both;
@@ -267,9 +268,10 @@ html[data-theme="dark"] .ai-composer-pill {
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
   box-shadow: var(--sk-drop);
-  color: var(--sk-label2);
+  color: var(--sk-accent);
   transition: transform .25s cubic-bezier(.2,.8,.2,1);
 }
+.sakeenah-hadith-chip-remove::before { content: ""; position: absolute; inset: -10px; }
 .sakeenah-hadith-chip-remove:active { transform: scale(.88); }
 @keyframes sakeenah-hadith-chip-in {
   from { opacity: 0; transform: translateY(16px) scale(.9); }

@@ -109,7 +109,7 @@ const HadithAttachmentChip = ({
   chipRef?: React.Ref<HTMLDivElement>;
   onRemove?: () => void;
 }) => (
-  <div ref={chipRef} className="sakeenah-hadith-chip-root" dir="rtl" aria-label="مرفق الحديث">
+  <div ref={chipRef} className="sakeenah-hadith-chip-root" dir="ltr" aria-label="مرفق الحديث">
     <div className="sakeenah-hadith-chip">
       {attachment.bookTitle && <span className="sakeenah-hadith-chip-label">{attachment.bookTitle}</span>}
       {removable && onRemove && (
