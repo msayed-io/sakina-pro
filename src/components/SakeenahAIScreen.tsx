@@ -50,6 +50,7 @@ type Message = {
   role: "user" | "assistant" | "error";
   content: string;
   timestamp: Date;
+  hadithAttachment?: HadithAttachmentContext | null;
   isNew?: boolean;
   isStreaming?: boolean;
 };
@@ -67,6 +68,74 @@ type WelcomeLine = {
   title: string;
   subtitle: string;
 };
+
+const HADITH_ATTACHMENT_STORAGE_KEY = "sakeenah_ai_hadith_attachments_v1";
+type StoredHadithAttachment = { content: string; attachment: HadithAttachmentContext };
+const readStoredHadithAttachments = (conversationId: string): StoredHadithAttachment[] => {
+  try {
+    const raw = localStorage.getItem(`${HADITH_ATTACHMENT_STORAGE_KEY}:${conversationId}`);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+const saveStoredHadithAttachment = (conversationId: string, content: string, attachment: HadithAttachmentContext) => {
+  try {
+    const existing = readStoredHadithAttachments(conversationId);
+    localStorage.setItem(`${HADITH_ATTACHMENT_STORAGE_KEY}:${conversationId}`, JSON.stringify([...existing, { content, attachment }]));
+  } catch {
+    // The request remains functional if local persistence is unavailable.
+  }
+};
+const attachStoredHadithsToMessages = (conversationId: string, storedMessages: Array<{ role: string; content: string }>) => {
+  const records = readStoredHadithAttachments(conversationId);
+  const used = new Set<number>();
+  return storedMessages.filter((message) => message.role === "user").map((message) => {
+    const index = records.findIndex((record, recordIndex) => !used.has(recordIndex) && record.content === message.content);
+    if (index === -1) return null;
+    used.add(index);
+    return records[index].attachment;
+  });
+};
+const HadithAttachmentChip = ({
+  attachment,
+  removable,
+  chipRef,
+  onRemove,
+}: {
+  attachment: HadithAttachmentContext;
+  removable: boolean;
+  chipRef?: React.Ref<HTMLDivElement>;
+  onRemove?: () => void;
+}) => (
+  <div ref={chipRef} className="sakeenah-hadith-chip-root" dir="rtl" aria-label="مرفق الحديث">
+    <div className="sakeenah-hadith-chip">
+      {attachment.bookTitle && <span className="sakeenah-hadith-chip-label">{attachment.bookTitle}</span>}
+      {removable && onRemove && (
+        <button type="button" className="sakeenah-hadith-chip-remove sk-rim" onClick={onRemove} aria-label="إزالة مرفق الحديث" title="إزالة المرفق">
+          <X size={12} strokeWidth={2.2} />
+        </button>
+      )}
+      <div className="sakeenah-hadith-chip-details">
+        {(attachment.arabicNumber ?? attachment.hadithNumber) !== undefined && (
+          <b>حديث رقم {(attachment.arabicNumber ?? attachment.hadithNumber)}</b>
+        )}
+        {attachment.chapterTitle && <small>{attachment.chapterTitle}</small>}
+      </div>
+    </div>
+  </div>
+);
+// Legacy wide attachment card intentionally retained but detached from the composer.
+const LegacyHadithAttachmentCard = ({ attachment, onRemove }: { attachment: HadithAttachmentContext; onRemove: () => void }) => (
+  <div className="mb-2 flex items-center gap-2 rounded-[18px] border border-[var(--sk-accent)]/25 bg-[var(--sk-bg3)]/90 px-3 py-2 shadow-sm" dir="rtl" aria-label="مرفق الحديث القديم">
+    <div className="min-w-0 flex-1">
+      <div className="truncate text-[11px] font-black text-[var(--sk-accent)]">{attachment.bookTitle}</div>
+      <div className="truncate text-[10px] font-bold text-[var(--sk-label2)]">{attachment.hadithNumber !== undefined && `حديث رقم [${attachment.hadithNumber}]`}</div>
+    </div>
+    <button type="button" onClick={onRemove} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--sk-label2)]" aria-label="إزالة المرفق القديم"><X size={14} /></button>
+  </div>
+);
 
 const welcomeLines: WelcomeLine[] = [
   { title: "ما الذي تحب أن تعرفه اليوم؟", subtitle: "اسأل بهدوء عن القرآن أو الأذكار أو أحكام العبادة." },
@@ -378,6 +447,9 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputAttachmentRef = useRef<HTMLDivElement>(null);
+  const messageAttachmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const attachmentFlightRef = useRef<{ messageId: string; source: DOMRect } | null>(null);
   useEffect(() => { if (initialHadithAttachment) setHadithAttachment(initialHadithAttachment); }, [initialHadithAttachment]);
   const [isMultiline, setIsMultiline] = useState(false);
   const [longMsgs, setLongMsgs] = useState<Set<string>>(new Set());
@@ -424,11 +496,14 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
     setStorageError(null);
     try {
       const storedMessages = await loadSakeenahMessages(conversationId);
+      const storedAttachments = attachStoredHadithsToMessages(conversationId, storedMessages);
+      let userMessageIndex = 0;
       setMessages(storedMessages.map((message) => ({
         id: message.id,
         role: message.role,
         content: message.content,
         timestamp: message.timestamp,
+        hadithAttachment: message.role === "user" ? storedAttachments[userMessageIndex++] : null,
         isNew: false,
         isStreaming: false,
       })));
@@ -445,6 +520,22 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
       setIsConversationLoading(false);
     }
   }, [isLoading, onHadithAttachmentChange]);
+
+  useEffect(() => {
+    const flight = attachmentFlightRef.current;
+    if (!flight) return;
+    const destination = messageAttachmentRefs.current[flight.messageId];
+    if (!destination) return;
+    attachmentFlightRef.current = null;
+    const target = destination.getBoundingClientRect();
+    destination.animate(
+      [
+        { opacity: 0, transform: `translate(${flight.source.left - target.left}px, ${flight.source.top - target.top}px) scale(.9)` },
+        { opacity: 1, transform: "translate(0, 0) scale(1)" },
+      ],
+      { duration: 580, easing: "cubic-bezier(.2,.8,.2,1)", fill: "both" },
+    );
+  }, [messages]);
 
   useEffect(() => {
     let cancelled = false;
@@ -796,7 +887,8 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
 
   const handleSendMessage = async (text: string, replaceUserMessageId?: string) => {
     const trimmed = text.trim();
-    if (!trimmed || isLoading) return;
+    const attachmentSnapshot = hadithAttachment;
+    if ((!trimmed && !attachmentSnapshot) || isLoading) return;
 
     const replaceIndex = replaceUserMessageId
       ? messages.findIndex((message) => message.id === replaceUserMessageId && message.role === "user")
@@ -808,8 +900,12 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
       id: replaceUserMessageId || Math.random().toString(),
       role: "user",
       content: trimmed,
-      timestamp: new Date()
+      timestamp: new Date(),
+      hadithAttachment: attachmentSnapshot,
     };
+    if (attachmentSnapshot && inputAttachmentRef.current) {
+      attachmentFlightRef.current = { messageId: userMsg.id, source: inputAttachmentRef.current.getBoundingClientRect() };
+    }
 
     const historyMessages = replaceUserMessageId
       ? [...messages.slice(0, replaceIndex), userMsg]
@@ -822,6 +918,10 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
       return currentIndex === -1 ? prev : [...prev.slice(0, currentIndex), userMsg];
     });
     setInputValue("");
+    if (attachmentSnapshot) {
+      setHadithAttachment(null);
+      onHadithAttachmentChange?.(null);
+    }
     setSelectedResponseId(null);
     setIsLoading(true);
 
@@ -836,6 +936,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
         setActiveConversationId(created.id);
         setConversations((prev) => [created, ...prev.filter((item) => item.id !== created.id)]);
       }
+      if (attachmentSnapshot) saveStoredHadithAttachment(conversationId, trimmed, attachmentSnapshot);
 
       const normalizedSupabaseUrl = supabaseUrl?.replace(/\/$/, "");
       if (!normalizedSupabaseUrl || !supabaseKey) {
@@ -854,7 +955,7 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
           apikey: supabaseKey,
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ conversationId, message: trimmed, stream: true, ...(hadithAttachment ? { hadithContext: hadithAttachment } : {}) }),
+        body: JSON.stringify({ conversationId, message: trimmed, stream: true, ...(attachmentSnapshot ? { hadithContext: attachmentSnapshot } : {}) }),
       });
 
       if (!res.ok) {
@@ -1279,6 +1380,13 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
                     
                     {isUser ? (
                       <>
+                        {m.hadithAttachment && (
+                          <HadithAttachmentChip
+                            attachment={m.hadithAttachment}
+                            removable={false}
+                            chipRef={(node) => { messageAttachmentRefs.current[m.id] = node; }}
+                          />
+                        )}
                         <div className="relative text-right bg-gradient-to-br from-[var(--sk-shade)] to-[#3f281a] dark:bg-none dark:bg-[var(--sk-bg3)] text-[#fff9f1] dark:text-[var(--sk-label)] border border-[#2b1a10]/20 dark:border-transparent rounded-[28px] shadow-md transition-all duration-300 overflow-hidden">
                           {isEditingThisMessage ? (
                             <textarea
@@ -1483,13 +1591,12 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
         <div className="fixed inset-x-0 bottom-0 z-20 flex justify-center pointer-events-none px-4 pb-4">
           <div className="w-full max-w-[390px] pointer-events-auto">
             {hadithAttachment && (
-              <div className="mb-2 flex items-center gap-2 rounded-[18px] border border-[var(--sk-accent)]/25 bg-[var(--sk-bg3)]/90 px-3 py-2 shadow-sm" dir="rtl" aria-label="مرفق الحديث">
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-[11px] font-black text-[var(--sk-accent)]">{hadithAttachment.bookTitle || "حديث مرفق"}</div>
-                  <div className="truncate text-[10px] font-bold text-[var(--sk-label2)]">حديث رقم [{hadithAttachment.hadithNumber ?? "غير متوفر"}] · {hadithAttachment.chapterTitle || "الباب غير متوفر"}</div>
-                </div>
-                <button type="button" onClick={() => { setHadithAttachment(null); onHadithAttachmentChange?.(null); }} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--sk-label2)] transition hover:bg-[var(--sk-accent)]/15 hover:text-[var(--sk-accent)]" aria-label="إزالة مرفق الحديث" title="إزالة المرفق"><X size={14} /></button>
-              </div>
+              <HadithAttachmentChip
+                attachment={hadithAttachment}
+                removable
+                chipRef={inputAttachmentRef}
+                onRemove={() => { setHadithAttachment(null); onHadithAttachmentChange?.(null); }}
+              />
             )}
             <form
               onSubmit={(e) => {
@@ -1516,9 +1623,9 @@ export const SakeenahAIScreen = React.memo(function SakeenahAIScreen({ onBack, u
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 type="submit"
-                disabled={!inputValue.trim() || isLoading || editingMessageId !== null}
+                disabled={(!inputValue.trim() && !hadithAttachment) || isLoading || editingMessageId !== null}
                 className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 sk-rim ${
-                  inputValue.trim() && !isLoading && editingMessageId === null
+                  (inputValue.trim() || hadithAttachment) && !isLoading && editingMessageId === null
                     ? "bg-[var(--sk-accent)] text-[var(--sk-on-espresso)] shadow-md hover:bg-[var(--sk-accent-deep3)] active:scale-90 cursor-pointer"
                     : "bg-[#e8dfd4]/60 dark:bg-[var(--sk-ring-track)]/60 text-[#7f6a55]/40 dark:text-[var(--sk-label2)]/40 cursor-not-allowed"
                 }`}
