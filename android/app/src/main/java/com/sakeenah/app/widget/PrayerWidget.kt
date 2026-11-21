@@ -105,7 +105,7 @@ class PrayerWidget : GlanceAppWidget() {
         if (entries.isEmpty()) return WidgetData.EMPTY
 
         val slots = entries
-            .map { WidgetData.Slot(it.key, it.name, it.timeMs) }
+            .map { WidgetData.Slot(it.key, it.name, it.timeMs, it.label) }
             .filter { it.timeMs > 0L }
 
         if (slots.isEmpty()) return WidgetData.EMPTY

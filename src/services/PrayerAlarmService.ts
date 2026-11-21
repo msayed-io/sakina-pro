@@ -48,7 +48,16 @@ export interface PrayerWidgetMetadata {
    * ضرورية لأن الويدجت يعرض «مواقيت اليوم» كما في البطاقة الأصلية،
    * ونداء scheduleAllPrayers يحمل المستقبل فقط (AlarmScheduler).
    */
-  dayTimes?: Array<{ key: string; name: string; timeMs: number }>;
+  dayTimes?: Array<{
+    key: string;
+    name: string;
+    timeMs: number;
+    /**
+     * نصّ الوقت كما تعرضه البطاقة الداخلية حرفيًا (أرقام هندية، 12 ساعة).
+     * الويدجت يعرضه كما هو بلا أي إعادة تنسيق — مصدر واحد للعرض.
+     */
+    label?: string;
+  }>;
 }
 
 class PrayerAlarmServiceImpl {

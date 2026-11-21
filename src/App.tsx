@@ -704,25 +704,41 @@ function AuthenticatedApp() {
           }))
           .filter((prayer, index, all) => all.findIndex((candidate) => candidate.key === prayer.key && candidate.timeMs === prayer.timeMs) === index);
 
-        /* ═══ ربط الويدجت بمصدر الحقيقة (v2.3.34) ═══════════════════════
-           نفس قيمة prayerSchedule/tomorrowSchedule التي يعرضها التطبيق —
-           لا حاسبة ثانية ولا خدمة جديدة. تُكتب **قبل** بوابة إذن الإشعارات
-           لأن الويدجت لا يحتاج أي إذن؛ وكانت الكتابة سابقًا داخل
-           syncPrayerSchedule بعد بوابات (الإشعارات + المنبّهات الدقيقة +
-           وجود صلوات مستقبلية) فيبقى الويدجت على مواقيت قديمة.
-           تشمل الغد أيضًا: يبقى الويدجت صحيحًا بعد منتصف الليل حتى لو لم
-           يُفتح التطبيق، والويدجت يختار مواقيت اليوم المحلي بنفسه. */
+        /* ═══ الويدجت متّصل بالبطاقة الداخلية (v2.3.35) ══════════════════
+           البطاقة الداخلية ترسم `timeline.augmentedSchedule` — نص عربي هندي
+           جاهز. كان الويدجت يستقبل epoch ويعيد تنسيقه بنفسه، أي مسار عرض
+           ثانٍ قد يختلف عن البطاقة. الآن يُرسَل **نص البطاقة نفسه** مع كل
+           ميعاد ويُعرض كما هو بلا أي تحويل. لا حاسبة ثانية ولا خدمة جديدة.
+           تُكتب دائمًا قبل بوابة إذن الإشعارات لأن الويدجت لا يحتاج إذنًا.
+           تشمل الغد: يبقى الويدجت صحيحًا بعد منتصف الليل حتى لو لم يُفتح
+           التطبيق، وهو يختار مواقيت اليوم المحلي بنفسه. */
+        const cardLabelByKey = new Map<string, string>(
+          timeline.augmentedSchedule.map((prayer) => [
+            prayer.key,
+            splitFormattedPrayerTime(prayer.timeFormatted).time,
+          ]),
+        );
+
         const widgetPayload = {
           sunriseTimeMs: prayerSchedule.find((p) => p.key === "sunrise")?.date?.getTime(),
           cityName: placeNameOnly,
           hijriDate: hijriSnapshot.today ? formatHijriDate(hijriSnapshot.today) : undefined,
           gregorianDate: dateStrings.gregorianDate,
-          dayTimes: [...prayerSchedule, ...tomorrowSchedule]
-            .filter((prayer) => prayer.date)
-            .map((prayer) => ({
+          dayTimes: [
+            // اليوم: نص البطاقة الداخلية حرفيًا.
+            ...prayerSchedule.map((prayer) => ({
+              prayer,
+              label: cardLabelByKey.get(prayer.key) ?? prayer.time,
+            })),
+            // الغد: نفس الصيغة من نفس الدالة (يبقى الويدجت صحيحًا بعد منتصف الليل).
+            ...tomorrowSchedule.map((prayer) => ({ prayer, label: prayer.time })),
+          ]
+            .filter(({ prayer }) => prayer.date)
+            .map(({ prayer, label }) => ({
               key: prayer.key,
               name: prayer.name,
               timeMs: prayer.date!.getTime(),
+              label,
             }))
             .filter(
               (item, index, all) =>

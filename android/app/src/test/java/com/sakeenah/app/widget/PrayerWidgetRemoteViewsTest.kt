@@ -378,12 +378,81 @@ class PrayerWidgetRemoteViewsTest {
         )
     }
 
-    /** التحقق من صحة النصوص دون ص/م (لا يعتمد على جهاز). */
+    /**
+     * ═══ حرّاس الربط بالبطاقة الداخلية (v2.3.35) ══════════════════════════
+     * الويدجت يجب أن يعرض النص القادم من البطاقة الداخلية حرفيًا، لا نصًا
+     * يعيد حسابه من epoch. الاختبار يبني RemoteViews الحقيقي، يضخّمه، ويقرأ
+     * نصّ كل بلاطة من الشجرة الناتجة.
+     */
+    @Test
+    fun tilesRenderCardLabelsVerbatim() {
+        val labels = mapOf(
+            WidgetData.FAJR to "٤:٥٣",
+            WidgetData.SUNRISE to "٦:٢٤",
+            WidgetData.DHUHR to "١١:٤١",
+            WidgetData.ASR to "٢:٣٤",
+            WidgetData.MAGHRIB to "٤:٥٥",
+            WidgetData.ISHA to "٦:١٦",
+        )
+        val slots = slotsFor().map { it.copy(label = labels[it.key]) }
+        val d = WidgetData(
+            slots = slots,
+            cityName = "الزقازيق",
+            hijriDate = null,
+            hasLocation = true,
+            sunriseTimeMs = 0L,
+            gregorianDate = null,
+        )
+        val nowMs = slots[0].timeMs + 45 * 60_000L
+
+        val view = buildWidgetRemoteViews(context, d, nowMs)
+            .apply(context, FrameLayout(context))
+
+        val ids = mapOf(
+            WidgetData.FAJR to com.sakeenah.app.R.id.w_tile_fajr_time,
+            WidgetData.SUNRISE to com.sakeenah.app.R.id.w_tile_sunrise_time,
+            WidgetData.DHUHR to com.sakeenah.app.R.id.w_tile_dhuhr_time,
+            WidgetData.ASR to com.sakeenah.app.R.id.w_tile_asr_time,
+            WidgetData.MAGHRIB to com.sakeenah.app.R.id.w_tile_maghrib_time,
+            WidgetData.ISHA to com.sakeenah.app.R.id.w_tile_isha_time,
+        )
+        for ((key, id) in ids) {
+            val text = view.findViewById<TextView>(id).text.toString()
+            // نفس أرقام البطاقة، لكن بأرقام إنجليزية (طلب المالك).
+            val expected = toLatinDigits(labels.getValue(key))
+            assertEquals("بلاطة $key يجب أن تعرض وقت البطاقة نفسه", expected, text)
+            assertTrue("يجب ألا تظهر أرقام هندية: $text", text.none { it in '٠'..'٩' })
+        }
+    }
+
+    /** بلا label (بيانات قديمة) ⇒ يبقى التنسيق المحلي كما كان، لا فراغ. */
+    @Test
+    fun tilesFallBackToFormattingWhenLabelMissing() {
+        val slots = slotsFor()
+        val d = WidgetData(
+            slots = slots,
+            cityName = "الزقازيق",
+            hijriDate = null,
+            hasLocation = true,
+            sunriseTimeMs = 0L,
+            gregorianDate = null,
+        )
+        val nowMs = slots[0].timeMs + 45 * 60_000L
+
+        val view = buildWidgetRemoteViews(context, d, nowMs)
+            .apply(context, FrameLayout(context))
+
+        val fajr = view.findViewById<TextView>(com.sakeenah.app.R.id.w_tile_fajr_time).text.toString()
+        assertEquals(formatTimeNoMeridiem(slots[0].timeMs), fajr)
+        assertTrue("لا يجب أن تكون فارغة", fajr.isNotBlank())
+    }
+
+    /** التحقق من صحة النصوص: بلا ص/م، وبأرقام إنجليزية. */
     @Test
     fun timeFormatting_hasNoMeridiem() {
         val formatted = formatTimeNoMeridiem(System.currentTimeMillis())
         assertTrue("يجب ألا يحتوي على ص أو م: $formatted", !formatted.contains('ص') && !formatted.contains('م'))
-        assertTrue("يجب أن يحتوي على أرقام عربية هندية: $formatted",
-            formatted.any { it in '٠'..'٩' })
+        assertTrue("يجب أن يحتوي على أرقام إنجليزية: $formatted", formatted.any { it in '0'..'9' })
+        assertTrue("يجب ألا يحتوي على أرقام هندية: $formatted", formatted.none { it in '٠'..'٩' })
     }
 }

@@ -30,6 +30,8 @@ data class WidgetData(
         val key: String,
         val name: String,
         val timeMs: Long,
+        /** نص البطاقة الداخلية حرفيًا — يُعرض كما هو متى توفّر. */
+        val label: String? = null,
     ) {
         val isSunrise: Boolean get() = key == SUNRISE
         val isMandatory: Boolean get() = key in MANDATORY

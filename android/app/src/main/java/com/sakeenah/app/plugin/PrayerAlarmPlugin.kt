@@ -140,8 +140,9 @@ class PrayerAlarmPlugin : Plugin() {
             val key = item.optString("key")
             val name = item.optString("name")
             val timeMs = item.optLong("timeMs", 0L)
+            val label = item.optString("label").takeIf { it.isNotBlank() }
             if (key.isNotBlank() && name.isNotBlank() && timeMs > 0L) {
-                dayTimes.add(PrayerAlarmStore.Entry(key, name, timeMs))
+                dayTimes.add(PrayerAlarmStore.Entry(key, name, timeMs, label = label))
             }
         }
 
