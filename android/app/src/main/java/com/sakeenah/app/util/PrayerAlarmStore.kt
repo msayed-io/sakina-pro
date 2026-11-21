@@ -28,6 +28,11 @@ object PrayerAlarmStore {
         val timeMs: Long,
         val schedulePrePrayer: Boolean = true,
         val schedulePrayerTime: Boolean = true,
+        /**
+         * نصّ الوقت كما تعرضه البطاقة الداخلية حرفيًا (أرقام هندية).
+         * يُعرض في الويدجت كما هو بلا أي إعادة تنسيق — فلا مسار عرض ثانٍ.
+         */
+        val label: String? = null,
     )
 
     /** فجر اليوم التالي — يُستنتج من الأداة نفسها، لا يُخزَّن. */
@@ -52,8 +57,9 @@ object PrayerAlarmStore {
                     val key = item.optString("key")
                     val name = item.optString("name")
                     val timeMs = item.optLong("timeMs", 0L)
+                    val label = item.optString("label").takeIf { it.isNotBlank() }
                     if (key.isNotBlank() && name.isNotBlank() && timeMs > 0L) {
-                        add(Entry(key, name, timeMs))
+                        add(Entry(key, name, timeMs, label = label))
                     }
                 }
             }.sortedBy { it.timeMs }
@@ -126,6 +132,7 @@ object PrayerAlarmStore {
                     put("key", entry.key)
                     put("name", entry.name)
                     put("timeMs", entry.timeMs)
+                    entry.label?.let { put("label", it) }
                 }
             )
         }

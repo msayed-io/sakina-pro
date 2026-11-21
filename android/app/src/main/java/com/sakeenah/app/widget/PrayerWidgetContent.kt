@@ -234,9 +234,14 @@ private fun applyTiles(
         val tileId = tileId(key)
         val slot = today[key]
 
-        // ── الوقت: بلا «ص/م» (المواصفات §5) ──
+        // ── الوقت: نص البطاقة الداخلية حرفيًا (بلا «ص/م»، المواصفات §5) ──
+        // label هو النص المعروض داخل التطبيق نفسه؛ التنسيق المحلي احتياطي
+        // فقط عند غيابه (بيانات قديمة أو مسار المنبّهات).
         if (slot != null) {
-            root.setTextViewText(timeId, formatTimeNoMeridiem(slot.timeMs))
+            root.setTextViewText(
+                timeId,
+                slot.label?.takeIf { it.isNotBlank() } ?: formatTimeNoMeridiem(slot.timeMs),
+            )
         } else {
             root.setTextViewText(timeId, "")
         }
