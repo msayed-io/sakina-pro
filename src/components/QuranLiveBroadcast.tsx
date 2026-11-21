@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Radio,
   Pause,
   ChevronLeft,
   ChevronRight,
@@ -215,7 +214,7 @@ export default function QuranLiveBroadcast({
             <button
               type="button"
               onClick={handlePrevStation}
-              className="w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50 dark:hover:border-[var(--sk-accent-bright)]/50"
+              className="sk-rim w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50 dark:hover:border-[var(--sk-accent-bright)]/50"
               title="الإذاعة السابقة"
               aria-label="الإذاعة السابقة"
             >
@@ -226,7 +225,7 @@ export default function QuranLiveBroadcast({
             <button
               type="button"
               onClick={handleNextStation}
-              className="w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50 dark:hover:border-[var(--sk-accent-bright)]/50"
+              className="sk-rim w-6 h-6 rounded-full bg-black/30 hover:bg-black/50 active:scale-90 flex items-center justify-center transition-all text-white/90 border border-white/15 backdrop-blur-md cursor-pointer shadow-sm hover:border-[#deab65]/50 dark:hover:border-[var(--sk-accent-bright)]/50"
               title="الإذاعة التالية"
               aria-label="الإذاعة التالية"
             >
@@ -287,7 +286,6 @@ export default function QuranLiveBroadcast({
                     </>
                   ) : (
                     <>
-                      <Radio size={11} className="text-[var(--sk-label)] shrink-0" />
                       <span>استماع مباشر</span>
                     </>
                   )}
@@ -300,10 +298,6 @@ export default function QuranLiveBroadcast({
                     </span>
                   )}
 
-                  {/* Fixed red live dot when inactive but standby */}
-                  {!isActiveAndPlaying && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse mr-0.5 shrink-0"></span>
-                  )}
                   </button>
                 </div>
               </div>

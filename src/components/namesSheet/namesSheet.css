@@ -95,7 +95,6 @@ html:not([data-theme="dark"]) .ns-root {
   transition:
     transform 0.6s var(--ns-sheet-ease),
     visibility 0s 0.6s;
-  will-change: transform;
   font-family: "Thmanyah Sans", sans-serif;
 }
 .ns-root[data-open="1"] .ns-sheet {
@@ -132,22 +131,24 @@ html:not([data-theme="dark"]) .ns-sheet::before {
    نفس صنفَي .progressive-blur / .progressive-blur-bottom وبنفس هندستهما
    وألوانهما (src/index.css:925-957) — نُعيد تثبيتهما داخل النافذة بدل الشاشة.
 
-   الأداء: طبقات backdrop-filter فوق شجرة تمرير داخل WebView تُعيد حساب البكسل
-   كل إطار فتُثقل التمرير بشدة. لذلك نستخدم هنا **وصفة التطبيق نفسها للحالة
-   المنخفضة الطاقة** (src/index.css:412-419): تعبئة متدرجة بلا ضباب، بنفس
-   اللون والاتجاه والارتفاع — فلا يتغيّر شكل التدرج ولا يتأثر التمرير. */
+   التدرج يبقى بتاع التطبيق بالكامل (طبقتا الضباب كما هما). وما يجعل تمرير
+   النافذة ثقيلًا ليس وجود الضباب وحده، بل أن الطبقة الزجاجية تُجبَر على إعادة
+   الحساب لكل إطار حين يكون فوقها/تحتها سياق طبقات متضارب. لذا:
+   ① نرفع طبقة التدرج إلى طبقة تركيب مستقلة (translateZ) فلا يُعاد بناؤها،
+   ② نُلغي will-change الدائم على النافذة نفسها (كان يجرّ محتوى التمرير كله
+      إلى طبقة تُعاد رسترتها)،
+   ③ نُبقي الحجب البصري للتمرير على contain:layout فقط بلا paint. */
 .ns-sheet .progressive-blur {
   position: absolute;
   inset-inline: 0;
   top: 0;
   bottom: auto;
   z-index: 4;
-  background: linear-gradient(var(--qf-fade), var(--bg) 25%, transparent);
+  transform: translateZ(0);
+  will-change: transform;
 }
 .ns-sheet .progressive-blur i {
-  display: none !important;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  transform: translateZ(0);
 }
 .ns-sheet .progressive-blur-bottom {
   top: auto;
@@ -180,7 +181,7 @@ html:not([data-theme="dark"]) .ns-sheet::before {
   position: absolute;
   inset: 0;
   overflow-y: auto;
-  contain: layout paint;
+  contain: layout;
   touch-action: pan-y;
   overscroll-behavior: contain;
   padding: 84px 16px 120px;

@@ -1272,6 +1272,19 @@ html[data-theme="dark"] :focus-visible {
   outline-offset: 2px;
 }
 
+/* حقول الإدخال في الداكن: لا outline على الحقل نفسه.
+   السبب الجذري للمستطيل الظاهر داخل خانة البحث/الإدخال: القاعدة العامة
+   `html[data-theme="dark"] :focus-visible { outline: 2px solid var(--sk-accent) }`
+   ترسم إطارًا كريميًا حول الحقل عند الكتابة. الحاوية (.cut-crystal-input)
+   تُظهر حالة التركيز أصلًا عبر :focus-within، فالإطار مكرّر ومزعج.
+   الاستثناء يخصّ الحقول فقط، ويُبقي حلقة التركيز للأزرار كما هي. */
+html[data-theme="dark"] :is(input, textarea, select):focus-visible {
+  outline: none;
+}
+html[data-theme="dark"] :is(input, textarea, select) {
+  box-shadow: none;
+}
+
 /* AI text fields: the requested dark-mode treatment excludes focus outlines,
    without changing keyboard focus styling for buttons or other screens. */
 html[data-theme="dark"] [data-sakeenah-ai-screen] :is(input, textarea):focus-visible {

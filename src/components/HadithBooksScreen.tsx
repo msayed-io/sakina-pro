@@ -959,7 +959,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                 : viewMode === "bookmarks"
                 ? "الأحاديث المحفوظة"
                 : viewMode === "reports"
-                ? "سجل ملاحظاتي وبلاغاتي"
+                ? "ملاحظاتي وبلاغاتي"
                 : viewMode === "search_global"
                 ? "نتائج البحث الشامل"
                 : "الكتب"}
@@ -980,7 +980,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               }`}
               title="المحفوظات"
             >
-              <BookmarkCheck className={`w-3.5 h-3.5 ${viewMode === "bookmarks" ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-accent-deep)]"}`} />
+              <BookmarkCheck className={`w-3.5 h-3.5 ${viewMode === "bookmarks" ? "text-[var(--sk-on-espresso)]" : "text-[var(--sk-accent-deep)]"}`} />
               <span className="hidden sm:inline">المحفوظات</span>
               {bookmarks.length > 0 && (
                 <span className="px-1.5 py-0.5 text-[10px] bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim">
@@ -999,7 +999,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               }`}
               title="ملاحظاتي وبلاغاتي"
             >
-              <Flag className={`w-3.5 h-3.5 ${viewMode === "reports" ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-accent-deep)]"}`} />
+              <Flag className={`w-3.5 h-3.5 ${viewMode === "reports" ? "text-[var(--sk-on-espresso)]" : "text-[var(--sk-accent-deep)]"}`} />
               <span className="hidden sm:inline">ملاحظاتي</span>
               {reports.length > 0 && (
                 <span className="px-1.5 py-0.5 text-[10px] bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)] font-black rounded-full leading-none flex items-center justify-center min-w-[16px] sk-rim">
@@ -1853,24 +1853,6 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                         <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                           {/* Left: Standard Actions */}
                           <div className="flex items-center gap-1.5">
-                            {/* زر الحفظ — انتقل من رأس البطاقة إلى شريط الأدوات السفلي */}
-                            <button
-                              onClick={() => saveBookmarkToggle(hadith)}
-                              className={`p-2.5 transition cursor-pointer flex items-center justify-center rounded-full sk-rim ${
-                                bookmarked
-                                  ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
-                                  : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
-                              }`}
-                              title={bookmarked ? "محفوظ في المفضلة" : "حفظ الحديث"}
-                              aria-label={bookmarked ? "إزالة من المحفوظات" : "حفظ الحديث"}
-                            >
-                              <Bookmark
-                                className={`w-4 h-4 ${
-                                  bookmarked ? "fill-current" : "text-[var(--sk-accent-bright)]"
-                                }`}
-                              />
-                            </button>
-
                             {/* Sakeenah AI attachment button */}
                             <button
                               onClick={() => onAskSakeenah?.(hadith)}
@@ -1909,6 +1891,24 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             >
                               <Flag className="w-3.5 h-3.5 text-rose-600" />
                               <span className="hidden sm:inline">بلاغ تصحيح</span>
+                            </button>
+
+                            {/* زر الحفظ — انتقل من رأس البطاقة إلى شريط الأدوات السفلي */}
+                            <button
+                              onClick={() => saveBookmarkToggle(hadith)}
+                              className={`p-2.5 transition cursor-pointer flex items-center justify-center rounded-full sk-rim ${
+                                bookmarked
+                                  ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
+                                  : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                              }`}
+                              title={bookmarked ? "محفوظ في المفضلة" : "حفظ الحديث"}
+                              aria-label={bookmarked ? "إزالة من المحفوظات" : "حفظ الحديث"}
+                            >
+                              <Bookmark
+                                className={`w-4 h-4 ${
+                                  bookmarked ? "fill-current" : "text-[var(--sk-accent-bright)]"
+                                }`}
+                              />
                             </button>
                           </div>
                         </div>
@@ -2181,24 +2181,6 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                       <div className="pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                         {/* Left: Standard Actions */}
                         <div className="flex items-center gap-1.5">
-                          {/* زر الحفظ — انتقل من رأس البطاقة إلى شريط الأدوات السفلي */}
-                          <button
-                            onClick={() => saveBookmarkToggle(hadith)}
-                            className={`p-2.5 transition cursor-pointer flex items-center justify-center rounded-full sk-rim ${
-                              isBookmarked(hadith)
-                                ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
-                                : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
-                            }`}
-                            title={isBookmarked(hadith) ? "محفوظ في المفضلة" : "حفظ الحديث"}
-                            aria-label={isBookmarked(hadith) ? "إزالة من المحفوظات" : "حفظ الحديث"}
-                          >
-                            <Bookmark
-                              className={`w-4 h-4 ${
-                                isBookmarked(hadith) ? "fill-current" : "text-[var(--sk-accent-bright)]"
-                              }`}
-                            />
-                          </button>
-
                           {/* Sakeenah AI attachment button */}
                           <button
                             onClick={() => onAskSakeenah?.(hadith)}
@@ -2241,6 +2223,24 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           >
                             <Flag className="w-3.5 h-3.5 text-rose-600" />
                             <span className="hidden sm:inline">بلاغ تصحيح</span>
+                          </button>
+
+                          {/* زر الحفظ — انتقل من رأس البطاقة إلى شريط الأدوات السفلي */}
+                          <button
+                            onClick={() => saveBookmarkToggle(hadith)}
+                            className={`p-2.5 transition cursor-pointer flex items-center justify-center rounded-full sk-rim ${
+                              isBookmarked(hadith)
+                                ? "cut-crystal-capsule-dark bg-[var(--sk-accent-bright)] text-[var(--sk-on-accent)] dark:text-[var(--sk-on-espresso)]"
+                                : "cut-crystal-capsule text-[var(--sk-espresso2)] hover:text-[var(--sk-label)]"
+                            }`}
+                            title={isBookmarked(hadith) ? "محفوظ في المفضلة" : "حفظ الحديث"}
+                            aria-label={isBookmarked(hadith) ? "إزالة من المحفوظات" : "حفظ الحديث"}
+                          >
+                            <Bookmark
+                              className={`w-4 h-4 ${
+                                isBookmarked(hadith) ? "fill-current" : "text-[var(--sk-accent-bright)]"
+                              }`}
+                            />
                           </button>
                         </div>
                       </div>
