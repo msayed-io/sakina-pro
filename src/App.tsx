@@ -53,6 +53,7 @@ import {
 import { getPrayerTimeline } from "@/lib/prayer-times";
 import type { PrayerLocation } from "@/lib/prayer-config";
 import ManualLocationDialog from "@/components/ManualLocationDialog";
+import LocationSheet from "@/components/settings/LocationSheet";
 import QcfVerse from "@/components/QcfVerse";
 import { prefetchQcfFont } from "@/hooks/useQcfFont";
 import { PRELOAD_QCF_PAGES } from "@/constants/appVerses";
@@ -64,7 +65,8 @@ const loadHadith = () => import("@/components/HadithBooksScreen");
 const loadLibrary = () => import("@/components/SakinaLibraryScreen");
 const loadAi = () => import("@/components/SakeenahAIScreen");
 const loadAsma = () => import("@/components/AsmaAlHusnaScreen");
-const loadSettings = () => import("@/components/SettingsScreen").then((m) => ({ default: m.SettingsScreen }));
+// الشاشة الجديدة الموحّدة (الصفحتان + الورقتان) — القديمة تُركّب مستبعدة أدناه.
+const loadSettings = () => import("@/components/settings/SettingsExperience");
 const loadPrayerSettings = () => import("@/components/PrayerSettingsScreen").then((m) => ({ default: m.PrayerSettingsScreen }));
 const LazyAzkar = lazy(loadAzkar), LazyCounter = lazy(loadCounter), LazyQuran = lazy(loadQuran);
 const LazyHadith = lazy(loadHadith), LazyLibrary = lazy(loadLibrary), LazyAi = lazy(loadAi);
@@ -284,6 +286,8 @@ function AuthenticatedApp() {
   const [pendingForkConversationId, setPendingForkConversationId] = useState<string | null>(() => localStorage.getItem("sakeenah_pending_fork_conversation_id"));
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
+  // الورقة المشتركة الوحيدة لتعديل الموقع — تُفتح من أي شاشة بنفس الدالة.
+  const [showLocationSheet, setShowLocationSheet] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [showAzkarCounter, setShowAzkarCounter] = useState(false);
   const [showAsmaAlHusna, setShowAsmaAlHusna] = useState(false);
@@ -1108,6 +1112,9 @@ function AuthenticatedApp() {
     setShowAsmaAlHusna(true);
   }, []);
 
+  /** نقطة الفتح الوحيدة لورقة تعديل الموقع في المشروع كله. */
+  const openLocationSheet = useCallback(() => setShowLocationSheet(true), []);
+
   const handleChangeLocation = useCallback(() => {
     setShowLocationDialog(true);
   }, []);
@@ -1145,7 +1152,9 @@ function AuthenticatedApp() {
         </Suspense>
       )}
 
-      {/* ── Location Dialog Overlay ── */}
+      {/* ── Location Dialog: صار خطوة الاختيار العميقة (شبكة/خريطة) التي
+          تفتحها الورقة المشتركة من صفّ «الموقع المحدد». لا يُفتح من أي زرّ
+          آخر — كل مداخل الموقع تمرّ عبر openLocationSheet. ── */}
       <ManualLocationDialog
         isOpen={showLocationDialog}
         onClose={() => setShowLocationDialog(false)}
@@ -1161,6 +1170,20 @@ function AuthenticatedApp() {
         currentCityName={cityName}
         currentLat={cityLat}
         currentLon={cityLon}
+      />
+
+      {/* ── ورقة تعديل الموقع المشتركة (نسخة واحدة لكل الشاشات) ── */}
+      <LocationSheet
+        open={showLocationSheet}
+        isAutoLocation={isAutoLocation}
+        locationLabel={cityName}
+        onApply={(auto) => {
+          setShowLocationSheet(false);
+          setIsAutoLocation(auto);
+          if (auto) void handleAutoDetectLocation();
+        }}
+        onClose={() => setShowLocationSheet(false)}
+        onPickLocation={handleChangeLocation}
       />
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -1215,7 +1238,7 @@ function AuthenticatedApp() {
                   <div className="flex flex-col items-start gap-0.5">
                     <WeatherDisplay weather={weather} />
                     <button
-                      onClick={() => setShowLocationDialog(true)}
+                      onClick={openLocationSheet}
                       className="flex items-center gap-1.5 text-xs font-bold text-white/90 hover:text-white transition-colors drop-shadow-sm max-w-[210px]"
                       title={cityName}
                     >
@@ -1652,10 +1675,7 @@ function AuthenticatedApp() {
             <div className={`${activeTab === "settings" ? "block" : "hidden"}${activeTab === "settings" && showAzkarCounter ? " invisible" : ""}`}>
           <SettingsScreen
             cityName={cityName}
-            cityLat={cityLat}
-            cityLon={cityLon}
             displayAddress={prayerLocation.displayAddress}
-            timezoneId={timezoneId}
             isAutoLocation={isAutoLocation}
             onToggleAutoLocation={setIsAutoLocation}
             calcMethod={calcMethod}
@@ -1666,12 +1686,10 @@ function AuthenticatedApp() {
             onToggleAutoAsrSchool={handleToggleAutoAsrSchool}
             onChangeCalcMethod={setCalcMethod}
             onChangeAsrSchool={setAsrSchool}
-            onChangeLocation={handleChangeLocation}
-            onBack={handleBackToMain}
+            onOpenLocationSheet={openLocationSheet}
+            onExit={handleBackToMain}
             currentUser={currentUser}
             onSignOut={handleSignOut}
-
-            // New props
             isMulkReminderEnabled={isMulkReminderEnabled}
             onToggleMulkReminder={setIsMulkReminderEnabled}
             mulkReminderTime={mulkReminderTime}

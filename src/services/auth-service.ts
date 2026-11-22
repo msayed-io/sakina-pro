@@ -80,6 +80,23 @@ export async function sendPasswordReset(email: string): Promise<void> {
   if (error) throw error;
 }
 
+/**
+ * يحفظ الاسم الظاهر في ملف المستخدم الحقيقي (user_metadata).
+ * الحساب يُخزّن الاسم داخل Supabase نفسه — لا جدول موازٍ ولا نسخة محلية،
+ * وأي شاشة تقرأ user_metadata.full_name ترى التغيير فورًا.
+ */
+export async function updateDisplayName(name: string): Promise<AuthUser> {
+  ensureAuthConfigured();
+  const clean = name.trim();
+  if (!clean) throw new Error("الاسم لا يمكن أن يكون فارغًا.");
+  const { data, error } = await getSupabaseClient().auth.updateUser({
+    data: { full_name: clean, name: clean },
+  });
+  if (error) throw error;
+  if (!data.user) throw new Error("لم يتم تحديث الملف الشخصي.");
+  return data.user;
+}
+
 export async function signOut(): Promise<void> {
   ensureAuthConfigured();
   const { error } = await getSupabaseClient().auth.signOut({ scope: "local" });
