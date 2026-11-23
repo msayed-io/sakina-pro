@@ -40,11 +40,19 @@ let started = false;
 /* مقارنة إصدارات SemVer (لا نستخدم !== حتى لا نتراجع لإصدار أقدم)     */
 /* ------------------------------------------------------------------ */
 
-function parseVersion(value: unknown): [number, number, number] | null {
+/**
+ * يفصل أي عدد من الأجزاء الرقمية: "2.3.45" → [2,3,45]، و"2.3.45.7" → [2,3,45,7].
+ * ضروري لأن حزمة الويب تُرقَّم vX.Y.Z.<run_number> لتكون أحدث من نفس إصدار الـAPK.
+ */
+function parseVersion(value: unknown): number[] | null {
   if (typeof value !== "string") return null;
-  const match = /^\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/.exec(value);
-  if (!match) return null;
-  return [Number(match[1]), Number(match[2] ?? 0), Number(match[3] ?? 0)];
+  const head = /^\s*v?([0-9][0-9.]*)/.exec(value);
+  if (!head) return null;
+  const parts = head[1]
+    .replace(/[.]+$/, "")
+    .split(".")
+    .map((piece) => Number(piece));
+  return parts.length > 0 && parts.every((n) => Number.isFinite(n)) ? parts : null;
 }
 
 /** 1 إذا كانت a أحدث من b، و-1 إذا كانت أقدم، و0 إذا تساوت. */
@@ -52,8 +60,11 @@ export function compareVersions(a: unknown, b: unknown): number {
   const left = parseVersion(a);
   const right = parseVersion(b);
   if (!left || !right) return 0;
-  for (let i = 0; i < 3; i += 1) {
-    if (left[i] !== right[i]) return left[i] > right[i] ? 1 : -1;
+  const length = Math.max(left.length, right.length);
+  for (let i = 0; i < length; i += 1) {
+    const a = left[i] ?? 0;
+    const b = right[i] ?? 0;
+    if (a !== b) return a > b ? 1 : -1;
   }
   return 0;
 }
