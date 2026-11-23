@@ -23,12 +23,26 @@ const RECHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 /** مهلة طلب البيان. */
 const FETCH_TIMEOUT_MS = 15_000;
 
+/** عنصر واحد في مانيفست التحديث التفاضلي (يطابق ManifestEntry في البلوجن). */
+interface OtaManifestEntry {
+  file_name: string;
+  file_hash: string;
+  download_url: string;
+}
+
 interface OtaManifest {
   version: string;
+  /** مسار احتياطي: حزمة dist.zip الكاملة. */
   url: string;
-  /** SHA-256 لحزمة dist.zip بصيغة hex — البلوجن يرفض التنزيل بدونه. */
-  checksum: string;
+  /** SHA-256 للحزمة الكاملة. البلوجن يقبل `checksum`، ونقبل الاسمين. */
+  checksum?: string;
+  sha256?: string;
   minNativeVersion?: string;
+  /**
+   * بصمات كل ملفات الحزمة. وجودها يُفعّل المسار التفاضلي (الأساسي)،
+   * وغيابها أو فشلها يُسقطنا بصمت على المسار الكامل.
+   */
+  manifest?: OtaManifestEntry[];
 }
 
 /** قفل ضد الفحوص المتزامنة. */
@@ -73,19 +87,60 @@ export function compareVersions(a: unknown, b: unknown): number {
 /* جلب البيان                                                          */
 /* ------------------------------------------------------------------ */
 
+/** يتحقق أن مدخلًا واحدًا من المانيفست صالح للاستخدام. */
+function isManifestEntry(value: unknown): value is OtaManifestEntry {
+  if (!value || typeof value !== "object") return false;
+  const entry = value as Record<string, unknown>;
+  return (
+    typeof entry.file_name === "string" &&
+    entry.file_name.length > 0 &&
+    typeof entry.file_hash === "string" &&
+    /^[0-9a-f]{64}$/i.test(entry.file_hash) &&
+    typeof entry.download_url === "string" &&
+    entry.download_url.startsWith("https://")
+  );
+}
+
 function isManifest(value: unknown): value is OtaManifest {
   if (!value || typeof value !== "object") return false;
   const candidate = value as Record<string, unknown>;
-  return (
-    typeof candidate.version === "string" &&
-    candidate.version.length > 0 &&
-    typeof candidate.url === "string" &&
-    candidate.url.startsWith("https://") &&
-    typeof candidate.checksum === "string" &&
-    /^[0-9a-f]{64}$/i.test(candidate.checksum) &&
-    (candidate.minNativeVersion === undefined ||
-      typeof candidate.minNativeVersion === "string")
-  );
+  if (
+    typeof candidate.version !== "string" ||
+    candidate.version.length === 0 ||
+    typeof candidate.url !== "string" ||
+    !candidate.url.startsWith("https://") ||
+    (candidate.minNativeVersion !== undefined &&
+      typeof candidate.minNativeVersion !== "string")
+  ) {
+    return false;
+  }
+
+  // البصمة إلزامية للحزمة الكاملة، مهما كان اسمها.
+  const checksum = candidate.checksum ?? candidate.sha256;
+  if (typeof checksum !== "string" || !/^[0-9a-f]{64}$/i.test(checksum)) return false;
+
+  // المانيفست اختياري، لكن إن وُجد فيجب أن يكون صالحًا بالكامل — لا نصف حزمة.
+  if (candidate.manifest !== undefined) {
+    if (!Array.isArray(candidate.manifest)) return false;
+    if (candidate.manifest.length > 0 && !candidate.manifest.every(isManifestEntry)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/** بصمة الحزمة الكاملة، أيًّا كان اسم الحقل الذي وصل. */
+function fallbackChecksum(manifest: OtaManifest): string {
+  return String(manifest.checksum ?? manifest.sha256 ?? "");
+}
+
+/** مانيفست تفاضلي صالح للعمل — أو null إذا تعذّر استخدامه. */
+function usableDelta(manifest: OtaManifest): OtaManifestEntry[] | null {
+  const entries = manifest.manifest;
+  if (!Array.isArray(entries) || entries.length === 0) return null;
+  if (!entries.some((entry) => entry.file_name === "index.html")) return null;
+  return entries;
 }
 
 async function fetchManifest(): Promise<OtaManifest | null> {
@@ -153,28 +208,58 @@ async function runCheck(): Promise<void> {
       return;
     }
 
-    // 6) التنزيل في الخلفية (لا يغيّر شيئًا على الشاشة).
+    // 6) المسار الأساسي: تحديث تفاضلي — تُنزَّل الملفات المتغيرة فقط.
+    //    الملفات غير المتغيرة تُعاد استخدامها من الـAPK أو الكاش المحلي،
+    //    لذلك حجم التنزيل بضعة كيلوبايتات بدلًا من الحزمة الكاملة.
+    const delta = usableDelta(manifest);
     let downloadedId = "";
-    try {
-      const bundle = await CapacitorUpdater.download({
-        url: manifest.url,
-        version: manifest.version,
-        checksum: manifest.checksum,
-      });
-      downloadedId = String(bundle.id ?? "");
-    } catch {
-      return; // فشل تنزيل/تحقق → نبقى على الحالي
+
+    if (delta) {
+      try {
+        const diff = await CapacitorUpdater.getMissingBundleFiles({
+          version: manifest.version,
+          manifest: delta,
+        });
+        // كل الملفات موجودة محليًا (في الـAPK أو الكاش) والمحتوى مطابق:
+        // لا شيء لتنزيله ولا شيء لتغييره — نخرج بلا أي طلب شبكة إضافي.
+        if (diff.missingCount === 0) return;
+
+        const bundle = await CapacitorUpdater.download({
+          url: manifest.url,
+          version: manifest.version,
+          checksum: fallbackChecksum(manifest),
+          manifest: delta,
+        });
+        downloadedId = String(bundle.id ?? "");
+      } catch {
+        downloadedId = ""; // فشل تفاضلي → ننتقل للمسار الكامل أدناه
+      }
+    }
+
+    // 7) المسار الاحتياطي: الحزمة الكاملة. لا يُستدعى إلا إذا غاب المانيفست
+    //    أو فشل المسار التفاضلي أو لم يُنتج حزمة قابلة للتطبيق.
+    if (!downloadedId) {
+      try {
+        const bundle = await CapacitorUpdater.download({
+          url: manifest.url,
+          version: manifest.version,
+          checksum: fallbackChecksum(manifest),
+        });
+        downloadedId = String(bundle.id ?? "");
+      } catch {
+        return; // فشل المسارين → نبقى على الحالي بلا أي أثر
+      }
     }
     if (!downloadedId) return;
 
-    // 7) جدولته للتطبيق عند مغادرة التطبيق أو التشغيل القادم — لا إعادة تحميل الآن.
+    // 8) جدولته للتطبيق عند مغادرة التطبيق أو التشغيل القادم — لا إعادة تحميل الآن.
     try {
       await CapacitorUpdater.next({ id: downloadedId });
     } catch {
       return;
     }
 
-    // 8) تنظيف الحزم القديمة (أفضل جهد، بلا أثر على الواجهة).
+    // 9) تنظيف الحزم القديمة (أفضل جهد، بلا أثر على الواجهة).
     try {
       const list = await CapacitorUpdater.list();
       for (const bundle of list.bundles ?? []) {

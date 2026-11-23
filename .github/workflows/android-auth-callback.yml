@@ -243,8 +243,44 @@ jobs:
           path: ${{ runner.temp }}/sakina-release-assets/*
           if-no-files-found: error
           retention-days: 30
-      # --- OTA (إضافة): حزمة الويب + بيان الإصدار ليُرفقا مع نفس الإصدار ---
-      - name: Package OTA web bundle and manifest
+      # --- OTA (إضافة): نشر تفاضلي عبر فرع ota-bundle + بيان بالبصمات ---
+      # الترتيب إلزامي: يُدفع فرع ota-bundle أولًا، ثم تُنشأ الحزمة الاحتياطية،
+      # ثم يُكتب البيان، ثم يُنشأ الـRelease في الخطوة التالية. بهذا لا يقرأ
+      # التطبيق إصدارًا جديدًا قبل أن تكون ملفاته متاحة (منع خطأ 404).
+      - name: Publish OTA delta bundle to ota-bundle branch
+        env:
+          RELEASE_VERSION: ${{ needs.calculate-version.outputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -f dist/index.html || { echo "dist/index.html missing" >&2; exit 1; }
+          # لازم لـ getMissingBundleFiles: البلوجن يقرأ هذا الملف لمطابقة الملفات
+          # المدمجة في الـAPK وإعادة استخدامها بلا تنزيل. يُنتجه cap sync تلقائيًا.
+          if [ ! -f android/app/src/main/assets/public/ota-builtin-hashes.json ]; then
+            npx cap copy android
+          fi
+          test -f android/app/src/main/assets/public/ota-builtin-hashes.json || {
+            echo "ota-builtin-hashes.json missing - delta reuse would silently fail" >&2
+            exit 1
+          }
+          ota_version="${RELEASE_VERSION}.${GITHUB_RUN_NUMBER}"
+          stage="$RUNNER_TEMP/ota-bundle-stage"
+          rm -rf "$stage"
+          mkdir -p "$stage"
+          cp -a dist/. "$stage"/
+          # البيان لا يُنشر على فرع التخزين: مكانه الأصلي في الـRelease فقط.
+          rm -f "$stage/version.json"
+          cd "$stage"
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config core.autocrlf false
+          git checkout -q --orphan ota-bundle
+          git add -A
+          git commit -q -m "chore(ota): publish bundle ${ota_version}"
+          git push -q --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/ota-bundle
+          echo "Pushed ota-bundle for ${ota_version} ($(git rev-parse --short HEAD))."
+      - name: Package OTA fallback zip and manifest
         env:
           RELEASE_VERSION: ${{ needs.calculate-version.outputs.version }}
           RELEASE_TAG: ${{ needs.calculate-version.outputs.tag }}
@@ -257,24 +293,26 @@ jobs:
           unzip -l "$RUNNER_TEMP/ota/dist.zip" | grep -qE ' index\.html$'
           min_native_version="$(tr -d '[:space:]' < ota/min-native-version.txt)"
           test -n "$min_native_version" || { echo "ota/min-native-version.txt is empty" >&2; exit 1; }
-          # مهم: يجب أن يكون أحدث من إصدار الحزمة المدمجة في الـAPK (وهو RELEASE_VERSION
-          # نفسه). لذلك نضيف run_number كجزء رابع: 2.3.45 → 2.3.45.<run>،
-          # والمقارنة في otaUpdater.ts تفصل كل الأجزاء الرقمية.
+          # الإصدار رباعي: نسخة الويب المدمجة في الـAPK تساوي RELEASE_VERSION نفسها،
+          # فنضيف run_number جزءًا رابعًا ليكون الإصدار المنشور أحدث دائمًا.
           ota_version="${RELEASE_VERSION}.${GITHUB_RUN_NUMBER}"
           ota_checksum="$(sha256sum "$RUNNER_TEMP/ota/dist.zip" | cut -d' ' -f1)"
           test -n "$ota_checksum"
-          python3 - "$RUNNER_TEMP/ota/version.json" "$ota_version" "$min_native_version" "$ota_checksum" <<'PY'
-          import json, os, sys
-          path, ota_version, min_native_version, ota_checksum = sys.argv[1:5]
-          manifest = {
-              "version": ota_version,
-              "url": f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/releases/download/{os.environ['RELEASE_TAG']}/dist.zip",
-              "checksum": ota_checksum,
-              "minNativeVersion": min_native_version,
-          }
-          with open(path, "w", encoding="utf-8") as handle:
-              json.dump(manifest, handle, ensure_ascii=False, indent=2)
-          print(json.dumps(manifest, indent=2))
+          OTA_VERSION="$ota_version" \
+          MIN_NATIVE_VERSION="$min_native_version" \
+          FALLBACK_ZIP_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}/dist.zip" \
+          FALLBACK_ZIP_SHA256="$ota_checksum" \
+          RAW_BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/ota-bundle" \
+          node scripts/generate-ota-manifest.mjs --out "$RUNNER_TEMP/ota/version.json"
+          test -s "$RUNNER_TEMP/ota/version.json"
+          python3 - "$RUNNER_TEMP/ota/version.json" <<'PY'
+          import json, sys
+          with open(sys.argv[1], encoding="utf-8") as handle:
+              data = json.load(handle)
+          files = data.get("manifest") or []
+          assert files, "manifest is empty"
+          assert any(entry.get("file_name") == "index.html" for entry in files), "index.html missing from manifest"
+          print(f"OTA {data['version']}: {len(files)} files, minNative={data['minNativeVersion']}")
           PY
       - name: Create GitHub Release and attach signed files
         id: publish
