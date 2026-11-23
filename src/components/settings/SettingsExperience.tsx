@@ -36,6 +36,10 @@ type Props = {
 
   /* الموقع — الورقة المشتركة تُركَّب مرة واحدة في App.tsx */
   onOpenLocationSheet: () => void;
+  /** رسالة فشل الموقع من المنظومة المرجعية (تظهر كصف حالة هادئ). */
+  locationError: string | null;
+  /** فتح إعدادات التطبيق النظامية (نفس مسار التطبيق الحقيقي). */
+  onOpenLocationSettings: () => void;
 
   /* الحساب */
   currentUser: User | null;
@@ -154,6 +158,8 @@ export default function SettingsExperience(props: Props) {
         onChangeCalcMethod={props.onChangeCalcMethod}
         onChangeAsrSchool={props.onChangeAsrSchool}
         onOpenLocationSheet={props.onOpenLocationSheet}
+        locationError={props.locationError}
+        onOpenLocationSettings={props.onOpenLocationSettings}
         onBack={props.onExit}
         currentUser={props.currentUser}
         onOpenAccount={() => setPage("account")}

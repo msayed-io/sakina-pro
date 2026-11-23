@@ -1182,11 +1182,13 @@ function AuthenticatedApp() {
         open={showLocationSheet}
         isAutoLocation={isAutoLocation}
         locationLabel={cityName}
-        onApply={({ auto, city }) => {
+        currentLat={cityLat}
+        currentLon={cityLon}
+        onApply={({ auto, place }) => {
           setShowLocationSheet(false);
-          if (city) {
+          if (place) {
             // نفس مسار التطبيق الحقيقي: حفظ العقد ثم تطبيقه على الشاشة.
-            handleCitySelected(city.nameAr, city.latitude, city.longitude);
+            handleCitySelected(place.name, place.lat, place.lon);
             setIsAutoLocation(false);
           } else if (auto) {
             setIsAutoLocation(true);
@@ -1699,6 +1701,8 @@ function AuthenticatedApp() {
             onChangeCalcMethod={setCalcMethod}
             onChangeAsrSchool={setAsrSchool}
             onOpenLocationSheet={openLocationSheet}
+            locationError={locationError}
+            onOpenLocationSettings={openLocationAppSettings}
             onExit={handleBackToMain}
             currentUser={currentUser}
             onSignOut={handleSignOut}

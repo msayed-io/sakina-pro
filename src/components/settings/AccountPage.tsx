@@ -118,7 +118,7 @@ export default function AccountPage({
           <div className="st-grp cut-crystal-panel">
             <label className="st-row">
               <div className="st-ic">
-                <UserRound fill="currentColor" size={16} />
+                <UserRound size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-s">الاسم</div>
@@ -135,7 +135,7 @@ export default function AccountPage({
 
             <div className="st-row">
               <div className="st-ic">
-                <Mail fill="currentColor" size={16} />
+                <Mail size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-s">البريد الإلكتروني</div>
@@ -171,14 +171,14 @@ export default function AccountPage({
               }}
             >
               <div className="st-ic">
-                <KeyRound fill="currentColor" size={16} />
+                <KeyRound size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">كلمة المرور</div>
                 <div className="st-s">تغيير كلمة مرور حسابك</div>
               </div>
               <div className="st-tr">
-                <ChevronLeft fill="currentColor" size={16} className="st-chev" />
+                <ChevronLeft size={16} className="st-chev" />
               </div>
             </div>
           </div>
@@ -190,7 +190,7 @@ export default function AccountPage({
             className="cut-crystal-capsule sk-rim st-role-wide st-role-logout mt-[28px]"
             onClick={() => void onSignOut()}
           >
-            <LogOut size={16} fill="currentColor" aria-hidden="true" />
+            <LogOut size={16} aria-hidden="true" />
             تسجيل الخروج
           </button>
           {/* «حذف الحساب» غير منقول: لا مسار حقيقي في التطبيق. */}
@@ -214,7 +214,7 @@ export default function AccountPage({
             aria-label="رجوع"
             onClick={goBack}
           >
-            <ChevronRight fill="currentColor" size={20} />
+            <ChevronRight size={20} />
           </button>
         </div>
       </header>

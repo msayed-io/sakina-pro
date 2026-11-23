@@ -34,8 +34,8 @@ import { toArabicIndicDigits } from "@/utils/prayerTimes";
 import { displayNameOf } from "./AccountPage";
 import { formatTime12Arabic } from "./TimePickerSheet";
 
-/** رقم الإصدار الحقيقي: package.json (نفس مصدر نسخة البناء في CI). */
-export const APP_VERSION = __APP_VERSION__;
+/** رقم البناء الحالي — احتياطي فقط قبل وصول الرد. */
+export const BUILD_VERSION = __APP_VERSION__;
 
 export type ReminderKey = "mulk" | "baqarah";
 
@@ -53,6 +53,9 @@ export type SettingsPageProps = {
   onChangeCalcMethod: (method: CalculationMethod) => void;
   onChangeAsrSchool: (school: AsrSchool) => void;
   onOpenLocationSheet: () => void;
+  /** رسالة فشل تحديد الموقع — تُعرض كحالة هادئة تحت المفتاح. */
+  locationError: string | null;
+  onOpenLocationSettings: () => void;
   onBack: () => void;
   currentUser: User | null;
   onOpenAccount: () => void;
@@ -83,7 +86,7 @@ function ExpandChevron({
       aria-expanded={expanded}
       aria-label="عرض الخيارات"
     >
-      <ChevronDown fill="currentColor"         size={14}
+      <ChevronDown         size={14}
         className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
       />
     </button>
@@ -104,6 +107,8 @@ export default function SettingsPage({
   onChangeCalcMethod,
   onChangeAsrSchool,
   onOpenLocationSheet,
+  locationError,
+  onOpenLocationSettings,
   onBack,
   currentUser,
   onOpenAccount,
@@ -115,6 +120,30 @@ export default function SettingsPage({
   baqarahReminderTime,
   onOpenReminderPicker,
 }: SettingsPageProps) {
+  /**
+   * رقم الإصدار المعروض: **آخر إصدار منشور فعليًا** من /api/app-version
+   * (يقرأه السيرفر من GitHub Releases). لا رقم ثابت ولا إصدار مكتوب بيد.
+   * قبل وصول الرد — أو إذا تعذّر — يُعرض رقم هذه النسخة.
+   */
+  const [appVersion, setAppVersion] = useState<string>(BUILD_VERSION);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      try {
+        const res = await fetch("/api/app-version");
+        if (!res.ok) return;
+        const data = (await res.json()) as { version?: string };
+        if (alive && data.version) setAppVersion(data.version);
+      } catch {
+        /* تعذّر الجلب: يبقى رقم النسخة الحالية. */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const [calcOpen, setCalcOpen] = useState(false);
   const [asrOpen, setAsrOpen] = useState(false);
   const [widgetState, setWidgetState] = useState<
@@ -197,7 +226,7 @@ export default function SettingsPage({
                 <div className="st-s">{email || "—"}</div>
               </div>
               <div className="st-tr">
-                <ChevronLeft fill="currentColor" size={16} className="st-chev" />
+                <ChevronLeft size={16} className="st-chev" />
               </div>
             </div>
           </div>
@@ -209,7 +238,7 @@ export default function SettingsPage({
           <div className="st-grp cut-crystal-panel">
             <div className="st-row">
               <div className="st-ic">
-                <MapPin fill="currentColor" size={16} />
+                <MapPin size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">الموقع الحالي</div>
@@ -228,7 +257,7 @@ export default function SettingsPage({
 
             <div className="st-row">
               <div className="st-ic">
-                <Compass fill="currentColor" size={16} />
+                <Compass size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">تحديد الموقع تلقائيًا</div>
@@ -246,6 +275,19 @@ export default function SettingsPage({
               </div>
             </div>
           </div>
+          {/* حالة فشل المنظومة المرجعية: نفس نمط الملاحظة، لا تصميم جديد. */}
+          {locationError && (
+            <div className="st-note st-note-error" role="alert">
+              <p>{locationError}</p>
+              <button
+                type="button"
+                className="st-note-link"
+                onClick={onOpenLocationSettings}
+              >
+                فتح إعدادات التطبيق
+              </button>
+            </div>
+          )}
         </section>
 
         {/* ── حساب المواقيت ───────────────────────────────────────── */}
@@ -254,7 +296,7 @@ export default function SettingsPage({
           <div className="st-grp cut-crystal-panel">
             <div className="st-row">
               <div className="st-ic">
-                <Sliders fill="currentColor" size={16} />
+                <Sliders size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">طريقة الحساب</div>
@@ -310,7 +352,7 @@ export default function SettingsPage({
 
             <div className="st-row">
               <div className="st-ic">
-                <BookOpen fill="currentColor" size={16} />
+                <BookOpen size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">المذهب الفقهي للعصر</div>
@@ -373,7 +415,7 @@ export default function SettingsPage({
           <div className="st-grp cut-crystal-panel">
             <div className={`st-row st-row-alarm ${isMulkReminderEnabled ? "st-on" : ""}`}>
               <div className="st-ic">
-                <Bell fill="currentColor" size={16} />
+                <Bell size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">سورة الملك</div>
@@ -401,7 +443,7 @@ export default function SettingsPage({
 
             <div className={`st-row st-row-alarm ${isBaqarahReminderEnabled ? "st-on" : ""}`}>
               <div className="st-ic">
-                <Bell fill="currentColor" size={16} />
+                <Bell size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">سورة البقرة</div>
@@ -435,7 +477,7 @@ export default function SettingsPage({
           <div className="st-grp cut-crystal-panel">
             <div className="st-row">
               <div className="st-ic">
-                <Smartphone fill="currentColor" size={16} />
+                <Smartphone size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">ويدجت سكينة</div>
@@ -468,7 +510,7 @@ export default function SettingsPage({
             <b>سَكِينَة</b>
             <p>﴿هُوَ الَّذِي أَنزَلَ السَّكِينَةَ فِي قُلُوبِ الْمُؤْمِنِينَ﴾</p>
             <small>سورة الفتح: 4</small>
-            <small className="st-ver">الإصدار {toArabicIndicDigits(APP_VERSION)}</small>
+            <small className="st-ver">الإصدار {toArabicIndicDigits(appVersion)}</small>
           </div>
         </section>
       </div>
@@ -481,7 +523,7 @@ export default function SettingsPage({
           aria-label="رجوع"
           onClick={onBack}
         >
-          <ChevronRight fill="currentColor" size={20} />
+          <ChevronRight size={20} />
         </button>
       </header>
     </div>

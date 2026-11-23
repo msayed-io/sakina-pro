@@ -127,6 +127,12 @@
      هنا نصف القطر والقصّ فقط — لا لون واحد مكتوب بيد. */
   border-radius: 22px;
   overflow: hidden;
+  /* الطبقة الداخلية أعلى من أي زخرفة كي تستقبل النقر. */
+  isolation: isolate;
+}
+.st-grp > .st-row {
+  position: relative;
+  z-index: 1;
 }
 .st-grp .st-row:first-child {
   border-radius: 22px 22px 0 0;
@@ -936,4 +942,29 @@
   min-height: 44px;
   margin-top: 16px;
   margin-bottom: 0;
+}
+
+
+/* ── ملاحظة خطأ (فشل تحديد الموقع) — امتداد لنمط .st-note ─────────────── */
+.st-note-error {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  margin: 8px 8px 0;
+}
+.st-note-error p {
+  margin: 0;
+  line-height: 1.6;
+}
+.st-note-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--st-gold);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
 }
