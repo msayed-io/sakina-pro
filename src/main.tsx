@@ -2,6 +2,7 @@ import { lazy, StrictMode, Suspense, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import SplashScreen from "./components/SplashScreen";
 import { useDarkRims } from "./theme/useDarkRims";
+import { startOtaUpdater } from "./services/otaUpdater";
 import "./index.css";
 
 // Start fetching the application bundle immediately, but do not make its
@@ -47,6 +48,9 @@ function Boot() {
     </div>
   );
 }
+
+// تحديثات الويب الصامتة: تعمل داخل التطبيق الأصلي فقط، وبلا أي واجهة.
+startOtaUpdater();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

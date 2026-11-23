@@ -243,6 +243,35 @@ jobs:
           path: ${{ runner.temp }}/sakina-release-assets/*
           if-no-files-found: error
           retention-days: 30
+      # --- OTA (إضافة): حزمة الويب + بيان الإصدار ليُرفقا مع نفس الإصدار ---
+      - name: Package OTA web bundle and manifest
+        env:
+          RELEASE_VERSION: ${{ needs.calculate-version.outputs.version }}
+        run: |
+          set -euo pipefail
+          test -f dist/index.html || { echo "dist/index.html missing" >&2; exit 1; }
+          mkdir -p "$RUNNER_TEMP/ota"
+          (cd dist && zip -qr "$RUNNER_TEMP/ota/dist.zip" .)
+          test -f "$RUNNER_TEMP/ota/dist.zip"
+          unzip -l "$RUNNER_TEMP/ota/dist.zip" | grep -qE ' index\.html$'
+          min_native_version="$(tr -d '[:space:]' < ota/min-native-version.txt)"
+          test -n "$min_native_version" || { echo "ota/min-native-version.txt is empty" >&2; exit 1; }
+          ota_version="${RELEASE_VERSION}"
+          ota_checksum="$(sha256sum "$RUNNER_TEMP/ota/dist.zip" | cut -d' ' -f1)"
+          test -n "$ota_checksum"
+          python3 - "$RUNNER_TEMP/ota/version.json" "$ota_version" "$min_native_version" "$ota_checksum" <<'PY'
+          import json, os, sys
+          path, ota_version, min_native_version, ota_checksum = sys.argv[1:5]
+          manifest = {
+              "version": ota_version,
+              "url": f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/releases/download/v{ota_version}/dist.zip",
+              "checksum": ota_checksum,
+              "minNativeVersion": min_native_version,
+          }
+          with open(path, "w", encoding="utf-8") as handle:
+              json.dump(manifest, handle, ensure_ascii=False, indent=2)
+          print(json.dumps(manifest, indent=2))
+          PY
       - name: Create GitHub Release and attach signed files
         id: publish
         env:
@@ -255,10 +284,13 @@ jobs:
             "$RUNNER_TEMP/sakina-release-assets/sakina-v${RELEASE_VERSION}.apk" \
             "$RUNNER_TEMP/sakina-release-assets/sakina-v${RELEASE_VERSION}.aab" \
             "$RUNNER_TEMP/sakina-release-assets/SHA256SUMS" \
+            "$RUNNER_TEMP/ota/dist.zip" \
+            "$RUNNER_TEMP/ota/version.json" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
             --title "Sakina v${RELEASE_VERSION}" \
-            --generate-notes
+            --generate-notes \
+            --latest
           release_url="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json url --jq .url)"
           echo "url=$release_url" >> "$GITHUB_OUTPUT"
       - name: Remove temporary signing material

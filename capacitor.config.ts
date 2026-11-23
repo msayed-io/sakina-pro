@@ -18,6 +18,10 @@ const config: CapacitorConfig = {
       iconColor: '#b88a4f',
       sound: 'azan.wav',
     },
+    // تحديثات الويب الصامتة: نديرها بأنفسنا من GitHub Releases، لا خادم Capgo.
+    CapacitorUpdater: {
+      autoUpdate: false,
+    },
   },
 };
 

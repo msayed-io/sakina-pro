@@ -26,6 +26,7 @@
     "@capacitor/geolocation": "8.2.2",
     "@capacitor/local-notifications": "^8.2.0",
     "@capacitor/share": "^8.0.1",
+    "@capgo/capacitor-updater": "^8.54.2",
     "@capgo/capacitor-zip": "^8.1.16",
     "@google/genai": "^2.10.0",
     "@photostructure/tz-lookup": "11.6.1",
