@@ -30,6 +30,7 @@ import {
 import type { User } from "@supabase/supabase-js";
 import type { CalculationMethod, AsrSchool } from "@/utils/locationDetection";
 import { calcMethodLabels, asrSchoolLabels } from "@/constants/prayerContent";
+import { toArabicIndicDigits } from "@/utils/prayerTimes";
 import { displayNameOf } from "./AccountPage";
 import { formatTime12Arabic } from "./TimePickerSheet";
 
@@ -82,8 +83,7 @@ function ExpandChevron({
       aria-expanded={expanded}
       aria-label="عرض الخيارات"
     >
-      <ChevronDown
-        size={14}
+      <ChevronDown fill="currentColor"         size={14}
         className={`transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
       />
     </button>
@@ -165,7 +165,8 @@ export default function SettingsPage({
       <div className="st-scroll">
         {/* ── بطاقة الملف ─────────────────────────────────────────── */}
         <section className="st-g" style={{ "--i": 0 } as React.CSSProperties}>
-          <div className="st-grp st-hero">
+          <div className="st-grp st-hero cut-crystal-panel">
+            {/* زخرفة خلفية من المرجع نفسه (ليست أيقونة واجهة) */}
             <svg className="st-rings" viewBox="0 0 300 300" aria-hidden="true">
               <circle cx="150" cy="150" r="148" />
               <circle cx="150" cy="150" r="112" />
@@ -196,7 +197,7 @@ export default function SettingsPage({
                 <div className="st-s">{email || "—"}</div>
               </div>
               <div className="st-tr">
-                <ChevronLeft size={16} strokeWidth={1.8} className="st-chev" />
+                <ChevronLeft fill="currentColor" size={16} className="st-chev" />
               </div>
             </div>
           </div>
@@ -205,10 +206,10 @@ export default function SettingsPage({
         {/* ── الموقع ──────────────────────────────────────────────── */}
         <section className="st-g" style={{ "--i": 1 } as React.CSSProperties}>
           <h3 className="st-h3">الموقع</h3>
-          <div className="st-grp">
+          <div className="st-grp cut-crystal-panel">
             <div className="st-row">
               <div className="st-ic">
-                <MapPin size={16} strokeWidth={1.7} />
+                <MapPin fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">الموقع الحالي</div>
@@ -217,7 +218,7 @@ export default function SettingsPage({
               <div className="st-tr">
                 <button
                   type="button"
-                  className="st-role-action"
+                  className="cut-crystal-capsule sk-rim st-role-action"
                   onClick={onOpenLocationSheet}
                 >
                   تغيير
@@ -227,7 +228,7 @@ export default function SettingsPage({
 
             <div className="st-row">
               <div className="st-ic">
-                <Compass size={16} strokeWidth={1.7} />
+                <Compass fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">تحديد الموقع تلقائيًا</div>
@@ -250,10 +251,10 @@ export default function SettingsPage({
         {/* ── حساب المواقيت ───────────────────────────────────────── */}
         <section className="st-g" style={{ "--i": 2 } as React.CSSProperties}>
           <h3 className="st-h3">حساب المواقيت</h3>
-          <div className="st-grp">
+          <div className="st-grp cut-crystal-panel">
             <div className="st-row">
               <div className="st-ic">
-                <Sliders size={16} strokeWidth={1.7} />
+                <Sliders fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">طريقة الحساب</div>
@@ -309,7 +310,7 @@ export default function SettingsPage({
 
             <div className="st-row">
               <div className="st-ic">
-                <BookOpen size={16} strokeWidth={1.7} />
+                <BookOpen fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">المذهب الفقهي للعصر</div>
@@ -369,10 +370,10 @@ export default function SettingsPage({
         {/* ── منبهات القرآن ───────────────────────────────────────── */}
         <section className="st-g" style={{ "--i": 3 } as React.CSSProperties}>
           <h3 className="st-h3">منبهات القرآن</h3>
-          <div className="st-grp">
+          <div className="st-grp cut-crystal-panel">
             <div className={`st-row st-row-alarm ${isMulkReminderEnabled ? "st-on" : ""}`}>
               <div className="st-ic">
-                <Bell size={16} strokeWidth={1.7} />
+                <Bell fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">سورة الملك</div>
@@ -381,7 +382,7 @@ export default function SettingsPage({
               <div className="st-tr">
                 <button
                   type="button"
-                  className="st-role-action st-ghost st-time"
+                  className="cut-crystal-capsule sk-rim st-role-action st-time"
                   aria-label="تعديل وقت منبه سورة الملك"
                   onClick={() => onOpenReminderPicker("mulk")}
                 >
@@ -400,7 +401,7 @@ export default function SettingsPage({
 
             <div className={`st-row st-row-alarm ${isBaqarahReminderEnabled ? "st-on" : ""}`}>
               <div className="st-ic">
-                <Bell size={16} strokeWidth={1.7} />
+                <Bell fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">سورة البقرة</div>
@@ -409,7 +410,7 @@ export default function SettingsPage({
               <div className="st-tr">
                 <button
                   type="button"
-                  className="st-role-action st-ghost st-time"
+                  className="cut-crystal-capsule sk-rim st-role-action st-time"
                   aria-label="تعديل وقت منبه سورة البقرة"
                   onClick={() => onOpenReminderPicker("baqarah")}
                 >
@@ -431,10 +432,10 @@ export default function SettingsPage({
         {/* ── الشاشة الرئيسية (الويدجت) ───────────────────────────── */}
         <section className="st-g" style={{ "--i": 4 } as React.CSSProperties}>
           <h3 className="st-h3">الشاشة الرئيسية</h3>
-          <div className="st-grp">
+          <div className="st-grp cut-crystal-panel">
             <div className="st-row">
               <div className="st-ic">
-                <Smartphone size={16} strokeWidth={1.7} />
+                <Smartphone fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">ويدجت سكينة</div>
@@ -443,7 +444,7 @@ export default function SettingsPage({
               <div className="st-tr">
                 <button
                   type="button"
-                  className="st-role-action st-ghost"
+                  className="cut-crystal-capsule sk-rim st-role-action"
                   onClick={() => void openWidgetPin()}
                   disabled={widgetState !== "idle"}
                 >
@@ -467,7 +468,7 @@ export default function SettingsPage({
             <b>سَكِينَة</b>
             <p>﴿هُوَ الَّذِي أَنزَلَ السَّكِينَةَ فِي قُلُوبِ الْمُؤْمِنِينَ﴾</p>
             <small>سورة الفتح: 4</small>
-            <small className="st-ver">الإصدار {APP_VERSION}</small>
+            <small className="st-ver">الإصدار {toArabicIndicDigits(APP_VERSION)}</small>
           </div>
         </section>
       </div>
@@ -480,7 +481,7 @@ export default function SettingsPage({
           aria-label="رجوع"
           onClick={onBack}
         >
-          <ChevronRight size={20} strokeWidth={1.9} />
+          <ChevronRight fill="currentColor" size={20} />
         </button>
       </header>
     </div>

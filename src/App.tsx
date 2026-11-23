@@ -52,7 +52,6 @@ import {
 } from "@/lib/gps-location";
 import { getPrayerTimeline } from "@/lib/prayer-times";
 import type { PrayerLocation } from "@/lib/prayer-config";
-import ManualLocationDialog from "@/components/ManualLocationDialog";
 import LocationSheet from "@/components/settings/LocationSheet";
 import QcfVerse from "@/components/QcfVerse";
 import { prefetchQcfFont } from "@/hooks/useQcfFont";
@@ -1015,6 +1014,29 @@ function AuthenticatedApp() {
     localStorage.setItem("app_isAutoLocation", isAutoLocation.toString());
   }, [isAutoLocation]);
 
+  // ارتفاع شريط التنقل الحقيقي → متغيّر CSS واحد تستخدمه الشاشات
+  // (المصدر الوحيد: القياس نفسه، لا رقم ثابت).
+  useEffect(() => {
+    const nav = document.querySelector("[data-sk-nav]");
+    if (!(nav instanceof HTMLElement)) return;
+    const apply = () => {
+      const rect = nav.getBoundingClientRect();
+      const fromBottom = window.innerHeight - rect.top;
+      document.documentElement.style.setProperty(
+        "--sk-nav-h",
+        `${Math.round(fromBottom)}px`,
+      );
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(nav);
+    window.addEventListener("resize", apply);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", apply);
+    };
+  }, [activeTab]);
+
   // حفظ العقد الموحّد dar_prayer_location عند كل تغيير (المصدر الوحيد للحقيقة).
   useEffect(() => {
     saveSavedLocation(prayerLocation);
@@ -1152,38 +1174,28 @@ function AuthenticatedApp() {
         </Suspense>
       )}
 
-      {/* ── Location Dialog: صار خطوة الاختيار العميقة (شبكة/خريطة) التي
-          تفتحها الورقة المشتركة من صفّ «الموقع المحدد». لا يُفتح من أي زرّ
-          آخر — كل مداخل الموقع تمرّ عبر openLocationSheet. ── */}
-      <ManualLocationDialog
-        isOpen={showLocationDialog}
-        onClose={() => setShowLocationDialog(false)}
-        onCitySelected={handleCitySelected}
-        onAutoLocationRequest={() => {
-          setIsAutoLocation(true);
-          void handleAutoDetectLocation();
-        }}
-        locationError={locationError}
-        onOpenLocationSettings={openLocationAppSettings}
-        isAutoLocation={isAutoLocation}
-        setIsAutoLocation={setIsAutoLocation}
-        currentCityName={cityName}
-        currentLat={cityLat}
-        currentLon={cityLon}
-      />
+      {/* ── البطاقة القديمة (ManualLocationDialog) حُذفت بالكامل:
+          واجهتها وملفها. كل مسارات الموقع تمرّ عبر الورقة المشتركة أدناه. ── */}
 
       {/* ── ورقة تعديل الموقع المشتركة (نسخة واحدة لكل الشاشات) ── */}
       <LocationSheet
         open={showLocationSheet}
         isAutoLocation={isAutoLocation}
         locationLabel={cityName}
-        onApply={(auto) => {
+        onApply={({ auto, city }) => {
           setShowLocationSheet(false);
-          setIsAutoLocation(auto);
-          if (auto) void handleAutoDetectLocation();
+          if (city) {
+            // نفس مسار التطبيق الحقيقي: حفظ العقد ثم تطبيقه على الشاشة.
+            handleCitySelected(city.nameAr, city.latitude, city.longitude);
+            setIsAutoLocation(false);
+          } else if (auto) {
+            setIsAutoLocation(true);
+            void handleAutoDetectLocation();
+          } else {
+            setIsAutoLocation(false);
+          }
         }}
         onClose={() => setShowLocationSheet(false)}
-        onPickLocation={handleChangeLocation}
       />
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -1732,7 +1744,10 @@ function AuthenticatedApp() {
         !showAsmaAlHusna &&
         activeTab !== "settings" &&
         activeTab !== "sakeenah-ai" && (
-          <nav className="fixed inset-x-0 bottom-5 z-40 flex justify-center pointer-events-none px-2">
+          <nav
+            data-sk-nav
+            className="fixed inset-x-0 bottom-5 z-40 flex justify-center pointer-events-none px-2"
+          >
             <div className="pointer-events-auto flex items-center gap-1 rounded-[32px] cut-crystal-capsule sk-rim px-2 py-1.5 shadow-lg max-w-full">
               {[
                 { id: "main", label: "الرئيسية", icon: <HomeIcon /> },

@@ -12,6 +12,7 @@
  * 12:30ص = 00:30 · 11:59م = 23:59.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toArabicIndicDigits } from "@/utils/prayerTimes";
 import { useSheetDrag } from "./hooks/useSheetDrag";
 
 export const HOURS = Array.from({ length: 12 }, (_, i) => i + 1); // 1..12
@@ -42,7 +43,10 @@ export function joinTime24(hour12: number, minute: number, period: 0 | 1): strin
 /** عرض 12h عربي: «9:00 م». */
 export function formatTime12Arabic(value: string): string {
   const { hour12, minute, period } = splitTime24(value);
-  return `${hour12}:${String(minute).padStart(2, "0")} ${PERIODS[period]}`;
+  // أرقام مشرقية كما في كل شاشات التطبيق (toArabicIndicDigits).
+  return `${toArabicIndicDigits(String(hour12))}:${toArabicIndicDigits(
+    String(minute).padStart(2, "0"),
+  )} ${PERIODS[period]}`;
 }
 
 const ITEM_HEIGHT = 36; // من المرجع
@@ -289,7 +293,9 @@ export default function TimePickerSheet({
   }, [open, onCancel]);
 
   const time24 = joinTime24(hour12, minute, period);
-  const preview = `تنبيه يومي عند ${hour12}:${String(minute).padStart(2, "0")} ${PERIODS[period]}`;
+  const preview = `تنبيه يومي عند ${toArabicIndicDigits(String(hour12))}:${toArabicIndicDigits(
+    String(minute).padStart(2, "0"),
+  )} ${PERIODS[period]}`;
 
   return (
     <div className={`st-ov ${open ? "st-open" : ""}`} aria-hidden={!open}>
@@ -309,7 +315,10 @@ export default function TimePickerSheet({
         <div className="st-wheels">
           <div className="st-band" aria-hidden="true" />
           <Wheel
-            items={HOURS.map((h) => ({ value: h, label: String(h) }))}
+            items={HOURS.map((h) => ({
+              value: h,
+              label: toArabicIndicDigits(String(h)),
+            }))}
             value={hour12}
             onChange={setHour12}
             ariaLabel="الساعة"
@@ -321,7 +330,7 @@ export default function TimePickerSheet({
           <Wheel
             items={MINUTES.map((m) => ({
               value: m,
-              label: String(m).padStart(2, "0"),
+              label: toArabicIndicDigits(String(m).padStart(2, "0")),
             }))}
             value={minute}
             onChange={setMinute}
@@ -338,12 +347,12 @@ export default function TimePickerSheet({
           />
         </div>
         <div className="st-acts">
-          <button type="button" className="cut-crystal-capsule sk-rim h-[42px] text-[13px] font-bold text-[var(--sk-label)]" onClick={onCancel}>
+          <button type="button" className="cut-crystal-capsule sk-rim st-role-wide text-[var(--sk-label)]" onClick={onCancel}>
             إلغاء
           </button>
           <button
             type="button"
-            className="cut-crystal-capsule-gold sk-rim h-[42px] text-[13px] font-bold"
+            className="cut-crystal-capsule-gold sk-rim st-role-wide"
             onClick={() => onConfirm(time24)}
           >
             تم

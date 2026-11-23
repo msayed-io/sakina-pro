@@ -11,7 +11,7 @@
  * كبسولة «حفظ» تظهر فقط عند اختلاف الاسم (dirty)، تمامًا كما في المرجع.
  */
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, KeyRound, Mail, UserRound } from "lucide-react";
+import { ChevronLeft, ChevronRight, KeyRound, LogOut, Mail, UserRound } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 export type AccountPageProps = {
@@ -115,10 +115,10 @@ export default function AccountPage({
 
         <section className="st-g" style={{ "--i": 1 } as React.CSSProperties}>
           <h3 className="st-h3">البيانات الشخصية</h3>
-          <div className="st-grp">
+          <div className="st-grp cut-crystal-panel">
             <label className="st-row">
               <div className="st-ic">
-                <UserRound size={16} strokeWidth={1.7} />
+                <UserRound fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-s">الاسم</div>
@@ -135,7 +135,7 @@ export default function AccountPage({
 
             <div className="st-row">
               <div className="st-ic">
-                <Mail size={16} strokeWidth={1.7} />
+                <Mail fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-s">البريد الإلكتروني</div>
@@ -154,7 +154,7 @@ export default function AccountPage({
 
         <section className="st-g" style={{ "--i": 2 } as React.CSSProperties}>
           <h3 className="st-h3">الأمان</h3>
-          <div className="st-grp">
+          <div className="st-grp cut-crystal-panel">
             <div
               className="st-row"
               role="button"
@@ -171,14 +171,14 @@ export default function AccountPage({
               }}
             >
               <div className="st-ic">
-                <KeyRound size={16} strokeWidth={1.7} />
+                <KeyRound fill="currentColor" size={16} />
               </div>
               <div className="st-tx">
                 <div className="st-t">كلمة المرور</div>
                 <div className="st-s">تغيير كلمة مرور حسابك</div>
               </div>
               <div className="st-tr">
-                <ChevronLeft size={16} strokeWidth={1.8} className="st-chev" />
+                <ChevronLeft fill="currentColor" size={16} className="st-chev" />
               </div>
             </div>
           </div>
@@ -187,12 +187,10 @@ export default function AccountPage({
         <section className="st-g" style={{ "--i": 3 } as React.CSSProperties}>
           <button
             type="button"
-            className="st-role-wide st-role-logout mt-[28px]"
+            className="cut-crystal-capsule sk-rim st-role-wide st-role-logout mt-[28px]"
             onClick={() => void onSignOut()}
           >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10M14 8l4 4-4 4M18 12H9" />
-            </svg>
+            <LogOut size={16} fill="currentColor" aria-hidden="true" />
             تسجيل الخروج
           </button>
           {/* «حذف الحساب» غير منقول: لا مسار حقيقي في التطبيق. */}
@@ -204,7 +202,7 @@ export default function AccountPage({
         <div className="st-end">
           <button
             type="button"
-            className="st-role-save" style={{ display: dirty ? "inline-flex" : "none" }}
+            className="cut-crystal-capsule sk-rim st-role-save" style={{ display: dirty ? "inline-flex" : "none" }}
             onClick={() => void handleSave()}
             disabled={saving}
           >
@@ -216,7 +214,7 @@ export default function AccountPage({
             aria-label="رجوع"
             onClick={goBack}
           >
-            <ChevronRight size={20} strokeWidth={1.9} />
+            <ChevronRight fill="currentColor" size={20} />
           </button>
         </div>
       </header>

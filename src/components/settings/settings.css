@@ -12,7 +12,8 @@
    ========================================================================== */
 
 .st-root,
-.st-sheet {
+.st-sheet,
+.st-ov {
   /* كل قيمة لون هنا تشير إلى رمز تطبيق حقيقي — لا رقم واحد منسوخ من الملف. */
   --st-tx: var(--sk-label);
   --st-mut: var(--sk-label2);
@@ -43,7 +44,8 @@
 }
 .st-root .st-page-first {
   position: relative;
-  min-height: 100vh;
+  /* 100dvh لا 100vh: الأخير في Capacitor أطول من الشاشة فيسبّب تمريرًا وهميًا. */
+  min-height: 100dvh;
 }
 .st-page-second {
   transform: translateX(-100%);
@@ -78,7 +80,9 @@
   inset: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 72px 16px 44px;
+  /* أسفل: ارتفاع شريط التنقل الحقيقي + مسافة + الحافة الآمنة. */
+  padding: 72px 16px
+    calc(var(--sk-nav-h, 92px) + 28px + env(safe-area-inset-bottom, 0px));
   scrollbar-width: none;
 }
 .st-scroll::-webkit-scrollbar {
@@ -119,19 +123,10 @@
 
 /* ── البطاقة الجماعية: شكل المرجع، مادة التطبيق ───────────────────────── */
 .st-grp {
-  position: relative;
+  /* المادة والحد والظل تأتي كلها من .cut-crystal-panel الحقيقي.
+     هنا نصف القطر والقصّ فقط — لا لون واحد مكتوب بيد. */
   border-radius: 22px;
-  /* مادة البطاقة = cut-crystal-panel الحقيقي للتطبيق في الوضعين */
-  background-color: var(--sk-panel);
-  background-image: none;
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  box-shadow: inset 0 0 0 1px var(--st-line);
   overflow: hidden;
-}
-html[data-theme="dark"] .st-grp {
-  background-color: rgba(28, 28, 30, 0.9);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 .st-grp .st-row:first-child {
   border-radius: 22px 22px 0 0;
@@ -235,8 +230,8 @@ html[data-theme="dark"] .st-grp {
 .st-chev {
   width: 16px;
   height: 16px;
-  fill: none;
-  stroke: var(--st-mut);
+  /* لا نفرض fill/stroke: الأيقونات مصمتة من المكتبة (fill=currentColor). */
+  color: var(--st-mut);
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -343,6 +338,8 @@ html[data-theme="dark"] .st-grp {
 
 /* ── كبسولة الوقت: تظهر مع المفتاح فقط ────────────────────────────────── */
 .st-time {
+  min-height: 36px;
+  padding-inline: 12px;
   font-variant-numeric: tabular-nums;
 }
 .st-row-alarm:not(.st-on) .st-time {
@@ -368,7 +365,8 @@ html[data-theme="dark"] .st-grp {
   top: 14px;
   left: 0;
   right: 0;
-  z-index: 5;
+  /* فوق التدرج العلوي (.progressive-blur = 18) كي لا تُضبَّب الكبسولات. */
+  z-index: 19;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -481,9 +479,10 @@ html[data-theme="dark"] .st-grp {
 
 /* ── الطبقات (ستارة + ورقة) ───────────────────────────────────────────── */
 .st-ov {
-  position: absolute;
+  /* نفس طبقة ورقات التطبيق (أسماء الله الحسنى z-50) فوق شريط التنقل z-40. */
+  position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: 50;
   visibility: hidden;
   transition: visibility 0s 0.5s;
 }
@@ -508,7 +507,12 @@ html[data-theme="dark"] .st-grp {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 12px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  /* فوق شريط التنقل (z-40) بالطبقة، وحشوة سفلية تمنع أي تغطية. */
+  padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
   border-radius: 32px 32px 0 0;
   background: var(--sk-sheet);
   box-shadow: inset 0 0 0 1px var(--st-line), 0 -12px 40px rgba(0, 0, 0, 0.35);
@@ -517,6 +521,9 @@ html[data-theme="dark"] .st-grp {
 }
 .st-ov.st-open .st-sheet {
   transform: none;
+}
+.st-sheet::-webkit-scrollbar {
+  display: none;
 }
 /* أثناء السحب: بلا انتقال — الورقة تتبع الإصبع 1:1 */
 .st-sheet.sheet-dragging {
@@ -706,36 +713,27 @@ html[data-theme="dark"] .st-grp {
   white-space: nowrap;
   cursor: default;
 }
+/* كبسولة إجرائية: صنف التطبيق الأصلي + أصغر مقاس حقيقي (h-9 = 36px). */
 .st-role-action {
-  height: 32px;
+  min-height: 36px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  /* كبسولة «تغيير» الحالية في التطبيق: معبّأة ذهبيًا */
-  background: linear-gradient(
-    to bottom,
-    var(--sk-accent-bright),
-    var(--sk-accent)
-  );
-  color: var(--sk-on-espresso);
-  font-family: inherit;
-  font-size: 11px;
+  color: var(--sk-label);
+  font-size: 11.5px;
   font-weight: 700;
-  box-shadow: 0 1px 2px rgba(146, 100, 32, 0.18);
   cursor: pointer;
-  transition: transform 0.25s var(--st-ease), opacity 0.25s;
+  transition: transform 0.25s var(--st-ease);
 }
 .st-role-action:active {
   transform: scale(0.94);
 }
-/* «كيفية الإضافة» في التطبيق كبسولة glass وليست معبأة */
+/* زجاجي = نفس مادة الكبسولة الأصلية، بلا معبّى */
 .st-role-action.st-ghost {
-  background: var(--sk-glass);
   color: var(--sk-label);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 .st-role-save {
   height: 40px;
@@ -807,4 +805,135 @@ html[data-theme="dark"] .st-grp {
   font-weight: 700;
   z-index: 90;
   animation: st-rise 0.35s var(--st-ease) both;
+}
+
+
+/* ── الخط: خطوط التطبيق المحلية على كل عنصر بلا استثناء ──────────────────
+   button/input/select/textarea لا ترث الخط افتراضيًا في المتصفح. */
+.st-root,
+.st-root * ,
+.st-ov,
+.st-ov * {
+  font-family: var(--font-sans);
+}
+.st-root button,
+.st-root input,
+.st-root select,
+.st-root textarea,
+.st-ov button,
+.st-ov input,
+.st-ov select,
+.st-ov textarea {
+  font-family: inherit;
+}
+.st-foot b,
+.st-page-first .st-foot b {
+  font-family: var(--font-display);
+}
+
+
+/* ── مرحلتا ورقة الموقع: تبديل هادئ داخل الورقة نفسها ─────────────────── */
+.st-step {
+  display: none;
+}
+.st-step.st-step-on {
+  display: block;
+  animation: st-step-in 0.32s var(--st-ease) both;
+}
+@keyframes st-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* حقل البحث: كبسولة التطبيق الأصلية، بارتفاع كبسولة حقيقية */
+.st-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 14px;
+  margin-bottom: 10px;
+}
+.st-search-ic {
+  flex: none;
+  color: var(--st-mut);
+}
+.st-search input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  outline: none;
+  color: var(--st-tx);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: right;
+}
+.st-search input::placeholder {
+  color: var(--st-mut);
+  font-weight: 500;
+}
+.st-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* نتائج البحث: نفس شكل صفوف الورقة */
+.st-results {
+  max-height: 300px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  border-radius: 22px;
+  background: var(--sk-panel);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: inset 0 0 0 1px var(--st-line);
+}
+.st-results::-webkit-scrollbar {
+  display: none;
+}
+.st-result {
+  width: 100%;
+  text-align: right;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  border-radius: 0;
+}
+.st-result + .st-result {
+  border-top: 1px solid var(--st-line);
+}
+.st-result:first-child {
+  border-start-start-radius: 22px;
+  border-start-end-radius: 22px;
+}
+.st-result:last-child {
+  border-end-start-radius: 22px;
+  border-end-end-radius: 22px;
+}
+.st-result:active {
+  background: var(--st-gold-soft);
+}
+.st-result-on {
+  background: var(--st-gold-soft);
+}
+.st-check {
+  color: var(--st-gold);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* زرّ التطبيق في الورقة: كبسولة التطبيق الذهبية بعرض كامل */
+.st-apply {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 16px;
+  margin-bottom: 0;
 }
