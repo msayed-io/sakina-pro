@@ -134,7 +134,8 @@ compareVersions("2.3.46", "2.3.46") === 0  ←  لا تنزيل، أبدًا
 ```
 التطبيق                      GitHub
    │                            │
-   ├── GET version.json ───────►│  (releases/latest/download)
+   ├── GET version.json ───────►│  raw.githubusercontent.com
+   │   (CapacitorHttp، بلا CORS) │  /ota-bundle/version.json
    │◄── { version, manifest } ──┤
    │                            │
    ├── getMissingBundleFiles ──►│  مقارنة محلية بحساب
@@ -147,6 +148,55 @@ compareVersions("2.3.46", "2.3.46") === 0  ←  لا تنزيل، أبدًا
    │                            │
    └── next({ id })             │  يُطبَّق عند الخروج/التشغيل القادم
 ```
+
+### من أين يُقرأ البيان؟ (سبب عطب v2.3.47)
+
+**العطب:** حتى `v2.3.48` كان البيان يُقرأ بـ`fetch()` من:
+
+```
+https://github.com/msayed-io/sakina-pro/releases/latest/download/version.json
+```
+
+هذا الرابط يرد بسلسلة **302 مزدوجة**:
+`github.com` → `github.com/releases/download/<tag>/…` →
+`release-assets.githubusercontent.com`، **ولا يحمل أي منها
+`Access-Control-Allow-Origin`**. صفحة الويب تعمل على أصل `https://localhost`،
+فـWebView يرفض القراءة ويُطلق `TypeError: Failed to fetch` قبل أن يصل الجسم
+إلى JS. الخطأ كان يُبتلع في `catch`، فبدا التحديث «صامتًا» إلى الأبد:
+لا تحديث، ولا رسالة، ولا أثر.
+
+المفعول على الجهاز: التنزيل **لم يبدأ أصلًا**، فلم تُكتب أي حزمة، ولم يجد
+البلوجن ما يطبّقه عند الخروج — ولهذا لم يظهر إصدار الويب الجديد بعد
+إعادة التشغيل.
+
+**الإصلاح:** مساران، كلاهما عبر `CapacitorHttp` (طبقة Java/OkHttp الأصلية
+خارج محرّك الويب، فلا تُطبَّق سياسة أصل إطلاقًا):
+
+1. **الأساسي:** `raw.githubusercontent.com/.../ota-bundle/version.json` —
+   نفس الفرع الذي تُنزَّل منه كل الملفات، ويُقدَّم بترويسة CORS صالحة.
+   نشرُه يتم في الـworkflow بعد دفع الملفات (انظر `Publish OTA manifest`).
+2. **الاحتياطي:** رابط الـRelease نفسه — ينجح عبر الطبقة الأصلية لأن
+   `HttpURLConnection` يتبع الـ302 افتراضيًا، ولأن CORS لا ينطبق عليها.
+
+> `version.json` كان يُحذف عمدًا من فرع `ota-bundle` قبل `v2.3.49`، فكان
+> المصدر الوحيد هو رابط الـRelease — وهو تحديدًا ما يكسره CORS. لذلك لم
+> يعمل الاحتياطي وحده كحلّ: المصدر الأساسي يجب أن يكون CORS-safe.
+
+### متى تُطبَّق الحزمة؟
+
+البلوجن ينفّذ التطبيق من `appMovedToBackground()` **فقط**
+(`CapacitorUpdaterPlugin.java:5909`). لو اكتمل التنزيل بعد أن صار التطبيق في
+الخلفية، لا يصل حدث خلفية آخر، ويبقى `next` معلّقًا في SharedPreferences —
+و**لا شيء يقرأه عند الإقلاع البارد**. من هنا: قتل التطبيق بالسحب قبل أي دورة
+حياة تالية يُضيّع التطبيق (لا الحزمة).
+
+لذلك بعد نجاح `next()` يطلب `otaUpdater` صراحةً `reload()` في اللحظة التي
+تصبح فيها الصفحة `hidden`. البلوجن يطبّق `next` المعلّق ثم يعيد التحميل وهو
+**خلفي** (`_reload()` → `reloadInBackground()`، سطر 3274)، ويثبّت الحزمة في
+`CAP_SERVER_PATH` عبر `setCurrentBundle()` (`CapgoUpdater.java:1698-1703`)
+فتصمد أمام القتل وإعادة الفتح. فحص `notifyAppReady` المؤجّل يتجاهل العمل
+وهو في الخلفية (`runDeferredAppReadyCheck`، سطر 5780)، فلا يتسبب `reload()`
+في أي تراجع.
 
 ### كيف تُقرَّر «الملفات الناقصة»؟
 

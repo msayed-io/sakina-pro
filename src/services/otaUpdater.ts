@@ -2,20 +2,50 @@
  * تحديثات الويب الصامتة (OTA) — معزولة تمامًا.
  *
  * الفكرة: تطبيق الأندرويد يحتوي طبقة ويب. عند كل تشغيل نتحقق من `version.json`
- * المرفوع مع آخر إصدار GitHub. إن وُجدت نسخة أحدث (SemVer) نُنزّلها في الخلفية
+ * المنشور مع آخر إصدار. إن وُجدت نسخة أحدث (SemVer) نُنزّلها في الخلفية
  * ونطلب تطبيقها عند الخروج من التطبيق — بلا أي واجهة، وبلا إعادة تحميل أمام المستخدم.
  *
  * قواعد صلبة:
  *  - لا يعمل إلا داخل تطبيق أصلي (Capacitor.isNativePlatform()).
  *  - لا يرمي أخطاء أبدًا ولا يعطّل الإقلاع: كل شيء داخل try/catch صامت.
  *  - notifyAppReady() يُستدعى أول شيء في كل تشغيل، وإلا يتراجع البلوجن عن النسخة.
+ *  - كل طلب شبكة يمرّ عبر CapacitorHttp (طبقة أصلية) لا عبر `fetch`:
+ *    `fetch` داخل WebView يخضع لـCORS، وهو سبب تعطّل التحديث في v2.3.47.
+ *  - التشخيص عبر `[SakinaOTA]` في logcat فقط، ولا يظهر للمستخدم أبدًا.
  */
 
-import { Capacitor } from "@capacitor/core";
+import { Capacitor, CapacitorHttp } from "@capacitor/core";
 
-/** بيان الإصدار المنشور مع آخر Release. */
-const MANIFEST_URL =
+/**
+ * بيان الإصدار — من فرع التخزين `ota-bundle` مباشرة، لا من صفحة الـRelease.
+ *
+ * السبب الجذري لعطب v2.3.47 (مثبت بالقياس):
+ *   https://github.com/.../releases/latest/download/version.json
+ * ترد بسلسلة 302 مزدوجة:
+ *   github.com → github.com/releases/download/<tag>/… → release-assets.githubusercontent.com
+ * ولا يحمل أي منها ترويسة `Access-Control-Allow-Origin`. WebView يعتبر الأصل
+ * `https://localhost` أصلًا مختلفًا، فيرمي `TypeError: Failed to fetch` قبل أن
+ * يصل الجسم إلى JS — ويلتقطه catch الصامت، فلا يحدث تحديث أبدًا.
+ *
+ * القياس الفعلي من أصل مختلف:
+ *   releases/latest/download/version.json → TypeError: Failed to fetch
+ *   raw.githubusercontent.com/.../ota-bundle/... → 200 + CORS صالح
+ *
+ * لذلك: المصدر الأساسي = ota-bundle (raw)، والاحتياطي = رابط الـRelease
+ * عبر CapacitorHttp (طبقة OkHttp الأصلية، تتجاوز CORS تمامًا).
+ */
+const BUNDLE_BRANCH_URL =
+  "https://raw.githubusercontent.com/msayed-io/sakina-pro/ota-bundle";
+
+/** نسخة البيان على فرع التخزين — المصدر الأساسي. */
+const MANIFEST_URL = `${BUNDLE_BRANCH_URL}/version.json`;
+
+/** الاحتياطي: نفس البيان المرفق مع الـRelease، يُجلب عبر طبقة أصلية. */
+const MANIFEST_URL_FALLBACK =
   "https://github.com/msayed-io/sakina-pro/releases/latest/download/version.json";
+
+/** وسم السجلات التشخيصية — يظهر في logcat فقط. */
+const LOG = "[SakinaOTA]";
 
 /** أقل فاصل زمني بين فحصين متتاليين عند العودة للتطبيق (6 ساعات). */
 const RECHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
@@ -49,6 +79,22 @@ interface OtaManifest {
 let inFlight: Promise<void> | null = null;
 let lastCheckAt = 0;
 let started = false;
+
+/**
+ * معرّف الحزمة المجدولة للتطبيق (بعد نجاح `next`).
+ *
+ * لماذا نحتفظ به في الذاكرة: البلوجن ينفّذ `installNext()` من
+ * `appMovedToBackground()` فقط (CapacitorUpdaterPlugin.java:5909). لو حدث التنزيل
+ * *بعد* أن صار التطبيق في الخلفية (شائع: التنزيل يستغرق ثواني بينما المستخدم
+ * خرج للتو)، فلا يصل حدث الخلفية مرة أخرى، و`next` ينتظر دورة حياة تالية.
+ * لو قُتل التطبيق بالسحب قبل أي دورة تالية، لا شيء يقرأ `nextVersion` عند
+ * الإقلاع البارد — يبقى الحالي كما هو.
+ * لذلك: عند رؤية أي عودة للخلفية ونحن نملك حزمة مجدولة، نطلب `reload()`
+ * صراحةً — وهو مسار يدعم الخلفية (`_reload()` → `reloadInBackground()`،
+ * سطر 3274) ويثبّت الحزمة في `CAP_SERVER_PATH` عبر `setCurrentBundle()`
+ * (CapgoUpdater.java:1698-1703) فتصمد أمام القتل وإعادة الفتح.
+ */
+let pendingBundleId = "";
 
 /* ------------------------------------------------------------------ */
 /* مقارنة إصدارات SemVer (لا نستخدم !== حتى لا نتراجع لإصدار أقدم)     */
@@ -143,22 +189,66 @@ function usableDelta(manifest: OtaManifest): OtaManifestEntry[] | null {
   return entries;
 }
 
-async function fetchManifest(): Promise<OtaManifest | null> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-  try {
-    const response = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    if (!response.ok) return null;
-    const payload: unknown = await response.json();
-    return isManifest(payload) ? payload : null;
-  } catch {
+/**
+ * جلب البيان عبر طبقة الشبكة الأصلية (OkHttp على أندرويد).
+ *
+ * لماذا لا `fetch`؟ لأن WebView يقيّد `fetch` بسياسة CORS: صفحتنا تعمل على
+ * `https://localhost`، وGitHub لا يرسل `Access-Control-Allow-Origin`، فيفشل
+ * الطلب بـ`TypeError` قبل أن يقرأ. `CapacitorHttp` ينفّذ الطلب في Java خارج
+ * محرّك الويب، ثم يُعيد الجسم عبر الجسر — فلا سياسة أصل مُطبَّقة إطلاقًا.
+ *
+ * ملاحظة: `data` يعود كائنًا مُحلَّلًا إذا كان رأس الاستجابة JSON، وقد يعود
+ * نصًّا خامًا — نتعامل مع الحالتين.
+ */
+async function fetchManifestNative(url: string): Promise<OtaManifest | null> {
+  // كاسر كاش: raw.githubusercontent.com يُخزَّن مؤقتًا ~5 دقائق عند الحافة،
+  // فبلا هذا تظل النسخة القديمة تُقرأ بعد النشر مباشرة.
+  const bustedUrl = `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`;
+  const response = await CapacitorHttp.get({
+    url: bustedUrl,
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+    connectTimeout: FETCH_TIMEOUT_MS,
+    readTimeout: FETCH_TIMEOUT_MS,
+  });
+  if (response.status !== 200) {
+    console.warn(`${LOG} HTTP ${response.status} ← ${url}`);
     return null;
-  } finally {
-    clearTimeout(timer);
   }
+  let payload: unknown = response.data;
+  if (typeof payload === "string") {
+    try {
+      payload = JSON.parse(payload);
+    } catch {
+      console.warn(`${LOG} ردٌّ ليس JSON ← ${url}`);
+      return null;
+    }
+  }
+  if (!isManifest(payload)) {
+    console.warn(`${LOG} بنية المانيفست غير صالحة ← ${url}`);
+    return null;
+  }
+  return payload;
+}
+
+/**
+ * مصدران بالترتيب: فرع `ota-bundle` (raw + CORS صالح) ثم الـRelease.
+ * كلاهما يمرّ عبر الطبقة الأصلية، فلا يمكن لـCORS إسقاطهما.
+ */
+async function fetchManifest(): Promise<OtaManifest | null> {
+  const sources = [MANIFEST_URL, MANIFEST_URL_FALLBACK];
+  for (const url of sources) {
+    try {
+      const manifest = await fetchManifestNative(url);
+      if (manifest) {
+        console.info(`${LOG} البيان جاهز (${manifest.version}) ← ${url}`);
+        return manifest;
+      }
+    } catch (error) {
+      console.warn(`${LOG} فشل جلب البيان ← ${url}: ${String(error)}`);
+    }
+  }
+  console.error(`${LOG} تعذّر جلب البيان من كل المصادر`);
+  return null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -191,13 +281,20 @@ async function runCheck(): Promise<void> {
       return; // بلا معلومات الإصدار لا نخاطر بشيء
     }
 
+    console.info(
+      `${LOG} فحص بدأ | native=${nativeVersion} bundle=${currentBundleVersion || "(builtin)"}`,
+    );
+
     // 3) البيان المنشور.
     const manifest = await fetchManifest();
     if (!manifest) return;
 
     // 4) لا تنزيل إلا إذا كان الإصدار المنشور أحدث فعلًا.
     const baseline = currentBundleVersion || nativeVersion;
-    if (compareVersions(manifest.version, baseline) <= 0) return;
+    if (compareVersions(manifest.version, baseline) <= 0) {
+      console.info(`${LOG} لا جديد: المنشور ${manifest.version} ≤ المثبّت ${baseline}`);
+      return;
+    }
 
     // 5) حماية التوافق: لا نحمّل ويبًا يحتاج APK أحدث مما على الجهاز.
     if (
@@ -205,6 +302,9 @@ async function runCheck(): Promise<void> {
       nativeVersion &&
       compareVersions(nativeVersion, manifest.minNativeVersion) < 0
     ) {
+      console.info(
+        `${LOG} تخطٍّ: البيان يحتاج native ${manifest.minNativeVersion} والجهاز ${nativeVersion}`,
+      );
       return;
     }
 
@@ -222,7 +322,11 @@ async function runCheck(): Promise<void> {
         });
         // كل الملفات موجودة محليًا (في الـAPK أو الكاش) والمحتوى مطابق:
         // لا شيء لتنزيله ولا شيء لتغييره — نخرج بلا أي طلب شبكة إضافي.
-        if (diff.missingCount === 0) return;
+        if (diff.missingCount === 0) {
+          console.info(`${LOG} لا ملفات مفقودة — الحزمة ${manifest.version} مطابقة محليًا`);
+          return;
+        }
+        console.info(`${LOG} ملفات مفقودة: ${diff.missingCount} ← تنزيل تفاضلي`);
 
         const bundle = await CapacitorUpdater.download({
           url: manifest.url,
@@ -231,7 +335,9 @@ async function runCheck(): Promise<void> {
           manifest: delta,
         });
         downloadedId = String(bundle.id ?? "");
-      } catch {
+        console.info(`${LOG} نُزّلت الحزمة التفاضلية ${manifest.version} id=${downloadedId}`);
+      } catch (error) {
+        console.warn(`${LOG} فشل التفاضلي، ننتقل للكامل: ${String(error)}`);
         downloadedId = ""; // فشل تفاضلي → ننتقل للمسار الكامل أدناه
       }
     }
@@ -246,7 +352,9 @@ async function runCheck(): Promise<void> {
           checksum: fallbackChecksum(manifest),
         });
         downloadedId = String(bundle.id ?? "");
-      } catch {
+        console.info(`${LOG} نُزّلت الحزمة الكاملة ${manifest.version} id=${downloadedId}`);
+      } catch (error) {
+        console.error(`${LOG} فشل المسار الكامل: ${String(error)}`);
         return; // فشل المسارين → نبقى على الحالي بلا أي أثر
       }
     }
@@ -255,7 +363,10 @@ async function runCheck(): Promise<void> {
     // 8) جدولته للتطبيق عند مغادرة التطبيق أو التشغيل القادم — لا إعادة تحميل الآن.
     try {
       await CapacitorUpdater.next({ id: downloadedId });
-    } catch {
+      pendingBundleId = downloadedId;
+      console.info(`${LOG} جُدولت الحزمة للتطبيق عند الخروج للخلفية (id=${downloadedId})`);
+    } catch (error) {
+      console.error(`${LOG} فشل جدولة next: ${String(error)}`);
       return;
     }
 
@@ -305,5 +416,34 @@ export function startOtaUpdater(): void {
     });
   } catch {
     /* تجاهل */
+  }
+
+  // تطبيق الحزمة المجدولة عند مغادرة التطبيق — صراحةً، لا اعتمادًا على توقيت
+  // حدث الخلفية الأصلي (انظر شرح `pendingBundleId` أعلاه).
+  try {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "hidden") return;
+      void applyPendingOnBackground();
+    });
+  } catch {
+    /* تجاهل */
+  }
+}
+
+/**
+ * يطلب `reload()` بعد أن صارت الصفحة مخفيّة، فتطبّق الحزمة المجدولة في
+ * الخلفية. `reload()` نفسه يطبّق `next` المعلّق (سطر 3317-3326) ثم يعيد
+ * تحميل الـWebView وهو خلفي، فلا يراه المستخدم.
+ */
+async function applyPendingOnBackground(): Promise<void> {
+  if (!pendingBundleId) return;
+  try {
+    const { CapacitorUpdater } = await import("@capgo/capacitor-updater");
+    console.info(`${LOG} التطبيق في الخلفية — تطبيق الحزمة ${pendingBundleId}`);
+    await CapacitorUpdater.reload();
+    pendingBundleId = "";
+    console.info(`${LOG} طُبّقت الحزمة المجدولة`);
+  } catch (error) {
+    console.warn(`${LOG} تعذّر التطبيق في الخلفية: ${String(error)}`);
   }
 }

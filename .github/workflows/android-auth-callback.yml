@@ -268,8 +268,20 @@ jobs:
           rm -rf "$stage"
           mkdir -p "$stage"
           cp -a dist/. "$stage"/
-          # البيان لا يُنشر على فرع التخزين: مكانه الأصلي في الـRelease فقط.
-          rm -f "$stage/version.json"
+          # ممنوع حذف version.json من فرع التخزين (كان يُحذف هنا سابقًا).
+          #
+          # السبب الجذري لعطب v2.3.47: البيان لم يكن موجودًا على الفرع إطلاقًا،
+          # فكان المصدر الوحيد هو:
+          #   github.com/.../releases/latest/download/version.json
+          # وهي ترد بسلسلة 302 مزدوجة إلى release-assets.githubusercontent.com
+          # بلا أي `Access-Control-Allow-Origin`. WebView يعمل على أصل
+          # `https://localhost` فيرفض القراءة بـ`TypeError: Failed to fetch`
+          # قبل وصول الجسم إلى JS — فيُبتلع الخطأ ويبدو التحديث صامتًا للأبد.
+          #
+          # الفرع يُقدَّم عبر raw.githubusercontent.com مع CORS صالح، والملفات
+          # التي يشير إليها المانيفست من نفس الأصل. الدفع أدناه يحدث *قبل*
+          # كتابة المانيفست في خطوة لاحقة، لذا يبقى ترتيب الأمان كما هو،
+          # ثم يُعاد دفع المانيفست وحده في نهاية الـjob (خطوة منفصلة).
           cd "$stage"
           git init -q
           git config user.name "github-actions[bot]"
@@ -314,6 +326,28 @@ jobs:
           assert any(entry.get("file_name") == "index.html" for entry in files), "index.html missing from manifest"
           print(f"OTA {data['version']}: {len(files)} files, minNative={data['minNativeVersion']}")
           PY
+      # --- OTA (إضافة): نشر البيان على فرع التخزين بعد تجهيزه ---
+      # ضروري للسبب الجذري: البيان يجب أن يُقرأ من أصل يسمح بـCORS.
+      # ترتيب الأمان محفوظ: الملفات دُفعت أولًا، والبيان يُدفع الآن، فلا يمكن
+      # أن يرى التطبيق إصدارًا جديدًا قبل توفّر ملفاته (لا 404).
+      - name: Publish OTA manifest to ota-bundle branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/ota/version.json"
+          stage="$RUNNER_TEMP/ota-manifest-stage"
+          rm -rf "$stage"
+          git clone -q --depth 1 --branch ota-bundle \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$stage"
+          cp "$RUNNER_TEMP/ota/version.json" "$stage/version.json"
+          cd "$stage"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          git commit -q -m "chore(ota): publish manifest for run ${GITHUB_RUN_NUMBER}"
+          git push -q origin HEAD:refs/heads/ota-bundle
+          echo "Manifest published to ota-bundle (CORS-enabled origin)."
       - name: Create GitHub Release and attach signed files
         id: publish
         env:
