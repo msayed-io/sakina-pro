@@ -108,8 +108,8 @@ class HadithNativePlugin : Plugin() {
         try {
             val id = call.getString("bookId") ?: return call.reject("معرّف المصدر غير صالح")
             val chapter = call.getString("chapterId") ?: "all"
-            val page = call.getInt("page", 1).coerceAtLeast(1)
-            val limit = call.getInt("limit", 20).coerceIn(1, 100000)
+            val page = (call.getInt("page", 1) ?: 1).coerceAtLeast(1)
+            val limit = (call.getInt("limit", 20) ?: 20).coerceIn(1, 100000)
             val search = call.getString("search")?.trim().orEmpty()
             val db = open(id); val all = readHadiths(db, id, chapter, search); db.close()
             val start = ((page - 1) * limit).coerceAtMost(all.size)
