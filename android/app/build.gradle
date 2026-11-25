@@ -49,6 +49,9 @@ android {
             includeAndroidResources = true
             all { test ->
                 test.systemProperty "robolectric.graphicsMode", "NATIVE"
+                // تجنب 429 المتقطع من repo1.maven.org أثناء بناء CI.
+                test.systemProperty "robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2"
+                test.systemProperty "robolectric.dependency.repo.id", "mavenCentral"
                 test.testLogging { l ->
                     l.showStandardStreams = true
                     l.events("passed", "failed", "skipped")
