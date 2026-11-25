@@ -29,6 +29,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(PrayerAlarmPlugin.class);
         registerPlugin(RadioCapturePlugin.class);
         registerPlugin(com.sakeenah.app.plugin.PrayerWidgetPlugin.class);
+        registerPlugin(com.sakeenah.app.plugin.HadithNativePlugin.class);
         super.onCreate(savedInstanceState);
         disableWebViewAlgorithmicDarkening(); // الوضع الداكن تديره الويب، لا تعتيم WebView الخوارزمي
         hideWebViewScrollbarsAndOverscroll(); // ملكية التمرير — الطبقة الثالثة (scroll-ownership-spec-ar.md)

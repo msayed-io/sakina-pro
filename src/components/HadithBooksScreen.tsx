@@ -1,8 +1,3 @@
-import {
-  arabicChapterByNumber,
-  isPlaceholderChapterTitle,
-  resolveChapterTitle,
-} from "../data/hadithArabicChapters";
 import React, { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -48,10 +43,10 @@ import {
   HadithBookmark,
   HadithListResponse,
 } from "../types/hadith.types";
-import { HadithOfflineSearchService } from "../services/HadithOfflineSearchService";
+import { HadithNativeService } from "../services/HadithNativeService";
 import SakeenahLineSpinner from "@/components/SakeenahLineSpinner";
 import { createHadithShare } from "@/components/hadith-share/sheet";
-import { getSmartCache, isSmartCacheStale, setSmartCache } from "@/services/smart-cache";
+
 
 interface HadithBooksScreenProps {
   isActive?: boolean;
@@ -66,12 +61,7 @@ const BOOKMARKS_STORAGE_KEY = "sakeenah_hadith_bookmarks_v1";
 const LAST_READ_STORAGE_KEY = "sakeenah_hadith_last_read_v1";
 const REPORTS_STORAGE_KEY = "sakeenah_hadith_reports_v1";
 const DISCLAIMER_STORAGE_KEY = "sakeenah_hadith_disclaimer_dismissed_v1";
-const HADITH_BOOKS_CACHE_KEY = "sakina:cache:hadith-books:v1";
-const HADITH_BOOKS_CACHE_MAX_AGE_MS = 10 * 60 * 1000;
 
-function getCachedHadithBooks(): HadithBookInfo[] | null {
-  return getSmartCache<HadithBookInfo[]>(HADITH_BOOKS_CACHE_KEY)?.data ?? null;
-}
 
 const SAKINA_LIBRARY_GATE_IMAGE = "/images/sakina-library/sakina-library-gate.webp";
 
@@ -102,134 +92,16 @@ interface HadithReport {
 
 // Fallback static list of books for maximum client resilience
 const FALLBACK_BOOKS: HadithBookInfo[] = [
-  {
-    id: "bukhari",
-    titleArabic: "صحيح البخاري",
-    authorArabic: "الإمام محمد بن إسماعيل البخاري",
-    authorDeath: "256 هـ",
-    hadithsCount: 7589,
-    chaptersCount: 98,
-    description: "أصح كتاب بعد كتاب الله تعالى، جمع فيه الإمام البخاري الأحاديث الصحيحة المسندة عن رسول الله ﷺ.",
-    category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
-    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
-    editionSlug: "ara-bukhari",
-    coverImage: "/images/hadith/author_bukhari.webp",
-  },
-  {
-    id: "muslim",
-    titleArabic: "صحيح مسلم",
-    authorArabic: "الإمام مسلم بن الحجاج النيسابوري",
-    authorDeath: "261 هـ",
-    hadithsCount: 7563,
-    chaptersCount: 57,
-    description: "ثاني أصح كتب الحديث الشريف، امتاز بحسن الترتيب والصياغة والاستيعاب للطرق والأسانيد.",
-    category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
-    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
-    editionSlug: "ara-muslim",
-    coverImage: "/images/hadith/author_muslim.webp",
-  },
-  {
-    id: "abudawud",
-    titleArabic: "سنن أبي داود",
-    authorArabic: "الإمام أبو داود سليمان بن الأشعث السجستاني",
-    authorDeath: "275 هـ",
-    hadithsCount: 5274,
-    chaptersCount: 44,
-    description: "أحد أهم السنن الأربعة، ركز فيه مصنفه على أحاديث الأحكام والسنن الفقهية المرفوعة.",
-    category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
-    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
-    editionSlug: "ara-abudawud",
-    coverImage: "/images/hadith/author_abudawud.png",
-  },
-  {
-    id: "tirmidhi",
-    titleArabic: "جامع الترمذي",
-    authorArabic: "الإمام أبو عيسى محمد بن عيسى الترمذي",
-    authorDeath: "279 هـ",
-    hadithsCount: 3998,
-    chaptersCount: 50,
-    description: "معروف بالجامع والسنن، تميز بذكر مذاهب الفقهاء وبيان درجات الأحاديث من الصحة والحسن والضعف.",
-    category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
-    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
-    editionSlug: "ara-tirmidhi",
-    coverImage: "/images/hadith/author_tirmidhi.png",
-  },
-  {
-    id: "nasai",
-    titleArabic: "سنن النسائي (المجتبى)",
-    authorArabic: "الإمام أحمد بن شعيب النسائي",
-    authorDeath: "303 هـ",
-    hadithsCount: 5765,
-    chaptersCount: 52,
-    description: "أشد السنن انتقاءً للرجال وأقلها حديثاً ضعيفاً بعد الصحيحين، اشتمل على الدقائق الفقهية والعلل.",
-    category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
-    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
-    editionSlug: "ara-nasai",
-    coverImage: "/images/hadith/author_nasai.png",
-  },
-  {
-    id: "ibnmajah",
-    titleArabic: "سنن ابن ماجه",
-    authorArabic: "الإمام أبو عبد الله محمد بن يزيد ابن ماجه",
-    authorDeath: "273 هـ",
-    hadithsCount: 4343,
-    chaptersCount: 38,
-    description: "خاتم الكتب الستة، امتاز بحسن التبويب وكثرة زوائده على الأمهات الخمس من الأحاديث والسنن.",
-    category: "الكتب الستة",
-    badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-accent-deep)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40",
-    bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent",
-    editionSlug: "ara-ibnmajah",
-    coverImage: "/images/hadith/author_ibnmajah.png",
-  },
-  {
-    id: "malik",
-    titleArabic: "موطأ الإمام مالك",
-    authorArabic: "الإمام مالك بن أنس الأصبحي",
-    authorDeath: "179 هـ",
-    hadithsCount: 1858,
-    chaptersCount: 62,
-    description: "أقدم مدونة حديثية وفقهية جامعة وصلتنا بحالة ممتازة، من أصح الآثار والسنن عن دار الهجرة.",
-    category: "الموطآت والمسانيد",
-    badgeColor: "bg-[#2b1a10]/12 dark:bg-[var(--sk-shade)]/12 text-[var(--sk-label)] border-[#2b1a10]/25 dark:border-[var(--sk-label)]/25",
-    bgGradient: "from-[#2b1a10]/10 dark:from-[var(--sk-shade)]/10 via-[#2b1a10]/5 dark:via-[var(--sk-shade)]/5 to-transparent",
-    editionSlug: "ara-malik",
-    coverImage: "/images/hadith/author_malik.png",
-  },
-  {
-    id: "nawawi",
-    titleArabic: "الأربعون النووية",
-    authorArabic: "الإمام يحيى بن شرف النووي",
-    authorDeath: "676 هـ",
-    hadithsCount: 42,
-    chaptersCount: 2,
-    description: "مجموعة جوامع كلم النبي ﷺ ومباني الإسلام والأحكام التي عليها مدار الدين.",
-    category: "الأربعينيات والقدسيات",
-    badgeColor: "bg-amber-950/15 text-amber-900 border-amber-800/30",
-    bgGradient: "from-amber-900/10 via-amber-800/5 to-transparent",
-    editionSlug: "ara-nawawi",
-    coverImage: "/images/hadith/author_nawawi.png",
-  },
-  {
-    id: "qudsi",
-    titleArabic: "الأحاديث القدسية",
-    authorArabic: "مجموعة من الأئمة الحفاظ",
-    authorDeath: "متنوع",
-    hadithsCount: 40,
-    chaptersCount: 2,
-    description: "الأحاديث التي يرويها النبي ﷺ عن ربه عز وجل بألفاظ جامعة معظمة ترقق القلوب.",
-    category: "الأربعينيات والقدسيات",
-    badgeColor: "bg-amber-950/15 text-amber-900 border-amber-800/30",
-    bgGradient: "from-amber-900/10 via-amber-800/5 to-transparent",
-    editionSlug: "ara-qudsi",
-    coverImage: "/images/hadith/author_qudsiyyah.png",
-  },
+  { id: "bukhari", titleArabic: "صحيح البخاري", authorArabic: "الإمام محمد بن إسماعيل البخاري", authorDeath: "256 هـ", hadithsCount: 7265, chaptersCount: 4048, description: "طبعة السلطانية / دار طوق النجاة؛ ترقيم محمد فؤاد عبد الباقي", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "bukhari", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_bukhari.db", sha256: "e6ba85e8789e2bfb0c33a13e286cb022452c960228590eb8b6e359b7882bac8d", coverImage: "/images/hadith/author_bukhari.webp" },
+  { id: "muslim", titleArabic: "صحيح مسلم", authorArabic: "الإمام مسلم بن الحجاج النيسابوري", authorDeath: "261 هـ", hadithsCount: 6347, chaptersCount: 1331, description: "تحقيق محمد فؤاد عبد الباقي؛ شامل المقدمة والأبواب", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "muslim", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_muslim.db", sha256: "5c5f1de76eae09fc065d1f43b29666dac75860c8dcae06c92347ac7237df3de8", coverImage: "/images/hadith/author_muslim.webp" },
+  { id: "abudawud", titleArabic: "سنن أبي داود", authorArabic: "الإمام أبو داود سليمان بن الأشعث السجستاني", authorDeath: "275 هـ", hadithsCount: 3657, chaptersCount: 1871, description: "تحقيق شعيب الأرنؤوط", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "abudawud", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_abudawud.db", sha256: "221f50e4ef81845fa19296df85dab1b6506fef96a008c82a72e0c8baece47082", coverImage: "/images/hadith/author_abudawud.png" },
+  { id: "tirmidhi", titleArabic: "جامع الترمذي", authorArabic: "الإمام أبو عيسى محمد بن عيسى الترمذي", authorDeath: "279 هـ", hadithsCount: 4325, chaptersCount: 2082, description: "تحقيق بشار عواد معروف", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "tirmidhi", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_tirmidhi.db", sha256: "7b031b43310c77c09939a143b23582358831789abae7c9042bf1e238f65c4a06", coverImage: "/images/hadith/author_tirmidhi.png" },
+  { id: "nasai", titleArabic: "سنن النسائي", authorArabic: "الإمام أحمد بن شعيب النسائي", authorDeath: "303 هـ", hadithsCount: 3674, chaptersCount: 2534, description: "طبعة الرسالة؛ اعتماد طبعة المحقق عبد الفتاح أبو غدة في المصدر", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "nasai", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_nasai.db", sha256: "ec4001265a73b948ff90ce1d763269fbf93c7ca02ae505824cd1e0456263fa8d", coverImage: "/images/hadith/author_nasai.png" },
+  { id: "ibnmajah", titleArabic: "سنن ابن ماجه", authorArabic: "الإمام أبو عبد الله محمد بن يزيد ابن ماجه", authorDeath: "273 هـ", hadithsCount: 4342, chaptersCount: 1480, description: "تحقيق محمد فؤاد عبد الباقي", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "ibnmajah", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_ibnmajah.db", sha256: "e27ff2e88612ee4c7955ca0a6738f74a07725631b07ebeb638876240d4efd91f", coverImage: "/images/hadith/author_ibnmajah.png" },
+  { id: "malik", titleArabic: "موطأ مالك", authorArabic: "الإمام مالك بن أنس الأصبحي", authorDeath: "179 هـ", hadithsCount: 1821, chaptersCount: 683, description: "رواية يحيى الليثي؛ تحقيق محمد فؤاد عبد الباقي", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "malik", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_malik.db", sha256: "34bee79b54d750a781bb4df3fd2b3584101def986037ddf9d13e4862242b04bd", coverImage: "/images/hadith/author_malik.png" },
+  { id: "ahmad", titleArabic: "مسند الإمام أحمد", authorArabic: "الإمام أحمد بن حنبل", authorDeath: "241 هـ", hadithsCount: 18000, chaptersCount: 1292, description: "طبعة الرسالة؛ تحقيق شعيب الأرنؤوط", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "ahmad", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_ahmad.db", sha256: "a68ab1e8eba89dfe20a3d57b32c921f6f23f4626f610e4ffbff1220f25fd3336", coverImage: "/images/hadith/author_ahmad.png" },
+  { id: "darimi", titleArabic: "سنن الدارمي", authorArabic: "الإمام عبد الله بن عبد الرحمن الدارمي", authorDeath: "255 هـ", hadithsCount: 3380, chaptersCount: 1317, description: "تحقيق حسين سليم أسد", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "darimi", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_darimi.db", sha256: "e3360b63c7daddf8aee660a67a12814d2bdc00041e79999b08ce4ac06a6bfb35", coverImage: "/images/hadith/author_darimi.png" },
 ];
-
 // Localize English Hadith grades to high-quality classical Arabic labels
 export function localizeHadithGrade(grade: string | undefined): string | undefined {
   if (!grade) return undefined;
@@ -262,7 +134,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
   useEffect(() => { if (!isActive) shareRef.current?.close(); }, [isActive]);
 
   // State: Books metadata
-  const [books, setBooks] = useState<HadithBookInfo[]>(() => getCachedHadithBooks() ?? FALLBACK_BOOKS);
+  const [books, setBooks] = useState<HadithBookInfo[]>(FALLBACK_BOOKS);
   const [loadingBooks, setLoadingBooks] = useState(false);
   const [booksError, setBooksError] = useState<string | null>(null);
 
@@ -345,7 +217,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
   const [bookProgressMap, setBookProgressMap] = useState<Record<string, number>>({});
   const [indexingProgress, setIndexingProgress] = useState(0);
   const [indexingStatusText, setIndexingStatusText] = useState("");
-  const [searchMethod, setSearchMethod] = useState<"online" | "offline">("online");
+  const [searchMethod, setSearchMethod] = useState<"offline">("offline");
   const [isSearchScopeDropdownOpen, setIsSearchScopeDropdownOpen] = useState(false);
   const [downloadSuccessAnim, setDownloadSuccessAnim] = useState(false);
 
@@ -356,39 +228,36 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     loadReportsFromStorage();
   }, []);
 
-  useEffect(() => {
-    if (!isActive) return;
-    const cached = getSmartCache<HadithBookInfo[]>(HADITH_BOOKS_CACHE_KEY);
-    if (cached && !isSmartCacheStale(cached, HADITH_BOOKS_CACHE_MAX_AGE_MS)) return;
-    void fetchBooks();
-  }, [isActive]);
-
   // Check offline status for loaded books
   const checkOfflineStats = useCallback(async (currentBooks: HadithBookInfo[] = books) => {
     if (!currentBooks || currentBooks.length === 0) return;
     try {
-      const stats = await HadithOfflineSearchService.getDownloadStats(currentBooks);
+      const stats = await HadithNativeService.getDownloadStats(currentBooks);
       setDownloadStats(stats);
 
       const hasAnyDownloaded = Object.values(stats).some(v => v === true);
-      setSearchMethod(hasAnyDownloaded ? "offline" : "online");
+      setSearchMethod("offline");
     } catch (err) {
       console.warn("Error checking offline search stats:", err);
     }
   }, [books]);
+
+  useEffect(() => {
+    if (!isActive) return;
+    void checkOfflineStats(books);
+  }, [isActive, books, checkOfflineStats]);
 
   // Handle toggling offline download/indexing for a single book
   const handleIndexBookToggle = async (book: HadithBookInfo) => {
     const isDownloaded = downloadStats[book.id];
     if (isDownloaded) {
       // Clear specific book
-      await HadithOfflineSearchService.hadithBooksStore.removeItem(book.id);
-      await HadithOfflineSearchService.searchMetaStore.removeItem(`updated_${book.id}`);
+      await HadithNativeService.deleteBook(book.id);
       setDownloadStats(prev => ({ ...prev, [book.id]: false }));
       setBookProgressMap(prev => ({ ...prev, [book.id]: 0 }));
-      const stats = await HadithOfflineSearchService.getDownloadStats(books);
+      const stats = await HadithNativeService.getDownloadStats(books);
       const hasAny = Object.values(stats).some(v => v === true);
-      if (!hasAny) setSearchMethod("online");
+      if (!hasAny) setSearchMethod("offline");
     } else {
       setIsIndexing(true);
       setDownloadingBookId(book.id);
@@ -396,7 +265,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
       setBookProgressMap(prev => ({ ...prev, [book.id]: 0 }));
       setIndexingStatusText(`جاري تهيئة تحميل كتاب ${book.titleArabic}...`);
       try {
-        await HadithOfflineSearchService.downloadAndIndexBook(book, (pct, status) => {
+        await HadithNativeService.downloadBook(book, (pct, status) => {
           setIndexingStatusText(status);
           setIndexingProgress(pct);
           setBookProgressMap(prev => ({ ...prev, [book.id]: pct }));
@@ -422,7 +291,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     try {
       const undownloaded = books.filter(b => !downloadStats[b.id]);
       if (undownloaded.length === 0) {
-        setIndexingStatusText("الموسوعة الحديثية كاملة ومفهرسة أوفلاين بالفعل!");
+        setIndexingStatusText("تم تنزيل كتب الحديث المطلوبة بالفعل");
         setDownloadSuccessAnim(true);
         setTimeout(() => {
           setDownloadSuccessAnim(false);
@@ -436,7 +305,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
         setDownloadingBookId(b.id);
         setBookProgressMap(prev => ({ ...prev, [b.id]: 0 }));
         setIndexingStatusText(`جاري تحميل وفهرسة ${b.titleArabic}...`);
-        await HadithOfflineSearchService.downloadAndIndexBook(b, (pct, status) => {
+        await HadithNativeService.downloadBook(b, (pct, status) => {
           setIndexingStatusText(status);
           setBookProgressMap(prev => ({ ...prev, [b.id]: pct }));
           const eachWeight = 100 / undownloaded.length;
@@ -449,7 +318,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
       }
 
       setIndexingProgress(100);
-      setIndexingStatusText("تم اكتمال تنزيل وتكشيف الموسوعة أوفلاين بالكامل!");
+      setIndexingStatusText("تم اكتمال تنزيل كتب الحديث");
       setSearchMethod("offline");
       setDownloadSuccessAnim(true);
       setTimeout(() => {
@@ -468,34 +337,6 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     }
   };
 
-  // 1. Fetch Books List from API
-  const fetchBooks = async () => {
-    const hasVisibleBooks = books.length > 0;
-    setLoadingBooks(!hasVisibleBooks);
-    setBooksError(null);
-    try {
-      const res = await fetch("/api/hadith/books", { cache: "no-store" });
-      if (res.ok) {
-        const data = await readHadithJson<{ success?: boolean; books?: HadithBookInfo[] }>(res);
-        if (data.success && Array.isArray(data.books)) {
-          setSmartCache(HADITH_BOOKS_CACHE_KEY, data.books);
-          setBooks(data.books);
-          checkOfflineStats(data.books);
-          return;
-        }
-      }
-      setSmartCache(HADITH_BOOKS_CACHE_KEY, FALLBACK_BOOKS);
-      setBooks(FALLBACK_BOOKS);
-      checkOfflineStats(FALLBACK_BOOKS);
-    } catch (err: any) {
-      console.warn("Server books fetch failed, falling back to local book metadata:", err);
-      setSmartCache(HADITH_BOOKS_CACHE_KEY, FALLBACK_BOOKS);
-      setBooks(FALLBACK_BOOKS);
-      checkOfflineStats(FALLBACK_BOOKS);
-    } finally {
-      setLoadingBooks(false);
-    }
-  };
 
   const loadBookmarksFromStorage = () => {
     try {
@@ -519,19 +360,8 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     }
   };
 
-  /** يرقّي بلاغًا محفوظًا: يستخرج رقم الباب عند غيابه ثم يحلّ اسمه الأصلي. */
-  const migrateReport = (r: HadithReport): HadithReport => {
-    if (r.chapterTitle && !isPlaceholderChapterTitle(r.chapterTitle)) return r;
-    const fromStored = r.chapterId ?? "";
-    const fromTitle = /(?:كتاب|باب)\s*رقم\s*([0-9]+)/.exec(r.chapterTitle ?? "")?.[1] ?? "";
-    const chapterNumber = fromStored || fromTitle;
-    const resolved = chapterNumber ? arabicChapterByNumber(r.bookId, chapterNumber) : null;
-    return {
-      ...r,
-      chapterId: chapterNumber || r.chapterId,
-      chapterTitle: resolved ?? r.chapterTitle,
-    };
-  };
+  /** يحافظ على البلاغات المحفوظة دون إعادة تفسير عناوين الأبواب. */
+  const migrateReport = (r: HadithReport): HadithReport => r;
 
   const loadReportsFromStorage = () => {
     try {
@@ -633,64 +463,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     }
   };
 
-  // Load local hadiths directly from local DB for 100% offline functionality
-  const loadLocalHadiths = useCallback(
-    (allLocalHadiths: HadithItem[], chapterId: string, p: number, search: string) => {
-      setLoadingHadiths(true);
-      setHadithsError(null);
-      try {
-        let filtered = allLocalHadiths;
-
-        // Filter by chapter
-        if (chapterId && chapterId !== "all") {
-          filtered = filtered.filter((h) => h.chapterId === chapterId);
-        }
-
-        // Filter by search text
-        if (search.trim()) {
-          const qLower = search.trim().toLowerCase();
-          const normQuery = HadithOfflineSearchService.normalizeArabic(qLower);
-          const queryNum = parseInt(search.trim(), 10);
-
-          filtered = filtered.filter((h) => {
-            const normText = HadithOfflineSearchService.normalizeArabic(h.text);
-            const normCh = HadithOfflineSearchService.normalizeArabic(h.chapterTitle);
-            const hNumStr = h.hadithnumber?.toString().trim() || "";
-            const arabicNumStr = h.arabicnumber?.toString().trim() || "";
-            const exactNumber = search.trim();
-
-            return (
-              normText.includes(normQuery) ||
-              hNumStr === exactNumber ||
-              arabicNumStr === exactNumber ||
-              (!isNaN(queryNum) && (hNumStr === queryNum.toString() || arabicNumStr === queryNum.toString())) ||
-              normCh.includes(normQuery)
-            );
-          });
-        }
-
-        const total = filtered.length;
-        const limit = 20;
-        const totalPagesCount = Math.ceil(total / limit) || 1;
-        const startIndex = (p - 1) * limit;
-        const paginated = filtered.slice(startIndex, startIndex + limit);
-
-        setHadiths(paginated);
-        setPage(p);
-        setTotalPages(totalPagesCount);
-        setTotalHadithsCount(total);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } catch (err: any) {
-        console.error("Error loading local hadiths:", err);
-        setHadithsError("حدث خطأ أثناء تحميل الأحاديث المحلية");
-      } finally {
-        setLoadingHadiths(false);
-      }
-    },
-    []
-  );
-
-  // Open a specific Book
+  // Open a specific Book from the verified local SQLite database.
   const handleOpenBook = async (book: HadithBookInfo, chapterIdToOpen: string = "all", initialPage: number = 1) => {
     setSelectedBook(book);
     setActiveChapterId(chapterIdToOpen);
@@ -698,120 +471,34 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     setReaderSearch("");
     setViewMode("book_reader");
     setHadiths([]);
-
-    // Fetch Chapters list
     setLoadingChapters(true);
     try {
-      // 1. Check if we have offline data for this book!
-      const isDownloaded = downloadStats[book.id];
-      if (isDownloaded) {
-        const localData = await HadithOfflineSearchService.hadithBooksStore.getItem<{
-          bookId: string;
-          title: string;
-          hadiths: HadithItem[];
-        }>(book.id);
-
-        if (localData && localData.hadiths) {
-          // Generate chapters list from local data dynamically
-          const chapterMap = new Map<string, { title: string; count: number }>();
-          for (const h of localData.hadiths) {
-            const cid = h.chapterId || "0";
-            const existing = chapterMap.get(cid);
-            if (existing) {
-              existing.count++;
-            } else {
-              chapterMap.set(cid, {
-                title: resolveChapterTitle(book.id ?? "", cid, h.chapterTitle),
-                count: 1,
-              });
-            }
-          }
-
-          const localChapters: HadithChapter[] = Array.from(chapterMap.entries()).map(([cid, info]) => ({
-            id: cid,
-            number: parseInt(cid, 10) || 0,
-            title: info.title,
-            hadithCount: info.count,
-          }));
-          localChapters.sort((a, b) => a.number - b.number);
-          setChapters(localChapters);
-          setLoadingChapters(false);
-          // Load local hadiths directly!
-          loadLocalHadiths(localData.hadiths, chapterIdToOpen, initialPage, "");
-          return;
-        }
-      }
-
-      // Fallback to online fetch if not downloaded
-      const res = await fetch(`/api/hadith/book/${book.id}`);
-      const data = await readHadithJson<{ success?: boolean; chapters?: HadithChapter[] }>(res);
-      if (data.success) {
-        setChapters(data.chapters || []);
-      }
-    } catch (e) {
-      console.error("Error fetching chapters:", e);
+      const localChapters = await HadithNativeService.getChapters(book.id);
+      setChapters(localChapters);
+      await fetchHadiths(book.id, chapterIdToOpen, initialPage, "");
+    } catch (error: any) {
+      setHadithsError(error?.message || "قم بتنزيل الكتاب أولًا لفتحه");
     } finally {
       setLoadingChapters(false);
     }
-
-    // Fetch Hadiths from network
-    fetchHadiths(book.id, chapterIdToOpen, initialPage, "");
   };
-
-  // Fetch Hadiths for active book, chapter, page, search
   const fetchHadiths = useCallback(
     async (bookId: string, chapterId: string, p: number, search: string) => {
       setLoadingHadiths(true);
       setHadithsError(null);
-
-      // Check if downloaded offline!
-      if (downloadStats[bookId]) {
-        try {
-          const localData = await HadithOfflineSearchService.hadithBooksStore.getItem<{
-            bookId: string;
-            title: string;
-            hadiths: HadithItem[];
-          }>(bookId);
-          if (localData && localData.hadiths) {
-            loadLocalHadiths(localData.hadiths, chapterId, p, search);
-            return;
-          }
-        } catch (err) {
-          console.warn("Could not load hadiths offline, falling back to online fetch", err);
-        }
-      }
-
       try {
-        const queryParams = new URLSearchParams({
-          page: p.toString(),
-          limit: "20",
-          chapter: chapterId,
-        });
-        if (search.trim()) {
-          queryParams.set("search", search.trim());
-        }
-
-        const res = await fetch(`/api/hadith/book/${bookId}/hadiths?${queryParams.toString()}`);
-        const data = await readHadithJson<HadithListResponse & { success: boolean; error?: string }>(res);
-
-        if (data.success) {
-          setHadiths(data.hadiths);
-          setTotalPages(data.totalPages);
-          setTotalHadithsCount(data.total);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        } else {
-          throw new Error(data.error || "تعذر جلب الأحاديث");
-        }
-      } catch (err: any) {
-        console.error("Error fetching hadiths:", err);
-        setHadithsError(err.message || "حدث خطأ أثناء تحميل الأحاديث");
+        const data = await HadithNativeService.getHadiths(bookId, chapterId, p, search);
+        setHadiths(data.hadiths);
+        setTotalPages(data.totalPages);
+        setTotalHadithsCount(data.total);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (error: any) {
+        setHadithsError(error?.message || "حدث خطأ أثناء قراءة قاعدة الحديث المحلية");
       } finally {
         setLoadingHadiths(false);
       }
-    },
-    [downloadStats, loadLocalHadiths]
+    }, []
   );
-
   const handleChapterSelect = (chId: string) => {
     setActiveChapterId(chId);
     setPage(1);
@@ -846,7 +533,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     fetchHadiths(selectedBook.id, "all", 1, jumpHadithNum.trim());
   };
 
-  // Global Search across all books (Offline-First Advanced NLP)
+  // البحث العام داخل قواعد SQLite المحملة.
   const handleGlobalSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!globalSearchQuery.trim()) return;
@@ -855,33 +542,11 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     setLoadingGlobalSearch(true);
     setGlobalSearchResults([]);
 
-    const hasAnyDownloaded = Object.values(downloadStats).some(v => v === true);
-
-    if (searchMethod === "offline" && hasAnyDownloaded) {
-      try {
-        // Run our incredibly advanced offline search algorithm!
-        const results = await HadithOfflineSearchService.searchOffline(globalSearchQuery.trim(), "all");
-        setGlobalSearchResults(results);
-      } catch (err) {
-        console.error("Offline search failed, falling back to online:", err);
-        await runOnlineGlobalSearch();
-      } finally {
-        setLoadingGlobalSearch(false);
-      }
-    } else {
-      await runOnlineGlobalSearch();
-    }
-  };
-
-  const runOnlineGlobalSearch = async () => {
     try {
-      const res = await fetch(`/api/hadith/search?q=${encodeURIComponent(globalSearchQuery.trim())}&limit=40`);
-      const data = await readHadithJson<{ success?: boolean; results?: HadithItem[] }>(res);
-      if (data.success) {
-        setGlobalSearchResults(data.results || []);
-      }
-    } catch (err) {
-      console.error("Global search error:", err);
+      const results = await HadithNativeService.searchOffline(globalSearchQuery.trim(), "all");
+      setGlobalSearchResults(results);
+    } catch (error) {
+      console.error("Hadith native search failed:", error);
     } finally {
       setLoadingGlobalSearch(false);
     }
@@ -1223,17 +888,17 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                         {/* Settings-styled Switch for Offline / Online Mode */}
                         <div className="flex items-center gap-1.5">
                           <span className="text-[10px] font-bold text-[var(--sk-label2)]">
-                            {searchMethod === "offline" ? "أوفلاين" : "أونلاين"}
+                            {searchMethod === "offline" ? "محلي" : "محلي"}
                           </span>
                           <button
                             type="button"
-                            onClick={() => setSearchMethod(searchMethod === "offline" ? "online" : "offline")}
+                            onClick={() => setSearchMethod("offline")}
                             className="relative w-9 h-5 rounded-full p-0.5 transition-colors duration-300 focus:outline-none flex items-center shadow-inner cursor-pointer"
                             style={{
                               backgroundColor: searchMethod === "offline" ? "var(--sk-accent)" : "var(--sk-sep)",
                               justifyContent: searchMethod === "offline" ? "flex-start" : "flex-end",
                             }}
-                            title={searchMethod === "offline" ? "تبديل للوضع الأونلاين" : "تبديل للوضع الأوفلاين"}
+                            title="البحث داخل الكتب المحملة"
                           >
                             <motion.div
                               layout
@@ -1310,7 +975,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             /* Downloaded Books Checklist / Actions */
                             <div className="space-y-2">
                               <div className="flex items-center justify-between text-[11px] font-extrabold text-[var(--sk-label2)] pb-1">
-                                <span>حالة كتب الحديث أوفلاين:</span>
+                                <span>حالة كتب الحديث المحملة:</span>
                                 {books.some((b) => !downloadStats[b.id]) && (
                                   <button
                                     type="button"
@@ -1362,10 +1027,10 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                         <div className="py-3 px-2 text-center space-y-1.5">
                           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-on-accent)] text-[11px] font-extrabold border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35">
                             <Wifi className="w-3.5 h-3.5 text-[var(--sk-accent-bright)]" />
-                            <span>البحث السحابي أونلاين</span>
+                            <span>البحث داخل الكتب المحملة</span>
                           </div>
                           <p className="text-[11px] text-[var(--sk-label2)] font-bold leading-relaxed pt-0.5">
-                            يتم البحث في السيرفر أونلاين عبر كافة كتب الأحاديث النبوية المتاحة.
+                            يتم البحث في السيرفر محلي عبر كافة كتب الأحاديث النبوية المتاحة.
                           </p>
                         </div>
                       )}
@@ -1382,7 +1047,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                   { id: "all", label: `جميع الكتب (${books.length})` },
                   { id: "الكتب الستة", label: "الكتب الستة" },
                   { id: "الموطآت والمسانيد", label: "الموطأ والمسند" },
-                  { id: "الأربعينيات والقدسيات", label: "الأربعينيات والقدسيات" },
+                  { id: "كتب إضافية", label: "كتب إضافية" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -1415,7 +1080,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               <div className="p-6 cut-crystal-satin border border-rose-300 text-rose-900 text-center space-y-3">
                 <p className="text-sm font-bold">{booksError}</p>
                 <button
-                  onClick={fetchBooks}
+                  onClick={() => void checkOfflineStats(books)}
                   className="px-4 py-2 cut-crystal-capsule bg-rose-700 text-white text-xs font-bold hover:bg-rose-800 transition inline-flex items-center gap-2"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -1486,60 +1151,50 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             </p>
                           </div>
 
-                          {/* Professional Glassmorphic Download Button with Capsule Progress Fill */}
-                          <div className="shrink-0 self-start pt-0.5">
-                            {isDownloaded ? (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleIndexBookToggle(book);
-                                }}
-                                className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/50 dark:border-[var(--sk-accent-bright)]/50 backdrop-blur-md shadow-xs active:scale-95 ${
-                                  hasCoverImage
-                                    ? "bg-[#deab65]/25 dark:bg-[var(--sk-accent-bright)]/25 text-[var(--sk-bg3)] dark:text-[#fdfcfb] hover:bg-[#deab65]/35 dark:hover:bg-[var(--sk-accent-bright)]/35"
-                                    : "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-on-accent)] hover:bg-[#deab65]/25 dark:hover:bg-[var(--sk-accent-bright)]/25"
-                                }`}
-                                title="محمل ومتاح بدون إنترنت - اضغط للحذف"
+                          {/* منطقة التنزيل: لا تظهر بعد الجاهزية، حفاظًا على البطاقة الأصلية */}
+                          {!isDownloaded && (
+                            <div className="shrink-0 self-start pt-0.5 min-w-[84px]">
+                              <p
+                                className={`mb-1 text-[9px] leading-tight text-center ${hasCoverImage ? "text-[#f2ebe1]/90" : "text-[var(--sk-label2)]"}`}
                               >
-                                <Check className="w-2.5 h-2.5 text-[var(--sk-accent-bright)] stroke-[3]" />
-                                <span className="text-[9.5px]">أوفلاين</span>
-                              </button>
-                            ) : isDownloadingThisBook ? (
-                              <div
-                                className="relative overflow-hidden w-[84px] h-7 rounded-full border border-[#deab65]/60 dark:border-[var(--sk-accent-bright)]/60 bg-white/85 backdrop-blur-md shadow-sm flex items-center justify-center cursor-default"
-                                title={`جاري التحميل... ${currentPct}%`}
-                              >
-                                {/* Progress Fill inside Capsule (RTL width fill from right) */}
+                                {isDownloadingThisBook ? indexingStatusText : "نزّل الكتاب لتصفح أبوابه وأحاديثه"}
+                              </p>
+                              {isDownloadingThisBook ? (
                                 <div
-                                  className="absolute inset-y-0 right-0 bg-gradient-to-l from-[var(--sk-accent-bright)] to-[var(--sk-gold-eq1)] transition-all duration-300 ease-out opacity-85"
-                                  style={{ width: `${currentPct}%` }}
-                                />
-                                {/* Percentage & Loading Icon */}
-                                <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-black text-[var(--sk-label)]">
-                                  <SakeenahLineSpinner size={32} color="var(--sk-label)" label="جارٍ تنزيل الكتاب" className="shrink-0" />
-                                  <span className="tabular-nums font-mono">{currentPct}%</span>
+                                  className="relative overflow-hidden w-[84px] h-7 rounded-full border border-[#deab65]/60 dark:border-[var(--sk-accent-bright)]/60 bg-white/85 backdrop-blur-md shadow-sm flex items-center justify-center"
+                                  role="progressbar"
+                                  aria-valuenow={currentPct}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                >
+                                  <div
+                                    className="absolute inset-y-0 right-0 bg-gradient-to-l from-[var(--sk-accent-bright)] to-[var(--sk-gold-eq1)] transition-all duration-300 ease-out opacity-85"
+                                    style={{ width: `${currentPct}%` }}
+                                  />
+                                  <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-black text-[var(--sk-label)]">
+                                    <SakeenahLineSpinner size={24} color="var(--sk-label)" label="جارٍ تنزيل الكتاب" className="shrink-0" />
+                                    <span className="tabular-nums">{currentPct}%</span>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleIndexBookToggle(book);
-                                }}
-                                className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 backdrop-blur-md shadow-xs active:scale-95 ${
-                                  hasCoverImage
-                                    ? "bg-black/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb] hover:bg-[#deab65]/30 dark:hover:bg-[var(--sk-accent-bright)]/30 hover:border-[#deab65]/70 dark:hover:border-[var(--sk-accent-bright)]/70"
-                                    : "bg-white/50 text-[var(--sk-accent-deep)] hover:bg-[#deab65]/15 dark:hover:bg-[var(--sk-accent-bright)]/15 hover:border-[#deab65]/60 dark:hover:border-[var(--sk-accent-bright)]/60"
-                                }`}
-                                title="تحميل للقراءة والبحث بدون إنترنت"
-                              >
-                                <Download className="w-2.5 h-2.5 text-[var(--sk-accent-bright)]" />
-                                <span className="text-[9.5px]">تنزيل</span>
-                              </button>
-                            )}
-                          </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleIndexBookToggle(book);
+                                  }}
+                                  className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 backdrop-blur-md shadow-xs active:scale-95 ${
+                                    hasCoverImage
+                                      ? "bg-black/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb] hover:bg-[var(--sk-accent-bright)]/30"
+                                      : "bg-white/50 text-[var(--sk-accent-deep)] hover:bg-[var(--sk-accent-bright)]/15"
+                                  }`}
+                                >
+                                  <Download className="w-2.5 h-2.5 text-[var(--sk-accent-bright)]" />
+                                  <span className="text-[9.5px]">تنزيل</span>
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         {/* Description */}
@@ -2173,11 +1828,11 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                 {searchMethod === "offline" && Object.values(downloadStats).some(v => v === true) ? (
                   <span className="px-3 py-1.5 rounded-full bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] text-[10px] font-black border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5 text-[var(--sk-accent-bright)]" />
-                    <span>محرك أوفلاين ٢٠٠٪</span>
+                    <span>محرك محلي ٢٠٠٪</span>
                   </span>
                 ) : (
                   <span className="px-3 py-1.5 rounded-full bg-[#2b1a10]/5 dark:bg-[var(--sk-shade)]/5 text-[var(--sk-label2)] text-[10px] font-black border border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10 flex items-center gap-1">
-                    <span>بحث سيرفر أونلاين</span>
+                    <span>بحث سيرفر محلي</span>
                   </span>
                 )}
               </div>
@@ -2193,7 +1848,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                 <AlertCircle className="w-12 h-12 text-[#deab65]/40 dark:text-[var(--sk-accent-bright)]/40 mx-auto" />
                 <p className="text-sm font-bold text-[var(--sk-label)]">لم نجد أي نتائج مطابقة لعبارة البحث.</p>
                 <p className="text-xs text-[var(--sk-label2)] max-w-md mx-auto leading-relaxed text-center">
-                  تلميح: جرب كتابة كلمات مفردة أو مرادفات إسلامية (مثل: صلاة، وضوء، غضب، والدين، توبة). خوارزمية محرك البحث قادرة على توسيع مرادفات هذه الكلمات أوفلاين تلقائياً لتغطي عشرات الألفاظ والمشتقات!
+                  تلميح: جرب كتابة كلمات مفردة أو مرادفات إسلامية (مثل: صلاة، وضوء، غضب، والدين، توبة). خوارزمية محرك البحث قادرة على توسيع مرادفات هذه الكلمات محلي تلقائياً لتغطي عشرات الألفاظ والمشتقات!
                 </p>
                 <button
                   onClick={() => setViewMode("library")}

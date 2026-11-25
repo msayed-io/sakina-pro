@@ -6,10 +6,12 @@ export interface HadithBookInfo {
   hadithsCount: number;
   chaptersCount: number;
   description: string;
-  category: "الكتب الستة" | "الموطآت والمسانيد" | "الأربعينيات والقدسيات";
+  category: "الكتب الستة" | "الموطآت والمسانيد";
   badgeColor: string; // Tailwind color class
   bgGradient: string;
-  editionSlug: string; // fawazahmed edition key e.g. 'ara-bukhari'
+  editionSlug: string;
+  downloadUrl: string;
+  sha256: string;
   coverImage?: string; // Optional author/book background art
 }
 

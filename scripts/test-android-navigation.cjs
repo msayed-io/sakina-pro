@@ -32,7 +32,7 @@ const { chromium } = require('playwright');
     await page.goto(process.env.SAKINA_TEST_URL || 'http://127.0.0.1:3011');
     await page.locator('nav button').first().click({ trial: true, timeout: 60000 });
     const bootRequests = requests.slice();
-    assert(!bootRequests.some(url => url.includes('/api/hadith/') || url.includes('mp3quran.net/api/')),
+    assert(!bootRequests.some(url => url.includes('mp3quran.net/api/')),
       'A screen data request ran before navigation');
     const labels = ['AzkarTabScreen-', 'AzkarReferenceScreen-', 'QuranTabScreen-', 'HadithBooksScreen-', 'SakinaLibraryScreen-', 'SakeenahAIScreen-', 'AsmaAlHusnaScreen-', 'SettingsScreen-', 'PrayerSettingsScreen-'];
     for (const label of labels) assert(bootRequests.some(url => url.includes(label)), `Not prepared at boot: ${label}`);

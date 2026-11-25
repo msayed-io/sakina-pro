@@ -8,7 +8,6 @@ import { createServer as createViteServer } from "vite";
 import recitersRouter from "./routes/reciters";
 import quranReflectionRouter from "./routes/quran-reflection";
 import sakeenahAiRouter from "./routes/sakeenah-ai";
-import hadithBooksRouter from "./routes/hadith-books";
 import appVersionRouter from "./routes/app-version";
 
 dotenv.config({ path: ".env.local" });
@@ -74,7 +73,6 @@ async function startServer() {
   app.use("/api", recitersRouter);
   app.use("/api/quran", aiRateLimiter, quranReflectionRouter);
   app.use("/api/sakeenah-ai", aiRateLimiter, sakeenahAiRouter);
-  app.use("/api/hadith", hadithBooksRouter);
   app.use("/api", appVersionRouter);
 
   if (process.env.NODE_ENV !== "production") {
