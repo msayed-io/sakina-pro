@@ -90,13 +90,30 @@ class HadithNativePlugin : Plugin() {
     }
 
     @PluginMethod
-    fun getChapters(call: PluginCall) {
+    fun getBooks(call: PluginCall) {
         try {
             val id = call.getString("bookId") ?: return call.reject("معرّف المصدر غير صالح")
             val db = open(id); val rows = JSArray()
-            db.rawQuery("SELECT id, chapter_number, title_ar FROM chapters ORDER BY chapter_number, id", null).use { c ->
+            db.rawQuery("SELECT b.id, b.book_number, b.title_ar, COUNT(h.id) FROM books b LEFT JOIN hadiths h ON h.book_id=b.id GROUP BY b.id, b.book_number, b.title_ar ORDER BY b.book_number, b.id", null).use { c ->
                 while (c.moveToNext()) rows.put(JSObject().apply {
-                    put("id", c.getLong(0).toString()); put("number", c.getInt(1)); put("title", c.getString(2));
+                    put("id", c.getLong(0).toString()); put("number", c.getInt(1)); put("title", c.getString(2)); put("hadithCount", c.getInt(3))
+                })
+            }
+            db.close(); call.resolve(JSObject().put("books", rows))
+        } catch (e: Exception) { call.reject(e.message ?: "تعذر قراءة كتب المصدر") }
+    }
+
+    @PluginMethod
+    fun getChapters(call: PluginCall) {
+        try {
+            val id = call.getString("bookId") ?: return call.reject("معرّف المصدر غير صالح")
+            val innerBookId = call.getString("innerBookId") ?: "all"
+            val db = open(id); val rows = JSArray()
+            val sql = "SELECT id, chapter_number, title_ar, (SELECT COUNT(*) FROM hadiths h WHERE h.chapter_id=chapters.id) FROM chapters" + (if (innerBookId == "all") "" else " WHERE book_id = ?") + " ORDER BY chapter_number, id"
+            val args = if (innerBookId == "all") null else arrayOf(innerBookId)
+            db.rawQuery(sql, args).use { c ->
+                while (c.moveToNext()) rows.put(JSObject().apply {
+                    put("id", c.getLong(0).toString()); put("number", c.getInt(1)); put("title", c.getString(2)); put("hadithCount", c.getInt(3));
                 })
             }
             db.close(); call.resolve(JSObject().put("chapters", rows))
@@ -108,10 +125,11 @@ class HadithNativePlugin : Plugin() {
         try {
             val id = call.getString("bookId") ?: return call.reject("معرّف المصدر غير صالح")
             val chapter = call.getString("chapterId") ?: "all"
+            val innerBookId = call.getString("innerBookId") ?: "all"
             val page = (call.getInt("page", 1) ?: 1).coerceAtLeast(1)
             val limit = (call.getInt("limit", 20) ?: 20).coerceIn(1, 100000)
             val search = call.getString("search")?.trim().orEmpty()
-            val db = open(id); val all = readHadiths(db, id, chapter, search); db.close()
+            val db = open(id); val all = readHadiths(db, id, innerBookId, chapter, search); db.close()
             val start = ((page - 1) * limit).coerceAtMost(all.size)
             val rows = JSArray(); all.drop(start).take(limit).forEach { rows.put(it) }
             call.resolve(JSObject().apply { put("total", all.size); put("totalPages", (all.size + limit - 1) / limit.coerceAtLeast(1)); put("hadiths", rows) })
@@ -125,7 +143,7 @@ class HadithNativePlugin : Plugin() {
             val bookId = call.getString("bookId") ?: "all"
             val ids = if (bookId == "all") root.listFiles { f -> f.extension == "db" }?.map { it.nameWithoutExtension } ?: emptyList() else listOf(bookId)
             val results = JSArray(); ids.forEach { id ->
-                val db = open(id); readHadiths(db, id, "all", query).take(40 - results.length()).forEach { results.put(it) }; db.close()
+                val db = open(id); readHadiths(db, id, "all", "all", query).take(40 - results.length()).forEach { results.put(it) }; db.close()
             }
             call.resolve(JSObject().put("results", results))
         } catch (e: Exception) { call.reject(e.message ?: "تعذر البحث في الأحاديث") }
@@ -133,8 +151,9 @@ class HadithNativePlugin : Plugin() {
 
     private fun open(id: String): SQLiteDatabase = SQLiteDatabase.openDatabase(File(root, "$id.db").absolutePath, null, SQLiteDatabase.OPEN_READONLY)
 
-    private fun readHadiths(db: SQLiteDatabase, id: String, chapter: String, search: String): List<JSObject> {
+    private fun readHadiths(db: SQLiteDatabase, id: String, innerBookId: String, chapter: String, search: String): List<JSObject> {
         val args = mutableListOf<String>(); val where = mutableListOf<String>()
+        if (innerBookId != "all") { where += "h.book_id = ?"; args += innerBookId }
         if (chapter != "all") { where += "h.chapter_id = ?"; args += chapter }
         val sql = "SELECT h.hadith_number, h.text_tashkeel, h.text_plain, h.chapter_id, c.title_ar, b.title_ar FROM hadiths h JOIN chapters c ON c.id=h.chapter_id JOIN books b ON b.id=h.book_id" + if (where.isEmpty()) "" else " WHERE " + where.joinToString(" AND ") + " ORDER BY h.id"
         val normalized = search.lowercase(Locale.ROOT)

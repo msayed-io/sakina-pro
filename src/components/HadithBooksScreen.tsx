@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import {
   HadithBookInfo,
+  HadithInnerBook,
   HadithChapter,
   HadithItem,
   HadithBookmark,
@@ -99,8 +100,8 @@ const FALLBACK_BOOKS: HadithBookInfo[] = [
   { id: "nasai", titleArabic: "سنن النسائي", authorArabic: "الإمام أحمد بن شعيب النسائي", authorDeath: "303 هـ", hadithsCount: 3674, chaptersCount: 2534, description: "طبعة الرسالة؛ اعتماد طبعة المحقق عبد الفتاح أبو غدة في المصدر", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "nasai", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_nasai.db", sha256: "ec4001265a73b948ff90ce1d763269fbf93c7ca02ae505824cd1e0456263fa8d", coverImage: "/images/hadith/author_nasai.png" },
   { id: "ibnmajah", titleArabic: "سنن ابن ماجه", authorArabic: "الإمام أبو عبد الله محمد بن يزيد ابن ماجه", authorDeath: "273 هـ", hadithsCount: 4342, chaptersCount: 1480, description: "تحقيق محمد فؤاد عبد الباقي", category: "الكتب الستة", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "ibnmajah", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_ibnmajah.db", sha256: "e27ff2e88612ee4c7955ca0a6738f74a07725631b07ebeb638876240d4efd91f", coverImage: "/images/hadith/author_ibnmajah.png" },
   { id: "malik", titleArabic: "موطأ مالك", authorArabic: "الإمام مالك بن أنس الأصبحي", authorDeath: "179 هـ", hadithsCount: 1821, chaptersCount: 683, description: "رواية يحيى الليثي؛ تحقيق محمد فؤاد عبد الباقي", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "malik", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_malik.db", sha256: "34bee79b54d750a781bb4df3fd2b3584101def986037ddf9d13e4862242b04bd", coverImage: "/images/hadith/author_malik.png" },
-  { id: "ahmad", titleArabic: "مسند الإمام أحمد", authorArabic: "الإمام أحمد بن حنبل", authorDeath: "241 هـ", hadithsCount: 18000, chaptersCount: 1292, description: "طبعة الرسالة؛ تحقيق شعيب الأرنؤوط", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "ahmad", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_ahmad.db", sha256: "a68ab1e8eba89dfe20a3d57b32c921f6f23f4626f610e4ffbff1220f25fd3336", coverImage: "/images/hadith/author_ahmad.png" },
-  { id: "darimi", titleArabic: "سنن الدارمي", authorArabic: "الإمام عبد الله بن عبد الرحمن الدارمي", authorDeath: "255 هـ", hadithsCount: 3380, chaptersCount: 1317, description: "تحقيق حسين سليم أسد", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "darimi", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_darimi.db", sha256: "e3360b63c7daddf8aee660a67a12814d2bdc00041e79999b08ce4ac06a6bfb35", coverImage: "/images/hadith/author_darimi.png" },
+  { id: "ahmad", titleArabic: "مسند الإمام أحمد", authorArabic: "الإمام أحمد بن حنبل", authorDeath: "241 هـ", hadithsCount: 18000, chaptersCount: 1292, description: "طبعة الرسالة؛ تحقيق شعيب الأرنؤوط", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "ahmad", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_ahmad.db", sha256: "a68ab1e8eba89dfe20a3d57b32c921f6f23f4626f610e4ffbff1220f25fd3336", coverImage: "/images/hadith/author_nawawi.png" },
+  { id: "darimi", titleArabic: "سنن الدارمي", authorArabic: "الإمام عبد الله بن عبد الرحمن الدارمي", authorDeath: "255 هـ", hadithsCount: 3380, chaptersCount: 1317, description: "تحقيق حسين سليم أسد", category: "الموطآت والمسانيد", badgeColor: "bg-[#deab65]/20 dark:bg-[var(--sk-accent-bright)]/20 text-[var(--sk-on-accent)] border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40", bgGradient: "from-[#deab65]/10 dark:from-[var(--sk-accent-bright)]/10 via-[#deab65]/5 dark:via-[var(--sk-accent-bright)]/5 to-transparent", editionSlug: "darimi", downloadUrl: "https://github.com/msayed-io/sakina-hadith-data/releases/download/v1.0.0/sakina_darimi.db", sha256: "e3360b63c7daddf8aee660a67a12814d2bdc00041e79999b08ce4ac06a6bfb35", coverImage: "/images/hadith/author_qudsiyyah.png" },
 ];
 // Localize English Hadith grades to high-quality classical Arabic labels
 export function localizeHadithGrade(grade: string | undefined): string | undefined {
@@ -159,10 +160,14 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
 
   // Selected Book & Reader State
   const [selectedBook, setSelectedBook] = useState<HadithBookInfo | null>(null);
+  const [innerBooks, setInnerBooks] = useState<HadithInnerBook[]>([]);
+  const [activeInnerBookId, setActiveInnerBookId] = useState<string>("all");
   const [chapters, setChapters] = useState<HadithChapter[]>([]);
   const [activeChapterId, setActiveChapterId] = useState<string>("all");
   const [loadingChapters, setLoadingChapters] = useState(false);
+  const [showBookDrawer, setShowBookDrawer] = useState(false);
   const [showChapterDrawer, setShowChapterDrawer] = useState(false);
+  const [bookSearchQuery, setBookSearchQuery] = useState("");
   const [chapterSearchQuery, setChapterSearchQuery] = useState("");
 
   // Hadiths Pagination & Filter State
@@ -466,16 +471,22 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
   // Open a specific Book from the verified local SQLite database.
   const handleOpenBook = async (book: HadithBookInfo, chapterIdToOpen: string = "all", initialPage: number = 1) => {
     setSelectedBook(book);
+    setActiveInnerBookId("all");
     setActiveChapterId(chapterIdToOpen);
     setPage(initialPage);
     setReaderSearch("");
     setViewMode("book_reader");
     setHadiths([]);
+    setInnerBooks([]);
+    setShowBookDrawer(false);
+    setShowChapterDrawer(false);
     setLoadingChapters(true);
     try {
-      const localChapters = await HadithNativeService.getChapters(book.id);
+      const localBooks = await HadithNativeService.getBooks(book.id);
+      setInnerBooks(localBooks);
+      const localChapters = await HadithNativeService.getChaptersForBook(book.id, "all");
       setChapters(localChapters);
-      await fetchHadiths(book.id, chapterIdToOpen, initialPage, "");
+      await fetchHadiths(book.id, chapterIdToOpen, initialPage, "", "all");
     } catch (error: any) {
       setHadithsError(error?.message || "قم بتنزيل الكتاب أولًا لفتحه");
     } finally {
@@ -483,11 +494,11 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     }
   };
   const fetchHadiths = useCallback(
-    async (bookId: string, chapterId: string, p: number, search: string) => {
+    async (bookId: string, chapterId: string, p: number, search: string, innerBookId = activeInnerBookId) => {
       setLoadingHadiths(true);
       setHadithsError(null);
       try {
-        const data = await HadithNativeService.getHadiths(bookId, chapterId, p, search);
+        const data = await HadithNativeService.getHadiths(bookId, chapterId, p, search, innerBookId);
         setHadiths(data.hadiths);
         setTotalPages(data.totalPages);
         setTotalHadithsCount(data.total);
@@ -497,14 +508,31 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
       } finally {
         setLoadingHadiths(false);
       }
-    }, []
+    }, [activeInnerBookId]
   );
+  const handleInnerBookSelect = async (innerBookId: string) => {
+    if (!selectedBook) return;
+    setActiveInnerBookId(innerBookId);
+    setActiveChapterId("all");
+    setPage(1);
+    setShowBookDrawer(false);
+    setLoadingChapters(true);
+    try {
+      const localChapters = await HadithNativeService.getChaptersForBook(selectedBook.id, innerBookId);
+      setChapters(localChapters);
+      await fetchHadiths(selectedBook.id, "all", 1, "", innerBookId);
+    } catch (error: any) {
+      setHadithsError(error?.message || "تعذر تحميل أبواب الكتاب");
+    } finally {
+      setLoadingChapters(false);
+    }
+  };
   const handleChapterSelect = (chId: string) => {
     setActiveChapterId(chId);
     setPage(1);
     setShowChapterDrawer(false);
     if (selectedBook) {
-      fetchHadiths(selectedBook.id, chId, 1, readerSearch);
+      fetchHadiths(selectedBook.id, chId, 1, readerSearch, activeInnerBookId);
     }
   };
 
@@ -512,7 +540,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     if (newPage < 1 || newPage > totalPages) return;
     setPage(newPage);
     if (selectedBook) {
-      fetchHadiths(selectedBook.id, activeChapterId, newPage, readerSearch);
+      fetchHadiths(selectedBook.id, activeChapterId, newPage, readerSearch, activeInnerBookId);
     }
   };
 
@@ -520,7 +548,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     e.preventDefault();
     setPage(1);
     if (selectedBook) {
-      fetchHadiths(selectedBook.id, activeChapterId, 1, readerSearch);
+      fetchHadiths(selectedBook.id, activeChapterId, 1, readerSearch, activeInnerBookId);
     }
   };
 
@@ -530,7 +558,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     setReaderSearch(jumpHadithNum.trim());
     setActiveChapterId("all");
     setPage(1);
-    fetchHadiths(selectedBook.id, "all", 1, jumpHadithNum.trim());
+    fetchHadiths(selectedBook.id, "all", 1, jumpHadithNum.trim(), activeInnerBookId);
   };
 
   // البحث العام داخل قواعد SQLite المحملة.
@@ -1314,9 +1342,16 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                 </div>
               </div>
 
-              {/* Lower Section: Active chapter detail & Index trigger with Dropdown */}
+              {/* Lower Section: current hierarchy + separate books and chapters indexes */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
                 <div className="text-xs text-[var(--sk-label2)] font-bold flex items-center gap-1">
+                  <span className="text-[var(--sk-accent-bright)] font-extrabold">الكتاب الحالي:</span>
+                  <span className="text-[var(--sk-label)]">
+                    {activeInnerBookId === "all"
+                      ? "جميع الكتب"
+                      : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
+                  </span>
+                  <span className="mx-1 text-[var(--sk-label2)]">·</span>
                   <span className="text-[var(--sk-accent-bright)] font-extrabold">الباب الحالي:</span>
                   <span className="text-[var(--sk-label)]">
                     {activeChapterId === "all"
@@ -1325,15 +1360,87 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                   </span>
                 </div>
 
-                {/* Compact Index Trigger Button with Dropdown Card */}
-                <div className="relative shrink-0">
+                {/* Separate index capsules: books first, chapters second */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="relative">
+                    <button
+                      onClick={() => {
+                        setShowBookDrawer(!showBookDrawer);
+                        setShowChapterDrawer(false);
+                      }}
+                      className="px-3.5 py-2 cut-crystal-capsule bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 hover:bg-[#deab65]/20 dark:hover:bg-[var(--sk-accent-bright)]/20 text-[12.5px] font-bold text-[var(--sk-on-accent)] border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35 flex items-center gap-2 cursor-pointer active:scale-95 transition-all shadow-3xs"
+                      title="فتح فهرس الكتب"
+                    >
+                      <BookOpen className="w-4 h-4 text-[var(--sk-accent-deep)]" />
+                      <span className="text-[var(--sk-accent-deep)]">الكتب:</span>
+                      <span className="font-extrabold max-w-[100px] sm:max-w-[140px] truncate">
+                        {activeInnerBookId === "all" ? "جميع الكتب" : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
+                      </span>
+                      <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80" />
+                    </button>
+                    <AnimatePresence>
+                      {showBookDrawer && (
+                        <>
+                          <div className="fixed inset-0 z-40 cursor-default" onClick={() => setShowBookDrawer(false)} />
+                          <motion.div
+                            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                            transition={{ duration: 0.15, ease: "easeOut" }}
+                            className="hadith-index-sheet absolute right-0 top-full mt-2 w-[268px] sm:w-[300px] cut-crystal-panel rounded-[24px] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
+                          >
+                            <div className="relative z-[2] px-2.5 pt-2.5 pb-1.5 shrink-0">
+                              <div className="cut-crystal-input flex items-center px-2.5 py-1">
+                                <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
+                                <input
+                                  type="text"
+                                  value={bookSearchQuery}
+                                  onChange={(e) => setBookSearchQuery(e.target.value)}
+                                  placeholder="تصفية فهرس الكتب..."
+                                  className="w-full bg-transparent border-none text-[12px] text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+                            <div className="relative flex-1 overflow-y-auto px-2 pt-1 pb-2 space-y-1 player-hide-scrollbar max-h-[300px]">
+                              {!bookSearchQuery && (
+                                <button
+                                  onClick={() => void handleInnerBookSelect("all")}
+                                  className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeInnerBookId === "all" ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
+                                >
+                                  <span>عرض جميع الكتب</span>
+                                  <Check className={`w-3.5 h-3.5 ${activeInnerBookId === "all" ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
+                                </button>
+                              )}
+                              {innerBooks.filter((b) => !bookSearchQuery.trim() || b.title.includes(bookSearchQuery.trim())).map((innerBook) => (
+                                <button
+                                  key={innerBook.id}
+                                  onClick={() => void handleInnerBookSelect(innerBook.id)}
+                                  className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeInnerBookId === innerBook.id ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
+                                >
+                                  <div className="space-y-0.5 max-w-[85%] text-right">
+                                    <span className="block truncate">{innerBook.title}</span>
+                                    {innerBook.hadithCount !== undefined && <span className="text-[9.5px] font-normal text-[var(--sk-label2)]">({innerBook.hadithCount} أحاديث)</span>}
+                                  </div>
+                                  <Check className={`w-3.5 h-3.5 shrink-0 ${activeInnerBookId === innerBook.id ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  <div className="relative shrink-0">
                   <button
-                    onClick={() => setShowChapterDrawer(!showChapterDrawer)}
+                    onClick={() => {
+                      setShowChapterDrawer(!showChapterDrawer);
+                      setShowBookDrawer(false);
+                    }}
                     className="px-3.5 py-2 cut-crystal-capsule bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 hover:bg-[#deab65]/20 dark:hover:bg-[var(--sk-accent-bright)]/20 text-[12.5px] font-bold text-[var(--sk-on-accent)] border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35 flex items-center gap-2 cursor-pointer active:scale-95 transition-all shadow-3xs"
                     title="فتح فهرس الأبواب"
                   >
                     <List className="w-4 h-4 text-[var(--sk-accent-deep)]" />
-                    <span className="text-[var(--sk-accent-deep)]">الفهرس:</span>
+                    <span className="text-[var(--sk-accent-deep)]">الأبواب:</span>
                     <span className="font-extrabold max-w-[120px] sm:max-w-[180px] truncate">
                       {activeChapterId === "all"
                         ? "جميع الأبواب"
@@ -1342,7 +1449,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                     <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80" />
                   </button>
 
-                  {/* Dropdown Card (البطاقة المنسدلة للفهرس) */}
+                  {/* Dropdown Card (فهرس الأبواب) */}
                   <AnimatePresence>
                     {showChapterDrawer && (
                       <>
@@ -1449,6 +1556,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                       </>
                     )}
                   </AnimatePresence>
+                  </div>
                 </div>
               </div>
             </div>

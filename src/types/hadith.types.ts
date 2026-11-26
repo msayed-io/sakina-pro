@@ -22,6 +22,13 @@ export interface HadithChapter {
   hadithCount?: number;
 }
 
+export interface HadithInnerBook {
+  id: string;
+  number: number;
+  title: string;
+  hadithCount?: number;
+}
+
 export interface HadithItem {
   bookId: string;
   bookTitle: string;

@@ -1,13 +1,14 @@
 import { Capacitor, registerPlugin } from "@capacitor/core";
-import type { HadithBookInfo, HadithChapter, HadithItem } from "../types/hadith.types";
+import type { HadithBookInfo, HadithChapter, HadithInnerBook, HadithItem } from "../types/hadith.types";
 
 export type NativeProgress = { bookId: string; percent: number; status: string };
 export interface HadithNativePlugin {
   isDownloaded(options: { bookId: string }): Promise<{ downloaded: boolean }>;
   downloadBook(options: { bookId: string; url: string; sha256: string }): Promise<{ downloaded: boolean }>;
   deleteBook(options: { bookId: string }): Promise<{ deleted: boolean }>;
-  getChapters(options: { bookId: string }): Promise<{ chapters: HadithChapter[] }>;
-  getHadiths(options: { bookId: string; chapterId?: string; page?: number; limit?: number; search?: string }): Promise<{ total: number; totalPages: number; hadiths: HadithItem[] }>;
+  getBooks(options: { bookId: string }): Promise<{ books: HadithInnerBook[] }>;
+  getChapters(options: { bookId: string; innerBookId?: string }): Promise<{ chapters: HadithChapter[] }>;
+  getHadiths(options: { bookId: string; innerBookId?: string; chapterId?: string; page?: number; limit?: number; search?: string }): Promise<{ total: number; totalPages: number; hadiths: HadithItem[] }>;
   searchHadiths(options: { query: string; bookId?: string; limit?: number }): Promise<{ results: HadithItem[] }>;
   addListener(eventName: "downloadProgress", listener: (event: NativeProgress) => void): Promise<{ remove: () => Promise<void> }>;
 }
@@ -45,9 +46,17 @@ export const HadithNativeService = {
     if (!isNative()) return [];
     return (await HadithNative.getChapters({ bookId })).chapters;
   },
-  async getHadiths(bookId: string, chapterId = "all", page = 1, search = ""): Promise<{ total: number; totalPages: number; hadiths: HadithItem[] }> {
+  async getBooks(bookId: string): Promise<HadithInnerBook[]> {
+    if (!isNative()) return [];
+    return (await HadithNative.getBooks({ bookId })).books;
+  },
+  async getChaptersForBook(bookId: string, innerBookId = "all"): Promise<HadithChapter[]> {
+    if (!isNative()) return [];
+    return (await HadithNative.getChapters({ bookId, innerBookId })).chapters;
+  },
+  async getHadiths(bookId: string, chapterId = "all", page = 1, search = "", innerBookId = "all"): Promise<{ total: number; totalPages: number; hadiths: HadithItem[] }> {
     if (!isNative()) throw new Error("قاعدة الحديث المحلية غير متاحة خارج تطبيق أندرويد.");
-    return HadithNative.getHadiths({ bookId, chapterId, page, limit: 20, search });
+    return HadithNative.getHadiths({ bookId, innerBookId, chapterId, page, limit: 20, search });
   },
   async searchOffline(query: string, bookId = "all"): Promise<HadithItem[]> {
     if (!isNative()) return [];
