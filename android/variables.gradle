@@ -19,7 +19,17 @@ ext {
     // عند رفع robolectricVersion يجب رفع robolectricSdkVersion معه، وإلا رفض
     // LocalDependencyResolver الملف بـ"jar not present at".
     robolectricVersion = '4.14.1'
-    robolectricSdkVersion = '13-robolectric-9030017-i7'
+    // قائمة الـjars التي قد يطلبها Robolectric 4.14.1 لهذا المشروع:
+    //   • 13-robolectric-9030017-i7  → API 33 (المحدد صراحةً في @Config)
+    //   • 15-robolectric-12650502-i7 → API 35 (أعلى ما يدعمه 4.14.1؛ وهو
+    //     ما يختاره Robolectric افتراضيًا لأن targetSdkVersion = 36 أعلى من
+    //     أي SDK يعرفه 4.14.1)
+    // توفير الاثنين معًا يغطي مسار الاختبار المحدد ومسار الافتراضي، فلا يلمس
+    // Robolectric الشبكة في أي حالة.
+    robolectricSdkVersions = [
+        '13-robolectric-9030017-i7',
+        '15-robolectric-12650502-i7',
+    ]
     androidxTestCoreVersion = '1.6.1'
     androidxJunitVersion = '1.3.0'
     androidxEspressoCoreVersion = '3.7.0'

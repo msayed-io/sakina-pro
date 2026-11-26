@@ -22,33 +22,47 @@ def hasReleaseSigning = [releaseKeystorePath, releaseStorePassword, releaseKeyAl
 // إلى المهمة عبر tasks.named.
 def robolectricSdkDir = layout.buildDirectory.dir("robolectric-sdk").get().asFile
 
-configurations {
-    robolectricSdkJar {
-        canBeConsumed = false
-        canBeResolved = true
-        transitive = false
+// configuration مستقلة لكل إصدار.
+// لو جمعنا الإصدارين في configuration واحدة، يحل Gradle تعارض الإصدارات على
+// مستوى group:name فيحتفظ بالأعلى فقط (15) ويُسقط 13 — وهو تمامًا ما حدث في
+// المحاولة السابقة. configuration منفصلة لكل إصدار تمنع هذا التعارض.
+def robolectricSdkConfigs = robolectricSdkVersions.collect { v ->
+    def confName = "robolectricSdkJar_" + v.replaceAll(/[^A-Za-z0-9]/, "_")
+    configurations.create(confName) { c ->
+        c.canBeConsumed = false
+        c.canBeResolved = true
+        c.transitive = false
+        c.withDependencies { ds ->
+            ds.add(project.dependencies.create(
+                "org.robolectric:android-all-instrumented:${v}".toString()))
+        }
     }
 }
 
 tasks.register("syncRobolectricSdkJar") {
-    description = "Copies the Robolectric android-all-instrumented jar into an offline dir."
+    description = "Copies every required Robolectric android-all-instrumented jar into an offline dir."
     group = "verification"
-    def jarFiles = configurations.robolectricSdkJar
+    def jarFiles = robolectricSdkConfigs.collect { it.files }.flatten()
     def targetDir = robolectricSdkDir
-    def artifactName = "android-all-instrumented-${robolectricSdkVersion}.jar"
-    inputs.files(jarFiles)
-    outputs.dir(targetDir)
+    // لا نصرّح بـoutputs.dir: المحتوى قد يتغيّر (jar إضافي) بينما المجلد موجود،
+    // وGradle كان يعتبر المهمة up-to-date فيتخطى النسخ. النسخ نفسه مقارنة
+    // بالحجم فتصبح التكلفة صفرًا تقريبًا عند التكرار.
     doLast {
         targetDir.mkdirs()
-        def source = jarFiles.singleFile
-        def target = new File(targetDir, artifactName)
-        if (!target.exists() || target.length() != source.length()) {
-            java.nio.file.Files.copy(
-                source.toPath(), target.toPath(),
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING
-            )
+        // اسم الملف يتبع DependencyJar حرفيًا: اسم الـartifact هو بالفعل
+        // "android-all-instrumented-<version>"، فالملف الناتج
+        // "android-all-instrumented-<version>.jar" — وهو ما يبحث عنه
+        // LocalDependencyResolver داخل robolectric.dependency.dir.
+        jarFiles.each { source ->
+            def target = new File(targetDir, source.name)
+            if (!target.exists() || target.length() != source.length()) {
+                java.nio.file.Files.copy(
+                    source.toPath(), target.toPath(),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING
+                )
+            }
+            logger.lifecycle("[robolectric] SDK jar ready offline: ${target.name} (${target.length()} bytes)")
         }
-        logger.lifecycle("[robolectric] SDK jar ready offline: ${target.name} (${target.length()} bytes)")
     }
 }
 
@@ -141,9 +155,8 @@ dependencies {
     // Robolectric يشغّل RemoteViews على JVM: تضخيم حقيقي + ترميز Parcel،
     // وهو الطريق الوحيد لإثبات أن Bitmaps قابلة للإرسال بلا جهاز.
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
-    // الـjar الذي يشغّل SDK 33 — يُنزَّل عبر Gradle لا عبر Robolectric.
-    // الإصدار مقرون بـrobolectricVersion في variables.gradle.
-    robolectricSdkJar "org.robolectric:android-all-instrumented:${robolectricSdkVersion}"
+    // تبعيات الـjars معرّفة داخل كل configuration في robolectricSdkConfigs
+    // أعلاه (withDependencies)، فلا شيء يُضاف هنا.
     testImplementation "androidx.test:core:$androidxTestCoreVersion"
     testImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
