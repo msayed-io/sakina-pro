@@ -10,7 +10,16 @@ ext {
     coreSplashScreenVersion = '1.2.0'
     androidxWebkitVersion = '1.14.0'
     junitVersion = '4.13.2'
+    // ── Robolectric: الإصدار + الـjar المطابق ────────────────────────────
+    // robolectricVersion يحدد مكتبة الاختبار نفسها.
+    // robolectricSdkVersion يحدد android-all-instrumented الذي يشغّل SDK 33
+    // (يطابق @Config(sdk = [33])). القيمتان مُقترنتان بقاعدة Robolectric:
+    //   Robolectric 4.14.1 → SDK 33 = 13-robolectric-9030017-i7
+    // راجع: org.robolectric.plugins.DefaultSdkProvider (PREINSTRUMENTED_VERSION = i7).
+    // عند رفع robolectricVersion يجب رفع robolectricSdkVersion معه، وإلا رفض
+    // LocalDependencyResolver الملف بـ"jar not present at".
     robolectricVersion = '4.14.1'
+    robolectricSdkVersion = '13-robolectric-9030017-i7'
     androidxTestCoreVersion = '1.6.1'
     androidxJunitVersion = '1.3.0'
     androidxEspressoCoreVersion = '3.7.0'

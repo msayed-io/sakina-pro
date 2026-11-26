@@ -8,6 +8,50 @@ def releaseKeyAlias = System.getenv('SAKEENAH_RELEASE_KEY_ALIAS')
 def releaseKeyPassword = System.getenv('SAKEENAH_RELEASE_KEY_PASSWORD') ?: releaseStorePassword
 def hasReleaseSigning = [releaseKeystorePath, releaseStorePassword, releaseKeyAlias, releaseKeyPassword].every { it }
 
+// ═══ Robolectric: تنزيل jar الـSDK عبر Gradle وتشغيله دون اتصال ═══════════
+// خوادم Maven المركزية ترد بـ HTTP 429 (‎retry-after = 24 ساعة) على تنزيل
+// Robolectric الذاتي للـjar (163 MB) وقت تشغيل الاختبار، خارج Gradle، فتسقط
+// كل اختبارات الويدجت دفعة واحدة. ننزّله عبر Gradle (مستودعه المؤقت ومرآته)،
+// وننسخه لمجلد ثابت، ثم يعمل Robolectric في وضع offline فلا يلمس الشبكة.
+//
+// اسم الملف منقول حرفيًا من org.robolectric.internal.dependency.DependencyJar:
+//   "{artifactId}-{version}-{classifier}.{type}"
+// وإلا رفضه LocalDependencyResolver بـ"jar not present at".
+//
+// يجب أن يبقى هذا التعريف قبل كتلة android { } لأن testOptions.all يشير
+// إلى المهمة عبر tasks.named.
+def robolectricSdkDir = layout.buildDirectory.dir("robolectric-sdk").get().asFile
+
+configurations {
+    robolectricSdkJar {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
+tasks.register("syncRobolectricSdkJar") {
+    description = "Copies the Robolectric android-all-instrumented jar into an offline dir."
+    group = "verification"
+    def jarFiles = configurations.robolectricSdkJar
+    def targetDir = robolectricSdkDir
+    def artifactName = "android-all-instrumented-${robolectricSdkVersion}.jar"
+    inputs.files(jarFiles)
+    outputs.dir(targetDir)
+    doLast {
+        targetDir.mkdirs()
+        def source = jarFiles.singleFile
+        def target = new File(targetDir, artifactName)
+        if (!target.exists() || target.length() != source.length()) {
+            java.nio.file.Files.copy(
+                source.toPath(), target.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+            )
+        }
+        logger.lifecycle("[robolectric] SDK jar ready offline: ${target.name} (${target.length()} bytes)")
+    }
+}
+
 def buildVersionCode = (project.findProperty('versionCode') ?: '2003025').toString().toInteger()
 def buildVersionName = (project.findProperty('versionName') ?: '2.3.25').toString()
 
@@ -49,9 +93,18 @@ android {
             includeAndroidResources = true
             all { test ->
                 test.systemProperty "robolectric.graphicsMode", "NATIVE"
-                // تجنب 429 المتقطع من repo1.maven.org أثناء بناء CI.
-                test.systemProperty "robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2"
-                test.systemProperty "robolectric.dependency.repo.id", "mavenCentral"
+                // ── وضع Robolectric دون اتصال (إصلاح فشل CI المتكرر) ──────────
+                // Robolectric يُنزّل jar بحجم 163 MB بنفسه وقت تشغيل الاختبار
+                // (MavenArtifactFetcher)، خارج Gradle تمامًا. خوادم Maven
+                // المركزية ترد على ذلك بـ HTTP 429 (retry-after = 24 ساعة)
+                // فتفشل كل اختبارات الويدجت دفعة واحدة.
+                // الحل: نُنزّل الـjar عبر Gradle (فيدخل مستودعه المؤقت)، وننسخه
+                // إلى مجلد ثابت، ثم نُشغّل Robolectric في وضع offline فلا يلمس
+                // الشبكة إطلاقًا. انظر المهمة syncRobolectricSdkJar أدناه.
+                test.systemProperty "robolectric.offline", "true"
+                test.systemProperty "robolectric.dependency.dir", robolectricSdkDir
+                // المهمة معرّفة في هذا المشروع (:app) لا في الجذر.
+                test.dependsOn tasks.named("syncRobolectricSdkJar")
                 test.testLogging { l ->
                     l.showStandardStreams = true
                     l.events("passed", "failed", "skipped")
@@ -88,6 +141,9 @@ dependencies {
     // Robolectric يشغّل RemoteViews على JVM: تضخيم حقيقي + ترميز Parcel،
     // وهو الطريق الوحيد لإثبات أن Bitmaps قابلة للإرسال بلا جهاز.
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    // الـjar الذي يشغّل SDK 33 — يُنزَّل عبر Gradle لا عبر Robolectric.
+    // الإصدار مقرون بـrobolectricVersion في variables.gradle.
+    robolectricSdkJar "org.robolectric:android-all-instrumented:${robolectricSdkVersion}"
     testImplementation "androidx.test:core:$androidxTestCoreVersion"
     testImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"

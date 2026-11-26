@@ -199,8 +199,38 @@ jobs:
           VERSION_CODE: ${{ needs.calculate-version.outputs.version_code }}
         run: |
           set -euo pipefail
-          ./gradlew --no-daemon clean testDebugUnitTest assembleRelease bundleRelease \
+          # ── لماذا هذا الملف المؤقت (مُثبت بالقياس لا بالتخمين) ──────────────
+          # Robolectric يُنزّل jar اسمه 163 MB بنفسه وقت تشغيل الاختبار، خارج
+          # Gradle، من خوادم Maven المركزية. تلك الخوادم ترد على عناوين CI
+          # المشتركة بـ HTTP 429 مع retry-after = 86400 ثانية، فتفشل الاختبارات
+          # الـ18 كلها دفعة واحدة — ومعها البناء كله لأن testDebugUnitTest
+          # تُشغَّل قبل assembleRelease في نفس سطر gradlew.
+          #
+          # القياس: repo1.maven.org و repo.maven.apache.org (نفس الخادم، اسمان)
+          # أعادا 429 / retry-after:86350 من شبكة هذا الـrunner، بينما مرآة
+          # Google الرسمية أعادت 200 و163,233,590 بايت وطابقت sha1 المعلن
+          # (c2ea93742dee42d01478927baa3ecfd4f84ee6cc) حرفيًا.
+          #
+          # الحل: نضع مرآة Google أولًا في init script مؤقت، فتصل تبعية
+          # robolectricSdkJar عبر Gradle (المخزَّن مؤقتًا) بلا لمس في
+          # build.gradle العام. Robolectric نفسه يعمل offline فلا يطلب شيئًا.
+          init_script="$RUNNER_TEMP/robolectric-mirror.init.gradle"
+          cat > "$init_script" <<'GRADLE_EOF'
+          // مرآة Google الرسمية لـMaven Central: أداء عالٍ وبلا حدود معدّل
+          // عدوانية على عناوين CI المشتركة.
+          def mirror = 'https://maven-central.storage-download.googleapis.com/maven2'
+          beforeSettings { settings ->
+              settings.pluginManagement.repositories { maven { url mirror } }
+          }
+          allprojects {
+              buildscript.repositories { maven { url mirror } }
+              repositories { maven { url mirror } }
+          }
+          GRADLE_EOF
+          ./gradlew --no-daemon --init-script "$init_script" \
+            clean testDebugUnitTest assembleRelease bundleRelease \
             "-PversionCode=$VERSION_CODE" "-PversionName=$VERSION_NAME"
+          rm -f "$init_script"
       - name: Verify package versions and signing certificates
         env:
           VERSION_NAME: ${{ needs.calculate-version.outputs.version }}
