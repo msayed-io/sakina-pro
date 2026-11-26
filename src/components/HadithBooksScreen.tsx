@@ -516,6 +516,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     setActiveChapterId("all");
     setPage(1);
     setShowBookDrawer(false);
+    setShowChapterDrawer(true);
     setLoadingChapters(true);
     try {
       const localChapters = await HadithNativeService.getChaptersForBook(selectedBook.id, innerBookId);
@@ -1342,221 +1343,158 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                 </div>
               </div>
 
-              {/* Lower Section: current hierarchy + separate books and chapters indexes */}
+              {/* Lower Section: current hierarchy + one books capsule with adjacent chapters card */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
-                <div className="text-xs text-[var(--sk-label2)] font-bold flex items-center gap-1">
-                  <span className="text-[var(--sk-accent-bright)] font-extrabold">الكتاب الحالي:</span>
-                  <span className="text-[var(--sk-label)]">
+                <div className="min-w-0 text-xs text-[var(--sk-label2)] font-bold flex items-center gap-1">
+                  <span className="text-[var(--sk-accent-bright)] font-extrabold shrink-0">الكتاب الحالي:</span>
+                  <span className="text-[var(--sk-label)] truncate">
                     {activeInnerBookId === "all"
                       ? "جميع الكتب"
                       : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
                   </span>
-                  <span className="mx-1 text-[var(--sk-label2)]">·</span>
-                  <span className="text-[var(--sk-accent-bright)] font-extrabold">الباب الحالي:</span>
-                  <span className="text-[var(--sk-label)]">
+                  <span className="mx-1 text-[var(--sk-label2)] shrink-0">·</span>
+                  <span className="text-[var(--sk-accent-bright)] font-extrabold shrink-0">الباب الحالي:</span>
+                  <span className="text-[var(--sk-label)] truncate">
                     {activeChapterId === "all"
                       ? "جميع الأبواب"
                       : chapters.find((c) => c.id === activeChapterId)?.title || ""}
                   </span>
                 </div>
 
-                {/* Separate index capsules: books first, chapters second */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="relative">
-                    <button
-                      onClick={() => {
-                        setShowBookDrawer(!showBookDrawer);
-                        setShowChapterDrawer(false);
-                      }}
-                      className="px-3.5 py-2 cut-crystal-capsule bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 hover:bg-[#deab65]/20 dark:hover:bg-[var(--sk-accent-bright)]/20 text-[12.5px] font-bold text-[var(--sk-on-accent)] border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35 flex items-center gap-2 cursor-pointer active:scale-95 transition-all shadow-3xs"
-                      title="فتح فهرس الكتب"
-                    >
-                      <BookOpen className="w-4 h-4 text-[var(--sk-accent-deep)]" />
-                      <span className="text-[var(--sk-accent-deep)]">الكتب:</span>
-                      <span className="font-extrabold max-w-[100px] sm:max-w-[140px] truncate">
-                        {activeInnerBookId === "all" ? "جميع الكتب" : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
-                      </span>
-                      <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80" />
-                    </button>
-                    <AnimatePresence>
-                      {showBookDrawer && (
-                        <>
-                          <div className="fixed inset-0 z-40 cursor-default" onClick={() => setShowBookDrawer(false)} />
-                          <motion.div
-                            initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                            transition={{ duration: 0.15, ease: "easeOut" }}
-                            className="hadith-index-sheet absolute right-0 top-full mt-2 w-[268px] sm:w-[300px] cut-crystal-panel rounded-[24px] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
-                          >
-                            <div className="relative z-[2] px-2.5 pt-2.5 pb-1.5 shrink-0">
-                              <div className="cut-crystal-input flex items-center px-2.5 py-1">
-                                <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
-                                <input
-                                  type="text"
-                                  value={bookSearchQuery}
-                                  onChange={(e) => setBookSearchQuery(e.target.value)}
-                                  placeholder="تصفية فهرس الكتب..."
-                                  className="w-full bg-transparent border-none text-[12px] text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
-                                />
-                              </div>
-                            </div>
-                            <div className="relative flex-1 overflow-y-auto px-2 pt-1 pb-2 space-y-1 player-hide-scrollbar max-h-[300px]">
-                              {!bookSearchQuery && (
-                                <button
-                                  onClick={() => void handleInnerBookSelect("all")}
-                                  className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeInnerBookId === "all" ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
-                                >
-                                  <span>عرض جميع الكتب</span>
-                                  <Check className={`w-3.5 h-3.5 ${activeInnerBookId === "all" ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
-                                </button>
-                              )}
-                              {innerBooks.filter((b) => !bookSearchQuery.trim() || b.title.includes(bookSearchQuery.trim())).map((innerBook) => (
-                                <button
-                                  key={innerBook.id}
-                                  onClick={() => void handleInnerBookSelect(innerBook.id)}
-                                  className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeInnerBookId === innerBook.id ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
-                                >
-                                  <div className="space-y-0.5 max-w-[85%] text-right">
-                                    <span className="block truncate">{innerBook.title}</span>
-                                    {innerBook.hadithCount !== undefined && <span className="text-[9.5px] font-normal text-[var(--sk-label2)]">({innerBook.hadithCount} أحاديث)</span>}
-                                  </div>
-                                  <Check className={`w-3.5 h-3.5 shrink-0 ${activeInnerBookId === innerBook.id ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
-                                </button>
-                              ))}
-                            </div>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                  <div className="relative shrink-0">
+                <div className="relative z-[60] shrink-0">
                   <button
                     onClick={() => {
-                      setShowChapterDrawer(!showChapterDrawer);
-                      setShowBookDrawer(false);
+                      setShowBookDrawer((open) => !open);
+                      setShowChapterDrawer(false);
                     }}
                     className="px-3.5 py-2 cut-crystal-capsule bg-[#deab65]/10 dark:bg-[var(--sk-accent-bright)]/10 hover:bg-[#deab65]/20 dark:hover:bg-[var(--sk-accent-bright)]/20 text-[12.5px] font-bold text-[var(--sk-on-accent)] border border-[#deab65]/35 dark:border-[var(--sk-accent-bright)]/35 flex items-center gap-2 cursor-pointer active:scale-95 transition-all shadow-3xs"
-                    title="فتح فهرس الأبواب"
+                    title="فتح فهرس الكتب"
+                    aria-expanded={showBookDrawer || showChapterDrawer}
                   >
-                    <List className="w-4 h-4 text-[var(--sk-accent-deep)]" />
-                    <span className="text-[var(--sk-accent-deep)]">الأبواب:</span>
-                    <span className="font-extrabold max-w-[120px] sm:max-w-[180px] truncate">
-                      {activeChapterId === "all"
-                        ? "جميع الأبواب"
-                        : chapters.find((c) => c.id === activeChapterId)?.title || ""}
+                    <BookOpen className="w-4 h-4 text-[var(--sk-accent-deep)]" />
+                    <span className="text-[var(--sk-accent-deep)]">الكتب:</span>
+                    <span className="font-extrabold max-w-[100px] sm:max-w-[140px] truncate">
+                      {activeInnerBookId === "all" ? "جميع الكتب" : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
                     </span>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80" />
+                    <ChevronDown className={`w-3.5 h-3.5 text-[#8a6a3d]/80 dark:text-[var(--sk-accent-deep)]/80 transition-transform ${showBookDrawer ? "rotate-180" : ""}`} />
                   </button>
 
-                  {/* Dropdown Card (فهرس الأبواب) */}
                   <AnimatePresence>
-                    {showChapterDrawer && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40 cursor-default"
-                          onClick={() => setShowChapterDrawer(false)}
-                        />
-                        <motion.div
-                          initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                          transition={{ duration: 0.15, ease: "easeOut" }}
-                          className="hadith-index-sheet absolute right-0 top-full mt-2 w-[268px] sm:w-[300px] cut-crystal-panel rounded-[24px] z-50 overflow-hidden flex flex-col max-h-[380px] text-right"
-                        >
-                          {/* تدرج التطبيق الأصلي: نفس صنف .progressive-blur ونفس
-                              طبقتَي الضباب، مُثبَّت في أعلى النافذة بدل أعلى الشاشة. */}
-                          <div className="progressive-blur" aria-hidden="true">
-                            <i />
-                            <i />
-                          </div>
-
-                          {/* شريط البحث الداخلي: بلا خلفية ولا حدّ — الطبقة المصمتة
-                              كانت تحته مباشرة فتبدو كتلة بيضاء في الداكن. */}
-                          <div className="relative z-[2] px-2.5 pt-2.5 pb-1.5 shrink-0">
-                            <div className="cut-crystal-input flex items-center px-2.5 py-1">
-                              <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
-                              <input
-                                type="text"
-                                value={chapterSearchQuery}
-                                onChange={(e) => setChapterSearchQuery(e.target.value)}
-                                placeholder="تصفية أبواب الفهرس..."
-                                className="w-full bg-transparent border-none text-[12px] text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
-                              />
-                              {chapterSearchQuery && (
-                                <button
-                                  onClick={() => setChapterSearchQuery("")}
-                                  className="text-[var(--sk-label2)] hover:text-[var(--sk-label)] mr-1"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* List of Chapters with scrollbar */}
-                          <div className="relative flex-1 overflow-y-auto px-2 pt-1 pb-2 space-y-1 player-hide-scrollbar max-h-[300px]">
-                            {/* All Chapters option */}
-                            {!chapterSearchQuery && (
-                              <button
-                                onClick={() => {
-                                  handleChapterSelect("all");
-                                  setShowChapterDrawer(false);
-                                }}
-                                className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${
-                                  activeChapterId === "all"
-                                    ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30"
-                                    : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"
-                                }`}
-                              >
-                                <span>عرض جميع الأبواب</span>
-                                <Check className={`w-3.5 h-3.5 ${activeChapterId === "all" ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
-                              </button>
-                            )}
-
-                            {loadingChapters ? (
-                              <div className="py-8 flex items-center justify-center gap-2 text-xs font-bold text-[var(--sk-label2)]">
-                                <SakeenahLineSpinner size={32} color="var(--sk-accent-bright)" label="جارٍ تحميل فهرس الأبواب" />
-                                <span>جاري تحميل الفهرس...</span>
-                              </div>
-                            ) : (
-                              chapters
-                                .filter((ch) =>
-                                  chapterSearchQuery.trim()
-                                    ? ch.title.toLowerCase().includes(chapterSearchQuery.trim().toLowerCase())
-                                    : true
-                                )
-                                .map((ch) => (
-                                  <button
-                                    key={ch.id}
-                                    onClick={() => {
-                                      handleChapterSelect(ch.id);
-                                      setShowChapterDrawer(false);
-                                    }}
-                                    className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${
-                                      activeChapterId === ch.id
-                                        ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30"
-                                        : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"
-                                    }`}
-                                  >
-                                    <div className="space-y-0.5 max-w-[85%] text-right">
-                                      <span className="block truncate">{ch.title}</span>
-                                      {ch.hadithCount !== undefined && ch.hadithCount > 0 && (
-                                        <span className={`text-[9.5px] font-normal ${activeChapterId === ch.id ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-label2)]"}`}>
-                                          ({ch.hadithCount} أحاديث)
-                                        </span>
-                                      )}
-                                    </div>
-                                    <Check className={`w-3.5 h-3.5 shrink-0 ${activeChapterId === ch.id ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
-                                  </button>
-                                ))
-                            )}
-                          </div>
-                        </motion.div>
-                      </>
+                    {(showBookDrawer || showChapterDrawer) && (
+                      <div className="fixed inset-0 z-40 cursor-default" onClick={() => { setShowBookDrawer(false); setShowChapterDrawer(false); }} />
                     )}
                   </AnimatePresence>
-                  </div>
+
+                  {/* Books card: absolute so it never participates in the reader-card height. */}
+                  <AnimatePresence>
+                    {showBookDrawer && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.96 }}
+                        transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                        className="hadith-index-sheet !absolute right-0 top-[calc(100%+8px)] w-[268px] sm:w-[300px] max-w-[calc(100vw-32px)] cut-crystal-panel rounded-[24px] z-[70] overflow-hidden flex flex-col max-h-[380px] text-right origin-top-right"
+                        dir="rtl"
+                      >
+                        <div className="relative z-[2] px-2.5 pt-2.5 pb-1.5 shrink-0">
+                          <div className="cut-crystal-input flex items-center px-2.5 py-1">
+                            <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
+                            <input
+                              type="text"
+                              value={bookSearchQuery}
+                              onChange={(e) => setBookSearchQuery(e.target.value)}
+                              placeholder="تصفية فهرس الكتب..."
+                              className="w-full bg-transparent border-none text-[12px] text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="relative flex-1 overflow-y-auto px-2 pt-1 pb-2 space-y-1 player-hide-scrollbar max-h-[300px]">
+                          {!bookSearchQuery && (
+                            <button
+                              onClick={() => void handleInnerBookSelect("all")}
+                              className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeInnerBookId === "all" ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
+                            >
+                              <span>عرض جميع الكتب</span>
+                              <Check className={`w-3.5 h-3.5 ${activeInnerBookId === "all" ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
+                            </button>
+                          )}
+                          {innerBooks.filter((b) => !bookSearchQuery.trim() || b.title.includes(bookSearchQuery.trim())).map((innerBook) => (
+                            <button
+                              key={innerBook.id}
+                              onClick={() => void handleInnerBookSelect(innerBook.id)}
+                              className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeInnerBookId === innerBook.id ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
+                            >
+                              <div className="space-y-0.5 max-w-[85%] text-right">
+                                <span className="block truncate">{innerBook.title}</span>
+                                {innerBook.hadithCount !== undefined && <span className="text-[9.5px] font-normal text-[var(--sk-label2)]">({innerBook.hadithCount} أحاديث)</span>}
+                              </div>
+                              <Check className={`w-3.5 h-3.5 shrink-0 ${activeInnerBookId === innerBook.id ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Chapters card: opens beside the only capsule after a book is selected. */}
+                  <AnimatePresence>
+                    {showChapterDrawer && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 8, scale: 0.96 }}
+                        transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                        className="hadith-index-sheet !absolute right-[calc(100%+8px)] top-0 w-[268px] sm:w-[300px] max-w-[calc(100vw-32px)] cut-crystal-panel rounded-[24px] z-[70] overflow-hidden flex flex-col max-h-[380px] text-right origin-top-left"
+                        dir="rtl"
+                      >
+                        <div className="progressive-blur" aria-hidden="true"><i /><i /></div>
+                        <div className="relative z-[2] px-2.5 pt-2.5 pb-1.5 shrink-0">
+                          <div className="cut-crystal-input flex items-center px-2.5 py-1">
+                            <Search className="w-3.5 h-3.5 text-[var(--sk-label2)] ml-1.5 shrink-0" />
+                            <input
+                              type="text"
+                              value={chapterSearchQuery}
+                              onChange={(e) => setChapterSearchQuery(e.target.value)}
+                              placeholder="تصفية أبواب الفهرس..."
+                              className="w-full bg-transparent border-none text-[12px] text-[var(--sk-label)] placeholder-[#7f6a55]/60 dark:placeholder-[var(--sk-label2)]/60 focus:outline-none"
+                            />
+                            {chapterSearchQuery && <button onClick={() => setChapterSearchQuery("")} className="text-[var(--sk-label2)] hover:text-[var(--sk-label)] mr-1"><X className="w-3 h-3" /></button>}
+                          </div>
+                        </div>
+                        <div className="relative flex-1 overflow-y-auto px-2 pt-1 pb-2 space-y-1 player-hide-scrollbar max-h-[300px]">
+                          {!chapterSearchQuery && (
+                            <button
+                              onClick={() => { handleChapterSelect("all"); setShowChapterDrawer(false); }}
+                              className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeChapterId === "all" ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
+                            >
+                              <span>عرض جميع الأبواب</span>
+                              <Check className={`w-3.5 h-3.5 ${activeChapterId === "all" ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
+                            </button>
+                          )}
+                          {loadingChapters ? (
+                            <div className="py-8 flex items-center justify-center gap-2 text-xs font-bold text-[var(--sk-label2)]">
+                              <SakeenahLineSpinner size={32} color="var(--sk-accent-bright)" label="جارٍ تحميل فهرس الأبواب" />
+                              <span>جاري تحميل الفهرس...</span>
+                            </div>
+                          ) : (
+                            chapters.filter((ch) => !chapterSearchQuery.trim() || ch.title.toLowerCase().includes(chapterSearchQuery.trim().toLowerCase())).map((ch) => (
+                              <button
+                                key={ch.id}
+                                onClick={() => { handleChapterSelect(ch.id); setShowChapterDrawer(false); }}
+                                className={`w-full p-2.5 rounded-[14px] text-right text-xs font-bold transition flex items-center justify-between border ${activeChapterId === ch.id ? "bg-[#deab65]/15 dark:bg-[var(--sk-accent-bright)]/15 text-[var(--sk-accent-deep)] border-[#deab65]/30 dark:border-[var(--sk-accent-bright)]/30" : "hover:bg-[#e8dfd4]/45 dark:hover:bg-[var(--sk-ring-track)]/45 text-[var(--sk-label)] border-transparent"}`}
+                              >
+                                <div className="space-y-0.5 max-w-[85%] text-right">
+                                  <span className="block truncate">{ch.title}</span>
+                                  {ch.hadithCount !== undefined && ch.hadithCount > 0 && <span className={`text-[9.5px] font-normal ${activeChapterId === ch.id ? "text-[var(--sk-accent-bright)]" : "text-[var(--sk-label2)]"}`}>({ch.hadithCount} أحاديث)</span>}
+                                </div>
+                                <Check className={`w-3.5 h-3.5 shrink-0 ${activeChapterId === ch.id ? "opacity-100 text-[var(--sk-accent-bright)]" : "opacity-0"}`} />
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>

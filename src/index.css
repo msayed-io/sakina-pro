@@ -1411,8 +1411,8 @@ html[data-theme="dark"] .ai-chat-error { color:#ffe9e5; background:#4c211e; }
    .progressive-blur ثابت للشاشة (position: fixed؛ أعلى الشاشة). داخل النافذة
    نحتاج نفس التدرج ونفس طبقتي الضباب لكن مثبّتًا على رأس النافذة لا الشاشة.
    لا تغيير في أي قيمة لونية أو هندسية — فقط موضع التثبيت والحجم ليطابق رأس
-   النافذة. */
-.hadith-index-sheet { position: relative; }
+   النافذة. لا نضع position على النافذة هنا؛ فالقائمة تعتمد على absolute من
+   JSX حتى تبقى خارج تدفق بطاقة القارئ. */
 .hadith-index-sheet > .progressive-blur {
   position: absolute;
   inset-inline: 0;
