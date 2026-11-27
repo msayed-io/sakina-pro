@@ -114,6 +114,25 @@
               inset 0 -1px 0 0 rgba(43, 26, 16, 0.06);
 }
 
+/* Hadith menus use a dense Regular Material surface, not clear glass.
+   They are portaled to body and positioned by viewport collision detection. */
+.hadith-menu-surface {
+  background: var(--sk-dialog);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--sk-hairline);
+  box-shadow: var(--sk-amb-card);
+  isolation: isolate;
+}
+.hadith-menu-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 var(--sk-lens);
+}
+
 /* 2. UNIVERSAL CUT-CRYSTAL CAPSULE / PILL (For Navbar, Header Badges, Page Title Capsules) */
 .cut-crystal-capsule {
   position: relative;
@@ -1406,21 +1425,3 @@ html[data-theme="dark"] .app-toast--info { --toast-bg:#49361b; --toast-border:#9
 }
 .ai-chat-error svg { flex: none; margin-top: 2px; }
 html[data-theme="dark"] .ai-chat-error { color:#ffe9e5; background:#4c211e; }
-
-/* ── تدرج التطبيق الأصلي داخل نافذة فهرس الكتاب ──────────────────────────
-   .progressive-blur ثابت للشاشة (position: fixed؛ أعلى الشاشة). داخل النافذة
-   نحتاج نفس التدرج ونفس طبقتي الضباب لكن مثبّتًا على رأس النافذة لا الشاشة.
-   لا تغيير في أي قيمة لونية أو هندسية — فقط موضع التثبيت والحجم ليطابق رأس
-   النافذة. لا نضع position على النافذة هنا؛ فالقائمة تعتمد على absolute من
-   JSX حتى تبقى خارج تدفق بطاقة القارئ. */
-.hadith-index-sheet > .progressive-blur {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  bottom: auto;
-  height: 64px;
-  z-index: 1;
-  border-radius: 24px 24px 0 0;
-  /* --bg يبقى var(--sk-bg) كما في كل شاشات التطبيق بالحرف — لا تجاوز:
-     تجاوزه إلى transparent يقتل التدرج في طبقة sk-lowpower لأنه هو بديلها. */
-}
