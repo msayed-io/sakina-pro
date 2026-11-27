@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <!-- theme-color stays byte-identical for light; dark splits by media query (spec §3.1) -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ece7de" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>سَكِينَة — Sakinah</title>
+    <script>
+      // First-paint theme resolution (spec §3.1): no flash, no stored preference.
+      // State is derived exclusively from the OS/browser color scheme and is
+      // re-applied on system flips and when the app/tab becomes visible again
+      // (covers Capacitor background → resume).
+      (function () {
+        var query = window.matchMedia('(prefers-color-scheme: dark)');
+        function applyTheme() {
+          document.documentElement.setAttribute('data-theme', query.matches ? 'dark' : 'light');
+        }
+        applyTheme();
+        if (typeof query.addEventListener === 'function') {
+          query.addEventListener('change', applyTheme);
+        } else if (typeof query.addListener === 'function') {
+          query.addListener(applyTheme);
+        }
+        document.addEventListener('visibilitychange', function () {
+          if (!document.hidden) applyTheme();
+        });
+        // Weak-hardware tier: entry-level Android WebViews re-sample backdrop
+        // blur every frame during scroll (glass recipe everywhere) and choke.
+        // Mirror of the app's existing prefers-reduced-transparency recipe,
+        // applied only when the browser itself reports very limited hardware.
+        try {
+          var cores = navigator.hardwareConcurrency || 8;
+          var memory = navigator.deviceMemory || 8;
+          if (cores <= 4 || memory <= 2) {
+            document.documentElement.classList.add('sk-lowpower');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        background: #ece7de;
+      }
+
+      html[data-theme="dark"],
+      html[data-theme="dark"] body {
+        background: #000000;
+      }
+
+      #root {
+        min-height: 100vh;
+        min-height: 100dvh;
+        background: #ece7de;
+      }
+
+      html[data-theme="dark"] #root {
+        background: #000000;
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-CQWWnmtY.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/capacitor-vendor-C2dKPlaX.js">
+    <link rel="modulepreload" crossorigin href="./assets/react-vendor-CfakCjk-.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-bda1Gh3R.js">
+    <link rel="modulepreload" crossorigin href="./assets/motion-vendor-CtKBKgkN.js">
+    <link rel="stylesheet" crossorigin href="./assets/vendor-Dgihpmma.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-T5Fupumh.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
