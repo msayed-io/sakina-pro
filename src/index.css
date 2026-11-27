@@ -121,8 +121,8 @@
 .hadith-menu-surface {
   background: linear-gradient(
     180deg,
-    rgba(253, 252, 251, 0.86) 0%,
-    rgba(244, 240, 234, 0.74) 100%
+    rgba(253, 252, 251, 0.75) 0%,
+    rgba(244, 240, 234, 0.60) 100%
   );
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) contrast(99%) brightness(102%);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) contrast(99%) brightness(102%);
@@ -130,25 +130,14 @@
   box-shadow: var(--glass-ambient), var(--glass-lensing);
   isolation: isolate;
 }
-.hadith-menu-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  box-shadow: inset 0 1px 0 var(--sk-lens);
-}
 
 /* Dark mode is separated by luminance, not light-theme strokes/highlights. */
 html[data-theme="dark"] .hadith-menu-surface {
-  background: var(--sk-dialog);
+  background: rgba(28, 28, 30, 0.90);
   -webkit-backdrop-filter: blur(30px) saturate(180%);
   backdrop-filter: blur(30px) saturate(180%);
   border-color: transparent;
   box-shadow: var(--sk-amb-card);
-}
-html[data-theme="dark"] .hadith-menu-surface::before {
-  box-shadow: none;
 }
 
 /* 2. UNIVERSAL CUT-CRYSTAL CAPSULE / PILL (For Navbar, Header Badges, Page Title Capsules) */

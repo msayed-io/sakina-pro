@@ -1416,24 +1416,8 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                 </div>
               </div>
 
-              {/* Lower Section: current hierarchy + one books capsule with adjacent chapters card */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
-                <div className="min-w-0 text-xs text-[var(--sk-label2)] font-bold flex items-center gap-1">
-                  <span className="text-[var(--sk-accent-bright)] font-extrabold shrink-0">الكتاب الحالي:</span>
-                  <span className="text-[var(--sk-label)] truncate">
-                    {activeInnerBookId === "all"
-                      ? "جميع الكتب"
-                      : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
-                  </span>
-                  <span className="mx-1 text-[var(--sk-label2)] shrink-0">·</span>
-                  <span className="text-[var(--sk-accent-bright)] font-extrabold shrink-0">الباب الحالي:</span>
-                  <span className="text-[var(--sk-label)] truncate">
-                    {activeChapterId === "all"
-                      ? "جميع الأبواب"
-                      : chapters.find((c) => c.id === activeChapterId)?.title || ""}
-                  </span>
-                </div>
-
+              {/* Lower Section: one stable books capsule with its portaled adjacent chapters card */}
+              <div className="flex items-center justify-end pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
                 <div className="relative z-[60] shrink-0">
                   <button
                     ref={booksTriggerRef}
@@ -1473,10 +1457,10 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           <motion.div
                             ref={booksMenuRef}
                             key="hadith-books-menu"
-                            initial={{ opacity: 0, y: -6, scale: 0.96 }}
+                            initial={{ opacity: 0, y: -5, scale: 0.94 }}
                             animate={{ opacity: menuPosition ? 1 : 0, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -6, scale: 0.96 }}
-                            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                            exit={{ opacity: 0, y: -3, scale: 0.98 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.78 }}
                             className="hadith-menu-surface fixed z-[110] overflow-hidden flex flex-col max-h-[min(380px,calc(100dvh-24px))] rounded-[18px] text-right origin-top-right"
                             style={{
                               top: menuPosition?.books.top ?? 0,
@@ -1533,10 +1517,10 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                           <motion.div
                             ref={chaptersMenuRef}
                             key="hadith-chapters-menu"
-                            initial={{ opacity: 0, x: 8, scale: 0.96 }}
+                            initial={{ opacity: 0, x: -7, scale: 0.94 }}
                             animate={{ opacity: menuPosition ? 1 : 0, x: 0, scale: 1 }}
-                            exit={{ opacity: 0, x: 8, scale: 0.96 }}
-                            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                            exit={{ opacity: 0, x: -4, scale: 0.98 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.78 }}
                             className="hadith-menu-surface fixed z-[111] overflow-hidden flex flex-col max-h-[min(380px,calc(100dvh-24px))] rounded-[18px] text-right origin-top-left"
                             style={{
                               top: menuPosition?.chapters.top ?? 0,
