@@ -224,6 +224,13 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
     }
   });
 
+  // ═══ إلغاء التنزيل ══════════════════════════════════════════════════════
+  // البلجن الأصلي لا يوفّر cancel: الخيط يقرأ الدفق حتى النهاية. لذلك الإلغاء
+  // على مستوى JS وحده: نُسجّل طلب الإلغاء لكل كتاب، ومع كل دفعة تقدم نتحقق
+  // منه — فإن كان الكتاب قد أُلغي نتجاهل الرد النهائي ونمسح الملف الجزئي.
+  // لا نمسّ منطق التنزيل ولا التحقق ولا التخزين، ولا نضيف أي شيء بصري.
+  const cancelRequestedRef = useRef<Set<string>>(new Set());
+
   // Offline Indexing & Search Engine States
   const [downloadStats, setDownloadStats] = useState<Record<string, boolean>>({});
   const [isIndexing, setIsIndexing] = useState(false);
@@ -234,6 +241,8 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
   const [searchMethod, setSearchMethod] = useState<"offline">("offline");
   const [isSearchScopeDropdownOpen, setIsSearchScopeDropdownOpen] = useState(false);
   const [downloadSuccessAnim, setDownloadSuccessAnim] = useState(false);
+  /** رسائل فشل التنزيل لكل كتاب — تُعرض داخل البطاقة لا في alert. */
+  const [downloadErrorMap, setDownloadErrorMap] = useState<Record<string, string>>({});
 
   // Restore local user state once; refresh public book metadata only while active.
   useEffect(() => {
@@ -273,29 +282,59 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
       const hasAny = Object.values(stats).some(v => v === true);
       if (!hasAny) setSearchMethod("offline");
     } else {
+      cancelRequestedRef.current.delete(book.id);
       setIsIndexing(true);
       setDownloadingBookId(book.id);
       setIndexingProgress(0);
       setBookProgressMap(prev => ({ ...prev, [book.id]: 0 }));
       setIndexingStatusText(`جاري تهيئة تحميل كتاب ${book.titleArabic}...`);
+      setDownloadErrorMap(prev => {
+        if (!prev[book.id]) return prev;
+        const next = { ...prev };
+        delete next[book.id];
+        return next;
+      });
       try {
         await HadithNativeService.downloadBook(book, (pct, status) => {
           setIndexingStatusText(status);
           setIndexingProgress(pct);
           setBookProgressMap(prev => ({ ...prev, [book.id]: pct }));
         });
+        // أُلغي أثناء الجريان: لا نعتبره ناجحًا ولا نُعلن خطأً.
+        if (cancelRequestedRef.current.has(book.id)) {
+          cancelRequestedRef.current.delete(book.id);
+          return;
+        }
         setDownloadStats(prev => ({ ...prev, [book.id]: true }));
         setBookProgressMap(prev => ({ ...prev, [book.id]: 100 }));
         setSearchMethod("offline");
       } catch (err: any) {
+        if (cancelRequestedRef.current.has(book.id)) {
+          cancelRequestedRef.current.delete(book.id);
+          return;
+        }
         console.error("Error downloading book:", err);
-        alert(`فشل التحميل: ${err.message || err}`);
+        // رسالة داخل البطاقة بدل alert — نفس تصميم حالة الخطأ في المرجع.
+        setDownloadErrorMap(prev => ({
+          ...prev,
+          [book.id]: err?.message || "تعذّر تجهيز الكتاب.",
+        }));
       } finally {
         setIsIndexing(false);
         setDownloadingBookId(null);
         setIndexingProgress(0);
       }
     }
+  };
+
+  /** إيقاف التنزيل: علامة إلغاء + مسح الملف الجزئي. لا يمسّ أي منطق آخر. */
+  const handleCancelDownload = (book: HadithBookInfo) => {
+    cancelRequestedRef.current.add(book.id);
+    setDownloadingBookId(null);
+    setIsIndexing(false);
+    setIndexingProgress(0);
+    setBookProgressMap(prev => ({ ...prev, [book.id]: 0 }));
+    void HadithNativeService.deleteBook(book.id).catch(() => undefined);
   };
 
   // Download and Index all Books to become Offline
@@ -1199,12 +1238,131 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                   const isDownloadingThisBook = isIndexing && downloadingBookId === book.id;
                   const currentPct = bookProgressMap[book.id] ?? indexingProgress;
                   const hasCoverImage = Boolean(book.coverImage);
+                  const downloadError = downloadErrorMap[book.id];
 
+                  // ═══════════════════════════════════════════════════════════════
+                  // حالة «الكتاب منزّل»: البطاقة الأصلية حرفيًا، ناقص كتلة زر التنزيل
+                  // القديمة فقط (التي كانت لا تظهر أصلًا بعد التنزيل).
+                  // ═══════════════════════════════════════════════════════════════
+                  if (isDownloaded) {
+                    return (
+                      <motion.div
+                        key={book.id}
+                        whileHover={{ y: -3 }}
+                        className={`group relative overflow-hidden rounded-[26px] p-5 flex flex-col justify-between transition-all duration-500 shadow-md ${
+                          hasCoverImage
+                            ? "border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb]"
+                            : "cut-crystal-satin text-[var(--sk-label)]"
+                        }`}
+                      >
+                        {/* Background Cover Image with 4:3 preservation, Dark Gradient & Film Grain Overlay */}
+                        {hasCoverImage && (
+                          <>
+                            <img
+                              src={book.coverImage}
+                              alt={book.titleArabic}
+                              width={1200}
+                              height={900}
+                              loading="eager"
+                              decoding="async"
+                              fetchPriority={book.id === "bukhari" || book.id === "muslim" ? "high" : "auto"}
+                              referrerPolicy="no-referrer"
+                              className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out z-0"
+                            />
+                            {/* Multi-layered Vignette & Contrast Gradients for text legibility with high illustration clarity */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f0a]/85 dark:from-[var(--sk-espresso-end)]/85 via-[#1a0f0a]/45 dark:via-[var(--sk-espresso-end)]/45 to-[#1a0f0a]/25 dark:to-[var(--sk-espresso-end)]/25 z-1" />
+                            <div className="absolute inset-0 border border-[#deab65]/25 dark:border-[var(--sk-accent-bright)]/25 rounded-[26px] pointer-events-none z-2" />
+                            <div className="pointer-events-none absolute inset-3 z-[3] rounded-[24px] border border-[#f7dfb4]/15 dark:border-[var(--sk-champagne)]/15 bg-[#2b1a10]/28 dark:bg-[var(--sk-shade)]/28 backdrop-blur-[2px]" />
+                          </>
+                        )}
+
+                        <div className="space-y-3 relative z-10">
+                          {/* Top Header of Card */}
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="space-y-1 min-w-0 flex-1">
+                              <h2
+                                className={`text-lg font-black font-display transition leading-snug ${
+                                  hasCoverImage
+                                    ? "text-[#fefefe] group-hover:text-[var(--sk-accent-bright)] drop-shadow-sm"
+                                    : "text-[var(--sk-label)] group-hover:text-[var(--sk-accent-bright)]"
+                                }`}
+                              >
+                                {book.titleArabic}
+                              </h2>
+                              <p
+                                className={`text-xs font-bold ${
+                                  hasCoverImage ? "text-[#e6dccf]/90 dark:text-[#e6dccf]/90" : "text-[var(--sk-label2)]"
+                                }`}
+                              >
+                                {book.authorArabic} ({book.authorDeath})
+                              </p>
+                            </div>
+
+                          </div>
+
+                          {/* Description */}
+                          <p
+                            className={`text-xs leading-relaxed line-clamp-3 font-serif ${
+                              hasCoverImage ? "text-[#f2ebe1]/90" : "text-[var(--sk-espresso2)]"
+                            }`}
+                          >
+                            {book.description}
+                          </p>
+
+                          {/* Stats Badges */}
+                          <div className="flex items-center gap-2 pt-1">
+                            <div
+                              className={`px-3 py-1 text-[11px] font-bold rounded-full backdrop-blur-md ${
+                                hasCoverImage
+                                  ? "bg-white/15 text-[var(--sk-bg3)] dark:text-[#fdfcfb] border border-white/20"
+                                  : "cut-crystal-capsule text-[var(--sk-label)]"
+                              }`}
+                            >
+                              {book.hadithsCount.toLocaleString("ar-EG")} حديثًا
+                            </div>
+                            <div
+                              className={`px-3 py-1 text-[11px] font-bold rounded-full backdrop-blur-md ${
+                                hasCoverImage
+                                  ? "bg-white/10 text-[var(--sk-sep)] dark:text-[#e6dccf]/85 border border-white/15"
+                                  : "cut-crystal-capsule text-[var(--sk-espresso2)]"
+                              }`}
+                            >
+                              {book.chaptersCount} بابًا
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Footer Action Button */}
+                        <div
+                          className={`pt-4 mt-4 relative z-10 ${
+                            hasCoverImage
+                              ? "border-t border-white/15"
+                              : "border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10"
+                          }`}
+                        >
+                          <button
+                            onClick={() => handleOpenBook(book)}
+                            className="w-full py-2.5 px-4 cut-crystal-capsule-gold text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                          >
+                            <BookText className="w-4 h-4 text-[var(--sk-label)]" />
+                            <span>فتح وتصفح الكتاب</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    );
+                  }
+
+                  // حالة «الكتاب غير منزّل»: نفس البطاقة الأصلية تمامًا (الإطار،
+                  // الغلاف، التدرجات، الحواف). يبقى منها اسم الكتاب وحده — في
+                  // المنتصف — ومنطقة الإجراء تحمل عناصر التنزيل من المرجع.
+                  // المحتوى الأخف يجعل البطاقة تنكمش بارتفاع طبيعي متوسط بلا
+                  // فراغات معلّقة.
+                  // ═══════════════════════════════════════════════════════════════
                   return (
                     <motion.div
                       key={book.id}
                       whileHover={{ y: -3 }}
-                      className={`group relative overflow-hidden rounded-[26px] p-5 flex flex-col justify-between transition-all duration-500 shadow-md ${
+                      className={`group relative overflow-hidden rounded-[26px] px-5 flex flex-col transition-all duration-500 shadow-md ${
                         hasCoverImage
                           ? "border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb]"
                           : "cut-crystal-satin text-[var(--sk-label)]"
@@ -1224,128 +1382,145 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                             referrerPolicy="no-referrer"
                             className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out z-0"
                           />
-                          {/* Multi-layered Vignette & Contrast Gradients for text legibility with high illustration clarity */}
                           <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f0a]/85 dark:from-[var(--sk-espresso-end)]/85 via-[#1a0f0a]/45 dark:via-[var(--sk-espresso-end)]/45 to-[#1a0f0a]/25 dark:to-[var(--sk-espresso-end)]/25 z-1" />
                           <div className="absolute inset-0 border border-[#deab65]/25 dark:border-[var(--sk-accent-bright)]/25 rounded-[26px] pointer-events-none z-2" />
                           <div className="pointer-events-none absolute inset-3 z-[3] rounded-[24px] border border-[#f7dfb4]/15 dark:border-[var(--sk-champagne)]/15 bg-[#2b1a10]/28 dark:bg-[var(--sk-shade)]/28 backdrop-blur-[2px]" />
                         </>
                       )}
 
-                      <div className="space-y-3 relative z-10">
-                        {/* Top Header of Card */}
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="space-y-1 min-w-0 flex-1">
-                            <h2
-                              className={`text-lg font-black font-display transition leading-snug ${
-                                hasCoverImage
-                                  ? "text-[#fefefe] group-hover:text-[var(--sk-accent-bright)] drop-shadow-sm"
-                                  : "text-[var(--sk-label)] group-hover:text-[var(--sk-accent-bright)]"
-                              }`}
-                            >
-                              {book.titleArabic}
-                            </h2>
-                            <p
-                              className={`text-xs font-bold ${
-                                hasCoverImage ? "text-[#e6dccf]/90 dark:text-[#e6dccf]/90" : "text-[var(--sk-label2)]"
-                              }`}
-                            >
-                              {book.authorArabic} ({book.authorDeath})
-                            </p>
-                          </div>
-
-                          {/* منطقة التنزيل: لا تظهر بعد الجاهزية، حفاظًا على البطاقة الأصلية */}
-                          {!isDownloaded && (
-                            <div className="shrink-0 self-start pt-0.5 min-w-[84px]">
-                              <p
-                                className={`mb-1 text-[9px] leading-tight text-center ${hasCoverImage ? "text-[#f2ebe1]/90" : "text-[var(--sk-label2)]"}`}
-                              >
-                                {isDownloadingThisBook ? indexingStatusText : "نزّل الكتاب لتصفح أبوابه وأحاديثه"}
-                              </p>
-                              {isDownloadingThisBook ? (
-                                <div
-                                  className="relative overflow-hidden w-[84px] h-7 rounded-full border border-[#deab65]/60 dark:border-[var(--sk-accent-bright)]/60 bg-white/85 backdrop-blur-md shadow-sm flex items-center justify-center"
-                                  role="progressbar"
-                                  aria-valuenow={currentPct}
-                                  aria-valuemin={0}
-                                  aria-valuemax={100}
-                                >
-                                  <div
-                                    className="absolute inset-y-0 right-0 bg-gradient-to-l from-[var(--sk-accent-bright)] to-[var(--sk-gold-eq1)] transition-all duration-300 ease-out opacity-85"
-                                    style={{ width: `${currentPct}%` }}
-                                  />
-                                  <div className="relative z-10 flex items-center justify-center gap-1 text-[10px] font-black text-[var(--sk-label)]">
-                                    <SakeenahLineSpinner size={24} color="var(--sk-label)" label="جارٍ تنزيل الكتاب" className="shrink-0" />
-                                    <span className="tabular-nums">{currentPct}%</span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleIndexBookToggle(book);
-                                  }}
-                                  className={`px-3 h-7 rounded-full text-[10px] font-extrabold cursor-pointer transition-all duration-300 flex items-center gap-1 border border-[#deab65]/40 dark:border-[var(--sk-accent-bright)]/40 backdrop-blur-md shadow-xs active:scale-95 ${
-                                    hasCoverImage
-                                      ? "bg-black/40 text-[var(--sk-bg3)] dark:text-[#fdfcfb] hover:bg-[var(--sk-accent-bright)]/30"
-                                      : "bg-white/50 text-[var(--sk-accent-deep)] hover:bg-[var(--sk-accent-bright)]/15"
-                                  }`}
-                                >
-                                  <Download className="w-2.5 h-2.5 text-[var(--sk-accent-bright)]" />
-                                  <span className="text-[9.5px]">تنزيل</span>
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Description */}
-                        <p
-                          className={`text-xs leading-relaxed line-clamp-3 font-serif ${
-                            hasCoverImage ? "text-[#f2ebe1]/90" : "text-[var(--sk-espresso2)]"
+                      {/* الاسم في منتصف المساحة العلوية بين حد البطاقة والفاصل. */}
+                      <div className="relative z-10 grid flex-1 place-items-center px-1 py-9">
+                        <h2
+                          className={`text-center text-xl sm:text-2xl font-black font-display leading-snug transition ${
+                            hasCoverImage
+                              ? "text-[#fefefe] group-hover:text-[var(--sk-accent-bright)] drop-shadow-sm"
+                              : "text-[var(--sk-label)] group-hover:text-[var(--sk-accent-bright)]"
                           }`}
                         >
-                          {book.description}
-                        </p>
-
-                        {/* Stats Badges */}
-                        <div className="flex items-center gap-2 pt-1">
-                          <div
-                            className={`px-3 py-1 text-[11px] font-bold rounded-full backdrop-blur-md ${
-                              hasCoverImage
-                                ? "bg-white/15 text-[var(--sk-bg3)] dark:text-[#fdfcfb] border border-white/20"
-                                : "cut-crystal-capsule text-[var(--sk-label)]"
-                            }`}
-                          >
-                            {book.hadithsCount.toLocaleString("ar-EG")} حديثًا
-                          </div>
-                          <div
-                            className={`px-3 py-1 text-[11px] font-bold rounded-full backdrop-blur-md ${
-                              hasCoverImage
-                                ? "bg-white/10 text-[var(--sk-sep)] dark:text-[#e6dccf]/85 border border-white/15"
-                                : "cut-crystal-capsule text-[var(--sk-espresso2)]"
-                            }`}
-                          >
-                            {book.chaptersCount} بابًا
-                          </div>
-                        </div>
+                          {book.titleArabic}
+                        </h2>
                       </div>
 
-                      {/* Footer Action Button */}
-                      <div
-                        className={`pt-4 mt-4 relative z-10 ${
-                          hasCoverImage
-                            ? "border-t border-white/15"
-                            : "border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10"
-                        }`}
-                      >
-                        <button
-                          onClick={() => handleOpenBook(book)}
-                          className="w-full py-2.5 px-4 cut-crystal-capsule-gold text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-                        >
-                          <BookText className="w-4 h-4 text-[var(--sk-label)]" />
-                          <span>فتح وتصفح الكتاب</span>
-                        </button>
+                      {/* منطقة الإجراء: بعناصر المرجع — زر / تقدم + إيقاف / خطأ */}
+                      <div className="relative z-10">
+                        <div
+                          className={`mb-4 h-px ${
+                            hasCoverImage ? "bg-white/15" : "bg-[#2b1a10]/10 dark:bg-[var(--sk-label)]/10"
+                          }`}
+                        />
+
+                        {isDownloadingThisBook ? (
+                          /* ── حالة التنزيل: شريط + نسبة + إيقاف ── */
+                          <div className="space-y-2.5">
+                            <div
+                              className={`flex items-baseline justify-between text-[12.5px] ${
+                                hasCoverImage ? "text-[#f2ebe1]/85" : "text-[var(--sk-label2)]"
+                              }`}
+                            >
+                              <span className="font-bold">{indexingStatusText || "جارٍ التنزيل"}</span>
+                              <b className="text-[13px] font-black tabular-nums text-[var(--sk-accent-bright)]">
+                                {currentPct}%
+                              </b>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="relative h-[5px] flex-1 overflow-hidden rounded-[9px] bg-white/25 dark:bg-white/20"
+                                role="progressbar"
+                                aria-label="تقدم تنزيل الكتاب"
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                                aria-valuenow={currentPct}
+                              >
+                                <div
+                                  className="absolute inset-y-0 start-0 rounded-[9px] bg-[var(--sk-accent-bright)] transition-[width] duration-300 ease-linear"
+                                  style={{ width: `${currentPct}%` }}
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCancelDownload(book);
+                                }}
+                                aria-label="إيقاف التنزيل"
+                                className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-white/16 text-white transition-transform duration-200 active:scale-90 hover:bg-white/25"
+                              >
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="h-3.5 w-3.5 fill-current"
+                                >
+                                  <rect x="5" y="5" width="14" height="14" rx="4" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        ) : downloadError ? (
+                          /* ── حالة الخطأ: نفس النص والزر، داخل البطاقة ── */
+                          <div className="space-y-2.5">
+                            <p
+                              className={`flex items-start gap-2 text-[12.5px] leading-[1.85] ${
+                                hasCoverImage ? "text-[#FF9230]" : "text-[#b45309]"
+                              }`}
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="mt-[3px] h-[17px] w-[17px] shrink-0 fill-none stroke-current"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <circle cx="12" cy="12" r="9" />
+                                <path d="M12 7.8v5M12 16.2v.01" />
+                              </svg>
+                              <span>{downloadError}</span>
+                            </p>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                void handleIndexBookToggle(book);
+                              }}
+                              className="flex h-[38px] w-full items-center justify-center gap-2 rounded-full bg-[var(--sk-accent-bright)] text-[14.5px] font-bold text-[var(--sk-on-espresso)] transition-transform duration-200 active:scale-[0.97]"
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                className="h-[18px] w-[18px] fill-none stroke-current"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />
+                              </svg>
+                              <span>إعادة التنزيل</span>
+                            </button>
+                          </div>
+                        ) : (
+                          /* ── حالة الخمول: زر التنزيل من المرجع حرفيًا ── */
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void handleIndexBookToggle(book);
+                            }}
+                            className="flex h-[38px] w-full items-center justify-center gap-[9px] rounded-full bg-[var(--sk-accent-bright)] text-[14.5px] font-bold text-[var(--sk-on-espresso)] transition-transform duration-200 active:scale-[0.97]"
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                              className="h-5 w-5 fill-none stroke-current"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 4v10.5M7.5 10.5 12 15l4.5-4.5M5.5 20h13" />
+                            </svg>
+                            <span>تنزيل الكتاب</span>
+                          </button>
+                        )}
+                        <div className="h-5" />
                       </div>
                     </motion.div>
                   );
@@ -1417,7 +1592,7 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
               </div>
 
               {/* Lower Section: one stable books capsule with its portaled adjacent chapters card */}
-              <div className="flex items-center justify-end pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
+              <div className="flex items-center justify-start pt-3 border-t border-[#2b1a10]/10 dark:border-[var(--sk-label)]/10">
                 <div className="relative z-[60] shrink-0">
                   <button
                     ref={booksTriggerRef}
@@ -1429,7 +1604,6 @@ const HadithBooksScreen = React.memo(function HadithBooksScreen({ isActive = tru
                     title="فتح فهرس الكتب"
                     aria-expanded={showBookDrawer || showChapterDrawer}
                   >
-                    <BookOpen className="w-4 h-4 text-[var(--sk-accent-deep)]" />
                     <span className="text-[var(--sk-accent-deep)]">الكتب:</span>
                     <span className="font-extrabold max-w-[100px] sm:max-w-[140px] truncate">
                       {activeInnerBookId === "all" ? "جميع الكتب" : innerBooks.find((b) => b.id === activeInnerBookId)?.title || ""}
